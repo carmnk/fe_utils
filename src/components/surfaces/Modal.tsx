@@ -4,7 +4,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
-import { Button, ButtonType } from './buttons/Button'
+import { Button, ButtonType } from '../buttons/Button'
 import {
   Box,
   IconButton,
@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import Icon from '@mdi/react'
 import { mdiClose } from '@mdi/js'
-import { NewlineText } from './basics/NewLineText'
+import { NewlineText } from '../basics/NewLineText'
 import { useCallback, useMemo } from 'react'
 
 const actionsStyles = { pl: 3 }

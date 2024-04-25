@@ -3,7 +3,7 @@ import {
   GenericForm,
   GenericFormParams,
 } from '../../components/forms/GenericForm'
-import { Modal, CModalProps } from '../Modal'
+import { Modal, CModalProps } from '../surfaces/Modal'
 
 export type GenericFormModalProps<
   F extends { [key: string]: any } = { [key: string]: any },

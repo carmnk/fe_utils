@@ -1,6 +1,6 @@
 {
   "name": "@cmk/fe_utils",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "frontend utility library",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -36,6 +36,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^15.0.4",
     "@types/react": "^18.2.79",
     "@types/react-color": "^3.0.12",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
