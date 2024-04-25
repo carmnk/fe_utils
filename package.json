@@ -1,6 +1,6 @@
 {
   "name": "@cmk/fe_utils",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "frontend utility library",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write --parser typescript '**/*.{ts,tsx}'",
     "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --fix",
-    "build": "tsc && vite build",
+    "build": "tsc",
     "prepublish": "npm run build"
   },
   "repository": {

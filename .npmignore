@@ -1,0 +1,10 @@
+jest.config.js 
+prettierrc.cjs
+prettierrc.js
+prettierrc.json
+.gitignore
+.eslintrc.cjs
+.eslintrc.js
+.eslintrc.mjs
+tscconfig.json
+vite.config.ts
