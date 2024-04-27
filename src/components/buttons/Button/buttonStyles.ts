@@ -24,6 +24,7 @@ export const makeButtonStyles = (
     | 'dropdown'
     | 'sx'
     | 'disabled'
+    | 'endIcon'
   > & {
     theme: Theme
   }
@@ -37,6 +38,7 @@ export const makeButtonStyles = (
     type,
     disabled,
     icon,
+    endIcon,
   } = props
 
   const padding = iconButton ? '4px' : type === 'text' ? '4px 16px' : 'auto'
@@ -53,6 +55,7 @@ export const makeButtonStyles = (
       mr: !icon ? 0 : iconButton ? 'auto' : '8px',
     },
     '& .MuiButton-endIcon': {
+      display: !endIcon ? 'none' : 'inherit',
       ml: 'auto',
       pl: '5px',
     },

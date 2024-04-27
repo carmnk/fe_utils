@@ -16,6 +16,7 @@ export const ButtonStartIcon = (props: ButtonStartIconProps) => {
   const { loading, icon, iconSize, iconColor, disabled, type } = props
   const theme = useTheme()
 
+  console.error('ButtonStartIcon', CircularProgress, Icon)
   return loading ? (
     <Stack direction="row" alignItems="center" width="17px" mr={1}>
       <CircularProgress color="inherit" size={17} />

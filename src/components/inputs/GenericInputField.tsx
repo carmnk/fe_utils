@@ -7,6 +7,7 @@ import { DatePicker, DatePickerProps } from './DatePicker'
 import { TextArea, TextAreaProps } from './TextArea'
 import { Checkbox, CheckboxProps } from './Checkbox'
 import { CommonInputFieldProps } from './_types'
+import { Switch } from './Switch'
 
 export type GenericInputFieldType =
   | 'text'
@@ -18,6 +19,7 @@ export type GenericInputFieldType =
   | 'multiselect'
   | 'textarea'
   | 'bool'
+  | 'switch'
   | 'file'
 
 export type GenericInputFieldOption = {
@@ -166,6 +168,14 @@ export const GenericInputField = (
       name={name}
       required={required}
       {...(restIn as Omit<SpecificInputProps<'bool'>, 'name'>)}
+    />
+  ) : type === 'switch' ? (
+    <Switch
+      label={label}
+      value={value as any}
+      name={name}
+      required={required}
+      {...(restIn as any)}
     />
   ) : type === 'date' ? (
     <DatePicker

@@ -78,15 +78,17 @@ export const Button = React.forwardRef(
       [icon, iconColor, iconSize, disabled, loading, type]
     )
     const endIconAdj = useMemo(
-      () => (
-        <ButtonEndIcon
-          disabled={disabled}
-          endIcon={endIcon}
-          iconColor={iconColor}
-          type={type}
-          dropdown={dropdown}
-        />
-      ),
+      () => ({
+        endIcon: (
+          <ButtonEndIcon
+            disabled={disabled}
+            endIcon={endIcon}
+            iconColor={iconColor}
+            type={type}
+            dropdown={dropdown}
+          />
+        ),
+      }),
       [disabled, endIcon, iconColor, type, dropdown]
     )
 
@@ -101,6 +103,7 @@ export const Button = React.forwardRef(
           iconButton,
           sx: rest?.sx,
           dropdown: dropdown,
+          endIcon,
         }),
       [
         theme,
@@ -111,6 +114,7 @@ export const Button = React.forwardRef(
         iconButton,
         rest?.sx,
         dropdown,
+        endIcon,
       ]
     )
 
@@ -123,7 +127,7 @@ export const Button = React.forwardRef(
             variant="outlined"
             disableElevation
             startIcon={startIcon}
-            endIcon={endIconAdj}
+            {...endIconAdj}
             disabled={disabled}
             {...rest}
             tabIndex={disableTabstop ? -1 : 0}
@@ -149,7 +153,7 @@ export const Button = React.forwardRef(
             size="small"
             variant="text"
             startIcon={startIcon}
-            endIcon={endIconAdj}
+            {...endIconAdj}
             disabled={disabled}
             {...rest}
             tabIndex={disableTabstop ? -1 : 0}
@@ -175,7 +179,7 @@ export const Button = React.forwardRef(
             variant="contained"
             disableElevation
             startIcon={startIcon}
-            endIcon={endIconAdj}
+            {...endIconAdj}
             disabled={disabled}
             {...rest}
             tabIndex={disableTabstop ? -1 : 0}

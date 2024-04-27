@@ -1,6 +1,6 @@
 {
   "name": "@cmk/fe_utils",
-  "version": "0.1.7",
+  "version": "0.1.15",
   "description": "frontend utility library",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write --parser typescript '**/*.{ts,tsx}'",
     "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --fix",
-    "build": "tsc",
+    "build": "tsc && vite build",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -33,15 +33,17 @@
   },
   "homepage": "https://github.com/carmnk/fe_utils#readme",
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@mui/material": "^5.15.1",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0"
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
+    "@mui/x-date-pickers": "^5.0.6",
+    "@mui/x-tree-view": "^6.17.0",
+    "@types/react": "^17.0.0 || ^18.0.0",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^15.0.4",
-    "@types/react": "^18.2.79",
     "@types/react-color": "^3.0.12",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
@@ -61,9 +63,6 @@
     "@dnd-kit/modifiers": "^7.0.0",
     "@mdi/js": "^7.3.67",
     "@mdi/react": "^1.6.1",
-    "@mui/material": "^5.15.1",
-    "@mui/x-date-pickers": "^5.0.6",
-    "@mui/x-tree-view": "^6.17.0",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20.12.7",

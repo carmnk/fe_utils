@@ -22,6 +22,7 @@ export type TextFieldProps = Omit<MTextFieldProps, 'onChange'> &
     labelSx?: TypographyProps['sx']
     injectComponent?: ReactNode
     locked?: boolean
+    useNotchedLabel?: boolean
     onChange?: (
       newValue: string | number,
       e: ChangeEvent<HTMLInputElement>
@@ -52,6 +53,7 @@ export const TextField = forwardRef(
       maxLength,
       locked,
       disabled,
+      useNotchedLabel,
       ...rest
     } = props
 
@@ -116,11 +118,13 @@ export const TextField = forwardRef(
         },
         InputProps: {
           endAdornment: (
+            // dont show if not present!
             <InputAdornment position="end">
               {icon ?? (locked ? <Icon path={mdiLock} /> : null)}
             </InputAdornment>
           ),
           startAdornment: (
+            // dont show if not present? -> probably already no width
             <InputAdornment position="start">{startIcon}</InputAdornment>
           ),
           ...((rest?.InputProps as any) ?? {}),
@@ -142,6 +146,7 @@ export const TextField = forwardRef(
             whiteSpace: 'nowrap',
           },
         },
+        label: useNotchedLabel ? label : undefined,
       }
     }, [
       icon,
@@ -161,6 +166,8 @@ export const TextField = forwardRef(
       value,
       locked,
       disableHelperText,
+      useNotchedLabel,
+      label,
     ])
 
     return (
@@ -171,7 +178,7 @@ export const TextField = forwardRef(
         width="100%"
         {...(ContainerProps ?? {})}
       >
-        {!disableLabel && (
+        {!disableLabel && !useNotchedLabel && (
           <Typography {...labelProps}>
             {label}{' '}
             {required && (

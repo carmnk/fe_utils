@@ -1,13 +1,20 @@
 import { ReactNode } from 'react'
-import { Box, CheckboxProps, FormControlLabel, Tooltip } from '@mui/material'
+import {
+  Box,
+  FormControlLabel,
+  FormControlLabelProps,
+  SwitchProps,
+  Tooltip,
+} from '@mui/material'
 import { Switch as MSwitch, FormHelperText } from '@mui/material'
 import { CommonInputFieldProps } from './_types'
 
 export type CCheckboxProps = CommonInputFieldProps &
-  CheckboxProps & {
+  SwitchProps & {
     formControlLabelProps?: any
     disableHelperText?: boolean
     tooltip?: ReactNode
+    labelPlacement?: FormControlLabelProps['labelPlacement']
   }
 
 export const Switch = (props: CCheckboxProps) => {
@@ -20,6 +27,7 @@ export const Switch = (props: CCheckboxProps) => {
     helperText,
     disableHelperText = true,
     tooltip,
+    labelPlacement,
     ...restCheckBoxProps
   } = props
 
@@ -45,6 +53,7 @@ export const Switch = (props: CCheckboxProps) => {
               {...(restCheckBoxProps as any)}
             />
           }
+          labelPlacement={labelPlacement ?? undefined}
           label={label}
           {...formControlLabelProps}
         />
