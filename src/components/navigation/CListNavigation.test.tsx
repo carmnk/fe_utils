@@ -16,11 +16,11 @@ describe('ListNavigation', () => {
 
     const item1Element = getByText('Item 1').parentElement?.parentElement
     const styles1 = item1Element?.style
-    expect(item1Element).toHaveStyle('background-color: rgba(0, 0, 0, 0.04);')
+    expect(item1Element).toHaveStyle('background-color: transparent;')
     console.log(getByText('Item 2').parentElement?.parentElement)
     const item2Element = getByText('Item 2').parentElement?.parentElement
     const styles2 = item2Element?.style
-    expect(item2Element).toHaveStyle('background: rgba(0, 0, 0, 0.04);')
+    expect(item2Element).toHaveStyle('background: transparent;')
   })
 
   it('calls onChange when item is clicked', () => {

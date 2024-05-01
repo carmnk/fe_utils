@@ -1,25 +1,24 @@
 import { useCallback, useMemo, useState } from 'react'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { DatePickerProps as MDatePickerProps } from '@mui/x-date-pickers'
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material'
-import { useTheme, TextField } from '@mui/material'
+import { useTheme } from '@mui/material'
 import Icon from '@mdi/react'
-import { mdiCalendar } from '@mdi/js'
+import { mdiAbacus, mdiCalendar } from '@mdi/js'
 import { Stack } from '../_wrapper/Stack'
 import { CommonInputFieldProps } from './_types'
+import TextField from './TextField'
+import { Button } from '../buttons'
 
 export type DatePickerProps = CommonInputFieldProps &
-  Omit<
-    MDatePickerProps<string, Date>,
-    'renderInput' | 'name' | 'onChange' | 'value'
-  > & {
+  MDatePickerProps<Moment> & {
     ContainerProps?: BoxProps
     labelSx?: TypographyProps
     IconComponent?: React.ReactNode
-    onChange?: MDatePickerProps<string, Date>['onChange']
+    onChange?: (newValue: Moment | null, name?: string) => void
     value?: string | null
   }
 
@@ -33,6 +32,7 @@ export const DatePicker = (props: DatePickerProps) => {
     onChange,
     disabled,
     IconComponent,
+    color,
     name,
   } = props
   const [validDate, setValidDate] = useState(true)
@@ -47,7 +47,7 @@ export const DatePicker = (props: DatePickerProps) => {
   )
 
   const handleChange = useCallback(
-    (newValue: Date | null) => {
+    (newValue: Moment | null) => {
       if (moment(newValue).isValid()) {
         setValidDate(true)
         onChange?.(newValue, name)
@@ -73,49 +73,64 @@ export const DatePicker = (props: DatePickerProps) => {
       <div>
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DesktopDatePicker
-            inputFormat="DD.MM.YYYY"
+            format="DD/MM/YYYY"
             value={value}
             onChange={handleChange}
             disabled={disabled}
-            renderInput={(params: any) => (
-              <TextField
-                {...params}
-                name={name}
-                sx={{ ...(params?.sx || {}), background: '#fff' }}
-                error={error || !validDate}
-                helperText={
-                  (!validDate && value !== '') ||
-                  ['Invalid date'].includes(value ?? '') ||
-                  (value === '' && error)
-                    ? 'Format nicht erkannt'
-                    : ' '
-                }
-                FormHelperTextProps={{
-                  style: {
-                    color: error
-                      ? theme.palette.error.main
-                      : 'rgba(0, 0, 0, 0.6)',
-                    marginLeft: 2,
-                  },
-                }}
-                disabled={disabled}
-              />
-            )}
-            className="font-base h-[45px]"
-            InputProps={{
-              sx: { '& > input': { p: '12px', pl: 2, pr: 2, fontSize: 14 } },
-              disabled,
+            slots={{
+              openPickerButton: (props) => (
+                <Button
+                  iconButton
+                  icon={mdiCalendar}
+                  variant="text"
+                  {...(props as any)}
+                />
+              ),
             }}
+            slotProps={{
+              textField: {
+                name,
+                error: error == !validDate,
+                color: color,
+              } as any,
+            }}
+            // renderInput={(params: any) => (
+            //   <TextField
+            //     {...params}
+            //     name={name}
+            //     sx={{ ...(params?.sx || {}), background: '#fff' }}
+            //     error={error || !validDate}
+            //     helperText={
+            //       (!validDate && value !== '') ||
+            //       ['Invalid date'].includes(value ?? '') ||
+            //       (value === '' && error)
+            //         ? 'Format nicht erkannt'
+            //         : ' '
+            //     }
+            //     FormHelperTextProps={{
+            //       style: {
+            //         color: error
+            //           ? theme.palette.error.main
+            //           : 'rgba(0, 0, 0, 0.6)',
+            //         marginLeft: 2,
+            //       },
+            //     }}
+            //     disabled={disabled}
+            //   />
+            // )}
+            // className="font-base h-[45px]"
+            // InputProps={{
+            //   sx: { '& > input': { p: '12px', pl: 2, pr: 2, fontSize: 14 } },
+            //   disabled,
+            // }}
             // componentsProps={{ icon : { fill: 'blue' } }}
-            components={{
-              OpenPickerIcon: IconComponent
-                ? () => null
-                : () => <Icon path={mdiCalendar} size={1} />,
-            }}
-            InputAdornmentProps={{ sx: { pr: 1 }, onBlur: () => {} }}
-            OpenPickerButtonProps={{
-              name: name ? name + '_picker' : undefined,
-            }}
+            // components={{
+            //   OpenPickerIcon: () => <Icon path={mdiCalendar} size={1} />,
+            // }}
+            // InputAdornmentProps={{ sx: { pr: 1 }, onBlur: () => {} }}
+            // OpenPickerButtonProps={{
+            //   name: name ? name + '_picker' : undefined,
+            // }}
 
             // shouldDisableDate={(date) => {
             //   return false
@@ -123,16 +138,6 @@ export const DatePicker = (props: DatePickerProps) => {
           />
         </LocalizationProvider>
       </div>
-      <Stack
-        direction="row"
-        alignItems="center"
-        position="absolute"
-        height="calc(100% - 24px)"
-        top={24}
-        right={16}
-      >
-        {IconComponent}
-      </Stack>
     </Box>
   )
 }

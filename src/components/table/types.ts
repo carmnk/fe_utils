@@ -51,6 +51,7 @@ export type TableColumnType<
 
 export type TableProps<TableDataType = any> = {
   loading?: boolean
+  loadingRows?: number
   trProps?: (item: any) => { [key: string]: any } // props for TR
   disableSelection?: boolean
   rows: TableDataType[]

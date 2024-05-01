@@ -1,15 +1,20 @@
 import { ReactNode, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
-import { Backdrop as MuiBackdrop, CircularProgress } from '@mui/material'
+import {
+  Backdrop as MuiBackdrop,
+  CircularProgress,
+  BackdropProps,
+} from '@mui/material'
 import { Stack, Theme, Typography, useTheme, Portal } from '@mui/material'
 
-export type CBackdropProps = {
+export type CBackdropProps = BackdropProps & {
   open: boolean
   label?: ReactNode
+  disablePortal?: boolean
 }
 
 export const Backdrop = (props: CBackdropProps) => {
-  const { label, open } = props
+  const { label, open, disablePortal, ...rest } = props
 
   const theme = useTheme()
   const backdropStyles = useMemo(() => {
@@ -21,8 +26,8 @@ export const Backdrop = (props: CBackdropProps) => {
 
   return (
     !!open && (
-      <Portal>
-        <MuiBackdrop sx={backdropStyles} open={open}>
+      <Portal disablePortal={disablePortal}>
+        <MuiBackdrop sx={backdropStyles} open={open} {...rest} >
           <Stack alignItems="center" justifyContent="center" textAlign="center">
             <CircularProgress color="inherit" />
             {label && <Typography> {label}</Typography>}

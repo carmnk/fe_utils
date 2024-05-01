@@ -3,7 +3,6 @@ import { Button } from '../buttons/Button/Button'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
 import { useDropzone } from 'react-dropzone'
 import { mdiDeleteOutline, mdiTrayArrowDown, mdiTrayArrowUp } from '@mdi/js'
-import { ButtonType } from '../buttons/Button'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 const REQUIRED_FIELD_HELPER_TEXT = 'This field is required'
 
@@ -181,7 +180,7 @@ export const FileUploader = (props: FileUploaderProps) => {
                 e?.stopPropagation?.()
                 HiddenInputRef?.current?.click?.()
               }}
-              type={ButtonType.secondary}
+              variant="outlined"
               // className="min-w-[195px]"
               icon={mdiTrayArrowUp}
               id={inputId + '_select'}
@@ -254,14 +253,14 @@ export const FileUploader = (props: FileUploaderProps) => {
               </Box>
 
               <Button
-                type={ButtonType.text}
+                variant="text"
                 iconButton={true}
                 icon={mdiTrayArrowDown}
                 tooltip="download file"
                 onClick={() => handleDownloadFile(fIdx)}
               />
               <Button
-                type={ButtonType.text}
+                variant="text"
                 iconButton={true}
                 icon={mdiDeleteOutline}
                 tooltip="delete file"

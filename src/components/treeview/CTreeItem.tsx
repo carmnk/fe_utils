@@ -17,7 +17,6 @@ import { DropdownMenu } from '../dropdown/DropdownMenu'
 import { DropdownMenuItem } from '../dropdown/DropdownMenuItem'
 import { AdditionalActionType } from './CTreeView'
 import { useDraggable, useDroppable } from '@dnd-kit/core'
-import { ButtonType } from '../buttons/Button/defs'
 
 export type StyledTreeItemProps = Omit<TreeItemProps, 'nodeId' | 'children'> & {
   bgColor?: string
@@ -205,7 +204,7 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
           <Button
             iconButton={true}
             icon={mdiChevronDown}
-            type={ButtonType.text}
+            variant="text"
             onPointerDown={stopPropagationPreventDefault}
             onKeyDown={stopPropagationPreventDefault}
             onClick={() => toggleExpand?.(nodeId as string)}
@@ -215,7 +214,7 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
           <Button
             iconButton={true}
             icon={mdiChevronRight}
-            type={ButtonType.text}
+            variant="text"
             onPointerDown={stopPropagation}
             onKeyDown={stopPropagation}
             onClick={() => toggleExpand?.(nodeId as string)}

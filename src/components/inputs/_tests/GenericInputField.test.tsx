@@ -1,5 +1,6 @@
 import { render, fireEvent, queryByRole } from '@testing-library/react'
 import { GenericInputField } from '../GenericInputField'
+import moment from 'moment'
 
 describe('GenericInputField', () => {
   it('renders with correct initial value', () => {
@@ -65,10 +66,14 @@ describe('GenericInputField', () => {
     expect(input).toHaveValue('test')
     // Datefield
     rerender(
-      <GenericInputField type="date" value={'01.01.2024'} onChange={() => {}} />
+      <GenericInputField
+        type="date"
+        value={moment('2024-01-02')}
+        onChange={() => {}}
+      />
     )
     const dateInputElement = document.querySelector('input')
-    expect(dateInputElement).toHaveValue('01.01.2024')
+    expect(dateInputElement).toHaveValue('02/01/2024')
     // Checkbox
     rerender(<GenericInputField type="bool" value={true} onChange={() => {}} />)
     const checkboxElement = document.querySelector('input')

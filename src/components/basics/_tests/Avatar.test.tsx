@@ -15,7 +15,10 @@ describe('Avatar', () => {
     const { getByTestId } = render(
       <Avatar data-testid={testId} src="test.jpg" />
     )
-    expect(getByTestId(testId)).toHaveAttribute('src', 'test.jpg')
+
+    const avatorRootElement = getByTestId(testId)
+    const imgElement = avatorRootElement.querySelector('img')
+    expect(imgElement).toHaveAttribute('src', 'test.jpg')
   })
 
   it('renders with correct size', () => {
@@ -61,9 +64,11 @@ describe('Avatar', () => {
   })
   it('changes the the initials (fullName!) fontSize when fontSize is provided', () => {
     const { getByTestId, getByText } = render(
-      <Avatar fontSize="32px" fullName="John Doe" data-testid="avatar" />
+      <Avatar fontSize={32} fullName="John Doe" data-testid="avatar" />
     )
     const initialsElement = getByText('JD')
+    const fs = initialsElement.style?.["font-size"]
+    console.warn(initialsElement.style, initialsElement.style.fontSize, fs )
     expect(initialsElement).toHaveStyle('font-size: 32px;')
   })
 })

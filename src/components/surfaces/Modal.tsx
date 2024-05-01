@@ -4,7 +4,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
-import { Button, ButtonType } from '../buttons/Button'
+import { Button } from '../buttons/Button'
 import {
   Box,
   IconButton,
@@ -182,7 +182,7 @@ export const Modal = (props: CModalProps) => {
               // mt={2}
             >
               <Button
-                type={ButtonType.text}
+                variant="text"
                 onClick={onClose}
                 icon={cancelConfirmationIcon}
                 loading={loading}
@@ -192,7 +192,7 @@ export const Modal = (props: CModalProps) => {
               <Stack direction="row" gap={2} alignItems="center">
                 {onSecondaryAction && secondaryActionLabel && (
                   <Button
-                    type={ButtonType.secondary}
+                    variant="outlined"
                     onClick={onSecondaryAction}
                     icon={secondaryActionIcon}
                     loading={loading}
@@ -202,7 +202,6 @@ export const Modal = (props: CModalProps) => {
                 )}
                 {!hideConfirmationButton && (
                   <Button
-                    type={ButtonType.primary}
                     onClick={handleConfirm}
                     icon={confirmationIcon}
                     disabled={confirmationDisabled}
@@ -222,11 +221,7 @@ export const Modal = (props: CModalProps) => {
                 placeNonConfirmationButtonOnLeft ? 'flex-start' : 'flex-end'
               }
             >
-              <Button
-                type={ButtonType.text}
-                onClick={onClose}
-                loading={loading}
-              >
+              <Button variant="text" onClick={onClose} loading={loading}>
                 {nonConfirmationLabel || 'Close'}
               </Button>
             </Stack>

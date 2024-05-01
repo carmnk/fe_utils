@@ -2,13 +2,14 @@ import { render, fireEvent } from '@testing-library/react'
 import { DatePicker } from '../DatePicker'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
+import moment from 'moment'
 
 describe('DatePicker', () => {
   it('renders with correct value', () => {
-    const testDate = new Date(2022, 1, 1)
+    const testDate = moment(new Date(2022, 1, 1))
     const { getByRole } = render(<DatePicker value={testDate} />)
     const datePicker = getByRole('textbox')
-    expect(datePicker.value).toBe('01.02.2022')
+    expect(datePicker.value).toBe('01/02/2022')
   })
 
   it('calls onChange when value is changed', () => {

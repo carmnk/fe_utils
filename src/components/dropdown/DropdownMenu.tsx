@@ -1,7 +1,7 @@
 import { Menu, MenuProps } from '@mui/material'
 import { DropDownMenuItemProps, DropdownMenuItem } from './DropdownMenuItem'
 
-export type DropdownMenuProps = {
+export type DropdownMenuProps = MenuProps & {
   id?: string
   anchorEl: HTMLElement | null
   open: boolean
@@ -26,7 +26,7 @@ const slotProps = { paper: { sx: { borderRadius: 1 } } }
 export const DropdownMenu = (
   props: React.PropsWithChildren<DropdownMenuProps>
 ) => {
-  const { children, anchorEl, onClose, open, items, id } = props
+  const { children, anchorEl, onClose, open, items, id, ...rest } = props
   // const stopPropagation = React.useCallback(
   //   (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
   //     onClose?.();
@@ -45,6 +45,7 @@ export const DropdownMenu = (
         {...menuOrigins}
         MenuListProps={menuListProps}
         slotProps={slotProps}
+        {...rest}
       >
         {items?.map?.((item, iIdx) => (
           <DropdownMenuItem key={iIdx} {...item} />

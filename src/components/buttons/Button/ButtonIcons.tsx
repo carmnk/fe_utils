@@ -1,8 +1,9 @@
 import Icon from '@mdi/react'
-import { ButtonDropdown, ButtonType } from './defs'
+import { ButtonDropdown } from './defs'
 import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
 import { CircularProgress, Stack, useTheme } from '@mui/material'
 import { CSSProperties } from 'react'
+import { CButtonProps } from './Button'
 
 type ButtonStartIconProps = {
   loading?: boolean
@@ -10,13 +11,11 @@ type ButtonStartIconProps = {
   iconSize?: CSSProperties['fontSize']
   iconColor?: string
   disabled?: boolean
-  type?: ButtonType
+  variant?: CButtonProps['variant']
 }
 export const ButtonStartIcon = (props: ButtonStartIconProps) => {
-  const { loading, icon, iconSize, iconColor, disabled, type } = props
+  const { loading, icon, iconSize, iconColor, disabled, variant } = props
   const theme = useTheme()
-
-  console.error('ButtonStartIcon', CircularProgress, Icon)
   return loading ? (
     <Stack direction="row" alignItems="center" width="17px" mr={1}>
       <CircularProgress color="inherit" size={17} />
@@ -29,7 +28,7 @@ export const ButtonStartIcon = (props: ButtonStartIconProps) => {
         iconColor ??
         (disabled
           ? theme.palette.action.disabled
-          : type === 'secondary' || type === 'text'
+          : variant === 'outlined' || variant === 'text'
             ? theme.palette.text.primary
             : theme.palette.primary.contrastText)
       }
@@ -40,12 +39,12 @@ export const ButtonStartIcon = (props: ButtonStartIconProps) => {
 }
 
 export const ButtonEndIcon = (
-  props: Pick<ButtonStartIconProps, 'disabled' | 'iconColor' | 'type'> & {
+  props: Pick<ButtonStartIconProps, 'disabled' | 'iconColor' | 'variant'> & {
     endIcon: React.ReactNode
     dropdown?: ButtonDropdown
   }
 ) => {
-  const { endIcon, iconColor, disabled, type, dropdown } = props
+  const { endIcon, iconColor, disabled, variant, dropdown } = props
   const theme = useTheme()
   return dropdown ? (
     <Icon
@@ -55,7 +54,7 @@ export const ButtonEndIcon = (
         iconColor ??
         (disabled
           ? theme.palette.action.disabled
-          : type === 'secondary' || type === 'text'
+          : variant === 'outlined' || variant === 'text'
             ? theme.palette.text.primary
             : theme.palette.primary.contrastText)
       }
@@ -68,7 +67,7 @@ export const ButtonEndIcon = (
         iconColor ??
         (disabled
           ? theme.palette.action.disabled
-          : type === 'secondary' || type === 'text'
+          : variant === 'outlined' || variant === 'text'
             ? theme.palette.text.primary
             : theme.palette.primary.contrastText)
       }

@@ -1,21 +1,17 @@
 import React, { CSSProperties, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import { useTheme, Button as MuiButton, Box } from '@mui/material'
-import {
-  ButtonProps,
-  Tooltip,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
-import type { ButtonDropdown, ButtonType } from './defs'
+import { Tooltip, Typography, TypographyProps } from '@mui/material'
+import { ButtonProps } from '@mui/material'
+import type { ButtonDropdown } from './defs'
 import { ButtonEndIcon, ButtonStartIcon } from './ButtonIcons'
 import { makeButtonStyles } from './buttonStyles'
 
 export type CButtonProps = Pick<
   ButtonProps,
-  'onClick' | 'onPointerDown' | 'onKeyDown' | 'size' | 'sx' | 'id'
+  'onClick' | 'onPointerDown' | 'onKeyDown' | 'size' | 'sx' | 'id' | 'variant'
 > & {
-  type?: ButtonType // 3 types of buttons: primary (default), secondary, text
+  // type?: ButtonType // 3 types of buttons: primary (default), secondary, text
   label?: React.ReactNode // label for the button - precedence over children!
   children?: React.ReactNode // label for the button - if label is not provided
   loading?: boolean // loading state (show spinner instead of icon)
@@ -42,7 +38,7 @@ export const Button = React.forwardRef(
   (props: CButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
     const {
       icon,
-      type,
+      variant,
       label,
       disableHover,
       children,
@@ -72,10 +68,10 @@ export const Button = React.forwardRef(
           iconSize={iconSize}
           disabled={disabled}
           loading={loading}
-          type={type}
+          variant={variant}
         />
       ),
-      [icon, iconColor, iconSize, disabled, loading, type]
+      [icon, iconColor, iconSize, disabled, loading, variant]
     )
     const endIconAdj = useMemo(
       () => ({
@@ -84,19 +80,19 @@ export const Button = React.forwardRef(
             disabled={disabled}
             endIcon={endIcon}
             iconColor={iconColor}
-            type={type}
+            variant={variant}
             dropdown={dropdown}
           />
         ),
       }),
-      [disabled, endIcon, iconColor, type, dropdown]
+      [disabled, endIcon, iconColor, variant, dropdown]
     )
 
     const buttonStyles = useMemo(
       () =>
         makeButtonStyles({
           theme,
-          type,
+          variant,
           disableHover,
           disabled,
           icon,
@@ -107,7 +103,7 @@ export const Button = React.forwardRef(
         }),
       [
         theme,
-        type,
+        variant,
         disableHover,
         disabled,
         icon,
@@ -120,7 +116,7 @@ export const Button = React.forwardRef(
 
     const Button = useMemo(
       () =>
-        type === 'secondary' ? (
+        variant === 'outlined' ? (
           <MuiButton
             color={color}
             ref={ref}
@@ -146,7 +142,7 @@ export const Button = React.forwardRef(
               </Typography>
             )}
           </MuiButton>
-        ) : type === 'text' ? (
+        ) : variant === 'text' ? (
           <MuiButton
             color={color}
             ref={ref}
@@ -211,7 +207,7 @@ export const Button = React.forwardRef(
         fontColor,
         label,
         startIcon,
-        type,
+        variant,
         buttonStyles,
         ref,
         typographyProps,

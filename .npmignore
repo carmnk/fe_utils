@@ -8,5 +8,9 @@ prettierrc.json
 .eslintrc.mjs
 tscconfig.json
 vite.config.ts
+babe.config.js
+jest.config.js
+tscconfig.json
+vite.config.ts
 !src
 !src/**

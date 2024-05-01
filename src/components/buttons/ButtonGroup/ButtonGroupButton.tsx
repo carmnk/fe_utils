@@ -1,5 +1,4 @@
 import { Button, CButtonProps } from '../Button/Button'
-import { ButtonType } from '../Button/defs'
 
 // explicit
 // type ButtonGroupButtonProps = Pick<
@@ -19,10 +18,5 @@ export type ButtonGroupButtonProps = CButtonProps & {
 
 export const ButtonGroupButton = (props: ButtonGroupButtonProps) => {
   const { selected, ...buttonProps } = props
-  return (
-    <Button
-      type={selected ? ButtonType.primary : ButtonType.text}
-      {...buttonProps}
-    />
-  )
+  return <Button variant={selected ? 'contained' : 'text'} {...buttonProps} />
 }

@@ -7,6 +7,14 @@ export type CheckboxProps = CommonInputFieldProps &
     formControlLabelProps?: any
     labelTypographyProps?: any
     tooltip?: string
+    color?:
+      | 'primary'
+      | 'secondary'
+      | 'default'
+      | 'error'
+      | 'info'
+      | 'success'
+      | 'warning'
   }
 
 export const Checkbox = (props: CheckboxProps) => {
@@ -19,6 +27,7 @@ export const Checkbox = (props: CheckboxProps) => {
     labelTypographyProps,
     tooltip,
     helperText,
+    color,
     ...restCheckBoxProps
   } = props
 
@@ -46,6 +55,7 @@ export const Checkbox = (props: CheckboxProps) => {
               value={value}
               checked={!!value}
               onChange={onChange}
+              color={color}
               {...restCheckBoxProps}
             />
           }

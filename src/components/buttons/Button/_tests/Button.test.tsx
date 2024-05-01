@@ -119,9 +119,7 @@ describe('Button', () => {
     expect(queryByText(testTooltip)).not.toBeInTheDocument()
   })
   it('renders with primary style when type is primary', () => {
-    const { getByTestId } = render(
-      <Button data-testid="button" type="primary" />
-    )
+    const { getByTestId } = render(<Button data-testid="button" />)
     // expect(getByTestId('button')).toHaveStyle(
     //   'border: 0px solid blue !important'
     // )
@@ -129,13 +127,17 @@ describe('Button', () => {
 
   it('renders with secondary style when type is secondary', () => {
     const { getByTestId } = render(
-      <Button data-testid="button" type="secondary" />
+      <Button data-testid="button" variant="outlined" />
     )
-    expect(getByTestId('button')).toHaveStyle('border: 0px solid #1976d2;')
+    expect(getByTestId('button')).toHaveStyle(
+      'border: 1px solid rgba(25, 118, 210, 0.5);'
+    )
   })
 
   it('renders with text style when type is text', () => {
-    const { getByTestId } = render(<Button data-testid="button" type="text" />)
-    expect(getByTestId('button')).toHaveStyle('border: 0px solid #1976d2;')
+    const { getByTestId } = render(
+      <Button data-testid="button" variant="text" />
+    )
+    expect(getByTestId('button')).toHaveStyle('border: 0px;')
   })
 })

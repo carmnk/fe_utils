@@ -1,7 +1,7 @@
 import { render, fireEvent, act, getByRole } from '@testing-library/react'
 import { Button } from '../Button'
 import { mdiTestTube } from '@mdi/js'
-import { ButtonDropdown, ButtonType } from '../defs'
+import { ButtonDropdown } from '../defs'
 
 describe('Button Icons', () => {
   describe('ButtonStartIcon', () => {
@@ -11,11 +11,11 @@ describe('Button Icons', () => {
           <Button icon={<span data-testid="icon">Icon</span>} />
           <Button
             icon={<span data-testid="icon2">Icon2</span>}
-            type={ButtonType.secondary}
+            variant={'outlined'}
           />
           <Button
             icon={<span data-testid="icon3">Icon3</span>}
-            type={ButtonType.text}
+            variant={'text'}
           />
         </div>
       )
@@ -32,13 +32,13 @@ describe('Button Icons', () => {
             icon={mdiTestTube}
             disabled
             data-testid="button2"
-            type={ButtonType.secondary}
+            variant="outlined"
           />
           <Button
             icon={mdiTestTube}
             disabled
             data-testid="button3"
-            type={ButtonType.text}
+            variant="text"
           />
         </div>
       )
@@ -53,23 +53,18 @@ describe('Button Icons', () => {
     it('renders with defined iconColor if passed and icon is string', () => {
       const { getByTestId } = render(
         <div>
-          <Button
-            icon={mdiTestTube}
-            data-testid="button"
-            iconColor={'red'}
-            type={ButtonType.primary}
-          />
+          <Button icon={mdiTestTube} data-testid="button" iconColor={'red'} />
           <Button
             icon={mdiTestTube}
             data-testid="button2"
             iconColor={'red'}
-            type={ButtonType.secondary}
+            variant="outlined"
           />
           <Button
             icon={mdiTestTube}
             data-testid="button3"
             iconColor={'red'}
-            type={ButtonType.text}
+            variant="text"
           />
         </div>
       )
@@ -86,23 +81,18 @@ describe('Button Icons', () => {
     it('renders with defined iconSize if passed and icon is string', () => {
       const { getByTestId } = render(
         <div>
-          <Button
-            icon={mdiTestTube}
-            data-testid="button"
-            iconSize={'48px'}
-            type={ButtonType.primary}
-          />
+          <Button icon={mdiTestTube} data-testid="button" iconSize={'48px'} />
           <Button
             icon={mdiTestTube}
             data-testid="button2"
             iconSize={'48px'}
-            type={ButtonType.secondary}
+            variant="outlined"
           />
           <Button
             icon={mdiTestTube}
             data-testid="button3"
             iconSize={'48px'}
-            type={ButtonType.text}
+            variant="text"
           />
         </div>
       )
@@ -116,20 +106,12 @@ describe('Button Icons', () => {
       const paths3 = iconElement3.querySelector('svg')
       expect(paths3).toHaveStyle('width: 48px; height: 48px;')
     })
-    it('renders icon in primary color for buttonType=secondary,text otherwise is contrastText (in most cases #fff) color, icon must be string', () => {
+    it('renders icon in primary color for variant=outlined,text otherwise is contrastText (in most cases #fff) color, icon must be string', () => {
       const { getByTestId } = render(
         <div>
           <Button icon={mdiTestTube} data-testid="button" />
-          <Button
-            icon={mdiTestTube}
-            data-testid="button2"
-            type={ButtonType.secondary}
-          />
-          <Button
-            icon={mdiTestTube}
-            data-testid="button3"
-            type={ButtonType.text}
-          />
+          <Button icon={mdiTestTube} data-testid="button2" variant="outlined" />
+          <Button icon={mdiTestTube} data-testid="button3" variant="text" />
         </div>
       )
       const iconElement = getByTestId('button')
@@ -154,17 +136,14 @@ describe('Button Icons', () => {
     it('renders with correct endIcon', () => {
       const { getByTestId } = render(
         <div>
-          <Button
-            endIcon={<span data-testid="end-icon">End Icon</span>}
-            type={ButtonType.primary}
-          />
+          <Button endIcon={<span data-testid="end-icon">End Icon</span>} />
           <Button
             endIcon={<span data-testid="end-icon2">End Icon2</span>}
-            type={ButtonType.secondary}
+            variant={'outlined'}
           />
           <Button
             endIcon={<span data-testid="end-icon3">End Icon3</span>}
-            type={ButtonType.text}
+            variant={'text'}
           />
         </div>
       )
@@ -180,13 +159,13 @@ describe('Button Icons', () => {
             endIcon={mdiTestTube}
             disabled
             data-testid="button2"
-            type={ButtonType.secondary}
+            variant="outlined"
           />
           <Button
             endIcon={mdiTestTube}
             disabled
             data-testid="button3"
-            type={ButtonType.text}
+            variant="text"
           />
         </div>
       )
@@ -204,19 +183,18 @@ describe('Button Icons', () => {
             endIcon={mdiTestTube}
             data-testid="button"
             iconColor={'red'}
-            type={ButtonType.primary}
           />
           <Button
             endIcon={mdiTestTube}
             data-testid="button2"
             iconColor={'red'}
-            type={ButtonType.secondary}
+            variant="outlined"
           />
           <Button
             endIcon={mdiTestTube}
             data-testid="button3"
             iconColor={'red'}
-            type={ButtonType.text}
+            variant="text"
           />
         </div>
       )
@@ -242,7 +220,7 @@ describe('Button Icons', () => {
             endIcon={mdiTestTube}
             data-testid="button2"
             dropdown={ButtonDropdown.open}
-            type={ButtonType.secondary}
+            variant="outlined"
           />
         </div>
       )

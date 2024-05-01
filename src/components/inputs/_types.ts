@@ -10,5 +10,13 @@ export type CommonInputFieldProps = {
   //   hidden?: boolean
   //   invisible?: boolean
   error?: boolean
+  color?:
+    | 'primary'
+    | 'secondary'
+    | 'default'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning'
   //   disableHelperTextTheming?: boolean
 }

@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
 import { InputAdornment, Box, useTheme } from '@mui/material'
 import {
-  TextField as MTextField,
-  TextFieldProps as MTextFieldProps,
-  Typography,
+  // TextField as MTextField,
+  // TextFieldProps as MTextFieldProps,
+  // Typography,
 } from '@mui/material'
-import { TextFieldProps } from './TextField'
+import TextField, { TextFieldProps } from './TextField'
 
 export const formatGermanNumberString = (
   number: number,
@@ -23,7 +23,7 @@ export const formatGermanNumberString = (
 
 const REQUIRED_FIELD_HELPER_TEXT = 'This field is required'
 
-export type CNumberFieldProps = TextFieldProps & {
+export type CNumberFieldProps = Omit<TextFieldProps, 'value'> & {
   value?: number | '' | null
   isInt?: boolean
   disableNumberSeparator?: boolean
@@ -210,7 +210,7 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     fontWeight: 700,
   }
 
-  const muiTextfieldProps: MTextFieldProps = useMemo(() => {
+  const muiTextfieldProps: TextFieldProps = useMemo(() => {
     return {
       value: innerValue ?? '',
       size: 'small',
@@ -269,28 +269,42 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
   ])
 
   return (
-    <Box
-      position="relative"
-      display="flex"
-      flexDirection="column"
-      width="100%"
-      {...(ContainerProps ?? {})}
-    >
-      {!disableLabel && (
-        <Box pb={0.25} pl={0.25}>
-          <Typography
-            variant="caption"
-            fontSize="14px"
-            color={error ? 'error.main' : undefined}
-            sx={labelSx}
-          >
-            {label} {required && <strong style={themeErrorText}>*</strong>}
-          </Typography>
-        </Box>
-      )}
-      <MTextField {...muiTextfieldProps} />
-      {injectComponent}
-    </Box>
+    // <Box
+    //   position="relative"
+    //   display="flex"
+    //   flexDirection="column"
+    //   width="100%"
+    //   {...(ContainerProps ?? {})}
+    // >
+    //   {!disableLabel && (
+    //     <Box pb={0.25} pl={0.25}>
+    //       <Typography
+    //         variant="caption"
+    //         fontSize="14px"
+    //         color={error ? 'error.main' : undefined}
+    //         sx={labelSx}
+    //       >
+    //         {label} {required && <strong style={themeErrorText}>*</strong>}
+    //       </Typography>
+    //     </Box>
+    //   )}
+    //   <MTextField {...muiTextfieldProps} />
+    //   {injectComponent}
+    // </Box>
+    <TextField
+      {...muiTextfieldProps}
+      disableLabel={disableLabel}
+      label={label}
+      error={error}
+      labelSx={labelSx}
+      required={required}
+      
+      injectComponent={injectComponent}
+      fullWidth
+      // onChange={(newValue: string | number, e: any) => {
+      //   muiTextfieldProps?.onChange?.(e)
+      // }}
+    />
   )
 })
 NumberField.displayName = 'CNumberField'

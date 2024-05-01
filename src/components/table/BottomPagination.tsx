@@ -2,7 +2,6 @@ import { ReactNode, useCallback, useMemo } from 'react'
 import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { mdiArrowLeft, mdiArrowRight } from '@mdi/js'
 import { Button } from '../buttons/Button/Button'
-import { ButtonType } from '../buttons/Button'
 import { Grid } from '../_wrapper/Grid'
 
 const defaultItemsPerPageOptions = [
@@ -118,11 +117,10 @@ export const BottomPagination = (props: BottomPaginationType) => {
             <Stack direction="row" gap={1} alignItems="center">
               {defaultItemsPerPageOptions.map((item, iIdx) => (
                 <Button
+                  size="small"
                   onClick={handlePageChange2?.[iIdx]}
-                  type={
-                    itemsPerPageAdj === item.value
-                      ? ButtonType.primary
-                      : ButtonType.secondary
+                  variant={
+                    itemsPerPageAdj === item.value ? 'contained' : 'outlined'
                   }
                 >
                   {item.label ?? item.value}
@@ -131,11 +129,10 @@ export const BottomPagination = (props: BottomPaginationType) => {
               {!!isDesktopViewport &&
                 additionalDesktopItemsPerPageOptions.map((item, iIdx) => (
                   <Button
+                    size="small"
                     onClick={handlePageChangeDesktop?.[iIdx]}
-                    type={
-                      itemsPerPageAdj === item.value
-                        ? ButtonType.primary
-                        : ButtonType.secondary
+                    variant={
+                      itemsPerPageAdj === item.value ? 'contained' : 'outlined'
                     }
                   >
                     {item.label ?? item.value}
@@ -145,7 +142,7 @@ export const BottomPagination = (props: BottomPaginationType) => {
           </Stack>
           <Stack direction="row" gap={1} alignItems="center">
             <Button
-              type={ButtonType.text}
+              variant="text"
               iconButton={true}
               icon={mdiArrowLeft}
               onClick={handleChangePageBackwards}
@@ -164,7 +161,7 @@ export const BottomPagination = (props: BottomPaginationType) => {
             </Typography>
 
             <Button
-              type={ButtonType.text}
+              variant="text"
               iconButton={true}
               icon={mdiArrowRight}
               onClick={handleChangePageForwards}
@@ -179,7 +176,13 @@ export const BottomPagination = (props: BottomPaginationType) => {
               // }
             />
           </Stack>
-          <Stack direction="row"> {label}</Stack>
+          <Stack direction="row">
+            {typeof label === 'object' ? (
+              label
+            ) : (
+              <Typography>{label}</Typography>
+            )}
+          </Stack>
         </Grid>
       </div>
     </div>

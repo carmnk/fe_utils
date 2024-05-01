@@ -28,6 +28,9 @@ export type TextFieldProps = Omit<MTextFieldProps, 'onChange'> &
       e: ChangeEvent<HTMLInputElement>
     ) => void
     onChangeCompleted?: (newValue: string | number) => void
+    notchedLabelMarginLeft?: number
+    borderRadius?: number
+    notchedLabelBgColor?: string
   }
 
 export const TextField = forwardRef(
@@ -54,6 +57,9 @@ export const TextField = forwardRef(
       locked,
       disabled,
       useNotchedLabel,
+      notchedLabelBgColor,
+      notchedLabelMarginLeft = 24,
+      borderRadius,
       ...rest
     } = props
 
@@ -117,10 +123,15 @@ export const TextField = forwardRef(
           title: name,
         },
         InputProps: {
+          notched: false,
           endAdornment: (
             // dont show if not present!
             <InputAdornment position="end">
-              {icon ?? (locked ? <Icon path={mdiLock} /> : null)}
+              {(typeof icon === 'string' ? (
+                <Icon path={icon} size={1} />
+              ) : (
+                icon
+              )) ?? (locked ? <Icon path={mdiLock} /> : null)}
             </InputAdornment>
           ),
           startAdornment: (
@@ -129,11 +140,12 @@ export const TextField = forwardRef(
           ),
           ...((rest?.InputProps as any) ?? {}),
           sx: {
-            height: 42,
+            height: props?.multiline ? undefined : 42,
             ...(inputStyle ?? {}),
             fontSize: '14px !important',
             borderColor: 'transparent !important',
             borderWidth: '0px !important',
+            borderRadius,
             ...(rest.InputProps?.sx ?? {}),
           },
         },
@@ -145,6 +157,18 @@ export const TextField = forwardRef(
             mt: disableHelperText ? 0 : 0.5,
             whiteSpace: 'nowrap',
           },
+        },
+        sx: {
+          ...(rest?.sx ?? {}),
+          ...(useNotchedLabel
+            ? {
+                '& >label': {
+                  transform: `translate(${notchedLabelMarginLeft}px, -9px) scale(0.75)`,
+                  bgcolor: notchedLabelBgColor ?? 'background.default',
+                  px: '4px',
+                },
+              }
+            : {}),
         },
         label: useNotchedLabel ? label : undefined,
       }

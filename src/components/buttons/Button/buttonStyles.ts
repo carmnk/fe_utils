@@ -17,7 +17,7 @@ const secondaryGrayColor = {
 export const makeButtonStyles = (
   props: Pick<
     CButtonProps,
-    | 'type'
+    | 'variant'
     | 'disableHover'
     | 'iconButton'
     | 'icon'
@@ -35,13 +35,13 @@ export const makeButtonStyles = (
     sx,
     iconButton,
     dropdown,
-    type,
+    variant,
     disabled,
     icon,
     endIcon,
   } = props
 
-  const padding = iconButton ? '4px' : type === 'text' ? '4px 16px' : 'auto'
+  const padding = iconButton ? '4px' : variant === 'text' ? '4px 16px' : 'auto'
   const commonStyles: Required<BoxProps['sx']> = {
     minWidth: 0,
     textTransform: 'none',
@@ -55,21 +55,21 @@ export const makeButtonStyles = (
       mr: !icon ? 0 : iconButton ? 'auto' : '8px',
     },
     '& .MuiButton-endIcon': {
-      display: !endIcon ? 'none' : 'inherit',
+      display: !endIcon && !dropdown ? 'none' : 'inherit',
       ml: 'auto',
       pl: '5px',
     },
     width: iconButton && dropdown ? 53 : iconButton ? 28 : 'auto',
     pr: iconButton && dropdown ? 1 : undefined,
   }
-  const secondaryBgColor =
-    theme.palette.mode === 'light'
-      ? !disabled
-        ? secondaryGrayColor.light.background
-        : secondaryGrayColor.light.disabled
-      : !disabled
-        ? secondaryGrayColor.dark.background
-        : secondaryGrayColor.dark.disabled
+  // const secondaryBgColor =
+  //   theme.palette.mode === 'light'
+  //     ? !disabled
+  //       ? secondaryGrayColor.light.background
+  //       : secondaryGrayColor.light.disabled
+  //     : !disabled
+  //       ? secondaryGrayColor.dark.background
+  //       : secondaryGrayColor.dark.disabled
 
   const disableHoverStyles = disableHover
     ? {
@@ -80,22 +80,22 @@ export const makeButtonStyles = (
       }
     : {}
 
-  return type === 'secondary'
+  return variant === 'outlined'
     ? {
         ...commonStyles,
-        border: '0px solid ' + theme.palette.primary.main + ' !important',
-        background: secondaryBgColor,
-        '&: hover': {
-          border: '0px solid ' + theme.palette.primary.main,
-          background:
-            theme.palette.mode === 'light'
-              ? secondaryGrayColor.light.hover
-              : secondaryGrayColor.dark.hover,
-        },
+        // border: '0px solid ' + theme.palette.primary.main + ' !important',
+        // background: secondaryBgColor,
+        // '&: hover': {
+        //   border: '0px solid ' + theme.palette.primary.main,
+        //   background:
+        //     theme.palette.mode === 'light'
+        //       ? secondaryGrayColor.light.hover
+        //       : secondaryGrayColor.dark.hover,
+        // },
         padding,
         ...(sx ?? {}),
       }
-    : type === 'text'
+    : variant === 'text'
       ? {
           ...commonStyles,
           background: 'transparent',

@@ -12,7 +12,6 @@ import {
 import React, { ChangeEvent, memo, useCallback, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
 import { CAutoComplete, CAutoCompleteProps } from './AutoComplete'
-import { ButtonType } from '../buttons/Button/defs'
 import { TextArea } from './TextArea'
 import {
   GenericInputField,
@@ -171,7 +170,7 @@ export const ClickTextFieldComponent = <
             <Button
               icon={mdiPencil}
               iconButton={true}
-              type={ButtonType.text}
+              variant="outlined"
               onClick={handleToggleIsEdit}
             />
           </Box>
@@ -181,7 +180,7 @@ export const ClickTextFieldComponent = <
                 icon={deleteIcon ?? mdiDelete}
                 tooltip={deleteIconTooltip}
                 iconButton={true}
-                type={ButtonType.text}
+                variant="outlined"
                 onClick={handleRemoveItem}
               />
             </Box>
@@ -233,7 +232,7 @@ export const ClickTextFieldComponent = <
           <Button
             icon={mdiCheck}
             iconButton={true}
-            type={ButtonType.text}
+            variant="text"
             onClick={handleTakeover}
           />
         </Box>

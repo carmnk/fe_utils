@@ -14,6 +14,7 @@ const Tr = (props: BoxProps) => <Box component="tr" {...props} />
 export const Table = (props: TableProps) => {
   const {
     loading,
+    loadingRows,
     rows,
     clearFilters,
     columns,
@@ -153,7 +154,7 @@ export const Table = (props: TableProps) => {
 
       <tbody>
         {loading ? (
-          new Array(10).fill(0).map((x, xIdx) => (
+          new Array(loadingRows ?? 10).fill(0).map((x, xIdx) => (
             <Tr key={xIdx}>
               {columns?.map((y, yIdx) => (
                 <td key={`${xIdx}-${yIdx}`} style={{ height: '48px' }}>

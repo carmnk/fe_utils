@@ -1,6 +1,6 @@
 import { mdiPlus } from '@mdi/js'
 import { Fragment } from 'react'
-import { Button, ButtonType } from '../../buttons/Button'
+import { Button } from '../../buttons/Button'
 import { DynamicFieldDefinition } from './Field'
 import { StringArrayField } from '../../inputs/StringArrayField'
 
@@ -127,7 +127,7 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
           />
 
           <Button
-            type={ButtonType.secondary}
+            variant="outlined"
             label={'Add'}
             onClick={onAddObjectSub}
             icon={mdiPlus}

@@ -1,8 +1,9 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 /** Definitions and Types  */
+/** ********************** */
 
-/** HTTP Query method + 2 custom Response types with File (blob) */
+/** HTTP Query method + 2 custom Response types with File (response=blob) */
 export enum QUERY_METHOD {
   GET = 'GET',
   POST = 'POST',
@@ -12,6 +13,7 @@ export enum QUERY_METHOD {
   POST_GET_FILE = 'POST_GET_FILE', // POST with responseType: 'blob'
 }
 
+/** initial timeouts per method */
 enum QUERY_TIMEOUT {
   POST = 1000 * 60 * 2,
   POST_GET_FILE = 1000 * 60 * 5,
@@ -45,8 +47,18 @@ export type QueryFnType<
   params: QueryParamType<PayloadType>
 ) => Promise<AxiosResponse<ResponseType>>
 
-/** utility fns */
+export type QueryResponseType<ResponseType = unknown> = {
+  data: ResponseType | null
+  status: number | string
+  statusText: string
+  headers: Record<string, string>
+  error?: unknown
+}
 
+/** utilities for queries */
+/** ******************* */
+
+/** Get the content-type header for the payload based on payload (formData -> multipart/form-data)*/
 const getContentHeader = (payload: unknown) => {
   const contentType =
     payload && payload instanceof FormData
@@ -55,6 +67,8 @@ const getContentHeader = (payload: unknown) => {
   const contentHeader = { 'Content-Type': contentType }
   return contentHeader
 }
+
+/** utility to merge external and default headers */
 const getHeaders = (
   payload: unknown,
   queryHeaders?: AxiosRequestConfig['headers']
@@ -65,6 +79,7 @@ const getHeaders = (
   }
 }
 
+/** utility to prepare the axios config object for the queries (all methods) */
 const makeAxiosQueryConfig = <PayloadType>(
   method: QUERY_METHOD,
   params: QueryParamType<PayloadType>
@@ -92,112 +107,39 @@ const makeAxiosQueryConfig = <PayloadType>(
           : 'get'
 
   const axiosQueryConfig: AxiosRequestConfig = {
-    ...queryConfig,
-    method: methodAdj,
-    url,
     timeout: QUERY_TIMEOUT[method],
+    ...queryConfig,
     data: payload,
+    method: methodAdj,
     headers,
+    url,
     ...responseTypeInjection,
   }
   return axiosQueryConfig
 }
 
-/** POST QUERY (with axios, preconfigured) */
-export const post = async <
-  PayloadType = UnknownQueryPayloadType,
-  ResponseType = unknown,
->(
-  params: QueryParamType<PayloadType>
-): ReturnType<QueryFnType<PayloadType, ResponseType>> => {
-  const axiosQueryConfig = makeAxiosQueryConfig(QUERY_METHOD.POST, params)
-  return axios(axiosQueryConfig)
-}
-
-export const postWithReturnedFile = async <
-  PayloadType = UnknownQueryPayloadType,
-  ResponseType = unknown,
->(
-  params: QueryParamType<PayloadType>
-): ReturnType<QueryFnType<PayloadType, ResponseType>> => {
-  const axiosQueryConfig = makeAxiosQueryConfig(
-    QUERY_METHOD.POST_GET_FILE,
-    params
-  )
-  return axios(axiosQueryConfig)
-}
-
-export const get = async <
-  PayloadType = UnknownQueryPayloadType,
-  ResponseType = unknown,
->(
-  params: QueryParamType<PayloadType>
-): ReturnType<QueryFnType<PayloadType, ResponseType>> => {
-  const axiosQueryConfig = makeAxiosQueryConfig(QUERY_METHOD.GET, params)
-  return axios(axiosQueryConfig)
-}
-
-export const getFile = async <
-  PayloadType = UnknownQueryPayloadType,
-  ResponseType = unknown,
->(
-  params: QueryParamType<PayloadType>
-): ReturnType<QueryFnType<PayloadType, ResponseType>> => {
-  const axiosQueryConfig = makeAxiosQueryConfig(QUERY_METHOD.GET_FILE, params)
-  return axios(axiosQueryConfig)
-}
-
-export const put = async <
-  PayloadType = UnknownQueryPayloadType,
-  ResponseType = unknown,
->(
-  params: QueryParamType<PayloadType>
-): ReturnType<QueryFnType<PayloadType, ResponseType>> => {
-  const axiosQueryConfig = makeAxiosQueryConfig(QUERY_METHOD.PUT, params)
-  return axios(axiosQueryConfig)
-}
-
-export const deletion = async <
-  PayloadType = UnknownQueryPayloadType,
-  ResponseType = unknown,
->(
-  params: QueryParamType<PayloadType>
-): ReturnType<QueryFnType<PayloadType, ResponseType>> => {
-  // const { disableRedirectToLogin } = params;
-  const axiosQueryConfig = makeAxiosQueryConfig(QUERY_METHOD.DELETE, params)
-  return axios(axiosQueryConfig)
-}
-
-export type QueryResponseType<ResponseType = unknown> = {
-  data: ResponseType | null
-  status: number | string
-  statusText: string
-  headers: Record<string, string>
-  error?: unknown
-}
-
-/** the query that unites them all */
-export const query = async <
+/** the raw query for all methods */
+const genericMethodQuery = async <
   PayloadType = UnknownQueryPayloadType,
   ResponseType = unknown,
 >(
   method: QUERY_METHOD,
   params: QueryParamType<PayloadType>
+): ReturnType<QueryFnType<PayloadType, ResponseType>> => {
+  const axiosQueryConfig = makeAxiosQueryConfig(method, params)
+  return axios(axiosQueryConfig)
+}
+
+/** the query for all methods */
+export const query = async <PayloadType = unknown, ResponseType = unknown>(
+  method: QUERY_METHOD,
+  params: QueryParamType<PayloadType>
 ): Promise<QueryResponseType<ResponseType>> => {
-  const queryFn =
-    method === 'POST'
-      ? post
-      : method === 'PUT'
-        ? put
-        : method === 'DELETE'
-          ? deletion
-          : method === 'GET_FILE'
-            ? getFile
-            : method === 'POST_GET_FILE'
-              ? postWithReturnedFile
-              : get
   try {
-    const res = await queryFn<PayloadType, ResponseType>(params)
+    const res = await genericMethodQuery<PayloadType, ResponseType>(
+      method,
+      params
+    )
     const response = {
       data: res.data,
       status: res.status,
@@ -208,8 +150,7 @@ export const query = async <
   } catch (e) {
     const error: AxiosError = e as AxiosError
     const axiosResponse: AxiosError['response'] | null =
-      (axios.isAxiosError(e) ? error?.response : error?.response) ??
-      null
+      (axios.isAxiosError(e) ? error?.response : error?.response) ?? null
     const altErrorCode =
       (typeof e === 'object' && !!e && 'code' in e && (e?.code as string)) ||
       null

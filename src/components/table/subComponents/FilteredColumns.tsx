@@ -13,7 +13,6 @@ import {
   FilterType,
 } from '../types'
 import TextField from '../../inputs/TextField'
-import { ButtonType } from '../../buttons/Button'
 
 export interface FilteredTableHeaderCellProps
   extends FilteredTableHeaderCellPropsIn {
@@ -322,7 +321,7 @@ export const FilteredTableHeaderCell = forwardRef(
 
                 {!!sortKey && (
                   <Button
-                    type={ButtonType.secondary}
+                    variant="outlined"
                     iconButton={true}
                     name={sortKey}
                     data-testid={`sort-${sortKey}`}
@@ -337,12 +336,7 @@ export const FilteredTableHeaderCell = forwardRef(
                   />
                 )}
                 {!!isFilterLocked && (
-                  <Button
-                    type={ButtonType.text}
-                    iconButton
-                    icon={mdiLock}
-                    disabled
-                  />
+                  <Button variant="text" iconButton icon={mdiLock} disabled />
 
                   // <IconButton
                   //   size="small"
@@ -363,7 +357,7 @@ export const FilteredTableHeaderCell = forwardRef(
 
                 {!isFilterLocked && !selectedFilter?.length && (
                   <Button
-                    type={ButtonType.secondary}
+                    variant="outlined"
                     iconButton={true}
                     data-testid={`filter-btn-${filterKey}`}
                     name={filterKey}
@@ -397,10 +391,10 @@ export const FilteredTableHeaderCell = forwardRef(
             <div className="relative">
               <Box sx={{ p: 2 }}>
                 <Stack direction="row" gap={2}>
-                  <Button type={ButtonType.text} onClick={selectAll}>
+                  <Button variant="text" onClick={selectAll}>
                     Select All filters
                   </Button>
-                  <Button type={ButtonType.text} onClick={clearFilter}>
+                  <Button variant="text" onClick={clearFilter}>
                     Remove all filters
                   </Button>
                 </Stack>
@@ -480,7 +474,7 @@ export const FilteredTableHeaderCell = forwardRef(
               style={{ height: 75, gap: 24 }}
             >
               <Button
-                type={ButtonType.text}
+                variant="text"
                 sx={{ height: 33 }}
                 onClick={() => {
                   handleResetFilter?.()

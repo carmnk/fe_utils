@@ -2,7 +2,7 @@ import { mdiArrowDownThin, mdiArrowUpThin, mdiMinus } from '@mdi/js'
 import { BoxProps, Box, Tooltip, Stack, useTheme } from '@mui/material'
 import { Flex } from '../../_wrapper/Flex'
 import { EllipsisTextWithTooltip } from '../../basics/EllipsisTooltip'
-import { Button, ButtonType } from '../../buttons/Button'
+import { Button } from '../../buttons/Button'
 import { FilteredTableHeaderCell } from './../subComponents/FilteredColumns'
 import { FilterType, TableProps } from '../types'
 
@@ -152,7 +152,7 @@ export const TableHeader = (props: TableHeaderProps) => {
                         gap={1}
                       >
                         <Button
-                          type={ButtonType.secondary}
+                          variant="outlined"
                           iconButton={true}
                           icon={
                             colSorting?.value.includes('asc')

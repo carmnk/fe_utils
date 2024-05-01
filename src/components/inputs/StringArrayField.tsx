@@ -3,7 +3,6 @@ import { Box, Stack } from '@mui/material'
 import { Fragment } from 'react'
 import { Button } from '../buttons/Button/Button'
 import { TextField } from './TextField'
-import { ButtonType } from '../buttons/Button/defs'
 
 export type StringArrayFieldProps = {
   value?: string[] | null
@@ -72,7 +71,7 @@ export const StringArrayField = (props: StringArrayFieldProps) => {
               }}
             >
               <Button
-                type={ButtonType.text}
+                variant="text"
                 iconButton={true}
                 icon={mdiDeleteOutline}
                 title={'delete_' + index}

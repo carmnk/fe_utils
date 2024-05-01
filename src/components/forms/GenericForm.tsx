@@ -3,7 +3,6 @@ import { Box, Grid, Stack } from '@mui/material'
 import { getDynamicFields } from './utils'
 import { Button } from '../buttons/Button/Button'
 import { mdiDeleteOutline } from '@mdi/js'
-import { ButtonType } from '../buttons/Button/defs'
 import { Field, StaticFieldDefinition } from './fields/Field'
 import { Subforms } from './Subforms'
 import { StringArrayFormField } from './fields/StringArrayField'
@@ -168,7 +167,7 @@ export const GenericForm = (props: GenericFormProps) => {
             >
               <Box>
                 <Button
-                  type={ButtonType.text}
+                  variant="text"
                   iconButton={true}
                   icon={mdiDeleteOutline}
                   onClick={() => {

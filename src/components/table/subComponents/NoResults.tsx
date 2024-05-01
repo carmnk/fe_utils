@@ -1,19 +1,26 @@
 import { Button } from '../../buttons/Button/Button'
-import { ButtonType } from '../../buttons/Button'
 
 export type NoResultsProps =
   | {
       clearFilters: () => any
       label?: string
+      content?: React.ReactNode
       clearFilersLabel?: string
     }
   | {
       label?: string
-      disableClearFilters?: boolean
+      content?: React.ReactNode
+      disableClearFilters?: true
     }
 
 export const NoResults = (props: NoResultsProps) => {
-  const { clearFilters, label, disableClearFilters, clearFilersLabel } = {
+  const {
+    clearFilters,
+    label,
+    disableClearFilters,
+    clearFilersLabel,
+    content,
+  } = {
     clearFilters: null,
     label: '',
     clearFilersLabel: null,
@@ -22,20 +29,13 @@ export const NoResults = (props: NoResultsProps) => {
   }
   return (
     <section className="no-result">
-      <div>
-        <img
-          id="image0_1274_9403"
-          width="512"
-          height="512"
-          src="/search_magnifier.png"
-        />
-      </div>
+      {content}
       {label ? label : 'No results found'}
       {!disableClearFilters && clearFilters && (
         <Button
           onClick={clearFilters}
           label={clearFilersLabel ? clearFilersLabel : 'remove all filters'}
-          type={ButtonType.secondary}
+          variant="outlined"
         />
       )}
     </section>

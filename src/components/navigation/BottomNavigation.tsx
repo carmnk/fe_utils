@@ -1,10 +1,14 @@
 import { ReactNode, useCallback } from 'react'
-import { BottomNavigationAction } from '@mui/material'
+import {
+  BottomNavigationAction,
+  BottomNavigationActionProps,
+} from '@mui/material'
 import { BottomNavigation as MBottomNavigation } from '@mui/material'
+import { BottomNavigationProps as MBottomNavigationProps } from '@mui/material'
 import Icon from '@mdi/react'
 import { mdiInformation } from '@mdi/js'
 
-export type CBottomNavigationProps = {
+export type CBottomNavigationProps = MBottomNavigationProps & {
   value: string
   onChange: (value: string) => void
   items: {
@@ -13,6 +17,7 @@ export type CBottomNavigationProps = {
     tooltip?: string
     disabled?: boolean
     icon?: string
+    sx?: BottomNavigationActionProps['sx']
   }[]
   showLabels?: boolean
 }
@@ -28,7 +33,7 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
   )
   return (
     <MBottomNavigation
-      showLabels={showLabels}
+      showLabels={showLabels ?? true}
       value={value}
       onChange={handleChangeItem}
     >

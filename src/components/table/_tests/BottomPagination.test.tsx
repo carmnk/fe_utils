@@ -1,9 +1,10 @@
 import React from 'react'
 import { render, fireEvent, act } from '@testing-library/react'
 import { BottomPagination } from '../BottomPagination'
-import { Box, ThemeProvider, useMediaQuery } from '@mui/material'
-import { muiDarkSiteTheme } from '../../../theme/muiTheme'
+import { Box, ThemeProvider, createTheme, useMediaQuery } from '@mui/material'
 import { mdiArrowLeft, mdiArrowRight } from '@mdi/js'
+
+const theme = createTheme({})
 
 jest.mock('@mui/material', () => ({
   ...jest.requireActual('@mui/material'),
@@ -13,7 +14,7 @@ jest.mock('@mui/material', () => ({
 describe('BottomPagination', () => {
   it('renders with correct initial page', () => {
     const { getByText } = render(
-      <ThemeProvider theme={muiDarkSiteTheme}>
+      <ThemeProvider theme={theme}>
         <BottomPagination
           pageNumber={1}
           itemPerPage={10}
@@ -34,7 +35,7 @@ describe('BottomPagination', () => {
 
   it('renders with correct label', () => {
     const { getByText } = render(
-      <ThemeProvider theme={muiDarkSiteTheme}>
+      <ThemeProvider theme={theme}>
         <BottomPagination
           pageNumber={1}
           itemPerPage={10}
@@ -51,7 +52,7 @@ describe('BottomPagination', () => {
   it('it triggers changePage when arrow buttons are used', async () => {
     const handleChangePage = jest.fn()
     const { getByText } = render(
-      <ThemeProvider theme={muiDarkSiteTheme}>
+      <ThemeProvider theme={theme}>
         <BottomPagination
           pageNumber={2}
           itemPerPage={10}
@@ -94,7 +95,7 @@ describe('BottomPagination', () => {
     const handleChangeSize = jest.fn()
     const handleChangePage = jest.fn()
     const { getByText } = render(
-      <ThemeProvider theme={muiDarkSiteTheme}>
+      <ThemeProvider theme={theme}>
         <BottomPagination
           pageNumber={1}
           itemPerPage={10}

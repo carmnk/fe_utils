@@ -1,6 +1,6 @@
 import { mdiPlus } from '@mdi/js'
 import { Box, Divider, Typography } from '@mui/material'
-import { Button, ButtonType } from '../buttons/Button'
+import { Button } from '../buttons/Button'
 import { GenericForm } from './GenericForm'
 import { DynamicFieldDefinition } from './fields/Field'
 
@@ -216,7 +216,7 @@ export const Subforms = (props: SubformsProps) => {
             })}
 
             <Button
-              type={ButtonType.secondary}
+              variant="outlined"
               label={subforms?.[field?.name ?? '']?.addArrayItemLabel ?? 'Add'}
               onClick={() => addnewItemArraySub(field.name, formData)}
               icon={mdiPlus}

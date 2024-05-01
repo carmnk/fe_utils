@@ -17,6 +17,18 @@ export type CCheckboxProps = CommonInputFieldProps &
     labelPlacement?: FormControlLabelProps['labelPlacement']
   }
 
+const defaultSlotProps = { typography: { sx: { fontSize: '14px' } } }
+const errorSlotProps = {
+  typography: {
+    sx: {
+      fontSize: '14px',
+      color: 'error.main',
+      '& +span': {
+        color: 'error.main',
+      },
+    },
+  },
+}
 export const Switch = (props: CCheckboxProps) => {
   const {
     value,
@@ -27,7 +39,9 @@ export const Switch = (props: CCheckboxProps) => {
     helperText,
     disableHelperText = true,
     tooltip,
+    error,
     labelPlacement,
+    color,
     ...restCheckBoxProps
   } = props
 
@@ -43,13 +57,18 @@ export const Switch = (props: CCheckboxProps) => {
     >
       <>
         <FormControlLabel
-          slotProps={{ typography: { sx: { fontSize: '14px' } } }}
+          color={color}
+          slotProps={error ? errorSlotProps : defaultSlotProps}
           control={
             <MSwitch
+              color={color}
               name={name}
               value={value}
               checked={!!value}
               onChange={onChange}
+              sx={{
+                ...(restCheckBoxProps?.sx as any),
+              }}
               {...(restCheckBoxProps as any)}
             />
           }
