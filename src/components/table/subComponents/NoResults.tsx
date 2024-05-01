@@ -6,6 +6,7 @@ export type NoResultsProps =
       label?: string
       content?: React.ReactNode
       clearFilersLabel?: string
+      disableClearFilters?: true
     }
   | {
       label?: string

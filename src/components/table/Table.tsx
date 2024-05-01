@@ -235,7 +235,8 @@ export const Table = (props: TableProps) => {
                     clearFilters={clearFilters}
                     label={noResultsLabel}
                     disableClearFilters={
-                      disableClearFilters || (allFilters && !allFilters?.length)
+                      !!disableClearFilters ||
+                      !!(allFilters && !allFilters?.length) as any
                     }
                     clearFilersLabel={clearFilersLabel}
                   />
