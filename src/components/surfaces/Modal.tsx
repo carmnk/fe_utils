@@ -17,6 +17,7 @@ import Icon from '@mdi/react'
 import { mdiClose } from '@mdi/js'
 import { NewlineText } from '../basics/NewLineText'
 import { useCallback, useMemo } from 'react'
+import { CButtonProps } from '../buttons/Button'
 
 const actionsStyles = { pl: 3 }
 
@@ -51,6 +52,10 @@ export type CModalBaseProps = Omit<
   loading?: boolean
   subheader?: React.ReactNode
   confirmationTooltip?: string
+  confirmButtonProps?: CButtonProps
+  secondaryButtonProps?: CButtonProps
+  nonConfirmationButtonProps?: CButtonProps
+  cancelConfirmButtonProps?: CButtonProps
 }
 
 export type CModalProps =
@@ -91,6 +96,10 @@ export const Modal = (props: CModalProps) => {
     loading,
     subheader,
     confirmationTooltip,
+    confirmButtonProps,
+    secondaryButtonProps,
+    nonConfirmationButtonProps,
+    cancelConfirmButtonProps,
     ...rest
   } = {
     ...props,
@@ -186,6 +195,7 @@ export const Modal = (props: CModalProps) => {
                 onClick={onClose}
                 icon={cancelConfirmationIcon}
                 loading={loading}
+                {...cancelConfirmButtonProps}
               >
                 {cancelConfirmationLabel ?? 'Close'}
               </Button>
@@ -196,6 +206,7 @@ export const Modal = (props: CModalProps) => {
                     onClick={onSecondaryAction}
                     icon={secondaryActionIcon}
                     loading={loading}
+                    {...secondaryButtonProps}
                   >
                     {secondaryActionLabel}
                   </Button>
@@ -207,6 +218,7 @@ export const Modal = (props: CModalProps) => {
                     disabled={confirmationDisabled}
                     loading={loading}
                     tooltip={confirmationTooltip}
+                    {...confirmButtonProps}
                   >
                     {confirmationLabel ?? 'Submit'}
                   </Button>
@@ -221,7 +233,12 @@ export const Modal = (props: CModalProps) => {
                 placeNonConfirmationButtonOnLeft ? 'flex-start' : 'flex-end'
               }
             >
-              <Button variant="text" onClick={onClose} loading={loading}>
+              <Button
+                variant="text"
+                onClick={onClose}
+                loading={loading}
+                {...nonConfirmationButtonProps}
+              >
                 {nonConfirmationLabel || 'Close'}
               </Button>
             </Stack>
