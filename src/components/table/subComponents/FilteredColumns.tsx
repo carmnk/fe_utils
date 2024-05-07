@@ -403,9 +403,12 @@ export const FilteredTableHeaderCell = forwardRef(
                     fullWidth={true}
                     value={searchValue}
                     onChange={handleSearchValueChange as any}
-                    InputProps={{ sx: { background: '#fafafa' } }}
+                    // InputProps={{ sx: { background: '#fafafa' } }}
                     autoFocus={true}
                     onKeyUp={handleKeyUpSearchField}
+                    slotProps={{
+                      inputContainer: { sx: { background: '#fafafa' } },
+                    }}
                   />
                 </div>
               </Box>

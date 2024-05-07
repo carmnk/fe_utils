@@ -1,27 +1,32 @@
-import { ReactNode } from 'react'
+import { useMemo } from 'react'
 import {
   Box,
   FormControlLabel,
   FormControlLabelProps,
+  FormHelperTextProps,
   SwitchProps,
   Tooltip,
+  TooltipProps,
+  TypographyProps,
 } from '@mui/material'
 import { Switch as MSwitch, FormHelperText } from '@mui/material'
-import { CommonInputFieldProps } from './_types'
+import { InputFieldProps } from './types'
 
-export type CCheckboxProps = CommonInputFieldProps &
-  SwitchProps & {
-    formControlLabelProps?: any
-    disableHelperText?: boolean
-    tooltip?: ReactNode
-    labelPlacement?: FormControlLabelProps['labelPlacement']
+export type CSwitchProps = InputFieldProps<'bool'> &
+  Omit<SwitchProps, 'value' | 'onChange'> & {
+    slotProps?: {
+      tooltip?: TooltipProps
+      formControlLabel?: FormControlLabelProps
+      typography?: TypographyProps
+      formHelperText?: FormHelperTextProps
+    }
   }
 
-const defaultSlotProps = { typography: { sx: { fontSize: '14px' } } }
+// const defaultSlotProps = { typography: { sx: { fontSize: '14px' } } }
 const errorSlotProps = {
   typography: {
     sx: {
-      fontSize: '14px',
+      // fontSize: '14px',
       color: 'error.main',
       '& +span': {
         color: 'error.main',
@@ -29,21 +34,38 @@ const errorSlotProps = {
     },
   },
 }
-export const Switch = (props: CCheckboxProps) => {
+export const Switch = (props: CSwitchProps) => {
   const {
     value,
     onChange,
     name,
     label,
-    formControlLabelProps,
     helperText,
     disableHelperText = true,
     tooltip,
     error,
     labelPlacement,
     color,
+    slotProps,
     ...restCheckBoxProps
   } = props
+
+  const {
+    tooltip: tooltipProps,
+    formControlLabel,
+    formHelperText,
+    typography,
+  } = slotProps ?? {}
+
+  const formControlLabelSlotProps = useMemo(
+    () => ({
+      typography: {
+        ...(typography ?? {}),
+        ...(error ? errorSlotProps.typography : {}),
+      },
+    }),
+    [typography, error]
+  )
 
   return (
     <Tooltip
@@ -54,11 +76,12 @@ export const Switch = (props: CCheckboxProps) => {
       title={tooltip}
       placement="top"
       arrow
+      {...tooltipProps}
     >
       <>
         <FormControlLabel
           color={color}
-          slotProps={error ? errorSlotProps : defaultSlotProps}
+          slotProps={formControlLabelSlotProps}
           control={
             <MSwitch
               color={color}
@@ -74,12 +97,14 @@ export const Switch = (props: CCheckboxProps) => {
           }
           labelPlacement={labelPlacement ?? undefined}
           label={label}
-          {...formControlLabelProps}
+          {...formControlLabel}
         />
         {!disableHelperText && (
-          <Box height="23px">
-            <FormHelperText>{helperText ?? ''}</FormHelperText>
-          </Box>
+          // <Box height="23px">
+          <FormHelperText {...formHelperText}>
+            {helperText ?? ''}
+          </FormHelperText>
+          // </Box>
         )}
       </>
     </Tooltip>

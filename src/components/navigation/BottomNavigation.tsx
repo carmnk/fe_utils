@@ -20,6 +20,11 @@ export type CBottomNavigationProps = MBottomNavigationProps & {
     sx?: BottomNavigationActionProps['sx']
   }[]
   showLabels?: boolean
+  slotProps?: {
+    bottomNavigation?: MBottomNavigationProps
+    bottomNavigationSelectedAction?: BottomNavigationActionProps
+    bottomNavigationAction?: BottomNavigationActionProps
+  }
 }
 
 export const BottomNavigation = (props: CBottomNavigationProps) => {
@@ -36,6 +41,7 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
       showLabels={showLabels ?? true}
       value={value}
       onChange={handleChangeItem}
+      {...(props.slotProps?.bottomNavigation ?? {})}
     >
       {items?.map((item) => {
         return (
@@ -43,6 +49,9 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
             value={item.value}
             label={item.label}
             icon={<Icon path={item?.icon ?? mdiInformation} size={1} />}
+            {...(item.value === value
+              ? props.slotProps?.bottomNavigationSelectedAction
+              : props.slotProps?.bottomNavigationAction ?? {})}
           />
         )
       })}

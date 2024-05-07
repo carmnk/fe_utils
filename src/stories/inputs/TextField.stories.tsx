@@ -109,7 +109,7 @@ export const Filled: Story = {
   },
 }
 
-let value = 'Value\n\n\n\n\n'
+const value = 'Value\n\n\n\n\n'
 export const TextArea: Story = {
   args: {
     label: 'Label',

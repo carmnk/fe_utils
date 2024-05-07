@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react'
-import { BottomNavigation } from './BottomNavigation'
+import { BottomNavigation } from '../BottomNavigation'
 import { mdiTestTube } from '@mdi/js'
 
 describe('BottomNavigation', () => {

@@ -1,20 +1,33 @@
-import { Box, CheckboxProps as MCBProps, FormHelperText } from '@mui/material'
+import {
+  CheckboxProps as MCBProps,
+  FormHelperText,
+  TooltipProps,
+  FormControlLabelProps,
+  FormHelperTextProps,
+  TypographyProps,
+} from '@mui/material'
 import { Checkbox as MCheckbox, FormControlLabel, Tooltip } from '@mui/material'
-import { CommonInputFieldProps } from './_types'
+import { InputFieldProps } from './types'
+import { ChangeEvent, useCallback, useMemo } from 'react'
 
-export type CheckboxProps = CommonInputFieldProps &
-  MCBProps & {
-    formControlLabelProps?: any
-    labelTypographyProps?: any
-    tooltip?: string
-    color?:
-      | 'primary'
-      | 'secondary'
-      | 'default'
-      | 'error'
-      | 'info'
-      | 'success'
-      | 'warning'
+export type CheckboxProps = InputFieldProps<'bool'> &
+  Omit<MCBProps, 'value' | 'onChange'> & {
+    // now common for all
+    // tooltip?: string
+    // color?:
+    //   | 'primary'
+    //   | 'secondary'
+    //   | 'default'
+    //   | 'error'
+    //   | 'info'
+    //   | 'success'
+    //   | 'warning'
+    slotProps?: {
+      tooltip?: TooltipProps
+      formControlLabel?: FormControlLabelProps
+      typography?: TypographyProps
+      formHelperText?: FormHelperTextProps
+    }
   }
 
 export const Checkbox = (props: CheckboxProps) => {
@@ -23,18 +36,33 @@ export const Checkbox = (props: CheckboxProps) => {
     onChange,
     name,
     label,
-    formControlLabelProps,
-    labelTypographyProps,
     tooltip,
     helperText,
     color,
+    slotProps,
+    disableHelperText,
+    disableLabel,
     ...restCheckBoxProps
   } = props
 
-  const slotProps: any = {}
-  if (labelTypographyProps) {
-    slotProps.typography = labelTypographyProps
-  }
+  const {
+    tooltip: tooltipProps,
+    typography,
+    formControlLabel,
+    formHelperText,
+  } = slotProps ?? {}
+
+  const formControlLabelSlotProps = useMemo(() => {
+    return typography ? { typography } : {}
+  }, [typography])
+
+  const handleChangeCheckbox = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const checked = e.target.checked
+      onChange(checked, e, name)
+    },
+    [name, onChange]
+  )
 
   return (
     <Tooltip
@@ -45,26 +73,31 @@ export const Checkbox = (props: CheckboxProps) => {
       title={tooltip}
       placement="top"
       arrow
+      {...tooltipProps}
     >
       <>
         <FormControlLabel
-          slotProps={slotProps}
+          slotProps={formControlLabelSlotProps}
           control={
             <MCheckbox
               name={name}
               value={value}
               checked={!!value}
-              onChange={onChange}
+              onChange={handleChangeCheckbox}
               color={color}
               {...restCheckBoxProps}
             />
           }
           label={label}
-          {...formControlLabelProps}
+          {...formControlLabel}
         />
-        <Box height="23px">
-          <FormHelperText>{helperText ?? ''}</FormHelperText>
-        </Box>
+        {/* <Box height="23px" > */}
+        {!disableHelperText && (
+          <FormHelperText {...formHelperText}>
+            {helperText ?? ''}
+          </FormHelperText>
+        )}
+        {/* </Box> */}
       </>
     </Tooltip>
   )

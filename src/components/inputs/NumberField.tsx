@@ -1,11 +1,6 @@
 import React, { useMemo } from 'react'
-import { InputAdornment, Box, useTheme } from '@mui/material'
-import {
-  // TextField as MTextField,
-  // TextFieldProps as MTextFieldProps,
-  // Typography,
-} from '@mui/material'
-import TextField, { TextFieldProps } from './TextField'
+import { InputAdornment, useTheme } from '@mui/material'
+import TextField, { CTextFieldProps } from './TextField'
 
 export const formatGermanNumberString = (
   number: number,
@@ -23,7 +18,7 @@ export const formatGermanNumberString = (
 
 const REQUIRED_FIELD_HELPER_TEXT = 'This field is required'
 
-export type CNumberFieldProps = Omit<TextFieldProps, 'value'> & {
+export type CNumberFieldProps = Omit<CTextFieldProps, 'value'> & {
   value?: number | '' | null
   isInt?: boolean
   disableNumberSeparator?: boolean
@@ -39,14 +34,11 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     onChange,
     required,
     icon,
-    inputStyle,
     helperText,
     startIcon,
     disableHelperText,
     disableLabel,
     error,
-    ContainerProps,
-    labelSx,
     injectComponent,
     onChangeCompleted,
     maxLength,
@@ -54,8 +46,17 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     disableNumberSeparator,
     isInt,
     maxDecimalDigits = 3,
+    slotProps,
     ...rest
   } = props
+
+  const {
+    rootContainer,
+    input,
+    inputContainer,
+    label: labelProps,
+    formHelperText,
+  } = slotProps ?? {}
 
   const theme = useTheme()
   const [innerValue, setInnerValue] = React.useState<string | undefined>(
@@ -101,16 +102,19 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     }
   }, [value])
 
-  const handleChangeCompleted = React.useCallback(() => {
-    //dont trigger if value has not changed
-    if (
-      typeof value === 'undefined' ||
-      value === null ||
-      value.toString() === valueStarted
-    )
-      return
-    onChangeCompleted?.(value)
-  }, [onChangeCompleted, value, valueStarted])
+  const handleChangeCompleted = React.useCallback(
+    (e: any) => {
+      //dont trigger if value has not changed
+      if (
+        typeof value === 'undefined' ||
+        value === null ||
+        value.toString() === valueStarted
+      )
+        return
+      onChangeCompleted?.(value as any, e, name)
+    },
+    [onChangeCompleted, value, valueStarted, name]
+  )
 
   const handleChangeStarted = React.useCallback(() => {
     if (!value) return
@@ -205,13 +209,13 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     [onChange, maxLength, isInt, disableNumberSeparator, maxDecimalDigits]
   )
 
-  const themeErrorText = {
-    color: theme.palette.error.main,
-    fontWeight: 700,
-  }
+  // const themeErrorText = {
+  //   color: theme.palette.error.main,
+  //   fontWeight: 700,
+  // }
 
-  const muiTextfieldProps: TextFieldProps = useMemo(() => {
-    return {
+  const muiTextfieldProps: CTextFieldProps = useMemo(() => {
+    const textfieldProps: CTextFieldProps = {
       value: innerValue ?? '',
       size: 'small',
       name: name,
@@ -224,32 +228,39 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
       onBlur: handleChangeCompleted,
       onFocus: handleChangeStarted,
       ...(rest as any),
-      inputProps: { ref, maxLength, title: name },
-      InputProps: {
-        endAdornment: <InputAdornment position="end">{icon}</InputAdornment>,
-        startAdornment: (
-          <InputAdornment position="start">{startIcon}</InputAdornment>
-        ),
-        ...(rest?.InputProps ?? {}),
-        sx: {
-          height: 42,
-          ...(inputStyle ?? {}),
-          fontSize: 14,
-          lineHeight: '16px',
-          borderColor: 'transparent !important',
-          borderWidth: '0px !important',
-          ...(rest.InputProps?.sx ?? {}),
+      slotProps: {
+        label: labelProps,
+        rootContainer,
+        input: { ref, maxLength, title: name, ...input },
+        inputContainer: {
+          endAdornment: <InputAdornment position="end">{icon}</InputAdornment>,
+          startAdornment: (
+            <InputAdornment position="start">{startIcon}</InputAdornment>
+          ),
+          ...(inputContainer ?? {}),
+          sx: {
+            height: 42,
+            fontSize: 14,
+            lineHeight: '16px',
+            borderColor: 'transparent !important',
+            borderWidth: '0px !important',
+            ...(inputContainer?.sx ?? {}),
+          },
         },
-      },
-      FormHelperTextProps: {
-        sx: {
-          ml: '2px',
-          height: disableHelperText ? '0px' : 23,
-          mt: disableHelperText ? 0 : 0.5,
-          whiteSpace: 'nowrap',
+        formHelperText: {
+          ...(formHelperText ?? {}),
+          sx: {
+            ml: '2px',
+            height: disableHelperText ? '0px' : 23,
+            mt: disableHelperText ? 0 : 0.5,
+            whiteSpace: 'nowrap',
+            ...(formHelperText?.sx ?? {}),
+          },
         },
       },
     }
+
+    return textfieldProps
   }, [
     disableHelperText,
     helperText,
@@ -264,8 +275,12 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     handleChangeCompleted,
     handleChangeStarted,
     maxLength,
-    inputStyle,
     ref,
+    formHelperText,
+    inputContainer,
+    input,
+    labelProps,
+    rootContainer,
   ])
 
   return (
@@ -296,9 +311,7 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
       disableLabel={disableLabel}
       label={label}
       error={error}
-      labelSx={labelSx}
       required={required}
-      
       injectComponent={injectComponent}
       fullWidth
       // onChange={(newValue: string | number, e: any) => {

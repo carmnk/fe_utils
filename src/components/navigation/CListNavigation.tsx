@@ -1,9 +1,23 @@
 import Icon from '@mdi/react'
-import { List, ListItem, ListItemButton, ListItemIcon } from '@mui/material'
+import { IconProps } from '@mdi/react/dist/IconProps'
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemButtonProps,
+  ListItemIcon,
+  ListItemIconProps,
+  ListItemProps,
+  ListItemTextProps,
+  ListProps,
+} from '@mui/material'
 import { ListItemText, ListSubheader, alpha, useTheme } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
 
-export type ListNavigationProps = {
+export type ListNavigationProps = Omit<
+  ListProps,
+  'onChange' | 'value' | 'items'
+> & {
   value: string
   onChange: (value: string) => void
   items: {
@@ -16,10 +30,39 @@ export type ListNavigationProps = {
   dense?: boolean
   disablePadding?: boolean
   subheader?: ReactNode
+  slotProps?: {
+    listItem?: ListItemProps
+    listItemButton?: ListItemButtonProps
+    listItemIconRoot?: ListItemIconProps
+    listItemIcon?: IconProps
+    listItemTextRoot?: ListItemTextProps
+    listItemTextPrimaryTypography?: ListItemTextProps['primaryTypographyProps']
+    listItemTextSecondaryTypography?: ListItemTextProps['secondaryTypographyProps']
+    touchRipple?: ListItemButtonProps['TouchRippleProps']
+  }
 }
 
 export const ListNavigation = (props: ListNavigationProps) => {
-  const { value, onChange, items, dense, disablePadding, subheader } = props
+  const {
+    value,
+    onChange,
+    items,
+    dense,
+    disablePadding,
+    subheader,
+    slotProps,
+    ...others
+  } = props
+
+  const {
+    listItem,
+    listItemButton,
+    listItemIconRoot,
+    listItemIcon,
+    listItemTextRoot,
+    listItemTextPrimaryTypography,
+    listItemTextSecondaryTypography,
+  } = slotProps ?? {}
 
   const theme = useTheme()
   const activeBgColor = useMemo(() => {
@@ -43,19 +86,27 @@ export const ListNavigation = (props: ListNavigationProps) => {
       dense={dense}
       disablePadding={disablePadding}
       subheader={subheaderComponent}
+      {...others}
     >
       {items?.map((item, iIdx) => (
         <ListItem
           disablePadding
           style={item?.value === value ? activeBgColor : undefined}
+          key={iIdx}
+          {...listItem}
         >
-          <ListItemButton onClick={handleClicks[iIdx]}>
+          <ListItemButton onClick={handleClicks[iIdx]} {...listItemButton}>
             {item?.icon && (
-              <ListItemIcon>
-                <Icon path={item?.icon as any} size={1} />
+              <ListItemIcon {...listItemIconRoot}>
+                <Icon path={item?.icon as any} size={1} {...listItemIcon} />
               </ListItemIcon>
             )}
-            <ListItemText primary={item.label} />
+            <ListItemText
+              primary={item.label}
+              {...listItemTextRoot}
+              primaryTypographyProps={listItemTextPrimaryTypography}
+              secondaryTypographyProps={listItemTextSecondaryTypography}
+            />
           </ListItemButton>
         </ListItem>
       ))}

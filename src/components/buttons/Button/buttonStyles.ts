@@ -1,19 +1,6 @@
 import { BoxProps, Theme } from '@mui/material'
 import { CButtonProps } from './Button'
 
-const secondaryGrayColor = {
-  light: {
-    background: '#E1E1E1',
-    disabled: '#F3F3F3',
-    hover: '#CCCCCC',
-  },
-  dark: {
-    background: '#666',
-    disabled: '#666',
-    hover: '#999',
-  },
-}
-
 export const makeButtonStyles = (
   props: Pick<
     CButtonProps,
@@ -25,6 +12,7 @@ export const makeButtonStyles = (
     | 'sx'
     | 'disabled'
     | 'endIcon'
+    | 'borderRadius'
   > & {
     theme: Theme
   }
@@ -36,13 +24,14 @@ export const makeButtonStyles = (
     iconButton,
     dropdown,
     variant,
-    disabled,
     icon,
     endIcon,
+    borderRadius,
   } = props
 
   const padding = iconButton ? '4px' : variant === 'text' ? '4px 16px' : 'auto'
   const commonStyles: Required<BoxProps['sx']> = {
+    borderRadius,
     minWidth: 0,
     textTransform: 'none',
     display: 'flex',

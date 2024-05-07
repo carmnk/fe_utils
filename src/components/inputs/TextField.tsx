@@ -1,40 +1,36 @@
 import { useState, useCallback, ReactNode, forwardRef } from 'react'
 import { useMemo, ChangeEvent, ForwardedRef } from 'react'
-import { useTheme, InputAdornment, Box } from '@mui/material'
+import { useTheme, InputAdornment, Box, TooltipProps } from '@mui/material'
 import { TextField as MTextField } from '@mui/material'
 import { TypographyProps, BoxProps, Typography } from '@mui/material'
 import { TextFieldProps as MTextFieldProps } from '@mui/material'
 import Icon from '@mdi/react'
-import { mdiLock } from '@mdi/js'
-import { CommonInputFieldProps } from './_types'
+import { InputFieldProps } from './types'
 
 const requiredFieldText = 'This field is required'
 
-export type TextFieldProps = Omit<MTextFieldProps, 'onChange'> &
-  CommonInputFieldProps & {
-    value?: string | number | null
-    icon?: ReactNode // does not support mdiIcons/ mdiStrings
-    inputStyle?: Required<MTextFieldProps>['InputProps']['sx']
-    startIcon?: ReactNode
-    disableHelperText?: boolean
-    disableLabel?: boolean
-    ContainerProps?: BoxProps
-    labelSx?: TypographyProps['sx']
-    injectComponent?: ReactNode
-    locked?: boolean
-    useNotchedLabel?: boolean
-    onChange?: (
-      newValue: string | number,
-      e: ChangeEvent<HTMLInputElement>
-    ) => void
-    onChangeCompleted?: (newValue: string | number) => void
-    notchedLabelMarginLeft?: number
+export type CTextFieldProps = InputFieldProps<'text'> &
+  Omit<
+    MTextFieldProps,
+    'value' | 'onChange' | 'inputProps' | 'InputProps' | 'FormHelperTextProps'
+  > & {
     borderRadius?: number
-    notchedLabelBgColor?: string
+    icon?: ReactNode
+    startIcon?: ReactNode
+    injectComponent?: ReactNode
+    slotProps?: {
+      rootContainer?: BoxProps
+      inputContainer?: MTextFieldProps['InputProps']
+      input?: MTextFieldProps['inputProps']
+      tooltip?: TooltipProps
+      formHelperText?: MTextFieldProps['FormHelperTextProps']
+      notchedInputLabel?: MTextFieldProps['InputLabelProps']
+      label?: TypographyProps
+    }
   }
 
 export const TextField = forwardRef(
-  (props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) => {
+  (props: CTextFieldProps, ref: ForwardedRef<HTMLDivElement>) => {
     const {
       value,
       label,
@@ -43,25 +39,31 @@ export const TextField = forwardRef(
       onChange,
       required,
       icon,
-      inputStyle,
       helperText,
       startIcon,
       disableHelperText,
       disableLabel,
       error,
-      ContainerProps,
-      labelSx,
       injectComponent,
       onChangeCompleted,
       maxLength,
-      locked,
       disabled,
       useNotchedLabel,
       notchedLabelBgColor,
       notchedLabelMarginLeft = 24,
       borderRadius,
+      slotProps,
       ...rest
     } = props
+
+    const {
+      inputContainer,
+      input,
+      label: labelProps,
+      formHelperText,
+      notchedInputLabel,
+      rootContainer,
+    } = slotProps ?? {}
 
     const theme = useTheme()
     const [valueStarted, setValueStarted] = useState('')
@@ -85,28 +87,26 @@ export const TextField = forwardRef(
     const handleChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
         const newValue = e?.target?.value
-        onChange?.(newValue ?? '', e)
+        onChange?.(newValue ?? '', e, name)
       },
-      [onChange]
+      [onChange, name]
     )
 
-    const labelProps: TypographyProps = useMemo(() => {
+    const defaultLabelProps: TypographyProps = useMemo(() => {
       return {
         variant: 'caption',
         component: 'label',
         color: error ? theme.palette.error.main : undefined,
         paddingBottom: '4px',
-        // style: error ? { color: theme.palette.error.main } : {},
-        sx: labelSx,
       }
-    }, [labelSx, error, theme.palette.error.main])
+    }, [error, theme.palette.error.main])
 
     const textFieldProps: MTextFieldProps = useMemo(() => {
       return {
         type,
         value: value ?? '',
         size: 'small',
-        disabled: disabled || locked,
+        disabled: disabled,
         name,
         onChange: handleChange,
         error,
@@ -121,7 +121,9 @@ export const TextField = forwardRef(
         inputProps: {
           maxLength,
           title: name,
+          ...input,
         },
+        InputLabelProps: notchedInputLabel,
         InputProps: {
           notched: false,
           endAdornment: (
@@ -131,32 +133,32 @@ export const TextField = forwardRef(
                 <Icon path={icon} size={1} />
               ) : (
                 icon
-              )) ?? (locked ? <Icon path={mdiLock} /> : null)}
+              )) ?? null}
             </InputAdornment>
           ),
           startAdornment: (
             // dont show if not present? -> probably already no width
             <InputAdornment position="start">{startIcon}</InputAdornment>
           ),
-          ...((rest?.InputProps as any) ?? {}),
           sx: {
             height: props?.multiline ? undefined : 42,
-            ...(inputStyle ?? {}),
             fontSize: '14px !important',
             borderColor: 'transparent !important',
             borderWidth: '0px !important',
             borderRadius,
-            ...(rest.InputProps?.sx ?? {}),
+            ...(inputContainer?.sx ?? {}),
           },
+          ...inputContainer,
         },
         FormHelperTextProps: {
           sx: {
-            ...(rest?.FormHelperTextProps?.sx ?? {}),
+            ...(formHelperText?.sx ?? {}),
             ml: '2px',
             height: disableHelperText ? '0px' : 23,
             mt: disableHelperText ? 0 : 0.5,
             whiteSpace: 'nowrap',
           },
+          ...formHelperText,
         },
         sx: {
           ...(rest?.sx ?? {}),
@@ -174,7 +176,6 @@ export const TextField = forwardRef(
       }
     }, [
       icon,
-      inputStyle,
       rest,
       startIcon,
       name,
@@ -188,10 +189,17 @@ export const TextField = forwardRef(
       required,
       type,
       value,
-      locked,
       disableHelperText,
       useNotchedLabel,
       label,
+      borderRadius,
+      notchedLabelBgColor,
+      notchedLabelMarginLeft,
+      props?.multiline,
+      formHelperText,
+      inputContainer,
+      input,
+      notchedInputLabel,
     ])
 
     return (
@@ -200,10 +208,10 @@ export const TextField = forwardRef(
         display="flex"
         flexDirection="column"
         width="100%"
-        {...(ContainerProps ?? {})}
+        {...(rootContainer ?? {})}
       >
         {!disableLabel && !useNotchedLabel && (
-          <Typography {...labelProps}>
+          <Typography {...defaultLabelProps} {...(labelProps ?? {})}>
             {label}{' '}
             {required && (
               <Box component="strong" color="error.main" fontWeight="700">

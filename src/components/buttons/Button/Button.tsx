@@ -1,17 +1,24 @@
 import React, { CSSProperties, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
-import { useTheme, Button as MuiButton, Box } from '@mui/material'
+import {
+  useTheme,
+  Button as MuiButton,
+  Box,
+  StackProps,
+  CircularProgressProps,
+  TooltipProps,
+} from '@mui/material'
 import { Tooltip, Typography, TypographyProps } from '@mui/material'
 import { ButtonProps } from '@mui/material'
 import type { ButtonDropdown } from './defs'
 import { ButtonEndIcon, ButtonStartIcon } from './ButtonIcons'
 import { makeButtonStyles } from './buttonStyles'
+import { IconProps } from '@mdi/react/dist/IconProps'
 
 export type CButtonProps = Pick<
   ButtonProps,
   'onClick' | 'onPointerDown' | 'onKeyDown' | 'size' | 'sx' | 'id' | 'variant'
 > & {
-  // type?: ButtonType // 3 types of buttons: primary (default), secondary, text
   label?: React.ReactNode // label for the button - precedence over children!
   children?: React.ReactNode // label for the button - if label is not provided
   loading?: boolean // loading state (show spinner instead of icon)
@@ -31,7 +38,16 @@ export type CButtonProps = Pick<
   disabled?: boolean // disabled attribute
   disableTooltipWhenDisabled?: boolean
   disableInteractiveTooltip?: boolean // will directly close not wait for hover
-  typographyProps?: TypographyProps // props for the typography component inside the button
+  // typographyProps?: TypographyProps // props for the typography component inside the button
+  slotProps?: {
+    typography?: TypographyProps
+    tooltip?: TooltipProps
+    startIcon?: IconProps
+    endIcon?: IconProps
+    loadingIconContainer?: StackProps
+    loadingProgress?: CircularProgressProps
+  }
+  borderRadius?: CSSProperties['borderRadius']
 }
 
 export const Button = React.forwardRef(
@@ -42,7 +58,7 @@ export const Button = React.forwardRef(
       label,
       disableHover,
       children,
-      endIcon,
+      endIcon: endIconIn,
       loading,
       dropdown,
       disabled: disabledIn,
@@ -53,14 +69,23 @@ export const Button = React.forwardRef(
       fontColor,
       disableTabstop,
       disableInteractiveTooltip,
-      typographyProps,
       disableTooltipWhenDisabled,
+      slotProps,
+      borderRadius,
       ...rest
     } = props
+    const {
+      typography,
+      startIcon,
+      endIcon,
+      loadingIconContainer,
+      loadingProgress,
+      tooltip,
+    } = slotProps ?? {}
     const theme = useTheme()
     const disabled = disabledIn || loading
 
-    const startIcon = useMemo(
+    const startIconComponent = useMemo(
       () => (
         <ButtonStartIcon
           icon={icon}
@@ -69,23 +94,39 @@ export const Button = React.forwardRef(
           disabled={disabled}
           loading={loading}
           variant={variant}
+          startIconProps={startIcon}
+          loadingIconContainerProps={loadingIconContainer}
+          loadingProgressProps={loadingProgress}
+          iconButton={iconButton}
         />
       ),
-      [icon, iconColor, iconSize, disabled, loading, variant]
+      [
+        icon,
+        iconColor,
+        iconSize,
+        disabled,
+        loading,
+        variant,
+        startIcon,
+        loadingIconContainer,
+        loadingProgress,
+        iconButton,
+      ]
     )
-    const endIconAdj = useMemo(
+    const endIconComponent = useMemo(
       () => ({
         endIcon: (
           <ButtonEndIcon
             disabled={disabled}
-            endIcon={endIcon}
+            endIcon={endIconIn}
             iconColor={iconColor}
             variant={variant}
             dropdown={dropdown}
+            endIconProps={endIcon}
           />
         ),
       }),
-      [disabled, endIcon, iconColor, variant, dropdown]
+      [disabled, endIconIn, iconColor, variant, dropdown, endIcon]
     )
 
     const buttonStyles = useMemo(
@@ -99,7 +140,8 @@ export const Button = React.forwardRef(
           iconButton,
           sx: rest?.sx,
           dropdown: dropdown,
-          endIcon,
+          endIcon: endIconIn,
+          borderRadius,
         }),
       [
         theme,
@@ -110,7 +152,8 @@ export const Button = React.forwardRef(
         iconButton,
         rest?.sx,
         dropdown,
-        endIcon,
+        endIconIn,
+        borderRadius,
       ]
     )
 
@@ -122,8 +165,8 @@ export const Button = React.forwardRef(
             ref={ref}
             variant="outlined"
             disableElevation
-            startIcon={startIcon}
-            {...endIconAdj}
+            startIcon={startIconComponent}
+            {...endIconComponent}
             disabled={disabled}
             {...rest}
             tabIndex={disableTabstop ? -1 : 0}
@@ -136,7 +179,7 @@ export const Button = React.forwardRef(
                   disabled ? 'action.disabled' : fontColor ?? 'text.primary'
                 }
                 fontWeight={700}
-                {...typographyProps}
+                {...typography}
               >
                 {label ?? children}
               </Typography>
@@ -148,8 +191,8 @@ export const Button = React.forwardRef(
             ref={ref}
             size="small"
             variant="text"
-            startIcon={startIcon}
-            {...endIconAdj}
+            startIcon={startIconComponent}
+            {...endIconComponent}
             disabled={disabled}
             {...rest}
             tabIndex={disableTabstop ? -1 : 0}
@@ -162,7 +205,7 @@ export const Button = React.forwardRef(
                   disabled ? 'action.disabled' : fontColor ?? 'text.primary'
                 }
                 fontWeight={700}
-                {...typographyProps}
+                {...typography}
               >
                 {label ?? children}
               </Typography>
@@ -174,8 +217,8 @@ export const Button = React.forwardRef(
             ref={ref}
             variant="contained"
             disableElevation
-            startIcon={startIcon}
-            {...endIconAdj}
+            startIcon={startIconComponent}
+            {...endIconComponent}
             disabled={disabled}
             {...rest}
             tabIndex={disableTabstop ? -1 : 0}
@@ -190,7 +233,7 @@ export const Button = React.forwardRef(
                     : fontColor ?? 'primary.contrastText'
                 }
                 fontWeight={700}
-                {...typographyProps}
+                {...typography}
               >
                 {label ?? children}
               </Typography>
@@ -203,14 +246,14 @@ export const Button = React.forwardRef(
         iconButton,
         children,
         disabled,
-        endIconAdj,
+        endIconComponent,
         fontColor,
         label,
-        startIcon,
+        startIconComponent,
         variant,
         buttonStyles,
         ref,
-        typographyProps,
+        typography,
         rest, // could be a problem
       ]
     )
@@ -223,6 +266,7 @@ export const Button = React.forwardRef(
             placement={'top'}
             title={disableTooltipWhenDisabled && disabled ? '' : props.tooltip}
             disableInteractive={disableInteractiveTooltip}
+            {...tooltip}
           >
             <Box width="max-content">{Button}</Box>
           </Tooltip>
@@ -235,6 +279,7 @@ export const Button = React.forwardRef(
         disableInteractiveTooltip,
         disabled,
         disableTooltipWhenDisabled,
+        tooltip,
       ]
     )
     return ButtonWithTooltip

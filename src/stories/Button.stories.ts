@@ -19,7 +19,7 @@ const optionsMdiIcons = {
   mdiCheck: mdiCheck,
   mdiClose: mdiClose,
   none: null,
-} as unknown as any[]
+}
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -34,16 +34,17 @@ const meta = {
 
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
+    borderRadius: { control: 'number' },
     color: { options: optionsMuiColors },
     iconSize: { control: 'number' },
     iconColor: { control: 'color' },
     fontColor: { control: 'color' },
     children: { control: false },
     icon: {
-      options: optionsMdiIcons,
+      options: optionsMdiIcons as any,
     },
     endIcon: {
-      options: optionsMdiIcons,
+      options: optionsMdiIcons as any,
     },
     dropdown: { options: ['closed', 'open'] },
   },
@@ -55,22 +56,49 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const Primary: Story = {
+export const ContainedButton: Story = {
   args: {
     label: 'Contained',
   },
 }
 
-export const Secondary: Story = {
+export const OutlinedButton: Story = {
   args: {
     variant: 'outlined',
     label: 'Outlined',
   },
 }
 
-export const Text: Story = {
+export const TextButton: Story = {
   args: {
     variant: 'text',
     label: 'Text',
+  },
+}
+
+export const ContainedIconButton: Story = {
+  args: {
+    // variant: 'text',
+    label: 'Text',
+    iconButton: true,
+    icon: optionsMdiIcons.mdiPencil,
+  },
+}
+
+export const OutlinedIconButton: Story = {
+  args: {
+    variant: 'outlined',
+    label: 'Text',
+    iconButton: true,
+    icon: optionsMdiIcons.mdiPencil,
+  },
+}
+
+export const TextIconButton: Story = {
+  args: {
+    // variant: 'text',
+    label: 'Text',
+    iconButton: true,
+    icon: optionsMdiIcons.mdiPencil,
   },
 }

@@ -156,10 +156,3 @@ export const Tabs = forwardRef(
   }
 )
 Tabs.displayName = 'CTabs'
-
-// borderTop: "1px solid " + theme.palette.divider,
-// borderLeft: "1px solid " + theme.palette.divider,
-// borderRight: "1px solid " + theme.palette.divider,
-// borderTopLeftRadius: 4,
-// borderTopRightRadius: 4,
-// background: theme.palette.primary.main,

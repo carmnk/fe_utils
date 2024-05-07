@@ -36,6 +36,7 @@ const meta = {
   argTypes: {
     color: { control: 'color' },
     size: { control: 'number' },
+    borderRadius: { control: 'number' },
     fontSize: { control: 'number' },
     children: { control: false },
     customTooltip: { control: 'text' },
@@ -56,7 +57,7 @@ export const Initials: Story = {
 
 export const Image: Story = {
   args: {
-    src: "https://avatars.githubusercontent.com/u/101338?s=460&u=",
+    src: 'https://avatars.githubusercontent.com/u/101338?s=460&u=',
     alt: 'Default Avatar',
   },
   argTypes: {

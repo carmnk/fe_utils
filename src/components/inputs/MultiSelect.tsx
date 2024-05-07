@@ -3,7 +3,7 @@ import { Select, MenuItem, useTheme, FormHelperText } from '@mui/material'
 import { FormControl, SelectProps, FormControlProps } from '@mui/material'
 import { Typography, SelectChangeEvent, BoxProps } from '@mui/material'
 import { ListItemText, Checkbox } from '@mui/material'
-import { CommonInputFieldProps } from './_types'
+import { CommonInputFieldProps } from './types'
 
 const requiredFieldText = 'This field is required'
 const ITEM_HEIGHT = 48

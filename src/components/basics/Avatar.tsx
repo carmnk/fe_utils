@@ -1,15 +1,25 @@
-import { CSSProperties, useMemo } from 'react'
+import { CSSProperties, PropsWithChildren, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
-import { AvatarProps as MAvatarProps, Avatar as MAvatar } from '@mui/material'
-import { Tooltip, Box, Typography } from '@mui/material'
+import {
+  AvatarProps as MAvatarProps,
+  Avatar as MAvatar,
+  TypographyProps,
+  TooltipProps,
+} from '@mui/material'
+import { Tooltip, Typography } from '@mui/material'
 
-export type AvatarProps = Omit<MAvatarProps, 'title'> & {
+export type AvatarProps = Omit<MAvatarProps, 'title' | 'slotProps'> & {
   size?: CSSProperties['width']
   fullName?: string
   fontSize?: CSSProperties['fontSize']
   disableInitials?: boolean
   customTooltip?: React.ReactNode
   bgColor?: string
+  slotProps?: MAvatarProps['slotProps'] & {
+    typography?: TypographyProps
+    tooltip?: TooltipProps
+  }
+  borderRadius?: CSSProperties['borderRadius']
 }
 
 /** Simple composite component building on top of mui's
@@ -20,13 +30,16 @@ export type AvatarProps = Omit<MAvatarProps, 'title'> & {
  * - display tooltip with customTooltip or fallback fullName, to disableTooltip set customTooltip to ""<br/>
  * - props: additional to [Mui' Avatar Props](https://mui.com/material-ui/api/avatar/) <br/>
  * @prop size - size of the avatar (all size dimensions ?)<br/>
- * @prop fullName - full name of the user<br/>
+ * @prop children - Unformated text content to display in the avatar - PRECEEDS fullName<br/>
+ * @prop fullName - full name of the user to display as initials (initial letter of first and last word) in the avator or tooltip<br/>
  * @prop fontSize - font size of the initials<br/>
  * @prop disableInitials - disable initials display<br/>
  * @prop customTooltip - custom tooltip to display<br/>
  * @prop bgColor - background color of the avatar
+ * @prop color - color of the initials<br/>
+ * @prop slotProps - additional slotProps for typography, tooltip and mui's img <br/>
  */
-export const Avatar = (props: AvatarProps) => {
+export const Avatar = (props: PropsWithChildren<AvatarProps>) => {
   const {
     size = 32,
     src,
@@ -37,13 +50,18 @@ export const Avatar = (props: AvatarProps) => {
     customTooltip,
     bgColor,
     color,
+    children,
+    slotProps,
+    borderRadius,
     ...rest
   } = props
+  const { typography, tooltip, ...muiSlotProps } = slotProps ?? {}
 
   const fontSizeAdj = typeof fontSize === 'number' ? fontSize + 'px' : fontSize
 
   const avatarStyles = useMemo(
     () => ({
+      borderRadius,
       width: size,
       height: size,
       display: 'flex',
@@ -54,7 +72,16 @@ export const Avatar = (props: AvatarProps) => {
       ...style,
       ...(rest?.sx ?? {}),
     }),
-    [size, style, rest?.sx, bgColor]
+    [
+      size,
+      style,
+      rest?.sx,
+      bgColor,
+      color,
+      fullName,
+      disableInitials,
+      borderRadius,
+    ]
   )
 
   const initials = useMemo(() => {
@@ -94,9 +121,16 @@ export const Avatar = (props: AvatarProps) => {
       arrow
       title={customTooltip ?? fullName}
       disableInteractive
+      {...tooltip}
     >
-      <MAvatar {...rest} sx={avatarStyles} src={src} color={color}>
-        {fullName && !disableInitials ? (
+      <MAvatar
+        {...rest}
+        sx={avatarStyles}
+        slotProps={muiSlotProps}
+        src={src}
+        color={color}
+      >
+        {children || (fullName && !disableInitials) ? (
           <Typography
             variant="caption"
             textAlign="center"
@@ -106,9 +140,9 @@ export const Avatar = (props: AvatarProps) => {
             color={color}
             height={fontSizeAdj}
             sx={{ fontSize: fontSizeAdj }}
-            // lineHeight={1}
+            {...typography}
           >
-            {initials}
+            {children ?? initials}
           </Typography>
         ) : null}
       </MAvatar>

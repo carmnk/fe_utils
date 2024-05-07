@@ -1,15 +1,10 @@
-import { Divider, Stack, useTheme } from '@mui/material'
+import { Divider, DividerProps, useTheme } from '@mui/material'
 import { useCallback } from 'react'
 import { ButtonGroupButton, ButtonGroupButtonProps } from './ButtonGroupButton'
 import { CButtonProps } from '../Button/Button'
+import { Flex, FlexProps } from '../../_wrapper'
 
 export type ButtonGroupProps = {
-  buttons?: (
-    | (Omit<ButtonGroupButtonProps, 'selected'> & {
-        value: string
-      })
-    | null
-  )[]
   items?: (
     | (Omit<ButtonGroupButtonProps, 'selected'> & {
         value: string
@@ -23,11 +18,16 @@ export type ButtonGroupProps = {
   isSelected?: (itemValue: string, groupValue: string) => boolean
   transformValue?: (newItemValue: string, currentGroupValue: string) => string
   iconButtons?: boolean
+  slotProps?: {
+    flexContainer?: FlexProps
+    selectedButtonSlots?: CButtonProps['slotProps']
+    buttonSlots?: CButtonProps['slotProps']
+    divider?: DividerProps
+  }
 }
 
 export const ButtonGroup = (props: ButtonGroupProps) => {
   const {
-    buttons,
     items,
     value,
     onChange,
@@ -36,8 +36,9 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
     buttonProps,
     selectedButtonProps,
     iconButtons,
+    slotProps,
   } = props
-  const itemsAdj = items ?? buttons
+  const itemsAdj = items
 
   const handleChange = useCallback(
     (newValue: string) => {
@@ -52,28 +53,38 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
 
   const theme = useTheme()
   return (
-    <Stack
-      direction="row"
+    <Flex
       gap={0.25}
       border={'1px solid ' + theme.palette.divider}
       width="max-content"
+      {...(slotProps?.flexContainer ?? {})}
     >
       {itemsAdj?.map?.((item, bIdx) => {
         const isItemSelected =
           (item && isSelected?.(item.value, value)) ?? item?.value === value
         return item ? (
           <ButtonGroupButton
-            {...(item ?? {})}
+            slotProps={
+              isItemSelected
+                ? slotProps?.selectedButtonSlots
+                : slotProps?.buttonSlots
+            }
             {...((isItemSelected ? selectedButtonProps : buttonProps) ?? {})}
+            {...(item ?? {})}
             iconButton={item?.iconButton ?? iconButtons}
             key={bIdx}
             selected={isItemSelected}
             onClick={() => handleChange(item.value)}
           />
         ) : (
-          <Divider orientation="vertical" flexItem key={bIdx} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            key={bIdx}
+            {...(slotProps?.divider ?? {})}
+          />
         )
       }) ?? null}
-    </Stack>
+    </Flex>
   )
 }

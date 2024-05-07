@@ -2,12 +2,13 @@ import { CAutoComplete, CAutoCompleteProps } from './AutoComplete'
 import { MultiSelect, MultiSelectProps } from './MultiSelect'
 import { CNumberFieldProps, NumberField } from './NumberField'
 import { CSelectProps, Select } from './Select'
-import { TextField, TextFieldProps } from './TextField'
+import { TextField, CTextFieldProps } from './TextField'
 import { DatePicker, DatePickerProps } from './DatePicker'
 import { TextArea, TextAreaProps } from './TextArea'
 import { Checkbox, CheckboxProps } from './Checkbox'
-import { CommonInputFieldProps } from './_types'
+import { CommonInputFieldProps } from './types'
 import { Switch } from './Switch'
+import { InputFieldProps } from './types'
 
 export type GenericInputFieldType =
   | 'text'
@@ -29,7 +30,7 @@ export type GenericInputFieldOption = {
 
 export type SpecificInputProps<T extends GenericInputFieldType> =
   T extends 'text'
-    ? TextFieldProps
+    ? CTextFieldProps
     : T extends 'number'
       ? CNumberFieldProps
       : T extends 'int'
@@ -108,15 +109,20 @@ export const GenericInputField = (
   return hidden ? null : type === 'text' ? (
     <TextField
       label={label}
-      value={value}
+      value={value as any}
       name={name}
       placeholder={placeholder}
       required={required}
-      InputProps={{
-        sx: { ...(sx ?? {}), visibility: !invisible ? 'visible' : 'hidden' },
+      // InputProps={{
+      //   sx: { ...(sx ?? {}), visibility: !invisible ? 'visible' : 'hidden' },
+      // }}
+      slotProps={{
+        inputContainer: {
+          sx: { ...(sx ?? {}), visibility: !invisible ? 'visible' : 'hidden' },
+        },
       }}
       error={error}
-      {...(restIn as Omit<SpecificInputProps<'text'>, 'name'>)}
+      {...(restIn as Omit<InputFieldProps<'text'>, 'name' | 'value' | 'color'>)}
     />
   ) : type === 'number' ? (
     <NumberField
@@ -125,7 +131,7 @@ export const GenericInputField = (
       name={name}
       placeholder={placeholder}
       required={required}
-      InputProps={{ sx }}
+      slotProps={{ inputContainer: { sx } }}
       error={error}
       {...(restIn as Omit<SpecificInputProps<'number'>, 'name'>)}
     />
@@ -136,7 +142,7 @@ export const GenericInputField = (
       name={name}
       placeholder={placeholder}
       required={required}
-      InputProps={{ sx }}
+      slotProps={{ inputContainer: { sx } }}
       error={error}
       {...(restIn as Omit<SpecificInputProps<'int'>, 'name'>)}
     />
@@ -167,7 +173,7 @@ export const GenericInputField = (
       value={value as any}
       name={name}
       required={required}
-      {...(restIn as Omit<SpecificInputProps<'bool'>, 'name'>)}
+      {...(restIn as Omit<SpecificInputProps<'bool'>, 'name' | 'value'>)}
     />
   ) : type === 'switch' ? (
     <Switch

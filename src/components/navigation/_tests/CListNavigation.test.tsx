@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react'
-import { ListNavigation } from './CListNavigation'
+import { ListNavigation } from '../CListNavigation'
 
 describe('ListNavigation', () => {
   it('renders with correct initial value', () => {

@@ -3,10 +3,10 @@ import { Select as MSelect, MenuItem, useTheme } from '@mui/material'
 import { FormHelperText, FormControl, SelectProps } from '@mui/material'
 import { FormControlProps, SelectChangeEvent, Typography } from '@mui/material'
 import { BoxProps } from '@mui/material/Box'
-import { CommonInputFieldProps } from './_types'
+import { CommonInputFieldProps } from './types'
 
 export type CSelectProps = CommonInputFieldProps &
-  Omit<SelectProps, 'onChange' | 'variant'> & {
+  Omit<SelectProps, 'onChange' | 'variant' | 'options'> & {
     variant?: SelectProps['variant']
     disableTopPadding?: boolean
     value?: string | number | boolean | null

@@ -10,7 +10,7 @@ export type StringArrayFieldProps = {
   name?: string
   required?: any
   error?: boolean
-  onChangeArray: (newValue: string, name: string, arrayIdx: number) => void
+  onChangeArray: (newValue: string, name?: string, arrayIdx?: number) => void
   onRemoveItem: (name: string | undefined, arrayIndex: number) => void
   enableDeleteFirst?: boolean
   // disableHelperText?: boolean
@@ -53,6 +53,7 @@ export const StringArrayField = (props: StringArrayFieldProps) => {
             required={required && !index}
             onChange={(newValue, e) => {
               const { name, value } = e?.target ?? {}
+              if (!value) return
               onChangeArray(value, name, index)
             }}
             sx={{ width: '100%' }}

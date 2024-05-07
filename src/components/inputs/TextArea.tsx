@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Box, Typography, useTheme } from '@mui/material'
-import { CommonInputFieldProps } from './_types'
+import { CommonInputFieldProps } from './types'
 
 const requiredFieldText = 'This field is required'
 

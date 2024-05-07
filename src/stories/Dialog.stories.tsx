@@ -34,18 +34,8 @@ const meta = {
 
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
-    // color: { options: optionsMuiColors },
-    // iconSize: { control: 'number' },
-    // iconColor: { control: 'color' },
-    // fontColor: { control: 'color' },
-    // children: { control: false },
-    // icon: {
-    //   options: optionsMdiIcons,
-    // },
-    // endIcon: {
-    //   options: optionsMdiIcons,
-    // },
-    // dropdown: { options: ['closed', 'open'] },
+    borderRadius: { control: 'number' },
+    buttonBorderRadiuses: { control: 'number' },
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
   args: { onClick: fn() },
@@ -55,12 +45,33 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const Primary: Story = {
+export const NonConfirmationDialog: Story = {
   args: {
     header: 'Modal Header',
     subheader: 'Modal Subheader',
     // slotProps: { backdrop: { sx: {width: "500 !important"} } },
-    sx: { width: '300px !important' },
+    sx: { width: '600px !important' },
+    // slotProps: { paper: { sx: { top: '0 !important', left: '0 !important' } } },
+    // PaperProps: { sx: { top: 0, left: 0 } },
+    open: true,
+    // nonConfirmationButtonProps: { borderRadius: 9999 },
+    nonConfirmationLabel: 'Okay',
+
+    hideBackdrop: true,
+    disablePortal: true,
+    onClose: fn(),
+    children: 'Modal Content',
+    width: 600,
+  },
+}
+
+export const ConfirmationDialog: Story = {
+  args: {
+    isConfirmation: true,
+    header: 'Modal Header',
+    subheader: 'Modal Subheader',
+    // slotProps: { backdrop: { sx: {width: "500 !important"} } },
+    sx: { width: '600px !important' },
     // slotProps: { paper: { sx: { top: '0 !important', left: '0 !important' } } },
     // PaperProps: { sx: { top: 0, left: 0 } },
     open: true,
@@ -68,20 +79,40 @@ export const Primary: Story = {
     disablePortal: true,
     onClose: fn(),
     children: 'Modal Content',
-    // width: 800,
+    confirmationLabel: 'Yeah!',
+    confirmationTooltip: 'Confirm',
+    confirmationIcon: mdiCheck,
+
+    cancelConfirmationLabel: 'Nope',
+    cancelConfirmationIcon: mdiClose,
+    slotProps: { cancelConfirmButton: { variant: 'outlined' } },
+    width: 600,
   },
 }
 
-// export const Secondary: Story = {
-//   args: {
-//     variant: 'outlined',
-//     label: 'Outlined',
-//   },
-// }
+export const ConfirmationWithTwoOptionsDialog: Story = {
+  args: {
+    isConfirmation: true,
+    header: 'Modal Header',
+    subheader: 'Modal Subheader',
+    // slotProps: { backdrop: { sx: {width: "500 !important"} } },
+    sx: { width: '600px !important' },
+    // slotProps: { paper: { sx: { top: '0 !important', left: '0 !important' } } },
+    // PaperProps: { sx: { top: 0, left: 0 } },
+    open: true,
 
-// export const Text: Story = {
-//   args: {
-//     variant: 'text',
-//     label: 'Text',
-//   },
-// }
+    confirmationLabel: 'Yeah!',
+    confirmationTooltip: 'Confirm',
+    confirmationIcon: mdiCheck,
+    secondaryActionIcon: mdiPencil,
+    secondaryActionLabel: 'Edit',
+    slotProps: { secondaryButton: { variant: 'outlined' } },
+    onSecondaryAction: fn(),
+
+    hideBackdrop: true,
+    disablePortal: true,
+    onClose: fn(),
+    children: 'Modal Content',
+    width: 600,
+  },
+}

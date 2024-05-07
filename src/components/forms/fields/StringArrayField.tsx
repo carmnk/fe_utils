@@ -119,7 +119,7 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
             label={(field as any)?.label}
             required={!!required}
             disabled={!!disabled}
-            onChangeArray={onChangeObjectSub}
+            onChangeArray={onChangeObjectSub as any}
             onRemoveItem={removeItemArraySub as any}
             enableDeleteFirst={(field as any)?.enableDeleteFirst}
             // showError={showError}

@@ -1,30 +1,29 @@
+import { useCallback, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import Dialog, { DialogProps } from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
+import DialogActions, { DialogActionsProps } from '@mui/material/DialogActions'
+import DialogContent, { DialogContentProps } from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
+import { Box, BoxProps, PaperProps, Stack, StackProps } from '@mui/material'
+import { Tooltip, TooltipProps } from '@mui/material'
+import { Typography, TypographyProps } from '@mui/material'
+import { TransitionProps } from '@mui/material/transitions'
 import { Button } from '../buttons/Button'
-import {
-  Box,
-  IconButton,
-  PaperProps,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material'
 import Icon from '@mdi/react'
 import { mdiClose } from '@mdi/js'
+import { IconProps } from '@mdi/react/dist/IconProps'
+import { Flex, FlexProps } from '../_wrapper'
 import { NewlineText } from '../basics/NewLineText'
-import { useCallback, useMemo } from 'react'
 import { CButtonProps } from '../buttons/Button'
 
 const actionsStyles = { pl: 3 }
 
 export type CModalBaseProps = Omit<
   DialogProps,
-  'open' | 'onClose' | 'maxWidth'
+  'open' | 'onClose' | 'maxWidth' | 'PaperProps' | 'slotProps'
 > & {
+  buttonBorderRadiuses?: number
+  borderRadius?: number
   open: boolean
   header: React.ReactNode
   isConfirmation?: boolean
@@ -34,9 +33,7 @@ export type CModalBaseProps = Omit<
   confirmationLabel?: string
   cancelConfirmationLabel?: string
   cancelConfirmationIcon?: React.ReactNode
-  onClose?: (param?: any) => any
-
-  PaperProps?: PaperProps
+  onClose?: () => void
   maxWidth?: number
   width?: number
   onSecondaryAction?: () => void
@@ -52,10 +49,29 @@ export type CModalBaseProps = Omit<
   loading?: boolean
   subheader?: React.ReactNode
   confirmationTooltip?: string
-  confirmButtonProps?: CButtonProps
-  secondaryButtonProps?: CButtonProps
-  nonConfirmationButtonProps?: CButtonProps
-  cancelConfirmButtonProps?: CButtonProps
+  slotProps?: DialogProps['slotProps'] & {
+    paper?: PaperProps
+    cancelConfirmButton?: CButtonProps
+    confirmButton?: CButtonProps
+    secondaryButton?: CButtonProps
+    nonConfirmationButton?: CButtonProps
+    dialogContainertransition?: TransitionProps
+    headerFlexContainer?: FlexProps
+    headerLeftSubcontainer?: BoxProps
+    headerLeftSubcontainerSubheader?: BoxProps
+    subheaderTypography?: TypographyProps
+    closeButtonContainer?: BoxProps
+    closeButton?: CButtonProps
+    closeIcon?: IconProps
+    dialogTitleTypography?: TypographyProps
+    dialogContent?: DialogContentProps
+    dialogContentText?: BoxProps
+    dialogActionsRoot?: DialogActionsProps
+    dialogActionsContainer?: StackProps
+    dialogLeftActionsContainer?: StackProps
+    closButtonTooltip?: TooltipProps
+    dialogContentTypography?: TypographyProps
+  }
 }
 
 export type CModalProps =
@@ -69,43 +85,68 @@ export type CModalProps =
 export const Modal = (props: CModalProps) => {
   const {
     open,
-    header,
-    isConfirmation,
-    onConfirm,
-    content,
-    cancelConfirmationLabel,
-    confirmationLabel,
-    onClose,
-    PaperProps,
     maxWidth,
     width,
-    onSecondaryAction,
-    secondaryActionLabel,
-    confirmationIcon,
-    secondaryActionIcon,
-    cancelConfirmationIcon,
-    placeNonConfirmationButtonOnLeft,
-    nonConfirmationLabel,
     minHeight,
-    children,
-    disableCloseOnConfirmation,
-    confirmationDisabled,
-    hideConfirmationButton,
     minWidth,
     height,
+    onClose,
+    children,
+    // content
     loading,
+    header,
     subheader,
+    content,
+    disableCloseOnConfirmation,
+    hideConfirmationButton,
+    placeNonConfirmationButtonOnLeft,
+    isConfirmation,
+    // buttons
+    confirmationLabel,
     confirmationTooltip,
-    confirmButtonProps,
-    secondaryButtonProps,
-    nonConfirmationButtonProps,
-    cancelConfirmButtonProps,
+    confirmationDisabled,
+    confirmationIcon,
+    onConfirm,
+    cancelConfirmationIcon,
+    cancelConfirmationLabel,
+    secondaryActionIcon,
+    secondaryActionLabel,
+    onSecondaryAction,
+    nonConfirmationLabel,
+    slotProps,
+    borderRadius,
+    buttonBorderRadiuses,
     ...rest
   } = {
     ...props,
     content: 'content' in props ? props.content : undefined,
     children: 'children' in props ? props.children : undefined,
   }
+
+  const {
+    paper,
+    confirmButton,
+    cancelConfirmButton,
+    nonConfirmationButton,
+    secondaryButton,
+    dialogContainertransition,
+    headerFlexContainer,
+    headerLeftSubcontainer,
+    headerLeftSubcontainerSubheader,
+    subheaderTypography,
+    closeButtonContainer,
+    closeButton,
+    closeIcon,
+    dialogTitleTypography,
+    dialogContent,
+    dialogContentText,
+    dialogActionsRoot,
+    dialogActionsContainer,
+    dialogLeftActionsContainer,
+    closButtonTooltip,
+    dialogContentTypography,
+    ...muiSlotProps
+  } = slotProps ?? {}
 
   const handleConfirm = useCallback(() => {
     onConfirm?.()
@@ -114,141 +155,165 @@ export const Modal = (props: CModalProps) => {
 
   const PaperPropsAdj = useMemo(
     () => ({
-      ...PaperProps,
+      ...paper,
       sx: {
         p: 2,
+        borderRadius: borderRadius ? borderRadius + 'px' : undefined,
         maxWidth,
         width: width ? width + 4 * 8 : undefined,
-        ...PaperProps?.sx,
+        ...paper?.sx,
         minHeight,
         minWidth,
         height,
         maxHeight: '90%',
       },
     }),
-    [PaperProps, maxWidth, width, minHeight, minWidth, height]
+    [paper, maxWidth, width, minHeight, minWidth, height, borderRadius]
   )
 
   const contentInternal = children || content
-  const contentComponent =
-    contentInternal && typeof contentInternal === 'string' ? (
-      <Typography sx={{ lineHeight: '1.25rem' }}>
-        <NewlineText text={contentInternal} />
-      </Typography>
-    ) : (
-      contentInternal
-    )
+  const contentComponent = useMemo(
+    () =>
+      contentInternal && typeof contentInternal === 'string' ? (
+        <Typography
+          sx={{ lineHeight: '1.25rem' }}
+          variant="body2"
+          color="text.secondary"
+          {...dialogContentTypography}
+        >
+          <NewlineText text={contentInternal} />
+        </Typography>
+      ) : (
+        contentInternal
+      ),
+    [contentInternal, dialogContentTypography]
+  )
 
   return (
-    <div>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        aria-labelledby={
-          'modal-' + (typeof header === 'string' ? header : 'generic')
-        }
-        aria-describedby="alert-dialog-description"
-        PaperProps={PaperPropsAdj}
-        {...rest}
-      >
-        {/* <Box position="absolute" top={3 * 8} right={4 * 8}>
-
-        </Box> */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <div style={{ flexGrow: 1 }}>
-            <DialogTitle id="alert-dialog-title" sx={{ flexGrow: 1 }}>
-              {header}
-            </DialogTitle>
-            {subheader && (
-              <Box px={3}>
-                <Typography>{subheader}</Typography>
-              </Box>
-            )}
-          </div>
-          <Tooltip arrow title={'close'} placement="top">
-            <div>
-              <IconButton onClick={onClose}>
-                <Icon path={mdiClose} size={1} />
-              </IconButton>
-            </div>
-          </Tooltip>
-        </Stack>
-        <DialogContent id={'dialog-scroll-container'}>
-          <DialogContentText id="alert-dialog-description" component="div">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      aria-labelledby={
+        'modal-' + (typeof header === 'string' ? header : 'generic')
+      }
+      // aria-describedby="alert-dialog-description"
+      PaperProps={PaperPropsAdj}
+      {...rest}
+      TransitionProps={dialogContainertransition}
+      slotProps={muiSlotProps}
+    >
+      <Flex justifyContent="space-between" {...headerFlexContainer}>
+        <Box flexGrow={1} mt={0} {...headerLeftSubcontainer}>
+          <Typography
+            variant="h6"
+            pl={3}
+            flexGrow={1}
+            py={1}
+            {...dialogTitleTypography}
+          >
+            {header}
+          </Typography>
+          {subheader && (
+            <Box px={3} {...headerLeftSubcontainerSubheader}>
+              <Typography {...subheaderTypography}>{subheader}</Typography>
+            </Box>
+          )}
+        </Box>
+        <Tooltip arrow title={'close'} placement="top" {...closButtonTooltip}>
+          <Box {...closeButtonContainer}>
+            <Button
+              iconButton
+              icon={mdiClose}
+              onClick={onClose as any}
+              variant="text"
+              borderRadius={buttonBorderRadiuses}
+              {...closeButton}
+            >
+              <Icon path={mdiClose} size={1} {...closeIcon} />
+            </Button>
+          </Box>
+        </Tooltip>
+      </Flex>
+      <DialogContent {...dialogContent}>
+        {typeof contentComponent === 'string' ? (
+          <DialogContentText component="div" {...dialogContentText}>
             {contentComponent}
           </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={actionsStyles}>
-          {isConfirmation ? (
+        ) : (
+          contentComponent
+        )}
+      </DialogContent>
+      <DialogActions sx={actionsStyles} {...dialogActionsRoot}>
+        {isConfirmation ? (
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            width="100%"
+            {...dialogActionsContainer}
+          >
+            <Button
+              variant="text"
+              onClick={onClose as any}
+              icon={cancelConfirmationIcon}
+              loading={loading}
+              borderRadius={buttonBorderRadiuses}
+              {...cancelConfirmButton}
+            >
+              {cancelConfirmationLabel ?? 'Close'}
+            </Button>
             <Stack
               direction="row"
-              justifyContent="space-between"
-              width="100%"
-              // mt={2}
+              gap={2}
+              alignItems="center"
+              {...dialogLeftActionsContainer}
             >
-              <Button
-                variant="text"
-                onClick={onClose}
-                icon={cancelConfirmationIcon}
-                loading={loading}
-                {...cancelConfirmButtonProps}
-              >
-                {cancelConfirmationLabel ?? 'Close'}
-              </Button>
-              <Stack direction="row" gap={2} alignItems="center">
-                {onSecondaryAction && secondaryActionLabel && (
-                  <Button
-                    variant="outlined"
-                    onClick={onSecondaryAction}
-                    icon={secondaryActionIcon}
-                    loading={loading}
-                    {...secondaryButtonProps}
-                  >
-                    {secondaryActionLabel}
-                  </Button>
-                )}
-                {!hideConfirmationButton && (
-                  <Button
-                    onClick={handleConfirm}
-                    icon={confirmationIcon}
-                    disabled={confirmationDisabled}
-                    loading={loading}
-                    tooltip={confirmationTooltip}
-                    {...confirmButtonProps}
-                  >
-                    {confirmationLabel ?? 'Submit'}
-                  </Button>
-                )}
-              </Stack>
+              {onSecondaryAction && secondaryActionLabel && (
+                <Button
+                  variant="outlined"
+                  onClick={onSecondaryAction}
+                  icon={secondaryActionIcon}
+                  loading={loading}
+                  borderRadius={buttonBorderRadiuses}
+                  {...secondaryButton}
+                >
+                  {secondaryActionLabel}
+                </Button>
+              )}
+              {!hideConfirmationButton && (
+                <Button
+                  onClick={handleConfirm}
+                  icon={confirmationIcon}
+                  disabled={confirmationDisabled}
+                  loading={loading}
+                  tooltip={confirmationTooltip}
+                  borderRadius={buttonBorderRadiuses}
+                  {...confirmButton}
+                >
+                  {confirmationLabel ?? 'Submit'}
+                </Button>
+              )}
             </Stack>
-          ) : (
-            <Stack
-              direction="row"
-              width="100%"
-              justifyContent={
-                placeNonConfirmationButtonOnLeft ? 'flex-start' : 'flex-end'
-              }
+          </Stack>
+        ) : (
+          <Stack
+            direction="row"
+            width="100%"
+            justifyContent={
+              placeNonConfirmationButtonOnLeft ? 'flex-start' : 'flex-end'
+            }
+          >
+            <Button
+              variant="text"
+              onClick={onClose as any}
+              loading={loading}
+              borderRadius={buttonBorderRadiuses}
+              {...nonConfirmationButton}
             >
-              <Button
-                variant="text"
-                onClick={onClose}
-                loading={loading}
-                {...nonConfirmationButtonProps}
-              >
-                {nonConfirmationLabel || 'Close'}
-              </Button>
-            </Stack>
-          )}
-        </DialogActions>
-      </Dialog>
-    </div>
+              {nonConfirmationLabel || 'Close'}
+            </Button>
+          </Stack>
+        )}
+      </DialogActions>
+    </Dialog>
   )
-}
-export const AlertDialog = (props: CModalProps) => {
-  const { width, maxWidth, ...rest } = props
-  return <Modal width={788} minWidth={788} {...rest} />
 }

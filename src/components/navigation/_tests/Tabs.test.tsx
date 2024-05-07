@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react'
-import { Tabs } from './CTabs'
+import { Tabs } from '../CTabs'
 
 describe('Tabs', () => {
   it('renders with correct initial value', () => {

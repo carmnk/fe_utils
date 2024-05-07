@@ -4,7 +4,7 @@ import { Fragment, KeyboardEventHandler, useMemo } from 'react'
 import { Autocomplete, TextField, FormControl, useTheme } from '@mui/material'
 import { FormHelperText, CircularProgress, Typography } from '@mui/material'
 import { FormControlProps, AutocompleteProps, Box } from '@mui/material'
-import { CommonInputFieldProps } from './_types'
+import { CommonInputFieldProps } from './types'
 
 const requiredFieldText = 'This field is required'
 
