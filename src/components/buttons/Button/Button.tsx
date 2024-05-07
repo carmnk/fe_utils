@@ -15,9 +15,9 @@ import { ButtonEndIcon, ButtonStartIcon } from './ButtonIcons'
 import { makeButtonStyles } from './buttonStyles'
 import { IconProps } from '@mdi/react/dist/IconProps'
 
-export type CButtonProps = Pick<
+export type CButtonProps = Omit<
   ButtonProps,
-  'onClick' | 'onPointerDown' | 'onKeyDown' | 'size' | 'sx' | 'id' | 'variant'
+  'label' | 'loading' | 'icon' | 'color' | 'slotProps' | 'endIcon'
 > & {
   label?: React.ReactNode // label for the button - precedence over children!
   children?: React.ReactNode // label for the button - if label is not provided
