@@ -1,17 +1,26 @@
 import { ReactNode, ChangeEvent, SyntheticEvent, useState, useRef } from 'react'
 import { useCallback, FocusEvent, KeyboardEvent, useEffect } from 'react'
 import { Fragment, KeyboardEventHandler, useMemo } from 'react'
-import { Autocomplete, TextField, FormControl, useTheme } from '@mui/material'
+import {
+  Autocomplete,
+  TextField as MTextField,
+  TextFieldProps,
+  FormControl,
+  useTheme,
+  TypographyProps,
+  FormHelperTextProps,
+} from '@mui/material'
 import { FormHelperText, CircularProgress, Typography } from '@mui/material'
 import { FormControlProps, AutocompleteProps, Box } from '@mui/material'
 import { CommonInputFieldProps } from './types'
+import TextField, { CTextFieldProps } from './TextField'
 
 const requiredFieldText = 'This field is required'
 
 export type CAutoCompleteProps = CommonInputFieldProps &
   Omit<
     AutocompleteProps<string, false, false, boolean>,
-    'options' | 'renderInput' | 'onChange' | 'onInputChange'
+    'options' | 'renderInput' | 'onChange' | 'onInputChange' | 'slotProps'
   > & {
     onChange?: (newValue: string, e: ChangeEvent<HTMLInputElement>) => void
     onInputChange?: (
@@ -22,7 +31,6 @@ export type CAutoCompleteProps = CommonInputFieldProps &
     freeSolo?: boolean
     disableHelperText?: boolean
     disableLabel?: boolean
-    ContainerProps?: FormControlProps
     options: { value: string; label: string }[]
     onKeyUp?: (e?: KeyboardEventHandler<HTMLInputElement>) => void
     value: string
@@ -32,6 +40,12 @@ export type CAutoCompleteProps = CommonInputFieldProps &
       false,
       boolean
     >['renderInput']
+    slotProps?: AutocompleteProps<string, false, false, boolean>['slotProps'] &
+      CTextFieldProps['slotProps'] & {
+        label?: TypographyProps
+        rootContainer?: FormControlProps
+        formHelperText?: FormHelperTextProps
+      }
   }
 
 const injectFieldNameToEvent = (
@@ -43,7 +57,7 @@ const injectFieldNameToEvent = (
     target: { ...(e?.target ?? {}), name },
   }) as unknown as ChangeEvent<HTMLInputElement>
 
-const formHelperTextStyles = { ml: '2px', height: 23, color: 'error.main' }
+const formHelperTextStyles = { ml: '2px', color: 'error.main' }
 
 export const CAutoComplete = (props: CAutoCompleteProps) => {
   const {
@@ -56,14 +70,26 @@ export const CAutoComplete = (props: CAutoCompleteProps) => {
     freeSolo,
     disableHelperText,
     disableLabel,
-    ContainerProps,
+    // ContainerProps,
     helperText,
     name,
     options,
     onKeyUp,
     value,
+    slotProps,
     ...restProps
   } = props
+
+  const {
+    label: labelProps,
+    rootContainer,
+    formHelperText: formHelperTextProps,
+    input,
+    tooltip,
+    notchedInputLabel,
+    inputContainer,
+    ...muiSlotProps
+  } = slotProps ?? {}
 
   const freeSoloInt = freeSolo ?? true
   const initValue = options?.find?.((opt) => opt?.value === value)?.label || ''
@@ -149,10 +175,10 @@ export const CAutoComplete = (props: CAutoCompleteProps) => {
       height: 42,
       p: 0,
       width: '100%',
-      ...((restProps as any)?.sx ?? {}),
       fontSize: 14,
       lineHeight: '16px',
       color: theme.palette.text.primary,
+      ...((restProps as any)?.sx ?? {}),
     }
   }, [theme.palette.text.primary, restProps])
 
@@ -172,33 +198,28 @@ export const CAutoComplete = (props: CAutoCompleteProps) => {
   )
 
   const renderInput = useCallback(
-    (params: any) => (
-      <TextField
-        {...params}
-        name={name}
-        error={!!error}
-        InputProps={{
-          ...(params?.InputProps ?? {}),
-          sx: {
-            ...(params?.InputProps?.sx ?? {}),
-            height: 42,
-            fontSize: '14px !important',
-            lineHeight: '16px',
+    (params: TextFieldProps) => {
+      const onChange = (newValue: string) => {
+        const eventValue = {
+          target: {
+            value: newValue,
           },
-          inputProps: {
-            ...(params?.inputProps ?? {}),
-            title: name,
-          },
-          endAdornment: (
-            <Fragment>
-              {loading ? <CircularProgress color="inherit" size={20} /> : null}
-              {params.InputProps.endAdornment}
-            </Fragment>
-          ),
-        }}
-      />
-    ),
-    [error, loading, name]
+        }
+        params?.onChange?.(eventValue as any)
+      }
+      return (
+        <TextField
+          {...params}
+          rows={params?.rows as any}
+          value={params?.value as string}
+          onChange={onChange}
+          name={name}
+          error={!!error}
+          slotProps={{ input, inputContainer,  }}
+        />
+      )
+    },
+    [error, name]
   )
 
   // update inner inputValue when outer value is changed
@@ -232,14 +253,16 @@ export const CAutoComplete = (props: CAutoCompleteProps) => {
 
   return (
     <FormControl
-      sx={{ width: '100%' }}
+      sx={{ width: '100%', minWidth: 240 }}
       className="flex flex-col w-full"
-      {...ContainerProps}
+      {...rootContainer}
     >
       {!disableLabel && (
         <Typography
           variant="caption"
           style={error ? labelErrorStyles : undefined}
+          paddingBottom={'4px'}
+          {...labelProps}
         >
           {label}
           {required && <strong style={themeErrorText}> *</strong>}
@@ -264,10 +287,16 @@ export const CAutoComplete = (props: CAutoCompleteProps) => {
         size="small"
         sx={inputStyles}
         renderOption={renderOption}
-        slotProps={{ popper: { sx: { zIndex: 999999 } } }}
+        slotProps={{
+          ...muiSlotProps,
+          popper: {
+            ...(muiSlotProps.popper ?? {}),
+            sx: { ...(muiSlotProps?.popper?.sx ?? {}), zIndex: 999999 },
+          },
+        }}
       />
       {!disableHelperText && (
-        <FormHelperText sx={formHelperTextStyles}>
+        <FormHelperText sx={formHelperTextStyles} {...formHelperTextProps}>
           {helperText ? helperText : error ? requiredFieldText : ' '}
         </FormHelperText>
       )}

@@ -12,7 +12,12 @@ const requiredFieldText = 'This field is required'
 export type CTextFieldProps = InputFieldProps<'text'> &
   Omit<
     MTextFieldProps,
-    'value' | 'onChange' | 'inputProps' | 'InputProps' | 'FormHelperTextProps'
+    | 'value'
+    | 'onChange'
+    | 'inputProps'
+    | 'InputProps'
+    | 'FormHelperTextProps'
+    | 'slotProps'
   > & {
     borderRadius?: number
     icon?: ReactNode
@@ -154,7 +159,7 @@ export const TextField = forwardRef(
           sx: {
             ...(formHelperText?.sx ?? {}),
             ml: '2px',
-            height: disableHelperText ? '0px' : 23,
+            height: disableHelperText ? '0px' : undefined,
             mt: disableHelperText ? 0 : 0.5,
             whiteSpace: 'nowrap',
           },
@@ -208,6 +213,7 @@ export const TextField = forwardRef(
         display="flex"
         flexDirection="column"
         width="100%"
+        minWidth="240px"
         {...(rootContainer ?? {})}
       >
         {!disableLabel && !useNotchedLabel && (

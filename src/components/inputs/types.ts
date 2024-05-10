@@ -7,7 +7,7 @@ export type CommonBooleanInputFieldProps = {
   required?: boolean
   sx?: any
   disabled?: boolean
-  helperText?: string
+  helperText?: ReactNode
   disableHelperText?: boolean
   disableLabel?: boolean
   //   hidden?: boolean
@@ -79,7 +79,47 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
           notchedLabelBgColor?: string
           notchedLabelMarginLeft?: number
         }
-      : never
+      : T extends 'number'
+        ? {
+            value: number | ''
+            onChange: (
+              newValue: string,
+              e?: ChangeEvent<HTMLInputElement>,
+              name?: string
+            ) => void
+            // rows?: number
+            onChangeCompleted?: (
+              newValue: string,
+              e?: ChangeEvent<HTMLInputElement>,
+              name?: string
+            ) => void
+            injectLabelComponent?: React.ReactNode
+            labelSubtext?: React.ReactNode
+            useNotchedLabel?: boolean
+            notchedLabelBgColor?: string
+            notchedLabelMarginLeft?: number
+          }
+        : T extends 'select' | 'autocomplete'
+          ? {
+              value: number | ''
+              onChange: (
+                newValue: string,
+                e?: ChangeEvent<HTMLInputElement>,
+                name?: string
+              ) => void
+              // rows?: number
+              onChangeCompleted?: (
+                newValue: string,
+                e?: ChangeEvent<HTMLInputElement>,
+                name?: string
+              ) => void
+              // injectLabelComponent?: React.ReactNode
+              // labelSubtext?: React.ReactNode
+              useNotchedLabel?: boolean
+              notchedLabelBgColor?: string
+              notchedLabelMarginLeft?: number
+            }
+          : never
 
 export type InputFieldProps<T extends InputFieldType = InputFieldType> =
   (T extends 'bool' | 'switch'

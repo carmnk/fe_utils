@@ -31,7 +31,9 @@ export const getDynamicFields = (params: {
           required: getInjectedValue(injections?.required?.[field.name]),
           options: getInjectedValue(injections?.options?.[field.name]),
           error: getInjectedValue(injections?.error?.[field.name]),
-          helperText: getInjectedValue(injections?.helperText?.[field.name]),
+          helperText: getInjectedValue(
+            injections?.helperText?.[field.name]
+          ) as any,
           invisible: getInjectedValue(injections?.invisible?.[field.name]),
           hidden: getInjectedValue(injections?.hidden?.[field.name]),
         }
@@ -41,7 +43,7 @@ export const getDynamicFields = (params: {
       ...injectDynamics,
     }
   })
-  return dynamicFields
+  return dynamicFields as any
 }
 
 export const getInitialFieldValues = (

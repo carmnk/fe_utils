@@ -40,12 +40,11 @@ const meta = {
     icon: { control: 'select', options: optionsMdiIcons },
     startIcon: { control: 'select', options: optionsMdiIcons },
     injectComponent: { control: false },
-    InputProps: { control: 'object' },
-    labelSx: { control: 'object' },
+    slotProps: { control: 'object' },
     InputLabelProps: { control: 'object' },
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-  args: { onChange: fn() },
+  args: { onChange: fn() as any },
 } satisfies Meta<typeof NumberField>
 
 export default meta

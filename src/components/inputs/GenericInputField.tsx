@@ -209,7 +209,8 @@ export const GenericInputField = (
       required={required}
       options={(options as any) ?? []}
       error={error}
-      {...(rest as Omit<SpecificInputProps<'select'>, 'name'>)}
+      sx={sx}
+      {...(rest as any)}
     />
   ) : type === 'autocomplete' ? (
     <CAutoComplete

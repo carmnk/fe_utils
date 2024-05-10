@@ -1,11 +1,19 @@
 import { ChangeEvent, useMemo, useCallback } from 'react'
-import { Select as MSelect, MenuItem, useTheme } from '@mui/material'
+import {
+  FormHelperTextProps,
+  Select as MSelect,
+  MenuItem,
+  MenuItemProps,
+  TypographyProps,
+  useTheme,
+} from '@mui/material'
 import { FormHelperText, FormControl, SelectProps } from '@mui/material'
-import { FormControlProps, SelectChangeEvent, Typography } from '@mui/material'
+import { SelectChangeEvent, Typography } from '@mui/material'
 import { BoxProps } from '@mui/material/Box'
-import { CommonInputFieldProps } from './types'
+import { CommonInputFieldProps, InputFieldProps } from './types'
 
 export type CSelectProps = CommonInputFieldProps &
+  InputFieldProps<'select'> &
   Omit<SelectProps, 'onChange' | 'variant' | 'options'> & {
     variant?: SelectProps['variant']
     disableTopPadding?: boolean
@@ -14,7 +22,7 @@ export type CSelectProps = CommonInputFieldProps &
     disableHelperText?: boolean
     disableLabel?: boolean
     labelSx?: BoxProps['sx']
-    ContainerProps?: FormControlProps
+    // ContainerProps?: FormControlProps
     onChange?:
       | ((newValue: string, e: ChangeEvent<HTMLInputElement>) => void)
       | ((newValue: number, e: ChangeEvent<HTMLInputElement>) => void)
@@ -22,6 +30,18 @@ export type CSelectProps = CommonInputFieldProps &
     locked?: boolean
     // helperText?: string
     size?: string
+    slotProps?: SelectProps['slotProps'] & {
+      rootContainer?: BoxProps
+      inputCombobox?: any // SelectProps['slotProps']['input']
+      inputContainer?: any // SelectProps['slotProps']['root']
+      input?: SelectProps['inputProps']
+      selectDisplay?: SelectProps['SelectDisplayProps']
+      menu?: SelectProps['MenuProps']
+      formHelperText?: FormHelperTextProps
+      label?: TypographyProps
+      menuItem?: MenuItemProps
+      // tooltip?: TooltipProps
+    }
   }
 
 const requiredFieldText = 'This field is required'
@@ -46,15 +66,27 @@ export const Select = (props: CSelectProps) => {
     disableHelperText,
     disableLabel,
     labelSx,
-    ContainerProps,
     name,
     locked,
     helperText,
     // disableHelperTextTheming,
     size,
+    slotProps,
     ...rest
   } = props
   const isDisabledAdj = disabled || locked
+
+  const {
+    inputCombobox,
+    inputContainer,
+    input: inputProps,
+    selectDisplay,
+    menu: menuProps,
+    rootContainer,
+    formHelperText,
+    label: typography,
+    menuItem: menuItemProps,
+  } = slotProps ?? {}
 
   const theme = useTheme()
   const handleChange = useCallback(
@@ -75,7 +107,7 @@ export const Select = (props: CSelectProps) => {
 
   const selectStyles = useMemo(() => {
     return {
-      height: !size || size === 'small' ? 32 : 42,
+      height: size === 'small' ? 32 : 40,
       pt: !disableTopPadding ? 1 : 0,
       width: '100%',
       fontSize: 14,
@@ -93,22 +125,29 @@ export const Select = (props: CSelectProps) => {
 
   const containerPropsAdj = useMemo(() => {
     return {
-      ...(ContainerProps ?? {}),
+      ...(rootContainer ?? {}),
       sx: {
-        ...(ContainerProps?.sx ?? {}),
-        // display: 'flex',
-        // flexDirection: 'column',
         width: '100%',
+        minWidth: '240px',
+        ...(rootContainer?.sx ?? {}),
       },
     }
-  }, [ContainerProps])
+  }, [rootContainer])
 
   const labelSxAdj = useMemo(() => {
     return {
-      ...labelSx,
       pb: 0.5,
+      ...labelSx,
     }
   }, [labelSx])
+
+  const muiSlotProps = useMemo(() => {
+    return {
+      // ...(slotProps ?? {}),
+      ...(inputCombobox ? { input: inputCombobox } : {}),
+      ...(inputContainer ? { root: inputContainer } : {}),
+    }
+  }, [inputCombobox, inputContainer])
 
   return (
     <FormControl {...(containerPropsAdj as any)}>
@@ -118,29 +157,39 @@ export const Select = (props: CSelectProps) => {
           component="label"
           style={error ? { color: theme.palette.error.main } : {}}
           sx={labelSxAdj}
+          {...typography}
         >
           {label}
           {required && <strong style={themeErrorText}> *</strong>}
         </Typography>
       )}
       <MSelect
-        {...rest}
         value={value ?? ''}
         onChange={handleChange as any}
         error={!!error}
-        size={size ?? 'small'}
+        size={size}
         disabled={isDisabledAdj}
         sx={selectStyles}
-        inputProps={{ title: name, name: name }}
+        fullWidth
+        inputProps={{ title: name, name: name, ...inputProps }}
+        SelectDisplayProps={selectDisplay}
+        MenuProps={menuProps}
+        slotProps={muiSlotProps}
+        {...rest}
       >
         {options?.map((opt, oIdx) => (
-          <MenuItem value={opt?.value as any} key={oIdx} sx={menuItemStyles}>
+          <MenuItem
+            value={opt?.value as any}
+            key={oIdx}
+            sx={menuItemStyles}
+            {...menuItemProps}
+          >
             {opt.label}
           </MenuItem>
         ))}
       </MSelect>
       {!disableHelperText && (
-        <FormHelperText sx={formHelperTextStyles}>
+        <FormHelperText sx={formHelperTextStyles} {...formHelperText}>
           {helperText ?? (error ? requiredFieldText : ' ')}
         </FormHelperText>
       )}

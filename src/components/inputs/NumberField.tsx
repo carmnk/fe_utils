@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import { InputAdornment, useTheme } from '@mui/material'
 import TextField, { CTextFieldProps } from './TextField'
 
 export const formatGermanNumberString = (
@@ -16,8 +15,6 @@ export const formatGermanNumberString = (
     ?.replaceAll(disableNumberSeparator ? '.' : '', '')
 }
 
-const REQUIRED_FIELD_HELPER_TEXT = 'This field is required'
-
 export type CNumberFieldProps = Omit<CTextFieldProps, 'value'> & {
   value?: number | '' | null
   isInt?: boolean
@@ -33,10 +30,6 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     name,
     onChange,
     required,
-    icon,
-    helperText,
-    startIcon,
-    disableHelperText,
     disableLabel,
     error,
     injectComponent,
@@ -50,15 +43,6 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     ...rest
   } = props
 
-  const {
-    rootContainer,
-    input,
-    inputContainer,
-    label: labelProps,
-    formHelperText,
-  } = slotProps ?? {}
-
-  const theme = useTheme()
   const [innerValue, setInnerValue] = React.useState<string | undefined>(
     undefined
   )
@@ -124,7 +108,6 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
   const handleChangeNumber = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value: valueIn } = e.target
-      console.log('EVT', e)
       let valueInAdj = valueIn.replaceAll('.', '')
       let isNumeric = true
       for (let i = 0; i < valueInAdj?.length || 0; i++) {
@@ -199,7 +182,6 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
               : undefined
           ) + (isLastCharComma ? ',' : '')
         setInnerValue(newInnerValue)
-        console.log('NEW VAL EVT', name, value, e)
         onChange?.(value, {
           ...e,
           target: { ...(e?.target ?? {}), value: value as any, name },
@@ -209,103 +191,27 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
     [onChange, maxLength, isInt, disableNumberSeparator, maxDecimalDigits]
   )
 
-  // const themeErrorText = {
-  //   color: theme.palette.error.main,
-  //   fontWeight: 700,
-  // }
-
   const muiTextfieldProps: CTextFieldProps = useMemo(() => {
     const textfieldProps: CTextFieldProps = {
       value: innerValue ?? '',
-      size: 'small',
-      name: name,
       onChange: handleChangeNumber,
-      error: error,
-      required: required,
-      helperText: disableHelperText
-        ? undefined
-        : helperText || (error ? REQUIRED_FIELD_HELPER_TEXT : ' '),
       onBlur: handleChangeCompleted,
       onFocus: handleChangeStarted,
       ...(rest as any),
-      slotProps: {
-        label: labelProps,
-        rootContainer,
-        input: { ref, maxLength, title: name, ...input },
-        inputContainer: {
-          endAdornment: <InputAdornment position="end">{icon}</InputAdornment>,
-          startAdornment: (
-            <InputAdornment position="start">{startIcon}</InputAdornment>
-          ),
-          ...(inputContainer ?? {}),
-          sx: {
-            height: 42,
-            fontSize: 14,
-            lineHeight: '16px',
-            borderColor: 'transparent !important',
-            borderWidth: '0px !important',
-            ...(inputContainer?.sx ?? {}),
-          },
-        },
-        formHelperText: {
-          ...(formHelperText ?? {}),
-          sx: {
-            ml: '2px',
-            height: disableHelperText ? '0px' : 23,
-            mt: disableHelperText ? 0 : 0.5,
-            whiteSpace: 'nowrap',
-            ...(formHelperText?.sx ?? {}),
-          },
-        },
-      },
+      slotProps,
     }
 
     return textfieldProps
   }, [
-    disableHelperText,
-    helperText,
-    icon,
-    error,
-    name,
-    required,
     rest,
-    startIcon,
     innerValue,
     handleChangeNumber,
     handleChangeCompleted,
     handleChangeStarted,
-    maxLength,
-    ref,
-    formHelperText,
-    inputContainer,
-    input,
-    labelProps,
-    rootContainer,
+    slotProps,
   ])
 
   return (
-    // <Box
-    //   position="relative"
-    //   display="flex"
-    //   flexDirection="column"
-    //   width="100%"
-    //   {...(ContainerProps ?? {})}
-    // >
-    //   {!disableLabel && (
-    //     <Box pb={0.25} pl={0.25}>
-    //       <Typography
-    //         variant="caption"
-    //         fontSize="14px"
-    //         color={error ? 'error.main' : undefined}
-    //         sx={labelSx}
-    //       >
-    //         {label} {required && <strong style={themeErrorText}>*</strong>}
-    //       </Typography>
-    //     </Box>
-    //   )}
-    //   <MTextField {...muiTextfieldProps} />
-    //   {injectComponent}
-    // </Box>
     <TextField
       {...muiTextfieldProps}
       disableLabel={disableLabel}
@@ -314,9 +220,6 @@ export const NumberField = React.forwardRef((props: CNumberFieldProps, ref) => {
       required={required}
       injectComponent={injectComponent}
       fullWidth
-      // onChange={(newValue: string | number, e: any) => {
-      //   muiTextfieldProps?.onChange?.(e)
-      // }}
     />
   )
 })

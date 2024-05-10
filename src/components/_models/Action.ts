@@ -12,3 +12,7 @@ export type UserActionDef = {
 export type UserAction = UserActionDef & {
   onClick: () => void
 }
+
+export type UserNavigationAction = Omit<UserAction, 'value'> & {
+  value: string
+}
