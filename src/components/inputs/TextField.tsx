@@ -158,6 +158,7 @@ export const TextField = forwardRef(
         FormHelperTextProps: {
           sx: {
             ml: '2px',
+            textAlign: 'left',
             height: disableHelperText ? '0px' : undefined,
             mt: disableHelperText ? 0 : 0.5,
             whiteSpace: 'nowrap',

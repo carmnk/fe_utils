@@ -9,6 +9,7 @@ import { Checkbox, CheckboxProps } from './Checkbox'
 import { CommonInputFieldProps } from './types'
 import { Switch } from './Switch'
 import { InputFieldProps } from './types'
+import { useMemo } from 'react'
 
 export type GenericInputFieldType =
   | 'text'
@@ -85,8 +86,10 @@ export type GenericInputFieldProps<T extends GenericInputFieldType> =
  * @returns JSX.Element | null
  * @todo implement Multiselect Component
  */
-export const GenericInputField = (
-  props: GenericInputFieldProps<GenericInputFieldType>
+export const GenericInputField = <
+  FieldType extends GenericInputFieldType = GenericInputFieldType,
+>(
+  props: GenericInputFieldProps<FieldType>
 ) => {
   const {
     value,
@@ -94,17 +97,19 @@ export const GenericInputField = (
     name,
     placeholder,
     required,
-    maxLength,
     type,
     sx,
     options,
     hidden,
     invisible,
     error,
-    files,
-    ...restIn
+    ...rest
   } = props
-  const rest = { ...restIn }
+
+  const sxAdj = useMemo(() => {
+    if (invisible) return { display: 'none', ...sx }
+    return sx
+  }, [invisible, sx])
 
   return hidden ? null : type === 'text' ? (
     <TextField
@@ -113,16 +118,9 @@ export const GenericInputField = (
       name={name}
       placeholder={placeholder}
       required={required}
-      // InputProps={{
-      //   sx: { ...(sx ?? {}), visibility: !invisible ? 'visible' : 'hidden' },
-      // }}
-      slotProps={{
-        inputContainer: {
-          sx: { ...(sx ?? {}), visibility: !invisible ? 'visible' : 'hidden' },
-        },
-      }}
+      sx={sxAdj}
       error={error}
-      {...(restIn as Omit<InputFieldProps<'text'>, 'name' | 'value' | 'color'>)}
+      {...(rest as Omit<InputFieldProps<'text'>, 'name' | 'value' | 'color'>)}
     />
   ) : type === 'number' ? (
     <NumberField
@@ -131,9 +129,9 @@ export const GenericInputField = (
       name={name}
       placeholder={placeholder}
       required={required}
-      slotProps={{ inputContainer: { sx } }}
+      sx={sxAdj}
       error={error}
-      {...(restIn as Omit<SpecificInputProps<'number'>, 'name'>)}
+      {...(rest as Omit<SpecificInputProps<'number'>, 'name'>)}
     />
   ) : type === 'int' ? (
     <NumberField
@@ -142,9 +140,9 @@ export const GenericInputField = (
       name={name}
       placeholder={placeholder}
       required={required}
-      slotProps={{ inputContainer: { sx } }}
+      sx={sxAdj}
       error={error}
-      {...(restIn as Omit<SpecificInputProps<'int'>, 'name'>)}
+      {...(rest as Omit<SpecificInputProps<'int'>, 'name'>)}
     />
   ) : //
   // : type === 'file' ? (
@@ -173,7 +171,9 @@ export const GenericInputField = (
       value={value as any}
       name={name}
       required={required}
-      {...(restIn as Omit<SpecificInputProps<'bool'>, 'name' | 'value'>)}
+      error={error}
+      sx={sxAdj}
+      {...(rest as Omit<SpecificInputProps<'bool'>, 'name' | 'value'>)}
     />
   ) : type === 'switch' ? (
     <Switch
@@ -181,7 +181,9 @@ export const GenericInputField = (
       value={value as any}
       name={name}
       required={required}
-      {...(restIn as any)}
+      sx={sxAdj}
+      error={error}
+      {...(rest as any)}
     />
   ) : type === 'date' ? (
     <DatePicker
@@ -189,7 +191,10 @@ export const GenericInputField = (
       value={value as any}
       name={name}
       required={required}
-      {...(restIn as Omit<SpecificInputProps<'date'>, 'name'>)}
+      placeholder={placeholder}
+      sx={sxAdj}
+      error={error}
+      {...(rest as Omit<SpecificInputProps<'date'>, 'name'>)}
     />
   ) : type === 'textarea' ? (
     <TextArea
@@ -198,7 +203,9 @@ export const GenericInputField = (
       name={name}
       placeholder={placeholder}
       required={required}
-      {...(restIn as Omit<SpecificInputProps<'textarea'>, 'name' | 'value'>)}
+      sx={sxAdj}
+      error={error}
+      {...(rest as Omit<SpecificInputProps<'textarea'>, 'name' | 'value'>)}
     />
   ) : type === 'select' ? (
     <Select
@@ -208,8 +215,8 @@ export const GenericInputField = (
       placeholder={placeholder}
       required={required}
       options={(options as any) ?? []}
+      sx={sxAdj}
       error={error}
-      sx={sx}
       {...(rest as any)}
     />
   ) : type === 'autocomplete' ? (
@@ -220,8 +227,9 @@ export const GenericInputField = (
       placeholder={placeholder}
       required={required}
       options={(options as any) ?? []}
+      sx={sxAdj}
       error={error}
-      {...(restIn as Omit<
+      {...(rest as Omit<
         SpecificInputProps<'autocomplete'>,
         'name' | 'value' | 'options'
       >)}
