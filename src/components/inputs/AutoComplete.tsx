@@ -45,6 +45,7 @@ export type CAutoCompleteProps = CommonInputFieldProps &
         label?: TypographyProps
         rootContainer?: FormControlProps
         formHelperText?: FormHelperTextProps
+        textfield?: CTextFieldProps
       }
   }
 
@@ -88,6 +89,7 @@ export const CAutoComplete = (props: CAutoCompleteProps) => {
     tooltip,
     notchedInputLabel,
     inputContainer,
+    textfield,
     ...muiSlotProps
   } = slotProps ?? {}
 
@@ -215,11 +217,14 @@ export const CAutoComplete = (props: CAutoCompleteProps) => {
           onChange={onChange}
           name={name}
           error={!!error}
-          slotProps={{ input, inputContainer,  }}
+          slotProps={{ input, inputContainer, notchedInputLabel }}
+          disableHelperText
+          disableLabel
+          {...textfield}
         />
       )
     },
-    [error, name]
+    [error, name, input, inputContainer, notchedInputLabel, textfield]
   )
 
   // update inner inputValue when outer value is changed
@@ -291,7 +296,7 @@ export const CAutoComplete = (props: CAutoCompleteProps) => {
           ...muiSlotProps,
           popper: {
             ...(muiSlotProps.popper ?? {}),
-            sx: { ...(muiSlotProps?.popper?.sx ?? {}), zIndex: 999999 },
+            sx: { zIndex: 999999, ...(muiSlotProps?.popper?.sx ?? {}) },
           },
         }}
       />

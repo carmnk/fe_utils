@@ -157,11 +157,11 @@ export const TextField = forwardRef(
         },
         FormHelperTextProps: {
           sx: {
-            ...(formHelperText?.sx ?? {}),
             ml: '2px',
             height: disableHelperText ? '0px' : undefined,
             mt: disableHelperText ? 0 : 0.5,
             whiteSpace: 'nowrap',
+            ...(formHelperText?.sx ?? {}),
           },
           ...formHelperText,
         },
