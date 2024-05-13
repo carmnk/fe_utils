@@ -2,13 +2,13 @@ import { ChangeEvent, useCallback } from 'react'
 import {
   GenericInputField,
   GenericInputFieldProps,
-  GenericInputFieldType,
 } from '../../inputs/GenericInputField'
 import { CustomField, CustomFieldDefinition } from './CustomField'
 import moment from 'moment'
+import { InputFieldType } from '../../inputs/types'
 
 export type FormFieldType =
-  | GenericInputFieldType
+  | InputFieldType
   | 'inject'
   | 'array'
   | 'object'
@@ -38,7 +38,7 @@ type StringArrayInputFieldProps = {
 export type StaticFieldDefinition<Type extends FormFieldType = FormFieldType> =
   InputFieldLayoutProps & { type: Type } & (Type extends 'inject'
       ? CustomFieldDefinition<any, any>
-      : Type extends GenericInputFieldType
+      : Type extends InputFieldType
         ? Omit<GenericInputFieldProps<Type>, 'name'> & { name: string } // make required
         : Type extends 'array'
           ? ArrayInputFieldProps
@@ -81,7 +81,7 @@ export type FieldProps = {
   onBeforeChange?: any //(value: any) => any
   showError?: boolean
   // type: string
-  field: DynamicFieldDefinition<GenericInputFieldType | 'inject'> // -> make gneric! StaticFieldType
+  field: DynamicFieldDefinition<InputFieldType | 'inject'> // -> make gneric! StaticFieldType
   files?: any
   onFileChange?: any
 }

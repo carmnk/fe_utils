@@ -5,21 +5,12 @@ import {
   Box,
   ClickAwayListener,
   TypographyProps,
-  TextField,
-  TextFieldProps,
   Chip,
 } from '@mui/material'
 import React, { ChangeEvent, memo, useCallback, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
-import { CAutoComplete, CAutoCompleteProps } from './AutoComplete'
-import { TextArea } from './TextArea'
-import {
-  GenericInputField,
-  GenericInputFieldProps,
-  GenericInputFieldType,
-} from './GenericInputField'
-
-const inputStyles = { sx: { p: 0.5, px: 1 } }
+import { CAutoComplete } from './AutoComplete'
+import { GenericInputField, GenericInputFieldProps } from './GenericInputField'
 
 type CommonClickTextFieldProps = {
   value: string
@@ -55,7 +46,7 @@ type CommonClickTextFieldProps = {
 // }
 
 export type ClickTextFieldProps<
-  T extends GenericInputFieldType = GenericInputFieldType,
+  T extends InputFieldType = InputFieldType,
 > = CommonClickTextFieldProps & {
   variant?: T
   fieldProps?: GenericInputFieldProps<T>
@@ -64,7 +55,7 @@ export type ClickTextFieldProps<
     : object)
 
 export const ClickTextFieldComponent = <
-  InputType extends GenericInputFieldType = GenericInputFieldType,
+  InputType extends InputFieldType = InputFieldType,
 >(
   props: ClickTextFieldProps<InputType>
 ) => {

@@ -6,64 +6,52 @@ import { TextField, CTextFieldProps } from './TextField'
 import { DatePicker, DatePickerProps } from './DatePicker'
 import { TextArea, TextAreaProps } from './TextArea'
 import { Checkbox, CheckboxProps } from './Checkbox'
-import { CommonInputFieldProps } from './types'
+import { CommonInputFieldProps, InputFieldType } from './types'
 import { Switch } from './Switch'
 import { InputFieldProps } from './types'
 import { useMemo } from 'react'
-
-export type GenericInputFieldType =
-  | 'text'
-  | 'number'
-  | 'int'
-  | 'date'
-  | 'select'
-  | 'autocomplete'
-  | 'multiselect'
-  | 'textarea'
-  | 'bool'
-  | 'switch'
-  | 'file'
 
 export type GenericInputFieldOption = {
   label: string
   value: number | string | boolean
 }
 
-export type SpecificInputProps<T extends GenericInputFieldType> =
-  T extends 'text'
-    ? CTextFieldProps
-    : T extends 'number'
+export type SpecificInputProps<T extends InputFieldType> = T extends 'text'
+  ? CTextFieldProps
+  : T extends 'number'
+    ? CNumberFieldProps
+    : T extends 'int'
       ? CNumberFieldProps
-      : T extends 'int'
-        ? CNumberFieldProps
-        : T extends 'date'
-          ? DatePickerProps
-          : T extends 'select'
-            ? CSelectProps
-            : T extends 'multiselect'
-              ? MultiSelectProps
-              : T extends 'autocomplete'
-                ? CAutoCompleteProps
-                : T extends 'textarea'
-                  ? TextAreaProps
-                  : T extends 'bool'
-                    ? CheckboxProps
-                    : never
+      : T extends 'date'
+        ? DatePickerProps
+        : T extends 'select'
+          ? CSelectProps
+          : T extends 'multiselect'
+            ? MultiSelectProps
+            : T extends 'autocomplete'
+              ? CAutoCompleteProps
+              : T extends 'textarea'
+                ? TextAreaProps
+                : T extends 'bool'
+                  ? CheckboxProps
+                  : never
 
-export type SimpleGenericInputFieldProps<T extends GenericInputFieldType> =
-  CommonInputFieldProps &
-    SpecificInputProps<T> & {
+export type SimpleGenericInputFieldProps<T extends InputFieldType> =
+  InputFieldProps<T> &
+    Omit<SpecificInputProps<T>, 'value' | 'onChange'> & {
       type: T
-      value?: T extends 'text' | 'textarea'
-        ? string | null
-        : T extends 'number' | 'int'
-          ? number | '' | null
-          : T extends 'date'
-            ? string | null
-            : T extends 'file'
-              ? number | '' | null
-              : null
-      onChange?: (newValue: any, e?: any) => void
+      // value?: T extends 'text' | 'textarea'
+      //   ? string | null
+      //   : T extends 'number' | 'int'
+      //     ? number | '' | null
+      //     : T extends 'date'
+      //       ? string | null
+      //       : T extends 'select' | 'autocomplete'
+      //         ? number | string | boolean | null
+      //         : T extends 'bool' | 'switch'
+      //           ? boolean | null
+      //           : null
+      // onChange?: (newValue: any, e?: any) => void
       hidden?: boolean
       invisible?: boolean
       disableHelperTextTheming?: boolean
@@ -73,21 +61,21 @@ export type SimpleGenericInputFieldProps<T extends GenericInputFieldType> =
       onFileChange?: (name: string, files: File[]) => void
     }
 
-export type GenericInputFieldProps<T extends GenericInputFieldType> =
+export type GenericInputFieldProps<T extends InputFieldType> =
   SimpleGenericInputFieldProps<T> & {
     options?: GenericInputFieldOption[]
   }
 
 /**
  * Generic Input Field Component - provides a unified prop interface for different input types.
- * The type property {@link GenericInputFieldType} determines the rendered input type
+ * The type property {@link InputFieldType} determines the rendered input type
  * Prefer using the GenericForm Component directly
  * @param props: {@link GenericInputFieldProps}
  * @returns JSX.Element | null
  * @todo implement Multiselect Component
  */
 export const GenericInputField = <
-  FieldType extends GenericInputFieldType = GenericInputFieldType,
+  FieldType extends InputFieldType = InputFieldType,
 >(
   props: GenericInputFieldProps<FieldType>
 ) => {

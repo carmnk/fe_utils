@@ -4,10 +4,11 @@ export { GenericInputField } from './GenericInputField'
 export type {
   GenericInputFieldProps,
   GenericInputFieldOption,
-  GenericInputFieldType,
   SimpleGenericInputFieldProps,
   SpecificInputProps,
 } from './GenericInputField'
+
+export type { InputFieldType } from './types'
 
 export { TextField } from './TextField'
 export type { CTextFieldProps } from './TextField'
