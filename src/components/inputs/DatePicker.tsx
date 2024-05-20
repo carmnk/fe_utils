@@ -72,9 +72,12 @@ export const DatePicker = (props: DatePickerProps) => {
           ),
           textField: (propsFromDateField) => {
             // const { ...restFromDateField } = propsFromDateField
-            console.warn('PROPS TEXTFIELD', propsFromDateField)
+            // console.warn('PROPS TEXTFIELD', propsFromDateField)
             const onChangeTextField = (newValue: any, e?: any, name?: any) => {
-              const event = { target: { value: newValue, name } }
+              const event = {
+                ...(e ?? {}),
+                target: { ...(e?.target ?? {}), value: newValue, name },
+              }
               propsFromDateField?.onChange?.(event)
             }
             return (
