@@ -70,19 +70,24 @@ export const DatePicker = (props: DatePickerProps) => {
               {...(props as any)}
             />
           ),
-          textField: (props) => {
-            console.warn('PROPS TEXTFIELD', props)
+          textField: (propsFromDateField) => {
+            // const { ...restFromDateField } = propsFromDateField
+            console.warn('PROPS TEXTFIELD', propsFromDateField)
+            const onChangeTextField = (newValue: any, e?: any, name?: any) => {
+              const event = { target: { value: newValue, name } }
+              propsFromDateField?.onChange?.(event)
+            }
             return (
               <CTextField
-                {...props}
+                {...propsFromDateField}
                 {...restIn}
                 slotProps={{
                   inputContainer: {
-                    ...(props?.InputProps ?? {}),
+                    ...(propsFromDateField?.InputProps ?? {}),
                     ...(restIn?.slotProps?.inputContainer ?? {}),
                   },
                   input: {
-                    ...props?.inputProps,
+                    ...propsFromDateField?.inputProps,
                     ...(restIn?.slotProps?.input ?? {}),
                   },
                 }}
@@ -90,6 +95,7 @@ export const DatePicker = (props: DatePickerProps) => {
                 helperText={helperText}
                 error={error == !validDate}
                 name={name}
+                onChange={onChangeTextField}
               />
             )
           },

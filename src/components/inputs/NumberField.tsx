@@ -148,10 +148,14 @@ export const NumberField = React.forwardRef(
         }
 
         if (!valueInAdj) {
-          onChange?.('' as any, {
-            ...e,
-            target: { ...(e?.target ?? {}), value: '', name: name as any },
-          })
+          onChange?.(
+            '' as any,
+            {
+              ...e,
+              target: { ...(e?.target ?? {}), value: '', name: name as any },
+            },
+            name
+          )
           setInnerValue('')
         } else {
           const posComma = valueInAdj.indexOf(',')
@@ -187,10 +191,18 @@ export const NumberField = React.forwardRef(
                 : undefined
             ) + (isLastCharComma ? ',' : '')
           setInnerValue(newInnerValue)
-          onChange?.(value, {
-            ...e,
-            target: { ...(e?.target ?? {}), value: value as any, name: name as any },
-          })
+          onChange?.(
+            value as any,
+            {
+              ...e,
+              target: {
+                ...(e?.target ?? {}),
+                value: value as any,
+                name: name as any,
+              },
+            },
+            name
+          )
         }
       },
       [onChange, maxLength, isInt, disableNumberSeparator, maxDecimalDigits]
