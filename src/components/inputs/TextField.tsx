@@ -54,7 +54,7 @@ export type CTextFieldProps = GenericInputFieldProps<'text'> &
   CustomTextFieldProps
 
 export const CTextField = forwardRef(
-  (props: CTextFieldProps, ref: ForwardedRef<HTMLInputElement>) => {
+  (props: CTextFieldProps, ref: ForwardedRef<any>) => {
     const {
       value,
       label,

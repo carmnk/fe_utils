@@ -24,7 +24,7 @@ export type CNumberFieldProps = Omit<CTextFieldProps, 'value'> & {
 }
 
 export const NumberField = React.forwardRef(
-  (props: CNumberFieldProps, ref: ForwardedRef<HTMLInputElement>) => {
+  (props: CNumberFieldProps, ref: ForwardedRef<any>) => {
     const {
       value,
       label,

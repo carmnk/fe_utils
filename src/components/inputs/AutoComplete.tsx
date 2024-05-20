@@ -61,7 +61,7 @@ const injectFieldNameToEvent = (
 // const formHelperTextStyles = { ml: '2px', color: 'error.main' }
 
 export const CAutoComplete = forwardRef(
-  (props: CAutoCompleteProps, ref: ForwardedRef<HTMLInputElement>) => {
+  (props: CAutoCompleteProps, ref: ForwardedRef<any>) => {
     const {
       onChange,
       onInputChange,
@@ -250,7 +250,7 @@ export const CAutoComplete = forwardRef(
             },
           },
           sx: {
-            height: 42,
+            // height: 42,
             // p: 0,
             width: '100%',
             fontSize: 14,

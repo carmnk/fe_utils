@@ -4,20 +4,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { DatePickerProps as MDatePickerProps } from '@mui/x-date-pickers'
-import {  BoxProps, TypographyProps } from '@mui/material'
 import { useTheme } from '@mui/material'
 import { GenericInputFieldProps } from './types'
 import { Button } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
-import CTextField from './TextField'
+import CTextField, { CTextFieldProps } from './TextField'
 
 export type DatePickerProps = GenericInputFieldProps<'date'> &
   MDatePickerProps<Moment> & {
-    ContainerProps?: BoxProps
-    labelSx?: TypographyProps
-    IconComponent?: React.ReactNode
     onChange?: (newValue: Moment | null, name?: string) => void
     value?: string | null
+    slotProps?: MDatePickerProps<Moment>['slotProps'] &
+      CTextFieldProps['slotProps']
   }
 
 export const DatePicker = (props: DatePickerProps) => {
@@ -27,14 +25,12 @@ export const DatePicker = (props: DatePickerProps) => {
     value,
     onChange,
     disabled,
-    IconComponent,
     helperText,
-    color,
     name,
+    ...restIn
   } = props
   const [validDate, setValidDate] = useState(true)
   const theme = useTheme()
-
 
   const handleChange = useCallback(
     (newValue: Moment | null) => {
@@ -49,13 +45,11 @@ export const DatePicker = (props: DatePickerProps) => {
     [name, onChange]
   )
 
-  
-
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <DesktopDatePicker
-      
         format="DD/MM/YYYY"
+        {...restIn}
         value={value}
         onChange={handleChange}
         disabled={disabled}
@@ -73,24 +67,25 @@ export const DatePicker = (props: DatePickerProps) => {
             return (
               <CTextField
                 {...props}
+                {...restIn}
                 slotProps={{
-                  inputContainer: { ...props?.InputProps },
-                  input: { ...props?.inputProps },
+                  inputContainer: {
+                    ...(props?.InputProps ?? {}),
+                    ...(restIn?.slotProps?.inputContainer ?? {}),
+                  },
+                  input: {
+                    ...props?.inputProps,
+                    ...(restIn?.slotProps?.input ?? {}),
+                  },
                 }}
                 label={label}
                 helperText={helperText}
+                error={error == !validDate}
+                name={name}
               />
             )
           },
         }}
-        slotProps={{
-          textField: {
-            name,
-            error: error == !validDate,
-            color: color,
-          } as any,
-        }}
-
       />
     </LocalizationProvider>
   )
