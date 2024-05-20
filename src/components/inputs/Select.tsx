@@ -1,4 +1,4 @@
-import { ChangeEvent, useMemo, useCallback } from 'react'
+import { ChangeEvent, useMemo } from 'react'
 import {
   FormHelperTextProps,
   Select as MSelect,
@@ -9,48 +9,67 @@ import {
 } from '@mui/material'
 import { FormHelperText, FormControl, SelectProps } from '@mui/material'
 import { SelectChangeEvent, Typography } from '@mui/material'
-import { BoxProps } from '@mui/material/Box'
-import { CommonInputFieldProps, InputFieldProps } from './types'
+import Box, { BoxProps } from '@mui/material/Box'
+import { GenericInputFieldProps } from './types'
+import { CTextFieldProps } from './TextField'
 
-export type CSelectProps = CommonInputFieldProps &
-  InputFieldProps<'select'> &
-  Omit<SelectProps, 'onChange' | 'variant' | 'options'> & {
-    variant?: SelectProps['variant']
-    disableTopPadding?: boolean
-    value?: string | number | boolean | null
-    options?: { value: string | number | boolean; label: string }[]
-    disableHelperText?: boolean
-    disableLabel?: boolean
-    labelSx?: BoxProps['sx']
-    // ContainerProps?: FormControlProps
-    onChange?:
-      | ((newValue: string, e: ChangeEvent<HTMLInputElement>) => void)
-      | ((newValue: number, e: ChangeEvent<HTMLInputElement>) => void)
-      | ((newValue: boolean, e: ChangeEvent<HTMLInputElement>) => void)
-    locked?: boolean
-    // helperText?: string
-    size?: string
-    slotProps?: SelectProps['slotProps'] & {
-      rootContainer?: BoxProps
-      inputCombobox?: any // SelectProps['slotProps']['input']
-      inputContainer?: any // SelectProps['slotProps']['root']
-      input?: SelectProps['inputProps']
-      selectDisplay?: SelectProps['SelectDisplayProps']
-      menu?: SelectProps['MenuProps']
-      formHelperText?: FormHelperTextProps
-      label?: TypographyProps
-      menuItem?: MenuItemProps
-      // tooltip?: TooltipProps
-    }
+export type CustomSelectProps = {
+  variant?: SelectProps['variant']
+  disableTopPadding?: boolean
+  value?: string | number | boolean | null
+  options?: { value: string | number | boolean; label: string }[]
+  disableHelperText?: boolean
+  disableLabel?: boolean
+  labelSx?: BoxProps['sx']
+  // ContainerProps?: FormControlProps
+  onChange?:
+    | ((newValue: string, e: ChangeEvent<HTMLInputElement>) => void)
+    | ((newValue: number, e: ChangeEvent<HTMLInputElement>) => void)
+    | ((newValue: boolean, e: ChangeEvent<HTMLInputElement>) => void)
+  locked?: boolean
+  // helperText?: string
+  size?: string
+  slotProps?: SelectProps['slotProps'] & {
+    rootContainer?: BoxProps
+    inputCombobox?: any // SelectProps['slotProps']['input']
+    inputContainer?: any // SelectProps['slotProps']['root']
+    input?: SelectProps['inputProps']
+    selectDisplay?: SelectProps['SelectDisplayProps']
+    menu?: SelectProps['MenuProps']
+    formHelperText?: FormHelperTextProps
+    label?: TypographyProps
+    menuItem?: MenuItemProps
+    // tooltip?: TooltipProps
   }
+}
+
+export type SpecificMuiTextFieldProps = Omit<
+  CTextFieldProps,
+  keyof CustomSelectProps
+>
+
+export type SpecificMuiSelectProps = Omit<
+  SelectProps,
+  | keyof CTextFieldProps
+  | keyof GenericInputFieldProps<'select'>
+  | keyof CustomSelectProps
+>
+
+export type CSelectProps = GenericInputFieldProps<'select'> &
+  SpecificMuiTextFieldProps &
+  SpecificMuiSelectProps &
+  CustomSelectProps
 
 const requiredFieldText = 'This field is required'
-
 const menuItemStyles = {
   fontSize: 14,
   lineHeight: '16px',
   color: '#212529',
   minHeight: { xs: 28 },
+}
+const errorTextStyle = {
+  color: 'error.main',
+  fontWeight: 700,
 }
 
 export const Select = (props: CSelectProps) => {
@@ -89,40 +108,13 @@ export const Select = (props: CSelectProps) => {
   } = slotProps ?? {}
 
   const theme = useTheme()
-  const handleChange = useCallback(
-    (e: SelectChangeEvent) => {
-      const value = e?.target?.value
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      onChange?.(value as never, e as any)
-    },
-    [onChange]
-  )
-
-  const themeErrorText = useMemo(() => {
-    return {
-      color: theme.palette.error.main,
-      fontWeight: 700,
-    }
-  }, [theme.palette.error.main])
-
-  const selectStyles = useMemo(() => {
-    return {
-      height: size === 'small' ? 32 : 40,
-      pt: !disableTopPadding ? 1 : 0,
-      width: '100%',
-      fontSize: 14,
-      lineHeight: '16px',
-      ...(props?.sx ?? {}),
-    }
-  }, [props?.sx, disableTopPadding, size])
 
   const formHelperTextStyles = useMemo(() => {
     return {
       ...(props?.sx ?? {}),
-      ...(error ? themeErrorText : {}),
+      ...(error ? errorTextStyle : {}),
     }
-  }, [props?.sx, error, themeErrorText])
-
+  }, [props?.sx, error])
   const containerPropsAdj = useMemo(() => {
     return {
       ...(rootContainer ?? {}),
@@ -133,7 +125,6 @@ export const Select = (props: CSelectProps) => {
       },
     }
   }, [rootContainer])
-
   const labelSxAdj = useMemo(() => {
     return {
       pb: 0.5,
@@ -141,13 +132,59 @@ export const Select = (props: CSelectProps) => {
     }
   }, [labelSx])
 
-  const muiSlotProps = useMemo(() => {
-    return {
-      // ...(slotProps ?? {}),
-      ...(inputCombobox ? { input: inputCombobox } : {}),
-      ...(inputContainer ? { root: inputContainer } : {}),
-    }
-  }, [inputCombobox, inputContainer])
+  const muiSelectProps: SelectProps = useMemo(
+    () => ({
+      value: value ?? '',
+      onChange: (e: SelectChangeEvent<unknown>) => {
+        const value = e?.target?.value
+        onChange?.(value as any, e as any, name)
+      },
+      error: !!error,
+      size: size as any,
+      disabled: isDisabledAdj,
+      sx: {
+        height: size === 'small' ? 32 : 40,
+        pt: !disableTopPadding ? 1 : 0,
+        width: '100%',
+        fontSize: 14,
+        lineHeight: '16px',
+        ...(props?.sx ?? {}),
+      },
+      fullWidth: true,
+      inputProps: { title: name, name: name, ...inputProps },
+      SelectDisplayProps: selectDisplay,
+      MenuProps: menuProps,
+
+      slotProps: {
+        // ...(slotProps ?? {}),
+        ...(inputCombobox ? { input: inputCombobox } : {}),
+        ...(inputContainer ? { root: inputContainer } : {}),
+      },
+      variant: rest?.variant as any,
+      defaultValue: rest?.defaultValue as any,
+      ...rest,
+      onInvalid: rest?.onInvalid as any,
+      margin: rest?.margin as any,
+      onKeyUp: rest?.onKeyUp as any,
+      onKeyDown: rest?.onKeyDown as any,
+    }),
+    [
+      value,
+      onChange,
+      error,
+      size,
+      isDisabledAdj,
+      name,
+      inputProps,
+      selectDisplay,
+      menuProps,
+      inputCombobox,
+      inputContainer,
+      disableTopPadding,
+      props?.sx,
+      rest,
+    ]
+  )
 
   return (
     <FormControl {...(containerPropsAdj as any)}>
@@ -160,23 +197,15 @@ export const Select = (props: CSelectProps) => {
           {...typography}
         >
           {label}
-          {required && <strong style={themeErrorText}> *</strong>}
+          {required && (
+            <Box component="strong" sx={errorTextStyle}>
+              {' '}
+              *
+            </Box>
+          )}
         </Typography>
       )}
-      <MSelect
-        value={value ?? ''}
-        onChange={handleChange as any}
-        error={!!error}
-        size={size}
-        disabled={isDisabledAdj}
-        sx={selectStyles}
-        fullWidth
-        inputProps={{ title: name, name: name, ...inputProps }}
-        SelectDisplayProps={selectDisplay}
-        MenuProps={menuProps}
-        slotProps={muiSlotProps}
-        {...rest}
-      >
+      <MSelect {...muiSelectProps}>
         {options?.map((opt, oIdx) => (
           <MenuItem
             value={opt?.value as any}

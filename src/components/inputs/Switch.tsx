@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import {
-  Box,
   FormControlLabel,
   FormControlLabelProps,
   FormHelperTextProps,
@@ -10,9 +9,9 @@ import {
   TypographyProps,
 } from '@mui/material'
 import { Switch as MSwitch, FormHelperText } from '@mui/material'
-import { InputFieldProps } from './types'
+import { GenericInputFieldProps } from './types'
 
-export type CSwitchProps = InputFieldProps<'bool'> &
+export type CSwitchProps = GenericInputFieldProps<'bool'> &
   Omit<SwitchProps, 'value' | 'onChange'> & {
     slotProps?: {
       tooltip?: TooltipProps

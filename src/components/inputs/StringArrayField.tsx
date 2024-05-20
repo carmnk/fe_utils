@@ -2,7 +2,7 @@ import { mdiDeleteOutline } from '@mdi/js'
 import { Box, Stack } from '@mui/material'
 import { Fragment } from 'react'
 import { Button } from '../buttons/Button/Button'
-import { TextField } from './TextField'
+import { CTextField } from './TextField'
 
 export type StringArrayFieldProps = {
   value?: string[] | null
@@ -45,13 +45,13 @@ export const StringArrayField = (props: StringArrayFieldProps) => {
           key={index}
           sx={{ overFlowX: 'visible' }}
         >
-          <TextField
+          <CTextField
             type="text"
             value={item}
             label={label}
             name={name}
             required={required && !index}
-            onChange={(newValue, e) => {
+            onChange={(newValue: any, e: any) => {
               const { name, value } = e?.target ?? {}
               if (!value) return
               onChangeArray(value, name, index)

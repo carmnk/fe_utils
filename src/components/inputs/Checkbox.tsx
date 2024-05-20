@@ -7,10 +7,10 @@ import {
   TypographyProps,
 } from '@mui/material'
 import { Checkbox as MCheckbox, FormControlLabel, Tooltip } from '@mui/material'
-import { InputFieldProps } from './types'
+import { GenericInputFieldProps } from './types'
 import { ChangeEvent, useCallback, useMemo } from 'react'
 
-export type CheckboxProps = InputFieldProps<'bool'> &
+export type CheckboxProps = GenericInputFieldProps<'bool'> &
   Omit<MCBProps, 'value' | 'onChange'> & {
     // now common for all
     // tooltip?: string

@@ -51,7 +51,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const Default: Story = {
+export const Outlined: Story = {
   args: {
     label: 'Label',
     value: 'value1',
@@ -63,5 +63,71 @@ export const Default: Story = {
       { value: 'value2', label: 'label2' },
     ],
     // fullName: 'C Menk',
+  },
+}
+
+export const OutlinedNotchedLabel: Story = {
+  args: {
+    label: 'Label',
+    value: 'value1',
+    options: [
+      {
+        value: 'value1',
+        label: 'label1',
+      },
+      { value: 'value2', label: 'label2' },
+    ],
+    useNotchedLabel: true,
+    // fullName: 'C Menk',
+  },
+}
+
+export const OutlinedRounded: Story = {
+  args: {
+    label: 'Label',
+    value: 'value1',
+    options: [
+      {
+        value: 'value1',
+        label: 'label1',
+      },
+      { value: 'value2', label: 'label2' },
+    ],
+    useNotchedLabel: true,
+    borderRadius: 9999,
+  },
+}
+
+export const StandardUnderline: Story = {
+  args: {
+    label: 'Label',
+    value: 'value1',
+    variant: 'standard',
+    options: [
+      {
+        value: 'value1',
+        label: 'label1',
+      },
+      { value: 'value2', label: 'label2' },
+    ],
+    // useNotchedLabel: true,
+    borderRadius: 9999,
+  },
+}
+
+export const Filled: Story = {
+  args: {
+    label: 'Label',
+    value: 'value1',
+    variant: 'filled',
+    options: [
+      {
+        value: 'value1',
+        label: 'label1',
+      },
+      { value: 'value2', label: 'label2' },
+    ],
+    // useNotchedLabel: true,
+    // borderRadius: 9999,
   },
 }

@@ -1,3 +1,4 @@
+import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { TextField } from '../../components/inputs/TextField'
@@ -42,8 +43,8 @@ const meta = {
     icon: { control: 'select', options: optionsMdiIcons },
     startIcon: { control: 'select', options: optionsMdiIcons },
     injectComponent: { control: false },
-    InputProps: { control: 'object' },
-    labelSx: { control: 'object' },
+    // InputProps: { control: 'object' },
+    // labelSx: { control: 'object' },
     InputLabelProps: { control: 'object' },
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args

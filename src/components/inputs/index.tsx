@@ -2,14 +2,14 @@ export { ClickTextField } from './ClickTextField'
 export type { ClickTextFieldProps } from './ClickTextField'
 export { GenericInputField } from './GenericInputField'
 export type {
-  GenericInputFieldProps,
+  GGenericInputFieldProps,
   GenericInputFieldOption,
-  GenericInputFieldType,
-  SimpleGenericInputFieldProps,
   SpecificInputProps,
 } from './GenericInputField'
 
-export { TextField } from './TextField'
+export type { InputFieldType } from './types'
+
+export { CTextField } from './TextField'
 export type { CTextFieldProps } from './TextField'
 
 export { NumberField } from './NumberField'
@@ -21,8 +21,8 @@ export type { CSelectProps } from './Select'
 export { DatePicker } from './DatePicker'
 export type { DatePickerProps } from './DatePicker'
 
-export { TextArea } from './TextArea'
-export type { TextAreaProps } from './TextArea'
+export { TextArea } from './_archiv/TextArea'
+export type { TextAreaProps } from './_archiv/TextArea'
 
 export { Checkbox } from './Checkbox'
 export type { CheckboxProps } from './Checkbox'

@@ -49,6 +49,7 @@ export type CModalBaseProps = Omit<
   loading?: boolean
   subheader?: React.ReactNode
   confirmationTooltip?: string
+  disableTopRightCloseButton?: boolean
   slotProps?: DialogProps['slotProps'] & {
     paper?: PaperProps
     cancelConfirmButton?: CButtonProps
@@ -116,6 +117,7 @@ export const Modal = (props: CModalProps) => {
     slotProps,
     borderRadius,
     buttonBorderRadiuses,
+    disableTopRightCloseButton,
     ...rest
   } = {
     ...props,
@@ -219,20 +221,22 @@ export const Modal = (props: CModalProps) => {
             </Box>
           )}
         </Box>
-        <Tooltip arrow title={'close'} placement="top" {...closButtonTooltip}>
-          <Box {...closeButtonContainer}>
-            <Button
-              iconButton
-              icon={mdiClose}
-              onClick={onClose as any}
-              variant="text"
-              borderRadius={buttonBorderRadiuses}
-              {...closeButton}
-            >
-              <Icon path={mdiClose} size={1} {...closeIcon} />
-            </Button>
-          </Box>
-        </Tooltip>
+        {!disableTopRightCloseButton && (
+          <Tooltip arrow title={'close'} placement="top" {...closButtonTooltip}>
+            <Box {...closeButtonContainer}>
+              <Button
+                iconButton
+                icon={mdiClose}
+                onClick={onClose as any}
+                variant="text"
+                borderRadius={buttonBorderRadiuses}
+                {...closeButton}
+              >
+                <Icon path={mdiClose} size={1} {...closeIcon} />
+              </Button>
+            </Box>
+          </Tooltip>
+        )}
       </Flex>
       <DialogContent {...dialogContent}>
         {typeof contentComponent === 'string' ? (

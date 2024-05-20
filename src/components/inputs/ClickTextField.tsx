@@ -5,21 +5,16 @@ import {
   Box,
   ClickAwayListener,
   TypographyProps,
-  TextField,
-  TextFieldProps,
   Chip,
 } from '@mui/material'
 import React, { ChangeEvent, memo, useCallback, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
-import { CAutoComplete, CAutoCompleteProps } from './AutoComplete'
-import { TextArea } from './TextArea'
+import { CAutoComplete } from './AutoComplete'
 import {
   GenericInputField,
-  GenericInputFieldProps,
-  GenericInputFieldType,
+  type GGenericInputFieldProps,
 } from './GenericInputField'
-
-const inputStyles = { sx: { p: 0.5, px: 1 } }
+import { InputFieldType } from './types'
 
 type CommonClickTextFieldProps = {
   value: string
@@ -54,17 +49,16 @@ type CommonClickTextFieldProps = {
 //   autoCompleteProps?: CAutoCompleteProps
 // }
 
-export type ClickTextFieldProps<
-  T extends GenericInputFieldType = GenericInputFieldType,
-> = CommonClickTextFieldProps & {
-  variant?: T
-  fieldProps?: GenericInputFieldProps<T>
-} & (T extends 'autocomplete' | 'select' | 'multiselect'
-    ? { options: { value: string; label: string }[] }
-    : object)
+export type ClickTextFieldProps<T extends InputFieldType = InputFieldType> =
+  CommonClickTextFieldProps & {
+    variant?: T
+    fieldProps?: GGenericInputFieldProps<T>
+  } & (T extends 'autocomplete' | 'select' | 'multiselect'
+      ? { options: { value: string; label: string }[] }
+      : object)
 
 export const ClickTextFieldComponent = <
-  InputType extends GenericInputFieldType = GenericInputFieldType,
+  InputType extends InputFieldType = InputFieldType,
 >(
   props: ClickTextFieldProps<InputType>
 ) => {

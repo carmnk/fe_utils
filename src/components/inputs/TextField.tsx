@@ -1,41 +1,60 @@
 import { useState, useCallback, ReactNode, forwardRef } from 'react'
 import { useMemo, ChangeEvent, ForwardedRef } from 'react'
-import { useTheme, InputAdornment, Box, TooltipProps } from '@mui/material'
+import { InputAdornment, Box, TooltipProps } from '@mui/material'
 import { TextField as MTextField } from '@mui/material'
 import { TypographyProps, BoxProps, Typography } from '@mui/material'
 import { TextFieldProps as MTextFieldProps } from '@mui/material'
 import Icon from '@mdi/react'
-import { InputFieldProps } from './types'
+import { GenericInputFieldProps } from './types'
 
 const requiredFieldText = 'This field is required'
+const defaultInputContainerTextFieldStyles = {
+  height: 42,
+  fontSize: '14px !important',
+  borderColor: 'transparent !important',
+  borderWidth: '0px !important',
+}
+const defaultLabelTextFieldStyles = {
+  variant: 'caption' as const,
+  component: 'label' as const,
+  paddingBottom: '4px',
+}
 
-export type CTextFieldProps = InputFieldProps<'text'> &
-  Omit<
-    MTextFieldProps,
-    | 'value'
-    | 'onChange'
-    | 'inputProps'
-    | 'InputProps'
-    | 'FormHelperTextProps'
-    | 'slotProps'
-  > & {
-    borderRadius?: number
-    icon?: ReactNode
-    startIcon?: ReactNode
-    injectComponent?: ReactNode
-    slotProps?: {
-      rootContainer?: BoxProps
-      inputContainer?: MTextFieldProps['InputProps']
-      input?: MTextFieldProps['inputProps']
-      tooltip?: TooltipProps
-      formHelperText?: MTextFieldProps['FormHelperTextProps']
-      notchedInputLabel?: MTextFieldProps['InputLabelProps']
-      label?: TypographyProps
-    }
+export type SpecificMuiTextFieldProps = Omit<
+  MTextFieldProps,
+  | (
+      | 'inputProps'
+      | 'InputProps'
+      | 'FormHelperTextProps'
+      | 'slotProps'
+      | 'InputLabelProps'
+      | 'SelectProps'
+    )
+  | keyof GenericInputFieldProps<'text'>
+>
+
+export type CustomTextFieldProps = {
+  borderRadius?: number
+  icon?: ReactNode
+  startIcon?: ReactNode
+  injectComponent?: ReactNode
+  slotProps?: {
+    rootContainer?: BoxProps
+    inputContainer?: MTextFieldProps['InputProps']
+    input?: MTextFieldProps['inputProps']
+    tooltip?: TooltipProps
+    formHelperText?: MTextFieldProps['FormHelperTextProps']
+    notchedInputLabel?: MTextFieldProps['InputLabelProps']
+    label?: TypographyProps
   }
+}
 
-export const TextField = forwardRef(
-  (props: CTextFieldProps, ref: ForwardedRef<HTMLDivElement>) => {
+export type CTextFieldProps = GenericInputFieldProps<'text'> &
+  SpecificMuiTextFieldProps &
+  CustomTextFieldProps
+
+export const CTextField = forwardRef(
+  (props: CTextFieldProps, ref: ForwardedRef<HTMLInputElement>) => {
     const {
       value,
       label,
@@ -70,7 +89,9 @@ export const TextField = forwardRef(
       rootContainer,
     } = slotProps ?? {}
 
-    const theme = useTheme()
+    // console.warn('PROPS TEXTFIELD', props)
+
+    // const theme = useTheme()
     const [valueStarted, setValueStarted] = useState('')
 
     const handleChangeCompleted = useCallback(() => {
@@ -99,12 +120,10 @@ export const TextField = forwardRef(
 
     const defaultLabelProps: TypographyProps = useMemo(() => {
       return {
-        variant: 'caption',
-        component: 'label',
-        color: error ? theme.palette.error.main : undefined,
-        paddingBottom: '4px',
+        ...defaultLabelTextFieldStyles,
+        color: error ? 'error.main' : undefined,
       }
-    }, [error, theme.palette.error.main])
+    }, [error])
 
     const textFieldProps: MTextFieldProps = useMemo(() => {
       return {
@@ -141,15 +160,13 @@ export const TextField = forwardRef(
               )) ?? null}
             </InputAdornment>
           ),
-          startAdornment: (
+          startAdornment: startIcon ? (
             // dont show if not present? -> probably already no width
             <InputAdornment position="start">{startIcon}</InputAdornment>
-          ),
+          ) : undefined,
           sx: {
+            ...defaultInputContainerTextFieldStyles,
             height: props?.multiline ? undefined : 42,
-            fontSize: '14px !important',
-            borderColor: 'transparent !important',
-            borderWidth: '0px !important',
             borderRadius,
             ...(inputContainer?.sx ?? {}),
           },
@@ -227,11 +244,11 @@ export const TextField = forwardRef(
             )}
           </Typography>
         )}
-        <MTextField ref={ref} {...textFieldProps} />
+        <MTextField {...textFieldProps} ref={ref} />
         {injectComponent}
       </Box>
     )
   }
 )
-TextField.displayName = 'CTextField'
-export default TextField
+CTextField.displayName = 'CTextField'
+export default CTextField
