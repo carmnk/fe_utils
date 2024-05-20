@@ -112,7 +112,7 @@ export const DatePicker = (props: DatePickerProps) => {
         )
       },
     }),
-    [error, helperText, label, name, restIn]
+    [error, helperText, label, name]
   )
 
   return (
