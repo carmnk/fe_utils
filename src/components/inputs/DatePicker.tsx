@@ -29,7 +29,10 @@ export const DatePicker = (props: DatePickerProps) => {
     name,
     ...restIn
   } = props
-  const [validDate, setValidDate] = useState(true)
+  const [validDate, setValidDate] = useState(
+    (value && moment(value)?.isValid?.()) || false
+  )
+  console.log('VALID DATE', validDate, value)
   const theme = useTheme()
 
   const handleChange = useCallback(
@@ -84,6 +87,11 @@ export const DatePicker = (props: DatePickerProps) => {
               <CTextField
                 {...propsFromDateField}
                 {...restIn}
+                // value={
+                //   !moment(propsFromDateField?.value).isValid()
+                //     ? propsFromDateField?.value
+                //     : moment(value)
+                // }
                 slotProps={{
                   inputContainer: {
                     ...(propsFromDateField?.InputProps ?? {}),
@@ -93,10 +101,16 @@ export const DatePicker = (props: DatePickerProps) => {
                     ...propsFromDateField?.inputProps,
                     ...(restIn?.slotProps?.input ?? {}),
                   },
+                  // formHelperText: {
+                  //   content: 'the date is invalid',
+                  //   // ...(restIn?.slotProps?.input ?? {}),
+                  // },
                 }}
                 label={label}
-                helperText={helperText}
-                error={error == !validDate}
+                helperText={
+                  helperText ?? (!value && !error ? '' : 'the date is invalid')
+                }
+                error={error}
                 name={name}
                 onChange={onChangeTextField}
               />

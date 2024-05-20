@@ -156,7 +156,7 @@ export const NumberField = React.forwardRef(
             },
             name
           )
-          setInnerValue('')
+          // setInnerValue('')
         } else {
           const posComma = valueInAdj.indexOf(',')
           const checkString =
@@ -179,18 +179,18 @@ export const NumberField = React.forwardRef(
           const newInnerValueNumber = parseFloat(
             newInnerValueRaw?.replaceAll(',', '.')
           )
-          const newInnerValue =
-            formatGermanNumberString(
-              newInnerValueNumber || 0,
-              typeof maxDecimalDigits === 'number' && maxDecimalDigits > 3
-                ? maxDecimalDigits
-                : undefined,
-              disableNumberSeparator,
-              posComma !== -1 && charsAfterComma?.length
-                ? Math.min(charsAfterComma?.length, maxDecimalDigits)
-                : undefined
-            ) + (isLastCharComma ? ',' : '')
-          setInnerValue(newInnerValue)
+          // const newInnerValue =
+          //   formatGermanNumberString(
+          //     newInnerValueNumber || 0,
+          //     typeof maxDecimalDigits === 'number' && maxDecimalDigits > 3
+          //       ? maxDecimalDigits
+          //       : undefined,
+          //     disableNumberSeparator,
+          //     posComma !== -1 && charsAfterComma?.length
+          //       ? Math.min(charsAfterComma?.length, maxDecimalDigits)
+          //       : undefined
+          //   ) + (isLastCharComma ? ',' : '')
+          // setInnerValue(newInnerValue)
           onChange?.(
             value as any,
             {
