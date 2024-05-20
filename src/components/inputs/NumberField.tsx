@@ -107,9 +107,13 @@ export const NumberField = React.forwardRef(
     }, [value])
 
     const handleChangeNumber = React.useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value: valueIn } = e.target
-        let valueInAdj = valueIn.replaceAll('.', '')
+      (
+        newValue: string,
+        e: React.ChangeEvent<HTMLInputElement>,
+        name?: string
+      ) => {
+        // const { name, value: valueIn } = e.target
+        let valueInAdj = newValue.replaceAll('.', '')
         let isNumeric = true
         for (let i = 0; i < valueInAdj?.length || 0; i++) {
           const allowedPureNumberChars = [
@@ -146,7 +150,7 @@ export const NumberField = React.forwardRef(
         if (!valueInAdj) {
           onChange?.('' as any, {
             ...e,
-            target: { ...(e?.target ?? {}), value: '', name },
+            target: { ...(e?.target ?? {}), value: '', name: name as any },
           })
           setInnerValue('')
         } else {
@@ -185,7 +189,7 @@ export const NumberField = React.forwardRef(
           setInnerValue(newInnerValue)
           onChange?.(value, {
             ...e,
-            target: { ...(e?.target ?? {}), value: value as any, name },
+            target: { ...(e?.target ?? {}), value: value as any, name: name as any },
           })
         }
       },

@@ -193,13 +193,16 @@ export const CAutoComplete = forwardRef(
           renderInput: (params: TextFieldProps) => {
             const onChange = (newValue: string, event?: any, name?: string) => {
               const eventValue = {
+                ...(event ?? {}),
                 target: {
                   value: newValue,
+                  name,
+                  ...(event?.target ?? {}),
                 },
               }
               params?.onChange?.(eventValue as any)
             }
-            console.warn('params', restProps, params)
+            // console.warn('params', restProps, params)
             return (
               <TextField
                 {...params}

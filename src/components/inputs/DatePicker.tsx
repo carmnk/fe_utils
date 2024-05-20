@@ -36,7 +36,11 @@ export const DatePicker = (props: DatePickerProps) => {
     (newValue: Moment | null) => {
       if (moment(newValue).isValid()) {
         setValidDate(true)
-        onChange?.(newValue, name)
+        onChange?.(
+          newValue as any,
+          { target: { value: newValue as any, name: name as any } } as any,
+          name
+        )
       } else {
         setValidDate(false)
         onChange?.(newValue, name)
