@@ -1,7 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
 import moment, { Moment } from 'moment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker'
+import {
+  DesktopDatePicker,
+  DesktopDatePickerProps,
+} from '@mui/x-date-pickers/DesktopDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { DatePickerProps as MDatePickerProps } from '@mui/x-date-pickers'
 import { useTheme } from '@mui/material'
@@ -33,7 +36,6 @@ export const DatePicker = (props: DatePickerProps) => {
     (value && moment(value)?.isValid?.()) || false
   )
   console.log('VALID DATE', validDate, value)
-  const theme = useTheme()
 
   const handleChange = useCallback(
     (newValue: Moment | null) => {
@@ -56,6 +58,63 @@ export const DatePicker = (props: DatePickerProps) => {
     [name, onChange]
   )
 
+  const slots: DesktopDatePickerProps<Moment>['slots'] = useMemo(
+    () => ({
+      openPickerButton: (props) => (
+        <Button
+          iconButton
+          icon={mdiCalendar}
+          variant="text"
+          {...(props as any)}
+        />
+      ),
+      textField: (propsFromDateField: any) => {
+        // const { ...restFromDateField } = propsFromDateField
+        // console.warn('PROPS TEXTFIELD', propsFromDateField)
+        const onChangeTextField = (newValue: any, e?: any, name?: any) => {
+          const event = {
+            ...(e ?? {}),
+            target: { ...(e?.target ?? {}), value: newValue, name },
+          }
+          propsFromDateField?.onChange?.(event)
+        }
+        return (
+          <CTextField
+            {...propsFromDateField}
+            {...restIn}
+            // value={
+            //   !moment(propsFromDateField?.value).isValid()
+            //     ? propsFromDateField?.value
+            //     : moment(value)
+            // }
+            slotProps={{
+              inputContainer: {
+                ...(propsFromDateField?.InputProps ?? {}),
+                ...(restIn?.slotProps?.inputContainer ?? {}),
+              },
+              input: {
+                ...propsFromDateField?.inputProps,
+                ...(restIn?.slotProps?.input ?? {}),
+              },
+              // formHelperText: {
+              //   content: 'the date is invalid',
+              //   // ...(restIn?.slotProps?.input ?? {}),
+              // },
+            }}
+            label={label}
+            helperText={
+              helperText ?? (!value && !error ? '' : 'the date is invalid')
+            }
+            error={error}
+            name={name}
+            onChange={onChangeTextField}
+          />
+        )
+      },
+    }),
+    [error, helperText, label, name, restIn, value]
+  )
+
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <DesktopDatePicker
@@ -64,59 +123,7 @@ export const DatePicker = (props: DatePickerProps) => {
         value={value}
         onChange={handleChange}
         disabled={disabled}
-        slots={{
-          openPickerButton: (props) => (
-            <Button
-              iconButton
-              icon={mdiCalendar}
-              variant="text"
-              {...(props as any)}
-            />
-          ),
-          textField: (propsFromDateField) => {
-            // const { ...restFromDateField } = propsFromDateField
-            // console.warn('PROPS TEXTFIELD', propsFromDateField)
-            const onChangeTextField = (newValue: any, e?: any, name?: any) => {
-              const event = {
-                ...(e ?? {}),
-                target: { ...(e?.target ?? {}), value: newValue, name },
-              }
-              propsFromDateField?.onChange?.(event)
-            }
-            return (
-              <CTextField
-                {...propsFromDateField}
-                {...restIn}
-                // value={
-                //   !moment(propsFromDateField?.value).isValid()
-                //     ? propsFromDateField?.value
-                //     : moment(value)
-                // }
-                slotProps={{
-                  inputContainer: {
-                    ...(propsFromDateField?.InputProps ?? {}),
-                    ...(restIn?.slotProps?.inputContainer ?? {}),
-                  },
-                  input: {
-                    ...propsFromDateField?.inputProps,
-                    ...(restIn?.slotProps?.input ?? {}),
-                  },
-                  // formHelperText: {
-                  //   content: 'the date is invalid',
-                  //   // ...(restIn?.slotProps?.input ?? {}),
-                  // },
-                }}
-                label={label}
-                helperText={
-                  helperText ?? (!value && !error ? '' : 'the date is invalid')
-                }
-                error={error}
-                name={name}
-                onChange={onChangeTextField}
-              />
-            )
-          },
-        }}
+        slots={slots}
       />
     </LocalizationProvider>
   )
