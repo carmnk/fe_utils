@@ -135,7 +135,7 @@ export const CAutoComplete = forwardRef(
           )?.value
           const valueAdj = option ?? (freeSolo ? inputValue : '')
           const event = name ? injectFieldNameToEvent(e, name) : (e as any)
-          onChange?.(valueAdj, event)
+          onChange?.(valueAdj, event, name)
           if (!freeSolo && !option) setInputValue('')
         }
         const onEnter = (
@@ -173,7 +173,7 @@ export const CAutoComplete = forwardRef(
                 : ''
           isChanging.current = true
           const event = name ? injectFieldNameToEvent(e, name) : (e as any)
-          onChange?.(value, event)
+          onChange?.(value, event, name)
         }) as any
 
         const handleInputChange = (

@@ -12,7 +12,7 @@ import CTextField, { CTextFieldProps } from './TextField'
 
 export type DatePickerProps = GenericInputFieldProps<'date'> &
   MDatePickerProps<Moment> & {
-    onChange?: (newValue: Moment | null, name?: string) => void
+    // onChange?: (newValue: Moment | null, name?: string) => void
     value?: string | null
     slotProps?: MDatePickerProps<Moment>['slotProps'] &
       CTextFieldProps['slotProps']
@@ -43,7 +43,11 @@ export const DatePicker = (props: DatePickerProps) => {
         )
       } else {
         setValidDate(false)
-        onChange?.(newValue, name)
+        onChange?.(
+          newValue as any,
+          { target: { value: newValue as any, name: name as any } } as any,
+          name
+        )
       }
     },
     [name, onChange]
