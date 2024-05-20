@@ -103,7 +103,7 @@ export const DatePicker = (props: DatePickerProps) => {
             }}
             label={label}
             helperText={
-              helperText ?? (!value && !error ? '' : 'the date is invalid')
+              helperText // ?? (!value && !error ? '' : 'the date is invalid')
             }
             error={error}
             name={name}
@@ -112,7 +112,7 @@ export const DatePicker = (props: DatePickerProps) => {
         )
       },
     }),
-    [error, helperText, label, name, restIn, value]
+    [error, helperText, label, name, restIn]
   )
 
   return (
