@@ -63,13 +63,12 @@ const injectFieldNameToEvent = (
 export const CAutoComplete = forwardRef(
   (props: CAutoCompleteProps, ref: ForwardedRef<HTMLInputElement>) => {
     const {
-      label,
       onChange,
       onInputChange,
       freeSolo = true,
       name,
-      options,
-      value,
+      options = [],
+      value = '',
       slotProps,
       ...restProps
     } = props
