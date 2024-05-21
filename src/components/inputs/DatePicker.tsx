@@ -19,6 +19,7 @@ export type DatePickerProps = GenericInputFieldProps<'date'> &
     value?: string | null
     slotProps?: MDatePickerProps<Moment>['slotProps'] &
       CTextFieldProps['slotProps']
+    outputFormat?: 'ISO_UTC'
   }
 
 export const DatePicker = (props: DatePickerProps) => {
@@ -30,11 +31,15 @@ export const DatePicker = (props: DatePickerProps) => {
     disabled,
     helperText,
     name,
+    outputFormat,
     ...restIn
   } = props
   const [validDate, setValidDate] = useState(
     (value && moment(value)?.isValid?.()) || false
   )
+
+  const valueMoment = useMemo(() => moment(value), [value])
+
   console.log('VALID DATE', validDate, value)
 
   const handleChange = useCallback(
@@ -71,10 +76,11 @@ export const DatePicker = (props: DatePickerProps) => {
       textField: (propsFromDateField: any) => {
         // const { ...restFromDateField } = propsFromDateField
         // console.warn('PROPS TEXTFIELD', propsFromDateField)
-        const onChangeTextField = (newValue: any, e?: any, name?: any) => {
+        const onChangeTextField = (newValue: Moment, e?: any, name?: any) => {
+          const newValueStr = newValue?.toISOString?.()
           const event = {
             ...(e ?? {}),
-            target: { ...(e?.target ?? {}), value: newValue, name },
+            target: { ...(e?.target ?? {}), value: newValueStr, name },
           }
           propsFromDateField?.onChange?.(event)
         }
@@ -120,7 +126,7 @@ export const DatePicker = (props: DatePickerProps) => {
       <DesktopDatePicker
         format="DD/MM/YYYY"
         {...restIn}
-        value={value}
+        value={valueMoment}
         onChange={handleChange}
         disabled={disabled}
         slots={slots}
