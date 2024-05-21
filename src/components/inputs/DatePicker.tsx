@@ -46,7 +46,9 @@ export const DatePicker = (props: DatePickerProps) => {
     (newValue: Moment | null) => {
       setValidDate(moment(newValue).isValid())
       const valueOut =
-        outputFormat === 'ISO_UTC' ? moment(newValue).toISOString() : newValue
+        outputFormat === 'ISO_UTC'
+          ? moment(newValue).startOf('day').toISOString()
+          : newValue
       onChange?.(
         valueOut as any,
         { target: { value: valueOut as any, name: name as any } } as any,
