@@ -31,7 +31,7 @@ export const DatePicker = (props: DatePickerProps) => {
     disabled,
     helperText,
     name,
-    outputFormat,
+    outputFormat = 'ISO_UTC',
     ...restIn
   } = props
   const [validDate, setValidDate] = useState(
@@ -44,23 +44,16 @@ export const DatePicker = (props: DatePickerProps) => {
 
   const handleChange = useCallback(
     (newValue: Moment | null) => {
-      if (moment(newValue).isValid()) {
-        setValidDate(true)
-        onChange?.(
-          newValue as any,
-          { target: { value: newValue as any, name: name as any } } as any,
-          name
-        )
-      } else {
-        setValidDate(false)
-        onChange?.(
-          newValue as any,
-          { target: { value: newValue as any, name: name as any } } as any,
-          name
-        )
-      }
+      setValidDate(moment(newValue).isValid())
+      const valueOut =
+        outputFormat === 'ISO_UTC' ? moment(newValue).toISOString() : newValue
+      onChange?.(
+        valueOut as any,
+        { target: { value: valueOut as any, name: name as any } } as any,
+        name
+      )
     },
-    [name, onChange]
+    [name, onChange, outputFormat]
   )
 
   const slots: DesktopDatePickerProps<Moment>['slots'] = useMemo(
@@ -77,10 +70,9 @@ export const DatePicker = (props: DatePickerProps) => {
         // const { ...restFromDateField } = propsFromDateField
         // console.warn('PROPS TEXTFIELD', propsFromDateField)
         const onChangeTextField = (newValue: Moment, e?: any, name?: any) => {
-          const newValueStr = newValue?.toISOString?.()
           const event = {
             ...(e ?? {}),
-            target: { ...(e?.target ?? {}), value: newValueStr, name },
+            target: { ...(e?.target ?? {}), value: newValue, name },
           }
           propsFromDateField?.onChange?.(event)
         }
