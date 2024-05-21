@@ -43,7 +43,9 @@ export const CTimeField = (props: CTimeFieldProps) => {
       setValidDate(moment(newValue).isValid())
       const valueOut =
         outputFormat === 'ISO_UTC'
-          ? moment(newValue).toISOString()
+          ? moment(newValue)
+              .startOf(restIn?.format?.includes('s') ? 'second' : 'minute')
+              .toISOString()
           : newValue
       onChange?.(
         valueOut as any,
