@@ -43,7 +43,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
       setValidDate(moment(newValue).isValid())
       const valueOut =
         outputFormat === 'ISO_UTC'
-          ? moment(newValue).startOf('day').toISOString()
+          ? moment(newValue).toISOString()
           : newValue
       onChange?.(
         valueOut as any,
@@ -114,7 +114,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <TimeField
-        format="DD/MM/YYYY"
+        // format="DD/MM/YYYY"
         {...restIn}
         value={valueMoment}
         onChange={handleChange}
