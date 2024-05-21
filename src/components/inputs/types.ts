@@ -22,6 +22,7 @@ export type InputFieldType =
   | 'bool'
   | 'switch'
   | 'file'
+  | 'time'
 
 /**  Def of common props for all boolean input fields (less than textfield) */
 export type CommonBooleanInputFieldProps = {
@@ -76,7 +77,7 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
           ) => void
           labelPlacement?: FormControlLabelProps['labelPlacement'] // TODO - remove this (should be in specific component props)
         }
-      : T extends 'text' | 'textarea' | 'date'
+      : T extends 'text' | 'textarea' | 'date' | 'time'
         ? {
             value: string
             onChange: (

@@ -38,3 +38,6 @@ export type { CAutoCompleteProps } from './AutoComplete'
 
 export { CSelect2 } from './Select2'
 export type { CSelect2Props } from './Select2'
+
+export { CTimeField } from './TimeField'
+export type { CTimeFieldProps } from './TimeField'
