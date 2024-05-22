@@ -9,11 +9,17 @@ import {
 } from 'react'
 import { FocusEvent, KeyboardEvent, useEffect } from 'react'
 import { useMemo } from 'react'
-import { Autocomplete, TextFieldProps, useTheme } from '@mui/material'
+import {
+  Autocomplete,
+  InputAdornment,
+  TextFieldProps,
+  useTheme,
+} from '@mui/material'
 // import { FormHelperText, Typography } from '@mui/material'
 import { FormControlProps, AutocompleteProps, Box } from '@mui/material'
 import { GenericInputFieldProps } from './types'
 import TextField, { CTextFieldProps } from './TextField'
+import Icon from '@mdi/react'
 
 const requiredFieldText = 'This field is required'
 
@@ -58,8 +64,6 @@ const injectFieldNameToEvent = (
     target: { ...(e?.target ?? {}), name },
   }) as unknown as ChangeEvent<HTMLInputElement>
 
-// const formHelperTextStyles = { ml: '2px', color: 'error.main' }
-
 export const CAutoComplete = forwardRef(
   (props: CAutoCompleteProps, ref: ForwardedRef<any>) => {
     const {
@@ -70,6 +74,8 @@ export const CAutoComplete = forwardRef(
       options = [],
       value = '',
       slotProps,
+      startIcon,
+      endIcon,
       ...restProps
     } = props
 
@@ -202,7 +208,7 @@ export const CAutoComplete = forwardRef(
               }
               params?.onChange?.(eventValue as any)
             }
-            // console.warn('params', restProps, params)
+            console.warn('params', restProps, params)
             return (
               <TextField
                 {...params}
@@ -220,6 +226,26 @@ export const CAutoComplete = forwardRef(
                   inputContainer: {
                     ...params?.InputProps,
                     ...inputContainer,
+                    startAdornment: startIcon ? (
+                      // dont show if not present? -> probably already no width
+                      <InputAdornment position="start">
+                        {(typeof startIcon === 'string' ? (
+                          <Icon path={startIcon} size={1} />
+                        ) : (
+                          startIcon
+                        )) ?? null}
+                      </InputAdornment>
+                    ) : undefined,
+                    endAdornment: endIcon ? (
+                      // dont show if not present!
+                      <InputAdornment position="end">
+                        {(typeof endIcon === 'string' ? (
+                          <Icon path={endIcon} size={1} />
+                        ) : (
+                          endIcon
+                        )) ?? null}
+                      </InputAdornment>
+                    ) : undefined,
                   },
                   notchedInputLabel: {
                     ...params?.InputLabelProps,
