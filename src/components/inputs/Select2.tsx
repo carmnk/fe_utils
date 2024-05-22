@@ -10,7 +10,7 @@ export type CSelect2Props = CTextFieldProps & {
 }
 
 export const CSelect2 = (props: CSelect2Props) => {
-  const { options, ...rest } = props
+  const { options, endIcon: _e, ...rest } = props
   const menuItemProps = rest?.slotProps?.menuItem
   return (
     <CTextField {...rest} select>

@@ -35,7 +35,7 @@ export type SpecificMuiTextFieldProps = Omit<
 
 export type CustomTextFieldProps = {
   borderRadius?: number
-  icon?: ReactNode
+  endIcon?: ReactNode
   startIcon?: ReactNode
   injectComponent?: ReactNode
   slotProps?: {
@@ -62,7 +62,7 @@ export const CTextField = forwardRef(
       type,
       onChange,
       required,
-      icon,
+      endIcon,
       helperText,
       startIcon,
       disableHelperText,
@@ -150,19 +150,25 @@ export const CTextField = forwardRef(
         InputLabelProps: notchedInputLabel,
         InputProps: {
           notched: false,
-          endAdornment: (
+          endAdornment: endIcon ? (
             // dont show if not present!
             <InputAdornment position="end">
-              {(typeof icon === 'string' ? (
-                <Icon path={icon} size={1} />
+              {(typeof endIcon === 'string' ? (
+                <Icon path={endIcon} size={1} />
               ) : (
-                icon
+                endIcon
               )) ?? null}
             </InputAdornment>
-          ),
+          ) : undefined,
           startAdornment: startIcon ? (
             // dont show if not present? -> probably already no width
-            <InputAdornment position="start">{startIcon}</InputAdornment>
+            <InputAdornment position="start">
+              {(typeof startIcon === 'string' ? (
+                <Icon path={startIcon} size={1} />
+              ) : (
+                startIcon
+              )) ?? null}
+            </InputAdornment>
           ) : undefined,
           sx: {
             ...defaultInputContainerTextFieldStyles,
@@ -198,7 +204,7 @@ export const CTextField = forwardRef(
         label: useNotchedLabel ? label : undefined,
       }
     }, [
-      icon,
+      endIcon,
       rest,
       startIcon,
       name,
