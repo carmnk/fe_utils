@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import moment, { Moment } from 'moment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import {
@@ -12,6 +12,7 @@ import { GenericInputFieldProps } from './types'
 import { Button } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
 import CTextField, { CTextFieldProps } from './TextField'
+import { isEqual } from 'lodash'
 
 export type DatePickerProps = GenericInputFieldProps<'date'> &
   MDatePickerProps<Moment> & {
@@ -21,6 +22,10 @@ export type DatePickerProps = GenericInputFieldProps<'date'> &
       CTextFieldProps['slotProps']
     outputFormat?: 'ISO_UTC'
   }
+
+// type b = Omit<MDatePickerProps<Moment>, keyof CTextFieldProps>
+
+// const datePickerProps = []
 
 export const DatePicker = (props: DatePickerProps) => {
   const {
@@ -32,6 +37,51 @@ export const DatePicker = (props: DatePickerProps) => {
     helperText,
     name,
     outputFormat = 'ISO_UTC',
+
+    // autoCompleteOnlyProps
+    closeOnSelect,
+    dayOfWeekFormatter,
+    desktopModeMediaQuery,
+    disableFuture,
+    disableHighlightToday,
+    disableOpenPicker,
+    disablePast,
+    displayWeekNumber,
+    enableAccessibleFieldDOMStructure,
+    fixedWeekNumber,
+    format = 'DD/MM/YYYY',
+    formatDensity,
+    loading,
+    localeText,
+    maxDate,
+    minDate,
+    monthsPerRow,
+    onAccept,
+    onClose,
+    onMonthChange,
+    onOpen,
+    onSelectedSectionsChange,
+    onViewChange,
+    onYearChange,
+    open,
+    openTo,
+    orientation,
+    readOnly,
+    reduceAnimations,
+    referenceDate,
+    renderLoading,
+    selectedSections,
+    shouldDisableDate,
+    shouldDisableMonth,
+    shouldDisableYear,
+    showDaysOutsideCurrentMonth,
+    slots,
+    timezone,
+    view,
+    viewRenderers,
+    views,
+    yearsPerRow,
+    // end of autoCompleteOnlyProps
     ...restIn
   } = props
   const [validDate, setValidDate] = useState(
@@ -58,8 +108,9 @@ export const DatePicker = (props: DatePickerProps) => {
     [name, onChange, outputFormat]
   )
 
-  const slots: DesktopDatePickerProps<Moment>['slots'] = useMemo(
+  const datePickerSlots: DesktopDatePickerProps<Moment>['slots'] = useMemo(
     () => ({
+      ...slots,
       openPickerButton: (props) => (
         <Button
           iconButton
@@ -114,18 +165,70 @@ export const DatePicker = (props: DatePickerProps) => {
         )
       },
     }),
-    [error, helperText, label, name]
+    [error, helperText, label, name, slots, value]
   )
+
+  const restInRef = useRef(restIn)
+
+  useEffect(() => {
+    if (restInRef.current === restIn) {
+      console.log("restIn didn't change (shallow)")
+    }
+    if (isEqual(restInRef.current, restIn)) {
+      console.log('restIn is deep-equal')
+    }
+    restInRef.current = restIn
+  }, [restIn])
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
-      <DesktopDatePicker
-        format="DD/MM/YYYY"
-        {...restIn}
+      <DesktopDatePicker<Moment>
         value={valueMoment}
         onChange={handleChange}
         disabled={disabled}
-        slots={slots}
+        slots={datePickerSlots}
+        //
+        closeOnSelect={closeOnSelect}
+        dayOfWeekFormatter={dayOfWeekFormatter}
+        // desktopModeMediaQuery={desktopModeMediaQuery}
+        disableFuture={disableFuture}
+        disableHighlightToday={disableHighlightToday}
+        disableOpenPicker={disableOpenPicker}
+        disablePast={disablePast}
+        displayWeekNumber={displayWeekNumber}
+        enableAccessibleFieldDOMStructure={enableAccessibleFieldDOMStructure}
+        fixedWeekNumber={fixedWeekNumber}
+        format={format}
+        formatDensity={formatDensity}
+        loading={loading}
+        localeText={localeText}
+        maxDate={maxDate}
+        minDate={minDate}
+        monthsPerRow={monthsPerRow}
+        onAccept={onAccept}
+        onClose={onClose}
+        onMonthChange={onMonthChange}
+        onOpen={onOpen}
+        onSelectedSectionsChange={onSelectedSectionsChange}
+        onViewChange={onViewChange}
+        onYearChange={onYearChange}
+        open={open}
+        openTo={openTo}
+        orientation={orientation}
+        readOnly={readOnly}
+        reduceAnimations={reduceAnimations}
+        referenceDate={referenceDate}
+        renderLoading={renderLoading}
+        selectedSections={selectedSections}
+        shouldDisableDate={shouldDisableDate}
+        shouldDisableMonth={shouldDisableMonth}
+        shouldDisableYear={shouldDisableYear}
+        showDaysOutsideCurrentMonth={showDaysOutsideCurrentMonth}
+        timezone={timezone}
+        view={view}
+        viewRenderers={viewRenderers}
+        views={views}
+        yearsPerRow={yearsPerRow}
       />
     </LocalizationProvider>
   )
