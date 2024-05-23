@@ -13,9 +13,14 @@ import { mdiCalendar } from '@mdi/js'
 import CTextField, { CTextFieldProps } from './TextField'
 import { isEqual } from 'lodash'
 
-export type DatePickerProps = GenericInputFieldProps<'date'> &
-  MDatePickerProps<Moment> &
-  CTextFieldProps & {
+type MDatePickerExTextfieldProps = Omit<
+  MDatePickerProps<Moment>,
+  keyof CTextFieldProps
+>
+
+export type DatePickerProps = GenericInputFieldProps<'date'> & {
+  datePickerProps?: MDatePickerExTextfieldProps
+} & CTextFieldProps & {
     // onChange?: (newValue: Moment | null, name?: string) => void
     value?: string | null
     slotProps?: MDatePickerProps<Moment>['slotProps'] &
@@ -23,59 +28,17 @@ export type DatePickerProps = GenericInputFieldProps<'date'> &
     outputFormat?: 'ISO_UTC'
   }
 
-// type b = Omit<MDatePickerProps<Moment>, keyof CTextFieldProps>
-
 // const datePickerProps = []
 
 export const DatePicker = (props: DatePickerProps) => {
   const {
-    // autoCompleteOnlyProps
+    // datePickerProps,
     onChange, // not for TextField
-    closeOnSelect,
-    dayOfWeekFormatter,
-    // desktopModeMediaQuery,
-    disableFuture,
-    disableHighlightToday,
-    disableOpenPicker,
-    disablePast,
-    displayWeekNumber,
-    enableAccessibleFieldDOMStructure,
-    fixedWeekNumber,
-    format = 'DD/MM/YYYY',
-    formatDensity,
-    loading,
-    localeText,
-    maxDate,
-    minDate,
-    monthsPerRow,
-    onAccept,
-    onClose,
-    onMonthChange,
-    onOpen,
-    onSelectedSectionsChange,
-    onViewChange,
-    onYearChange,
-    open,
-    openTo,
-    orientation,
-    readOnly,
-    reduceAnimations,
-    referenceDate,
-    renderLoading,
-    selectedSections,
-    shouldDisableDate,
-    shouldDisableMonth,
-    shouldDisableYear,
-    showDaysOutsideCurrentMonth,
-    slots,
-    timezone,
-    view,
-    viewRenderers,
-    views,
-    yearsPerRow,
-    borderRadius,
-    // end of autoCompleteOnlyProps
+    datePickerProps,
+
+    // end of datePickerProps
     // textfieldProps
+    borderRadius,
     disabled,
     error,
     helperText,
@@ -136,7 +99,7 @@ export const DatePicker = (props: DatePickerProps) => {
 
   const datePickerSlots: DesktopDatePickerProps<Moment>['slots'] = useMemo(
     () => ({
-      ...slots,
+      ...datePickerProps?.slots,
       openPickerButton: (props) => (
         <Button
           iconButton
@@ -216,7 +179,7 @@ export const DatePicker = (props: DatePickerProps) => {
       helperText,
       label,
       name,
-      slots,
+      datePickerProps?.slots,
       slotProps,
       required,
       sx,
@@ -262,47 +225,7 @@ export const DatePicker = (props: DatePickerProps) => {
         disabled={disabled}
         slots={datePickerSlots}
         //
-        closeOnSelect={closeOnSelect}
-        dayOfWeekFormatter={dayOfWeekFormatter}
-        // desktopModeMediaQuery={desktopModeMediaQuery}
-        disableFuture={disableFuture}
-        disableHighlightToday={disableHighlightToday}
-        disableOpenPicker={disableOpenPicker}
-        disablePast={disablePast}
-        displayWeekNumber={displayWeekNumber}
-        enableAccessibleFieldDOMStructure={enableAccessibleFieldDOMStructure}
-        fixedWeekNumber={fixedWeekNumber}
-        format={format}
-        formatDensity={formatDensity}
-        loading={loading}
-        localeText={localeText}
-        maxDate={maxDate}
-        minDate={minDate}
-        monthsPerRow={monthsPerRow}
-        onAccept={onAccept}
-        onClose={onClose}
-        onMonthChange={onMonthChange}
-        onOpen={onOpen}
-        onSelectedSectionsChange={onSelectedSectionsChange}
-        onViewChange={onViewChange}
-        onYearChange={onYearChange}
-        open={open}
-        openTo={openTo}
-        orientation={orientation}
-        readOnly={readOnly}
-        reduceAnimations={reduceAnimations}
-        referenceDate={referenceDate}
-        renderLoading={renderLoading}
-        selectedSections={selectedSections}
-        shouldDisableDate={shouldDisableDate}
-        shouldDisableMonth={shouldDisableMonth}
-        shouldDisableYear={shouldDisableYear}
-        showDaysOutsideCurrentMonth={showDaysOutsideCurrentMonth}
-        timezone={timezone}
-        view={view}
-        viewRenderers={viewRenderers}
-        views={views}
-        yearsPerRow={yearsPerRow}
+        {...datePickerProps}
       />
     </LocalizationProvider>
   )

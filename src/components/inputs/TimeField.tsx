@@ -10,7 +10,8 @@ import CTextField, { CTextFieldProps } from './TextField'
 import { TimeField, TimeFieldProps } from '@mui/x-date-pickers/TimeField'
 
 export type CTimeFieldProps = GenericInputFieldProps<'time'> &
-  TimeFieldProps<Moment> & {
+  TimeFieldProps<Moment> &
+  CTextFieldProps & {
     // onChange?: (newValue: Moment | null, name?: string) => void
     value?: string | null
     slotProps?: TimeFieldProps<Moment>['slotProps'] &
@@ -18,19 +19,15 @@ export type CTimeFieldProps = GenericInputFieldProps<'time'> &
     outputFormat?: 'ISO_UTC'
   }
 
-// type a = Omit<TimeFieldProps<Moment>, keyof CTextFieldProps>
-// type b = a['timezone']
+// type a = Pick<TimeFieldProps<Moment>, keyof CTextFieldProps>
+// type b = a['']
 
 export const CTimeField = (props: CTimeFieldProps) => {
   const {
-    label,
-    error,
     value,
     onChange,
-    disabled,
-    helperText,
-    name,
     outputFormat = 'ISO_UTC',
+    slotProps,
     // timefieldOnly props
     ampm,
     clearable,
@@ -53,48 +50,35 @@ export const CTimeField = (props: CTimeFieldProps) => {
     slots,
     timezone,
     // end timefieldOnly props
-  
+    // textfieldProps
+    borderRadius,
+    disabled,
+    error,
+    helperText,
+    name,
+    label,
+    required,
+    sx,
+    disableHelperText,
+    disableLabel,
+    color,
+    tooltip,
+    placeholder,
+    maxLength,
+    rows,
+    onChangeCompleted,
+    injectLabelComponent,
+    labelSubtext,
+    useNotchedLabel,
+    notchedLabelBgColor,
+    notchedLabelMarginLeft,
+    autoFocus,
+    className,
+    defaultValue,
+    onError,
+    inputRef,
+    ...restIn1
   } = props
-  const restIn = useMemo(
-    () =>
-      Object.fromEntries(
-        Object.entries(props).filter(
-          ([key]) =>
-            ![
-              'label',
-              'error',
-              'value',
-              'onChange',
-              'disabled',
-              'helperText',
-              'name',
-              'outputFormat',
-              'ampm',
-              'clearable',
-              'disableFuture',
-              'disableIgnoringDatePartForTimeValidation',
-              'disablePast',
-              'enableAccessibleFieldDOMStructure',
-              'format',
-              'formatDensity',
-              'maxTime',
-              'minTime',
-              'minutesStep',
-              'onClear',
-              'onSelectedSectionsChange',
-              'readOnly',
-              'referenceDate',
-              'selectedSections',
-              'shouldDisableTime',
-              'shouldRespectLeadingZeros',
-              'slots',
-              'timezone',
-            ].includes(key)
-        )
-      ),
-    [props]
-  )
-
 
   //  props
   const [validDate, setValidDate] = useState(
@@ -146,45 +130,87 @@ export const CTimeField = (props: CTimeFieldProps) => {
         return (
           <CTextField
             {...propsFromDateField}
-            {...restIn}
-            // value={
-            //   !moment(propsFromDateField?.value).isValid()
-            //     ? propsFromDateField?.value
-            //     : moment(value)
-            // }
+            borderRadius={borderRadius}
+            disabled={disabled}
+            error={error}
+            helperText={helperText}
+            name={name}
+            label={label}
+            required={required}
+            sx={sx}
+            disableHelperText={disableHelperText}
+            disableLabel={disableLabel}
+            color={color}
+            tooltip={tooltip}
+            placeholder={placeholder}
+            maxLength={maxLength}
+            rows={rows}
+            onChangeCompleted={onChangeCompleted}
+            injectLabelComponent={injectLabelComponent}
+            labelSubtext={labelSubtext}
+            useNotchedLabel={useNotchedLabel}
+            notchedLabelBgColor={notchedLabelBgColor}
+            notchedLabelMarginLeft={notchedLabelMarginLeft}
+            autoFocus={autoFocus}
+            className={className}
+            defaultValue={defaultValue}
+            onError={onError}
+            inputRef={inputRef}
             slotProps={{
               inputContainer: {
                 ...(propsFromDateField?.InputProps ?? {}),
-                ...(restIn?.slotProps?.inputContainer ?? {}),
+                ...(slotProps?.inputContainer ?? {}),
               },
               input: {
                 ...propsFromDateField?.inputProps,
-                ...(restIn?.slotProps?.input ?? {}),
+                ...(slotProps?.input ?? {}),
               },
               // formHelperText: {
               //   content: 'the date is invalid',
               //   // ...(restIn?.slotProps?.input ?? {}),
               // },
             }}
-            label={label}
-            helperText={
-              helperText // ?? (!value && !error ? '' : 'the date is invalid')
-            }
-            error={error}
-            name={name}
             onChange={onChangeTextField}
           />
         )
       },
     }),
-    [error, helperText, label, name, restIn]
+    [
+      slotProps, // textfieldProps
+      borderRadius,
+      disabled,
+      error,
+      helperText,
+      name,
+      label,
+      required,
+      sx,
+      disableHelperText,
+      disableLabel,
+      color,
+      tooltip,
+      placeholder,
+      maxLength,
+      rows,
+      onChangeCompleted,
+      injectLabelComponent,
+      labelSubtext,
+      useNotchedLabel,
+      notchedLabelBgColor,
+      notchedLabelMarginLeft,
+      autoFocus,
+      className,
+      defaultValue,
+      onError,
+      inputRef,
+    ]
   )
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <TimeField
         // format="DD/MM/YYYY"
-        {...restIn}
+
         value={valueMoment}
         onChange={handleChange}
         disabled={disabled}
