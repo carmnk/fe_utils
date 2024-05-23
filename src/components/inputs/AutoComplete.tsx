@@ -226,6 +226,10 @@ export const CAutoComplete = forwardRef(
                   inputContainer: {
                     ...params?.InputProps,
                     ...inputContainer,
+                    sx: {
+                      ml: '14px',
+                      ...(inputContainer?.sx ?? {}),
+                    },
                     startAdornment: startIcon ? (
                       // dont show if not present? -> probably already no width
                       <InputAdornment position="start">
@@ -233,16 +237,6 @@ export const CAutoComplete = forwardRef(
                           <Icon path={startIcon} size={1} />
                         ) : (
                           startIcon
-                        )) ?? null}
-                      </InputAdornment>
-                    ) : undefined,
-                    endAdornment: endIcon ? (
-                      // dont show if not present!
-                      <InputAdornment position="end">
-                        {(typeof endIcon === 'string' ? (
-                          <Icon path={endIcon} size={1} />
-                        ) : (
-                          endIcon
                         )) ?? null}
                       </InputAdornment>
                     ) : undefined,

@@ -234,6 +234,7 @@ export const NumberField = React.forwardRef(
         disableLabel={disableLabel}
         label={label}
         error={error}
+        name={name}
         required={required}
         injectComponent={injectComponent}
         fullWidth

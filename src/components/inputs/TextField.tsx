@@ -121,9 +121,9 @@ export const CTextField = forwardRef(
     const defaultLabelProps: TypographyProps = useMemo(() => {
       return {
         ...defaultLabelTextFieldStyles,
-        color: error ? 'error.main' : undefined,
+        color: error ? 'error.main' : disabled ? 'action.disabled' : undefined,
       }
-    }, [error])
+    }, [error, disabled])
 
     const textFieldProps: MTextFieldProps = useMemo(() => {
       return {

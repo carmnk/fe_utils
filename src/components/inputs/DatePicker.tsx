@@ -78,6 +78,8 @@ export const DatePicker = (props: DatePickerProps) => {
           }
           propsFromDateField?.onChange?.(event)
         }
+        const { startAdornment: _s, ...inputContainerPropsFromDatefield } =
+          propsFromDateField?.InputProps ?? {}
         return (
           <CTextField
             {...propsFromDateField}
@@ -89,7 +91,7 @@ export const DatePicker = (props: DatePickerProps) => {
             // }
             slotProps={{
               inputContainer: {
-                ...(propsFromDateField?.InputProps ?? {}),
+                ...(inputContainerPropsFromDatefield ?? {}),
                 ...(restIn?.slotProps?.inputContainer ?? {}),
               },
               input: {
