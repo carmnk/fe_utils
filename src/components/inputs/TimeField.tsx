@@ -53,8 +53,49 @@ export const CTimeField = (props: CTimeFieldProps) => {
     slots,
     timezone,
     // end timefieldOnly props
-    ...restIn
-  } = useMemo(() => props, [props])
+  
+  } = props
+  const restIn = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(props).filter(
+          ([key]) =>
+            ![
+              'label',
+              'error',
+              'value',
+              'onChange',
+              'disabled',
+              'helperText',
+              'name',
+              'outputFormat',
+              'ampm',
+              'clearable',
+              'disableFuture',
+              'disableIgnoringDatePartForTimeValidation',
+              'disablePast',
+              'enableAccessibleFieldDOMStructure',
+              'format',
+              'formatDensity',
+              'maxTime',
+              'minTime',
+              'minutesStep',
+              'onClear',
+              'onSelectedSectionsChange',
+              'readOnly',
+              'referenceDate',
+              'selectedSections',
+              'shouldDisableTime',
+              'shouldRespectLeadingZeros',
+              'slots',
+              'timezone',
+            ].includes(key)
+        )
+      ),
+    [props]
+  )
+
+
   //  props
   const [validDate, setValidDate] = useState(
     (value && moment(value)?.isValid?.()) || false

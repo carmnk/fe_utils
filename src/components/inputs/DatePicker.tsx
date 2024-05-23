@@ -14,7 +14,8 @@ import CTextField, { CTextFieldProps } from './TextField'
 import { isEqual } from 'lodash'
 
 export type DatePickerProps = GenericInputFieldProps<'date'> &
-  MDatePickerProps<Moment> & {
+  MDatePickerProps<Moment> &
+  CTextFieldProps & {
     // onChange?: (newValue: Moment | null, name?: string) => void
     value?: string | null
     slotProps?: MDatePickerProps<Moment>['slotProps'] &
@@ -72,6 +73,7 @@ export const DatePicker = (props: DatePickerProps) => {
     viewRenderers,
     views,
     yearsPerRow,
+    borderRadius,
     // end of autoCompleteOnlyProps
     // textfieldProps
     disabled,
@@ -178,6 +180,7 @@ export const DatePicker = (props: DatePickerProps) => {
             defaultValue={defaultValue}
             onError={onError}
             inputRef={inputRef}
+            borderRadius={borderRadius}
             // value={
             //   !moment(propsFromDateField?.value).isValid()
             //     ? propsFromDateField?.value
@@ -235,6 +238,7 @@ export const DatePicker = (props: DatePickerProps) => {
       defaultValue,
       onError,
       inputRef,
+      borderRadius,
     ]
   )
 
