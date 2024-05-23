@@ -6,7 +6,7 @@ import {
   DesktopDatePickerProps,
 } from '@mui/x-date-pickers/DesktopDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import { DatePickerProps as MDatePickerProps } from '@mui/x-date-pickers'
+
 import { GenericInputFieldProps } from './types'
 import { Button } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
@@ -14,7 +14,7 @@ import CTextField, { CTextFieldProps } from './TextField'
 import { isEqual } from 'lodash'
 
 type MDatePickerExTextfieldProps = Omit<
-  MDatePickerProps<Moment>,
+  DesktopDatePickerProps<Moment>,
   keyof CTextFieldProps
 >
 
@@ -23,7 +23,7 @@ export type DatePickerProps = GenericInputFieldProps<'date'> & {
 } & CTextFieldProps & {
     // onChange?: (newValue: Moment | null, name?: string) => void
     value?: string | null
-    slotProps?: MDatePickerProps<Moment>['slotProps'] &
+    slotProps?: DesktopDatePickerProps<Moment>['slotProps'] &
       CTextFieldProps['slotProps']
     outputFormat?: 'ISO_UTC'
   }

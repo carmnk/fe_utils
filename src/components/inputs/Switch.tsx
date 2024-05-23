@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { ChangeEvent, useCallback, useMemo } from 'react'
 import {
   FormControlLabel,
   FormControlLabelProps,
@@ -66,6 +66,14 @@ export const Switch = (props: CSwitchProps) => {
     [typography, error]
   )
 
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const checked = e.target.checked
+      onChange(checked, e, name)
+    },
+    [name, onChange]
+  )
+
   return (
     <Tooltip
       disableFocusListener={!tooltip}
@@ -87,7 +95,7 @@ export const Switch = (props: CSwitchProps) => {
               name={name}
               value={value}
               checked={!!value}
-              onChange={onChange}
+              onChange={handleChange}
               sx={{
                 ...(restCheckBoxProps?.sx as any),
               }}

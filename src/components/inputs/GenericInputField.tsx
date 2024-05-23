@@ -6,10 +6,12 @@ import { CTextField, CTextFieldProps } from './TextField'
 import { DatePicker, DatePickerProps } from './DatePicker'
 import { TextArea, TextAreaProps } from './_archiv/TextArea'
 import { Checkbox, CheckboxProps } from './Checkbox'
-import { CommonInputFieldProps, InputFieldType } from './types'
+import { InputFieldType } from './types'
 import { Switch } from './Switch'
 import { GenericInputFieldProps } from './types'
 import { useMemo } from 'react'
+import { TimeField } from '@mui/x-date-pickers'
+import { CSelect2 } from './Select2'
 
 export type GenericInputFieldOption = {
   label: string
@@ -52,7 +54,7 @@ export type GGenericInputFieldProps<T extends InputFieldType> =
       //           ? boolean | null
       //           : null
       // onChange?: (newValue: any, e?: any) => void
-      options?: any[]
+      // options?: any[]
       hidden?: boolean
       invisible?: boolean
       disableHelperTextTheming?: boolean
@@ -87,12 +89,13 @@ export const GenericInputField = <
     required,
     type,
     sx,
-    options,
     hidden,
     invisible,
     error,
     ...rest
   } = props
+
+  const options = 'options' in props ? props.options : undefined
 
   const sxAdj = useMemo(() => {
     if (invisible) return { display: 'none', ...sx }
@@ -130,6 +133,7 @@ export const GenericInputField = <
       required={required}
       sx={sxAdj}
       error={error}
+      isInt
       {...(rest as any)}
     />
   ) : //
@@ -183,18 +187,29 @@ export const GenericInputField = <
       error={error}
       {...(rest as any)}
     />
+  ) : type === 'time' ? (
+    <TimeField
+      label={label}
+      value={value as any}
+      name={name}
+      required={required}
+      sx={sxAdj}
+      error={error}
+      {...(rest as any)}
+    />
   ) : type === 'textarea' ? (
-    <TextArea
+    <CTextField
       label={label}
       value={value as string}
       name={name}
       required={required}
       sx={sxAdj}
       error={error}
-      {...(rest as Omit<SpecificInputProps<'textarea'>, 'name' | 'value'>)}
+      {...(rest as any)}
+      multiline
     />
   ) : type === 'select' ? (
-    <Select
+    <CSelect2
       label={label}
       value={value}
       name={name}
@@ -210,7 +225,7 @@ export const GenericInputField = <
       value={(value as any) ?? ''}
       name={name}
       required={required}
-      options={(options as any) ?? []}
+      options={options ?? []}
       sx={sxAdj}
       error={error}
       {...(rest as any)}

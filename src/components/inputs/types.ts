@@ -17,11 +17,11 @@ export type InputFieldType =
   | 'date'
   | 'select'
   | 'autocomplete'
-  | 'multiselect'
+  // | 'multiselect'
   | 'textarea'
   | 'bool'
   | 'switch'
-  | 'file'
+  // | 'file'
   | 'time'
 
 /**  Def of common props for all boolean input fields (less than textfield) */
