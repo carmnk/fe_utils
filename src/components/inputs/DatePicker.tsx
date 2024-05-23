@@ -7,7 +7,6 @@ import {
 } from '@mui/x-date-pickers/DesktopDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { DatePickerProps as MDatePickerProps } from '@mui/x-date-pickers'
-import { useTheme } from '@mui/material'
 import { GenericInputFieldProps } from './types'
 import { Button } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
@@ -29,19 +28,11 @@ export type DatePickerProps = GenericInputFieldProps<'date'> &
 
 export const DatePicker = (props: DatePickerProps) => {
   const {
-    label,
-    error,
-    value,
-    onChange,
-    disabled,
-    helperText,
-    name,
-    outputFormat = 'ISO_UTC',
-
     // autoCompleteOnlyProps
+    onChange, // not for TextField
     closeOnSelect,
     dayOfWeekFormatter,
-    desktopModeMediaQuery,
+    // desktopModeMediaQuery,
     disableFuture,
     disableHighlightToday,
     disableOpenPicker,
@@ -82,8 +73,41 @@ export const DatePicker = (props: DatePickerProps) => {
     views,
     yearsPerRow,
     // end of autoCompleteOnlyProps
+    // textfieldProps
+    disabled,
+    error,
+    helperText,
+    name,
+    label,
+    required,
+    sx,
+    disableHelperText,
+    disableLabel,
+    color,
+    tooltip,
+    placeholder,
+    maxLength,
+    rows,
+    onChangeCompleted,
+    injectLabelComponent,
+    labelSubtext,
+    useNotchedLabel,
+    notchedLabelBgColor,
+    notchedLabelMarginLeft,
+    autoFocus,
+    className,
+    defaultValue,
+    onError,
+    inputRef,
+    // custom
+    value,
+    outputFormat = 'ISO_UTC',
+    slotProps,
     ...restIn
   } = props
+
+  if (Object.keys(restIn).length > 0) console.warn('Unhandled Props', restIn)
+
   const [validDate, setValidDate] = useState(
     (value && moment(value)?.isValid?.()) || false
   )
@@ -134,7 +158,26 @@ export const DatePicker = (props: DatePickerProps) => {
         return (
           <CTextField
             {...propsFromDateField}
-            {...restIn}
+            required={required}
+            sx={sx}
+            disableHelperText={disableHelperText}
+            disableLabel={disableLabel}
+            color={color}
+            tooltip={tooltip}
+            placeholder={placeholder}
+            maxLength={maxLength}
+            rows={rows}
+            onChangeCompleted={onChangeCompleted}
+            injectLabelComponent={injectLabelComponent}
+            labelSubtext={labelSubtext}
+            useNotchedLabel={useNotchedLabel}
+            notchedLabelBgColor={notchedLabelBgColor}
+            notchedLabelMarginLeft={notchedLabelMarginLeft}
+            autoFocus={autoFocus}
+            className={className}
+            defaultValue={defaultValue}
+            onError={onError}
+            inputRef={inputRef}
             // value={
             //   !moment(propsFromDateField?.value).isValid()
             //     ? propsFromDateField?.value
@@ -143,11 +186,11 @@ export const DatePicker = (props: DatePickerProps) => {
             slotProps={{
               inputContainer: {
                 ...(inputContainerPropsFromDatefield ?? {}),
-                ...(restIn?.slotProps?.inputContainer ?? {}),
+                ...(slotProps?.inputContainer ?? {}),
               },
               input: {
                 ...propsFromDateField?.inputProps,
-                ...(restIn?.slotProps?.input ?? {}),
+                ...(slotProps?.input ?? {}),
               },
               // formHelperText: {
               //   content: 'the date is invalid',
@@ -165,7 +208,34 @@ export const DatePicker = (props: DatePickerProps) => {
         )
       },
     }),
-    [error, helperText, label, name, slots, value]
+    [
+      error,
+      helperText,
+      label,
+      name,
+      slots,
+      slotProps,
+      required,
+      sx,
+      disableHelperText,
+      disableLabel,
+      color,
+      tooltip,
+      placeholder,
+      maxLength,
+      rows,
+      onChangeCompleted,
+      injectLabelComponent,
+      labelSubtext,
+      useNotchedLabel,
+      notchedLabelBgColor,
+      notchedLabelMarginLeft,
+      autoFocus,
+      className,
+      defaultValue,
+      onError,
+      inputRef,
+    ]
   )
 
   const restInRef = useRef(restIn)

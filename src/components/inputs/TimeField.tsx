@@ -18,6 +18,9 @@ export type CTimeFieldProps = GenericInputFieldProps<'time'> &
     outputFormat?: 'ISO_UTC'
   }
 
+// type a = Omit<TimeFieldProps<Moment>, keyof CTextFieldProps>
+// type b = a['timezone']
+
 export const CTimeField = (props: CTimeFieldProps) => {
   const {
     label,
@@ -28,8 +31,31 @@ export const CTimeField = (props: CTimeFieldProps) => {
     helperText,
     name,
     outputFormat = 'ISO_UTC',
+    // timefieldOnly props
+    ampm,
+    clearable,
+    disableFuture,
+    disableIgnoringDatePartForTimeValidation,
+    disablePast,
+    enableAccessibleFieldDOMStructure,
+    format,
+    formatDensity,
+    maxTime,
+    minTime,
+    minutesStep,
+    onClear,
+    onSelectedSectionsChange,
+    readOnly,
+    referenceDate,
+    selectedSections,
+    shouldDisableTime,
+    shouldRespectLeadingZeros,
+    slots,
+    timezone,
+    // end timefieldOnly props
     ...restIn
-  } = props
+  } = useMemo(() => props, [props])
+  //  props
   const [validDate, setValidDate] = useState(
     (value && moment(value)?.isValid?.()) || false
   )
@@ -44,7 +70,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
       const valueOut =
         outputFormat === 'ISO_UTC'
           ? moment(newValue)
-              .startOf(restIn?.format?.includes('s') ? 'second' : 'minute')
+              .startOf(format?.includes('s') ? 'second' : 'minute')
               .toISOString()
           : newValue
       onChange?.(
@@ -53,10 +79,10 @@ export const CTimeField = (props: CTimeFieldProps) => {
         name
       )
     },
-    [name, onChange, outputFormat]
+    [name, onChange, outputFormat, format]
   )
 
-  const slots: DesktopDatePickerProps<Moment>['slots'] = useMemo(
+  const timeFieldSlots: DesktopDatePickerProps<Moment>['slots'] = useMemo(
     () => ({
       openPickerButton: (props) => (
         <Button
@@ -110,7 +136,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
         )
       },
     }),
-    [error, helperText, label, name]
+    [error, helperText, label, name, restIn]
   )
 
   return (
@@ -121,7 +147,28 @@ export const CTimeField = (props: CTimeFieldProps) => {
         value={valueMoment}
         onChange={handleChange}
         disabled={disabled}
-        slots={slots}
+        slots={timeFieldSlots}
+        ampm={ampm}
+        clearable={clearable}
+        disableFuture={disableFuture}
+        disableIgnoringDatePartForTimeValidation={
+          disableIgnoringDatePartForTimeValidation
+        }
+        disablePast={disablePast}
+        enableAccessibleFieldDOMStructure={enableAccessibleFieldDOMStructure}
+        format={format}
+        formatDensity={formatDensity}
+        maxTime={maxTime}
+        minTime={minTime}
+        minutesStep={minutesStep}
+        onClear={onClear}
+        onSelectedSectionsChange={onSelectedSectionsChange}
+        readOnly={readOnly}
+        referenceDate={referenceDate}
+        selectedSections={selectedSections}
+        shouldDisableTime={shouldDisableTime}
+        shouldRespectLeadingZeros={shouldRespectLeadingZeros}
+        timezone={timezone}
       />
     </LocalizationProvider>
   )

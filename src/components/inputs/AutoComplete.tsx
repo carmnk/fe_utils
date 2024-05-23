@@ -232,7 +232,7 @@ export const CAutoComplete = forwardRef(
                       ...defaultInputContainerTextFieldStyles,
                       // height: props?.multiline ? undefined : 42,
                       borderRadius,
-                      pl: '14px',
+                      pl: '14px !important',
                       ...(inputContainer?.sx ?? {}),
                     },
                     startAdornment: startIcon ? (
