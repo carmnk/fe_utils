@@ -10,8 +10,8 @@ import { InputFieldType } from './types'
 import { Switch } from './Switch'
 import { GenericInputFieldProps } from './types'
 import { useMemo } from 'react'
-import { TimeField } from '@mui/x-date-pickers'
 import { CSelect2 } from './Select2'
+import { CTimeField } from './TimeField'
 
 export type GenericInputFieldOption = {
   label: string
@@ -188,7 +188,7 @@ export const GenericInputField = <
       {...(rest as any)}
     />
   ) : type === 'time' ? (
-    <TimeField
+    <CTimeField
       label={label}
       value={value as any}
       name={name}
