@@ -99,71 +99,71 @@ export const Field = (props: FieldProps) => {
 
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e?.target ?? {}
-      console.log('handleChange', name, value)
-      const newValueWithInjections = onBeforeChange?.(
-        { ...formData, [name]: value },
-        formData,
-        name,
-        value
-      ) ?? {
-        ...formData,
-        [name]: value,
-      }
-      onChangeFormData(newValueWithInjections, name, value, formData)
-    },
-    [onBeforeChange, formData, onChangeFormData]
-  )
-  const handleCheckbox = useCallback(
-    (e: ChangeEvent<HTMLInputElement>, value: any) => {
       const { name } = e?.target ?? {}
+      console.log('handleChange', name, newValue)
       const newValueWithInjections = onBeforeChange?.(
-        { ...formData, [name]: value },
+        { ...formData, [name]: newValue },
         formData,
         name,
-        value
+        newValue
       ) ?? {
         ...formData,
-        [name]: value,
+        [name]: newValue,
       }
-
-      onChangeFormData(newValueWithInjections, name, value, formData)
+      onChangeFormData(newValueWithInjections, name, newValue, formData)
     },
     [onBeforeChange, formData, onChangeFormData]
   )
+  // const handleCheckbox = useCallback(
+  //   (e: ChangeEvent<HTMLInputElement>, value: any) => {
+  //     const { name } = e?.target ?? {}
+  //     const newValueWithInjections = onBeforeChange?.(
+  //       { ...formData, [name]: value },
+  //       formData,
+  //       name,
+  //       value
+  //     ) ?? {
+  //       ...formData,
+  //       [name]: value,
+  //     }
 
-  const handleChangeDate = useCallback(
-    (newvalue: string, name: string) => {
-      const newValueWithInjections = onBeforeChange?.(
-        { ...formData, [name]: newvalue },
-        formData,
-        name,
-        newvalue
-      ) ?? {
-        ...formData,
-        [name]: moment(newvalue).format('YYYY-MM-DD'),
-      }
-      onChangeFormData(newValueWithInjections, name, newvalue, formData)
-    },
-    [formData, onChangeFormData, onBeforeChange]
-  )
+  //     onChangeFormData(newValueWithInjections, name, value, formData)
+  //   },
+  //   [onBeforeChange, formData, onChangeFormData]
+  // )
 
-  const handleChangeSelect = useCallback(
-    (value: string, e: ChangeEvent<HTMLInputElement>) => {
-      const name = e?.target?.name
-      const newValueWithInjections = onBeforeChange?.(
-        { ...formData, [name]: value },
-        formData,
-        name,
-        value
-      ) ?? {
-        ...formData,
-        [name]: value,
-      }
-      onChangeFormData(newValueWithInjections, name, value, formData)
-    },
-    [onBeforeChange, formData, onChangeFormData]
-  )
+  // const handleChangeDate = useCallback(
+  //   (newvalue: string, name: string) => {
+  //     const newValueWithInjections = onBeforeChange?.(
+  //       { ...formData, [name]: newvalue },
+  //       formData,
+  //       name,
+  //       newvalue
+  //     ) ?? {
+  //       ...formData,
+  //       [name]: moment(newvalue).format('YYYY-MM-DD'),
+  //     }
+  //     onChangeFormData(newValueWithInjections, name, newvalue, formData)
+  //   },
+  //   [formData, onChangeFormData, onBeforeChange]
+  // )
+
+  // const handleChangeSelect = useCallback(
+  //   (value: string, e: ChangeEvent<HTMLInputElement>) => {
+  //     const name = e?.target?.name
+  //     const newValueWithInjections = onBeforeChange?.(
+  //       { ...formData, [name]: value },
+  //       formData,
+  //       name,
+  //       value
+  //     ) ?? {
+  //       ...formData,
+  //       [name]: value,
+  //     }
+  //     onChangeFormData(newValueWithInjections, name, value, formData)
+  //   },
+  //   [onBeforeChange, formData, onChangeFormData]
+  // )
   const injectIsInt = field.type === 'int' ? { isInt: true } : {}
 
   // const FieldComponent = (field as any)?.component
@@ -213,19 +213,20 @@ export const Field = (props: FieldProps) => {
             (['date'].includes(field?.type) && !fieldValue)))
       }
       sx={{
-        border: '1px solid rgb(221, 226, 234)',
+        // border: '1px solid rgb(221, 226, 234)',
         display: field?.hidden ? 'none' : undefined,
       }}
       {...(injectIsInt as any)}
       value={formData?.[field?.name ?? ''] ?? ''}
       onChange={
-        ['select', 'autocomplete', 'dropdown'].includes(field.type)
-          ? (handleChangeSelect as any)
-          : field.type === 'date'
-            ? handleChangeDate
-            : field.type === 'bool'
-              ? handleCheckbox
-              : handleChange
+        // ['select', 'autocomplete', 'dropdown'].includes(field.type)
+        //   ? (handleChangeSelect as any)
+        //   : field.type === 'date'
+        //     ? handleChangeDate
+        //     : field.type === 'bool'
+        //       ? handleCheckbox
+        //       :
+        handleChange
       }
       // onFileChange={onFileChange}
       // files={files}
