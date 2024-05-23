@@ -20,6 +20,7 @@ import { FormControlProps, AutocompleteProps, Box } from '@mui/material'
 import { GenericInputFieldProps } from './types'
 import TextField, { CTextFieldProps } from './TextField'
 import Icon from '@mdi/react'
+import { defaultInputContainerTextFieldStyles } from './defaultTextFieldStyles'
 
 const requiredFieldText = 'This field is required'
 
@@ -76,6 +77,7 @@ export const CAutoComplete = forwardRef(
       slotProps,
       startIcon,
       endIcon,
+      borderRadius,
       ...restProps
     } = props
 
@@ -227,7 +229,9 @@ export const CAutoComplete = forwardRef(
                     ...params?.InputProps,
                     ...inputContainer,
                     sx: {
-                      ml: '14px',
+                      ...defaultInputContainerTextFieldStyles,
+                      // height: props?.multiline ? undefined : 42,
+                      borderRadius,
                       ...(inputContainer?.sx ?? {}),
                     },
                     startAdornment: startIcon ? (

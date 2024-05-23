@@ -6,19 +6,12 @@ import { TypographyProps, BoxProps, Typography } from '@mui/material'
 import { TextFieldProps as MTextFieldProps } from '@mui/material'
 import Icon from '@mdi/react'
 import { GenericInputFieldProps } from './types'
+import {
+  defaultInputContainerTextFieldStyles,
+  defaultLabelTextFieldStyles,
+} from './defaultTextFieldStyles'
 
 const requiredFieldText = 'This field is required'
-const defaultInputContainerTextFieldStyles = {
-  height: 42,
-  fontSize: '14px !important',
-  borderColor: 'transparent !important',
-  borderWidth: '0px !important',
-}
-const defaultLabelTextFieldStyles = {
-  variant: 'caption' as const,
-  component: 'label' as const,
-  paddingBottom: '4px',
-}
 
 export type SpecificMuiTextFieldProps = Omit<
   MTextFieldProps,
