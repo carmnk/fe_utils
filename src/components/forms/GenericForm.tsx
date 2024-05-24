@@ -147,11 +147,13 @@ export const GenericForm = (props: GenericFormProps) => {
           ?.map((field, fIdx) => {
             const width12 =
               typeof field.width12 === 'number'
-                ? { xs: field.width12 ?? 12 }
-                : field.width12
+                ? { xs: field?.width12 ?? 12 }
+                : typeof field.width12 === 'object'
+                  ? field.width12
+                  : { xs: 12 }
             const fillWidth12 =
-              field.width12 && field.fillWidth
-                ? typeof field.width12 === 'number'
+              field?.width12 && field?.fillWidth
+                ? typeof field?.width12 === 'number'
                   ? { xs: 12 - field.width12 }
                   : typeof field.width12 === 'object'
                     ? {
