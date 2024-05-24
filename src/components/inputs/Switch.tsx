@@ -59,6 +59,7 @@ export const Switch = (props: CSwitchProps) => {
   const formControlLabelSlotProps = useMemo(
     () => ({
       typography: {
+        variant: 'caption' as const,
         ...(typography ?? {}),
         ...(error ? errorSlotProps.typography : {}),
       },

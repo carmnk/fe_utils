@@ -126,11 +126,30 @@ export const GenericForm = (props: GenericFormProps) => {
                 !['array', 'object', 'string-array']?.includes(field.type)
             )
             ?.map((field, fIdx) => {
+              const width12 =
+                typeof field.width12 === 'number'
+                  ? { xs: field.width12 ?? 12 }
+                  : field.width12
+              const fillWidth12 =
+                field.width12 && field.fillWidth
+                  ? typeof field.width12 === 'number'
+                    ? { xs: 12 - field.width12 }
+                    : typeof field.width12 === 'object'
+                      ? {
+                          xs: 12 - (field.width12?.xs ?? 12),
+                          sm: 12 - (field.width12?.sm ?? 12),
+                          md: 12 - (field.width12?.md ?? 12),
+                          lg: 12 - (field.width12?.lg ?? 12),
+                          xl: 12 - (field.width12?.xl ?? 12),
+                        }
+                      : {}
+                  : {}
               return (
                 <React.Fragment key={fIdx}>
                   <Grid
                     item
-                    xs={field.width12 ?? 12}
+                    // xs={field.width12 ?? 12}
+                    {...width12}
                     alignSelf={field.type === 'bool' ? 'flex-end' : undefined}
                     display={field?.hidden ? 'none' : undefined}
                   >
@@ -148,7 +167,7 @@ export const GenericForm = (props: GenericFormProps) => {
                     />
                   </Grid>
                   {field?.width12 && field?.fillWidth && (
-                    <Grid item xs={12 - field.width12} />
+                    <Grid item {...fillWidth12} />
                   )}
                 </React.Fragment>
               )

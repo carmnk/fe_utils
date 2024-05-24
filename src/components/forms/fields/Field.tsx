@@ -11,8 +11,12 @@ export type FormFieldType =
   | 'object'
   | 'string-array'
 
+type Width12 = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
+
 type InputFieldLayoutProps = {
-  width12?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
+  width12?:
+    | Width12
+    | { xs: Width12; sm?: Width12; md?: Width12; lg?: Width12; xl?: Width12 }
   fillWidth?: boolean
 }
 type ArrayInputFieldProps = {

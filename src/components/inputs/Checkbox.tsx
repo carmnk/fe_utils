@@ -29,6 +29,18 @@ export type CheckboxProps = GenericInputFieldProps<'bool'> &
       formHelperText?: FormHelperTextProps
     }
   }
+// const defaultSlotProps = { typography: { sx: { fontSize: '14px' } } }
+const errorSlotProps = {
+  typography: {
+    sx: {
+      // fontSize: '14px',
+      color: 'error.main',
+      '& +span': {
+        color: 'error.main',
+      },
+    },
+  },
+}
 
 export const Checkbox = (props: CheckboxProps) => {
   const {
@@ -42,6 +54,7 @@ export const Checkbox = (props: CheckboxProps) => {
     slotProps,
     disableHelperText,
     disableLabel,
+    error,
     ...restCheckBoxProps
   } = props
 
@@ -52,9 +65,20 @@ export const Checkbox = (props: CheckboxProps) => {
     formHelperText,
   } = slotProps ?? {}
 
-  const formControlLabelSlotProps = useMemo(() => {
-    return typography ? { typography } : {}
-  }, [typography])
+  // const formControlLabelSlotProps = useMemo(() => {
+  //   return typography ? { typography } : {}
+  // }, [typography])
+
+  const formControlLabelSlotProps = useMemo(
+    () => ({
+      typography: {
+        variant: 'caption' as const,
+        ...(typography ?? {}),
+        ...(error ? errorSlotProps.typography : {}),
+      },
+    }),
+    [typography, error]
+  )
 
   const handleChangeCheckbox = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
