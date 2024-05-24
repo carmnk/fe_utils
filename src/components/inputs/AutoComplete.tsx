@@ -76,7 +76,7 @@ export const CAutoComplete = forwardRef(
       value = '',
       slotProps,
       startIcon,
-      endIcon,
+      endIcon: _e,
       borderRadius,
       ...restProps
     } = props
@@ -87,29 +87,6 @@ export const CAutoComplete = forwardRef(
     const theme = useTheme()
     const isFocussed = useRef(false)
     const isChanging = useRef(false)
-
-    // const themeErrorText = useMemo(() => {
-    //   return {
-    //     color: theme.palette.error.main,
-    //     fontWeight: 700,
-    //   }
-    // }, [theme.palette.error.main])
-
-    // const formControlProps = useMemo(() => {
-    //   return {
-    //     ...(rootContainer ?? {}),
-    //     sx: { width: '100%', minWidth: 240, ...(rootContainer?.sx ?? {}) },
-    //   }
-    // }, [rootContainer])
-
-    // const labelTypographyProps: TypographyProps = useMemo(() => {
-    //   return {
-    //     variant: 'caption',
-    //     style: error ? { color: theme.palette.error.main } : undefined,
-    //     paddingBottom: '4px',
-    //     ...labelProps,
-    //   }
-    // }, [error, theme, labelProps])
 
     const autoCompleteProps: AutocompleteProps<string, false, false, boolean> =
       useMemo(() => {

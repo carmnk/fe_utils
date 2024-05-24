@@ -230,7 +230,6 @@ export const CTextField = forwardRef(
         display="flex"
         flexDirection="column"
         width="100%"
-        minWidth="240px"
         {...(rootContainer ?? {})}
       >
         {!disableLabel && !useNotchedLabel && (
