@@ -1,28 +1,18 @@
 import { FormControlLabelProps } from '@mui/material'
 import { ChangeEvent, ReactNode } from 'react'
-import { CAutoCompleteProps } from './AutoComplete'
-import { MultiSelectProps } from './MultiSelect'
-import { CNumberFieldProps } from './NumberField'
-import { CSelectProps } from './Select'
-import { TextAreaProps } from './_archiv/TextArea'
-import { DatePickerProps } from './DatePicker'
-import { CheckboxProps } from './Checkbox'
-import { CTextFieldProps } from './TextField'
 
-/** Def of all input field types */
-export type InputFieldType =
+export type InputTextFieldType =
   | 'text'
   | 'number'
   | 'int'
   | 'date'
   | 'select'
   | 'autocomplete'
-  // | 'multiselect'
   | 'textarea'
-  | 'bool'
-  | 'switch'
-  // | 'file'
   | 'time'
+
+/** Def of all input field types */
+export type InputFieldType = InputTextFieldType | 'bool' | 'switch'
 
 /**  Def of common props for all boolean input fields (less than textfield) */
 export type CommonBooleanInputFieldProps = {

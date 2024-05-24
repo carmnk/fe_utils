@@ -41,3 +41,6 @@ export type { CSelect2Props } from './Select2'
 
 export { CTimeField } from './TimeField'
 export type { CTimeFieldProps } from './TimeField'
+
+export { GenericArrayField } from './GenericArrayField'
+export type { GenericArrayFieldProps } from './GenericArrayField'

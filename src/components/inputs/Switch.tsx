@@ -40,7 +40,7 @@ export const Switch = (props: CSwitchProps) => {
     name,
     label,
     helperText,
-    disableHelperText = true,
+    disableHelperText,
     tooltip,
     error,
     labelPlacement,

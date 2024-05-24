@@ -1,11 +1,10 @@
 import React from 'react'
-import { Box, Grid, Stack } from '@mui/material'
+import { Box, BoxProps, Grid, GridProps, Stack } from '@mui/material'
 import { getDynamicFields } from './utils'
-import { Button } from '../buttons/Button/Button'
+import { Button, CButtonProps } from '../buttons/Button/Button'
 import { mdiDeleteOutline } from '@mdi/js'
 import { Field, StaticFieldDefinition } from './fields/Field'
 import { Subforms } from './Subforms'
-import { StringArrayFormField } from './fields/StringArrayField'
 
 export type GenericFormParams<F extends { [key: string]: any }> = Omit<
   GenericFormProps<F>,
@@ -29,8 +28,8 @@ type DynamicRootInjected<FormDataType> =
 export type GenericFormProps<
   F extends { [key: string]: any } = { [key: string]: any },
 > = {
-  addArrayItemLabel?: string
-  useAlwaysArraysInFormData?: boolean
+  _path?: (string | number)[]
+  _removeFormFromArray?: () => void
   fields: DynamicInjected<StaticFieldDefinition[], F> // StaticFieldDefinition[] | ((formData: F) => StaticFieldDefinition[])
   injections?: {
     initialFormData?: DynamicRootInjected<F>
@@ -41,7 +40,6 @@ export type GenericFormProps<
     required?: DynamicInjectedDict<boolean, F>
     error?: DynamicInjectedDict<boolean, F>
     helperText?: DynamicInjectedDict<boolean, F>
-
     onBeforeChange?: (
       newFormData: F,
       prevFormData: F,
@@ -61,10 +59,6 @@ export type GenericFormProps<
       'formData' | 'onChangeFormData'
     >
   }
-  settings?: {
-    gap?: number
-    gridWidth?: number | string
-  }
   formData: F
   onChangeFormData: (
     newFormData: F,
@@ -75,12 +69,24 @@ export type GenericFormProps<
   ) => void
   rootFormData?: any
   onChangeFormDataRoot?: (newFormData: any) => void
-  showError?: boolean
-  _path?: (string | number)[]
-  _removeFormFromArray?: () => void
-  disableTopSpacing?: boolean
+
   files?: { [key: string]: { file: File; filename: string }[] }
   onFileChange?: (name: string, files: File[]) => void
+  slotProps?: {
+    formContainer?: BoxProps
+    subformContainer?: BoxProps
+    fieldsContainer?: GridProps
+    fieldContainer?: GridProps
+    subFormRemoveItemButton?: CButtonProps
+  }
+  showError?: boolean
+  disableTopSpacing?: boolean
+  addArrayItemLabel?: string
+  useAlwaysArraysInFormData?: boolean
+  settings?: {
+    gap?: number
+    gridWidth?: number | string
+  }
 }
 
 export const GenericForm = (props: GenericFormProps) => {
@@ -101,7 +107,16 @@ export const GenericForm = (props: GenericFormProps) => {
     disableTopSpacing,
     onFileChange,
     files,
+    slotProps,
   } = props
+  const {
+    subFormRemoveItemButton,
+    formContainer,
+    subformContainer,
+    fieldContainer,
+    fieldsContainer,
+  } = slotProps ?? {}
+
   const { onBeforeChange, onBeforeRemoveArrayItem } = injections ?? {}
   const isFirstArrayElement = _path?.slice(-1)?.[0] === 0
   const dynamicFields = getDynamicFields({
@@ -112,94 +127,99 @@ export const GenericForm = (props: GenericFormProps) => {
   })
 
   return (
-    <>
-      <Box position="relative">
-        <Grid
-          container
-          spacing={settings?.gap ?? (disableTopSpacing ? '0 16px' : '16px')}
-          pr={settings?.gap ?? '16px'}
-          width={settings?.gridWidth ?? 'calc(100% - 64px)'}
-        >
-          {dynamicFields
-            ?.filter(
-              (field) =>
-                !['array', 'object', 'string-array']?.includes(field.type)
+    <Box
+      position="relative"
+      component={!_path ? 'form' : undefined}
+      {...(!_path ? formContainer : subformContainer)}
+    >
+      <Grid
+        container
+        spacing={settings?.gap ?? (disableTopSpacing ? '0 16px' : '16px')}
+        pr={settings?.gap ?? '16px'}
+        width={settings?.gridWidth ?? 'calc(100% - 64px)'}
+        {...fieldsContainer}
+      >
+        {dynamicFields
+          ?.filter(
+            (field) =>
+              !['array', 'object', 'string-array']?.includes(field.type)
+          )
+          ?.map((field, fIdx) => {
+            const width12 =
+              typeof field.width12 === 'number'
+                ? { xs: field.width12 ?? 12 }
+                : field.width12
+            const fillWidth12 =
+              field.width12 && field.fillWidth
+                ? typeof field.width12 === 'number'
+                  ? { xs: 12 - field.width12 }
+                  : typeof field.width12 === 'object'
+                    ? {
+                        xs: 12 - (field.width12?.xs ?? 12),
+                        sm: 12 - (field.width12?.sm ?? 12),
+                        md: 12 - (field.width12?.md ?? 12),
+                        lg: 12 - (field.width12?.lg ?? 12),
+                        xl: 12 - (field.width12?.xl ?? 12),
+                      }
+                    : {}
+                : {}
+            return (
+              <React.Fragment key={fIdx}>
+                <Grid
+                  item
+                  // xs={field.width12 ?? 12}
+                  {...width12}
+                  alignSelf={field.type === 'bool' ? 'flex-end' : undefined}
+                  display={field?.hidden ? 'none' : undefined}
+                  {...fieldContainer}
+                >
+                  <Field
+                    onBeforeChange={onBeforeChange}
+                    formData={formData}
+                    rootFormData={rootFormData}
+                    onChangeFormData={onChangeFormData}
+                    onChangeFormDataRoot={onChangeFormDataRoot}
+                    _path={_path}
+                    showError={showError}
+                    field={field as any}
+                    onFileChange={onFileChange}
+                    files={files}
+                  />
+                </Grid>
+                {field?.width12 && field?.fillWidth && (
+                  <Grid item {...fillWidth12} />
+                )}
+              </React.Fragment>
             )
-            ?.map((field, fIdx) => {
-              const width12 =
-                typeof field.width12 === 'number'
-                  ? { xs: field.width12 ?? 12 }
-                  : field.width12
-              const fillWidth12 =
-                field.width12 && field.fillWidth
-                  ? typeof field.width12 === 'number'
-                    ? { xs: 12 - field.width12 }
-                    : typeof field.width12 === 'object'
-                      ? {
-                          xs: 12 - (field.width12?.xs ?? 12),
-                          sm: 12 - (field.width12?.sm ?? 12),
-                          md: 12 - (field.width12?.md ?? 12),
-                          lg: 12 - (field.width12?.lg ?? 12),
-                          xl: 12 - (field.width12?.xl ?? 12),
-                        }
-                      : {}
-                  : {}
-              return (
-                <React.Fragment key={fIdx}>
-                  <Grid
-                    item
-                    // xs={field.width12 ?? 12}
-                    {...width12}
-                    alignSelf={field.type === 'bool' ? 'flex-end' : undefined}
-                    display={field?.hidden ? 'none' : undefined}
-                  >
-                    <Field
-                      onBeforeChange={onBeforeChange}
-                      formData={formData}
-                      rootFormData={rootFormData}
-                      onChangeFormData={onChangeFormData}
-                      onChangeFormDataRoot={onChangeFormDataRoot}
-                      _path={_path}
-                      showError={showError}
-                      field={field as any}
-                      onFileChange={onFileChange}
-                      files={files}
-                    />
-                  </Grid>
-                  {field?.width12 && field?.fillWidth && (
-                    <Grid item {...fillWidth12} />
-                  )}
-                </React.Fragment>
-              )
-            })}
-          {!isFirstArrayElement && _removeFormFromArray && (
-            <Stack
-              direction="row"
-              position="absolute"
-              right={0}
-              top={0}
-              // pt={options?.gap ?? 16 + 25 + 'px'}
-              // pb="36px"
-              height="100%"
-              width={64}
-              alignItems="center"
-            >
-              <Box>
-                <Button
-                  variant="text"
-                  iconButton={true}
-                  icon={mdiDeleteOutline}
-                  onClick={() => {
-                    // alert("F")
-                    _removeFormFromArray?.()
-                  }}
-                />
-              </Box>
-            </Stack>
-          )}
-        </Grid>
-      </Box>
-      <StringArrayFormField
+          })}
+        {!isFirstArrayElement && _removeFormFromArray && (
+          <Stack
+            direction="row"
+            position="absolute"
+            right={0}
+            top={0}
+            // pt={options?.gap ?? 16 + 25 + 'px'}
+            // pb="36px"
+            height="100%"
+            width={64}
+            alignItems="center"
+          >
+            <Box>
+              <Button
+                variant="text"
+                iconButton={true}
+                icon={mdiDeleteOutline}
+                onClick={() => {
+                  // alert("F")
+                  _removeFormFromArray?.()
+                }}
+              />
+            </Box>
+          </Stack>
+        )}
+      </Grid>
+
+      {/* <StringArrayFormField
         formData={formData}
         onChangeFormData={onChangeFormData}
         rootFormData={rootFormData}
@@ -209,7 +229,7 @@ export const GenericForm = (props: GenericFormProps) => {
         onBeforeRemoveArrayItem={onBeforeRemoveArrayItem}
         onBeforeChange={onBeforeChange}
         showError={showError}
-      />
+      /> */}
       <Subforms
         dynamicFields={dynamicFields}
         formData={formData}
@@ -223,6 +243,6 @@ export const GenericForm = (props: GenericFormProps) => {
         settings={settings}
         _removeFormFromArray={_removeFormFromArray}
       />
-    </>
+    </Box>
   )
 }
