@@ -5,6 +5,7 @@ import { Button, CButtonProps } from '../buttons/Button/Button'
 import { mdiDeleteOutline } from '@mdi/js'
 import { Field, StaticFieldDefinition } from './fields/Field'
 import { Subforms } from './Subforms'
+import { SubformField } from './SubformField'
 
 export type GenericFormParams<F extends { [key: string]: any }> = Omit<
   GenericFormProps<F>,
@@ -140,10 +141,10 @@ export const GenericForm = (props: GenericFormProps) => {
         {...fieldsContainer}
       >
         {dynamicFields
-          ?.filter(
-            (field) =>
-              !['array', 'object', 'string-array']?.includes(field.type)
-          )
+          // ?.filter(
+          //   (field) =>
+          //     !['array', 'object', 'string-array']?.includes(field.type)
+          // )
           ?.map((field, fIdx) => {
             const width12 =
               typeof field.width12 === 'number'
@@ -165,7 +166,9 @@ export const GenericForm = (props: GenericFormProps) => {
                       }
                     : {}
                 : {}
-            return (
+            return !['array', 'object', 'string-array']?.includes(
+              field.type
+            ) ? (
               <React.Fragment key={fIdx}>
                 <Grid
                   item
@@ -192,6 +195,29 @@ export const GenericForm = (props: GenericFormProps) => {
                   <Grid item {...fillWidth12} />
                 )}
               </React.Fragment>
+            ) : (
+              <Grid
+                item
+                // xs={field.width12 ?? 12}
+                // {...width12}
+                // alignSelf={field.type === 'bool' ? 'flex-end' : undefined}
+                display={field?.hidden ? 'none' : undefined}
+                {...fieldContainer}
+              >
+                <SubformField
+                  fIdx={fIdx}
+                  formData={formData}
+                  rootFormData={rootFormData}
+                  onChangeFormData={onChangeFormData}
+                  showError={!!showError}
+                  field={field as any}
+                  subforms={subforms}
+                  settings={settings}
+                  useAlwaysArraysInFormData={!!useAlwaysArraysInFormData}
+                  _path={_path}
+                  slotProps={slotProps}
+                />
+              </Grid>
             )
           })}
         {!isFirstArrayElement && _removeFormFromArray && (
@@ -232,7 +258,8 @@ export const GenericForm = (props: GenericFormProps) => {
         onBeforeChange={onBeforeChange}
         showError={showError}
       /> */}
-      <Subforms
+      {/* <Subforms
+        slotProps={slotProps}
         dynamicFields={dynamicFields}
         formData={formData}
         onChangeFormData={onChangeFormData}
@@ -244,7 +271,7 @@ export const GenericForm = (props: GenericFormProps) => {
         _path={_path}
         settings={settings}
         _removeFormFromArray={_removeFormFromArray}
-      />
+      /> */}
     </Box>
   )
 }

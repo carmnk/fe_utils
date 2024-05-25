@@ -1,7 +1,7 @@
 import { mdiPlus } from '@mdi/js'
 import { Box, Divider, Typography } from '@mui/material'
 import { Button } from '../buttons/Button'
-import { GenericForm } from './GenericForm'
+import { GenericForm, GenericFormProps } from './GenericForm'
 import { DynamicFieldDefinition } from './fields/Field'
 
 export type SubformsProps = {
@@ -15,6 +15,7 @@ export type SubformsProps = {
   useAlwaysArraysInFormData: any
   _path: any
   _removeFormFromArray?: any
+  slotProps?: GenericFormProps['slotProps']
 }
 export const Subforms = (props: SubformsProps) => {
   const {
@@ -28,6 +29,7 @@ export const Subforms = (props: SubformsProps) => {
     useAlwaysArraysInFormData,
     _path,
     _removeFormFromArray,
+    slotProps,
   } = props
   const arrayIdxRaw = _path?.slice(-1)?.[0]
   const ArrayIdx = typeof arrayIdxRaw === 'number' ? arrayIdxRaw : undefined
@@ -119,7 +121,7 @@ export const Subforms = (props: SubformsProps) => {
           </Box>
           <Box>
             <Typography fontWeight="bold" paddingBottom={1}>
-              field: {fieldName}
+              {fieldName}
             </Typography>
             <GenericForm
               useAlwaysArraysInFormData={useAlwaysArraysInFormData}
@@ -138,6 +140,7 @@ export const Subforms = (props: SubformsProps) => {
               _path={[...(_path ?? []), field.name]}
               showError={showError}
               subforms={subform?.subforms}
+              slotProps={slotProps}
             />
           </Box>
         </>
@@ -146,7 +149,7 @@ export const Subforms = (props: SubformsProps) => {
           <Box>
             <Divider />
           </Box>
-          <Typography fontWeight="bold">field: {fieldName}</Typography>
+          <Typography fontWeight="bold">{fieldName}</Typography>
           <Box mb={4} key={fIdx}>
             {(formData?.[fieldName]?.length
               ? formData?.[fieldName]
@@ -210,6 +213,7 @@ export const Subforms = (props: SubformsProps) => {
                     _path={[...(_path ?? []), field.name, fIdx2]}
                     showError={showError}
                     disableTopSpacing={true}
+                    slotProps={slotProps}
                   />
                 </Box>
               )
