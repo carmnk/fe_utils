@@ -1,7 +1,6 @@
 import { ChangeEvent, useCallback } from 'react'
 import { GenericInputField } from '../../inputs/GenericInputField'
 import { CustomField, CustomFieldDefinition } from './CustomField'
-import moment from 'moment'
 import { GenericInputFieldProps, InputFieldType } from '../../inputs/types'
 
 export type FormFieldType =
@@ -85,6 +84,7 @@ export type FieldProps = {
   field: DynamicFieldDefinition<InputFieldType | 'inject'> // -> make gneric! StaticFieldType
   files?: any
   onFileChange?: any
+  fieldProps?: GenericInputFieldProps
 }
 
 export const Field = (props: FieldProps) => {
@@ -99,6 +99,7 @@ export const Field = (props: FieldProps) => {
     onChangeFormDataRoot,
     field,
     _path,
+    fieldProps,
   } = props as FieldProps
 
   const handleChange = useCallback(
@@ -232,6 +233,7 @@ export const Field = (props: FieldProps) => {
         //       :
         handleChange
       }
+      {...fieldProps}
       // onFileChange={onFileChange}
       // files={files}
     />

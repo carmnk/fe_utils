@@ -159,7 +159,7 @@ export const Table = (props: TableProps) => {
         {loading ? (
           new Array(loadingRows ?? 10).fill(0).map((x, xIdx) => (
             <Tr key={xIdx}>
-              {columns?.map((y, yIdx) => (
+              {(columns?.length ? columns : new Array(5).fill(0))?.map((y, yIdx) => (
                 <td key={`${xIdx}-${yIdx}`} style={{ height: '48px' }}>
                   <Skeleton variant="text" height="36px" />
                 </td>

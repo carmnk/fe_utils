@@ -6,6 +6,7 @@ import { mdiDeleteOutline } from '@mdi/js'
 import { Field, StaticFieldDefinition } from './fields/Field'
 import { Subforms } from './Subforms'
 import { SubformField } from './SubformField'
+import { GenericInputFieldProps } from '../inputs/types'
 
 export type GenericFormParams<F extends { [key: string]: any }> = Omit<
   GenericFormProps<F>,
@@ -79,6 +80,7 @@ export type GenericFormProps<
     fieldsContainer?: GridProps
     fieldContainer?: GridProps
     subFormRemoveItemButton?: CButtonProps
+    commonFieldProps?: GenericInputFieldProps
   }
   showError?: boolean
   disableTopSpacing?: boolean
@@ -112,6 +114,7 @@ export const GenericForm = (props: GenericFormProps) => {
   } = props
   const {
     subFormRemoveItemButton,
+    commonFieldProps,
     formContainer,
     subformContainer,
     fieldContainer,
@@ -189,6 +192,7 @@ export const GenericForm = (props: GenericFormProps) => {
                     field={field as any}
                     onFileChange={onFileChange}
                     files={files}
+                    fieldProps={commonFieldProps}
                   />
                 </Grid>
                 {field?.width12 && field?.fillWidth && (
