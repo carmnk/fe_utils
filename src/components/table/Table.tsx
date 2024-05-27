@@ -11,41 +11,56 @@ import { TableComponent } from './subComponents/TableComponent'
 const Tfoot = (props: BoxProps) => <Box component="tfoot" {...props} />
 const Tr = (props: BoxProps) => <Box component="tr" {...props} />
 
+/**
+ * React table composite component
+ * @prop {Record<string, unknown>[]} data - table data
+ * @prop {Record<string, unknown>} footerData - table footer data
+ * @prop {TableColumnType[]} columns - table columns
+ * @prop {string[]} selectedRows - selected rows
+ * @prop {FilterType[]} filters - table filters
+ * @prop {boolean} loading - loading state
+ * @prop {number} loadingRows - number of rows to show skeleton loading
+ */
 export const Table = (props: TableProps) => {
   const {
     loading,
     loadingRows,
-    rows,
-    clearFilters,
+
+    data,
+    footerData,
     columns,
     selectedRows,
-    onClearSelected,
-    onSelectAll,
+    filters,
+
     headerBackground,
     footerBackground,
-    disableClearFilters,
-    noResultsLabel,
-    clearFilersLabel,
-    allFilters,
-    setPageNumber,
-    setAllFilters,
-    renderSelectedItem,
-    onSelectRow,
-    footerData,
-    getRowColor,
+    disableClearFiltersOnNoResults,
     disableSelection,
-    trProps,
     disableNoResults,
     disableTableHeader,
-    onSetAllFilters,
-    userSortingIdFieldKey,
+
+    noResultsLabel,
+    clearFilersOnNoResultLabel,
+
+    // dynamic setting
+    getSelectedRow,
+    getTrLeftBorderColor,
+    getTrProps,
+
+    reorderRowId,
     onReorder,
+    onSelectRow,
+    // filter Actions
+    onSelectAllFilters,
+    onUnselectAllFilters,
+    onSetFilters,
   } = props
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { draggedRows, bind, draggedItemId, hoverItemId } = useDraggableRows({
-    rows,
+    rows: data,
     onReorder,
-    userSortingIdFieldKey,
+    reorderRowId,
   })
 
   const [openFilters, setOpenFilters] = React.useState(
@@ -54,50 +69,41 @@ export const Table = (props: TableProps) => {
   React.useEffect(() => {
     if (columns?.length === openFilters?.length) return
     setOpenFilters(columns?.map?.(() => false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns])
 
   const sortings = React.useMemo(
-    () =>
-      allFilters?.filter((filter) => filter?.filterKey?.includes('sorting')),
-    [allFilters]
+    () => filters?.filter((filter) => filter?.filterKey?.includes('sorting')),
+    [filters]
   )
 
   const handleChangeNewSorting = React.useCallback(
     (sortValue: string) => {
       const sortKey = 'sorting'
-      const curSortFilter = allFilters?.find(
+      const curSortFilter = filters?.find(
         (filter) =>
           filter?.filterKey === sortKey && filter.value.includes(sortValue)
       )
-      const allFiltersExSortings = allFilters?.filter(
+      const allFiltersExSortings = filters?.filter(
         (filter) => filter?.filterKey !== sortKey
       )
       if (curSortFilter) {
         if (curSortFilter?.value.slice(-3) === 'asc') {
-          setAllFilters([
-            ...allFiltersExSortings,
-            { filterKey: sortKey, value: `${sortValue},desc` },
-          ])
-          onSetAllFilters?.([
+          onSetFilters?.([
             ...allFiltersExSortings,
             { filterKey: sortKey, value: `${sortValue},desc` },
           ])
         } else {
-          setAllFilters(allFiltersExSortings)
-          onSetAllFilters?.(allFiltersExSortings)
+          onSetFilters?.(allFiltersExSortings)
         }
       } else {
-        setAllFilters((current) => [
-          ...allFiltersExSortings,
-          { filterKey: sortKey, value: `${sortValue},asc` },
-        ])
-        onSetAllFilters?.([
+        onSetFilters?.([
           ...allFiltersExSortings,
           { filterKey: sortKey, value: `${sortValue},asc` },
         ])
       }
     },
-    [allFilters, setAllFilters, onSetAllFilters]
+    [filters, onSetFilters]
   )
 
   const handleOpenFilters = React.useMemo(() => {
@@ -122,14 +128,13 @@ export const Table = (props: TableProps) => {
   )
 
   const handleClickSelectAll = React.useCallback(() => {
-    console.warn('HERE TO SELECT / UNSELECT ALL', selectedRows?.length)
     if (!selectedRows?.length) {
-      onSelectAll?.()
+      onSelectAllFilters?.()
     } else {
       //Clean it
-      clearFilters?.()
+      onUnselectAllFilters?.()
     }
-  }, [selectedRows, onSelectAll, clearFilters])
+  }, [selectedRows, onSelectAllFilters, onUnselectAllFilters])
 
   return (
     <TableComponent disableTableHeader={disableTableHeader}>
@@ -139,17 +144,15 @@ export const Table = (props: TableProps) => {
         openFilters={openFilters}
         handleOpenFilters={handleOpenFilters}
         handleCloseFilters={handleCloseFilters}
-        allFilters={allFilters}
-        setAllFilters={setAllFilters}
-        setPageNumber={setPageNumber}
+        filters={filters}
         handleChangeSorting={handleChangeNewSorting}
         disableTableHeader={disableTableHeader}
         headerBackground={headerBackground}
         selectedRows={selectedRows}
-        onClearSelected={onClearSelected}
-        onSelectAll={onSelectAll}
+        onUnselectAll={onUnselectAllFilters}
+        onSelectAll={onSelectAllFilters}
         handleClickSelectAll={handleClickSelectAll}
-        onSetAllFilters={onSetAllFilters}
+        onSetFilters={onSetFilters}
       />
 
       <tbody>
@@ -166,54 +169,65 @@ export const Table = (props: TableProps) => {
         ) : (
           <>
             {draggedRows?.length ? (
-              draggedRows.map((row, rIdx) => (
-                <React.Fragment key={rIdx}>
-                  <RowComponent
-                    enableDrag={!!userSortingIdFieldKey}
-                    isDragged={
-                      row?.[userSortingIdFieldKey ?? ''] === draggedItemId &&
-                      !!draggedItemId
-                    }
-                    bind={bind}
-                    trProps={trProps}
-                    getRowColor={getRowColor}
-                    // onClick={() => {
-                    //   const id = renderSelectedItem?.(row, rIdx)
-                    //   if (!renderExpandedRows || !id) return
-                    //   setExpandedRowIds?.(((current: number[]) =>
-                    //     // current?.includes(id) ? current?.filter((rowId) => rowId !== id) : [...current, id]
-                    //     current?.includes(id) ? [] : [id]) as any) // only 1 expandable item allowed
-                    //   onExpandedRow?.(row)
-                    // }}
-                    row={row}
-                    rIdx={rIdx}
-                  >
-                    {columns.map((col, cIdx) =>
-                      col?.isRowSelect ? (
-                        <td className="p-2" key={cIdx}>
-                          <div className="flex items-center justify-center">
-                            <Checkbox
-                              disabled={disableSelection}
-                              tabIndex={-1}
-                              checked={
-                                !!selectedRows?.includes?.(
-                                  renderSelectedItem?.(row, rIdx) ?? ''
-                                )
-                              }
-                              size="small"
-                              onClick={() => {
-                                !disableSelection && onSelectRow?.(row, rIdx)
-                              }}
-                            />
-                          </div>
-                        </td>
-                      ) : (
-                        col?.renderRow?.(row, cIdx, rIdx) || <td key={cIdx} />
-                      )
-                    )}
-                  </RowComponent>
-                  {/* {expandedRowIds?.includes(
-                    renderSelectedItem?.(row, rIdx) ?? ''
+              draggedRows.map((row, rIdx) => {
+                const selectedItemId =
+                  typeof getSelectedRow === 'function'
+                    ? getSelectedRow(row, rIdx)
+                    : typeof getSelectedRow === 'string'
+                      ? row[getSelectedRow]
+                      : ''
+                return (
+                  <React.Fragment key={rIdx}>
+                    <RowComponent
+                      enableDrag={!!reorderRowId}
+                      isDragged={
+                        row?.[reorderRowId ?? ''] === draggedItemId &&
+                        !!draggedItemId
+                      }
+                      bind={bind}
+                      getTrProps={getTrProps}
+                      getTrLeftBorderColor={getTrLeftBorderColor}
+                      // onClick={() => {
+                      //   const id = getSelectedRow?.(row, rIdx)
+                      //   if (!renderExpandedRows || !id) return
+                      //   setExpandedRowIds?.(((current: number[]) =>
+                      //     // current?.includes(id) ? current?.filter((rowId) => rowId !== id) : [...current, id]
+                      //     current?.includes(id) ? [] : [id]) as any) // only 1 expandable item allowed
+                      //   onExpandedRow?.(row)
+                      // }}
+                      row={row}
+                      rowIdx={rIdx}
+                    >
+                      {columns.map((col, cIdx) => {
+                        const renderCell =
+                          typeof col?.renderCell === 'function' ? (
+                            col?.renderCell(row, cIdx, rIdx)
+                          ) : typeof col?.renderCell === 'string' ? (
+                            <td>{row[col?.renderCell]}</td>
+                          ) : null
+                        return col?.isRowSelect ? (
+                          <td key={cIdx}>
+                            <div>
+                              <Checkbox
+                                disabled={disableSelection}
+                                tabIndex={-1}
+                                checked={
+                                  !!selectedRows?.includes?.(selectedItemId)
+                                }
+                                size="small"
+                                onClick={() => {
+                                  !disableSelection && onSelectRow?.(row, rIdx)
+                                }}
+                              />
+                            </div>
+                          </td>
+                        ) : (
+                          renderCell || <td key={cIdx} />
+                        )
+                      })}
+                    </RowComponent>
+                    {/* {expandedRowIds?.includes(
+                    getSelectedRow?.(row, rIdx) ?? ''
                   ) ? (
                     <>
                       {renderExpandedRows?.(row, rIdx)}
@@ -226,19 +240,20 @@ export const Table = (props: TableProps) => {
                       <tr style={{ height: 2 }} key={`filler-02-${rIdx}`} />
                     </>
                   ) : null} */}
-                </React.Fragment>
-              ))
+                  </React.Fragment>
+                )
+              })
             ) : !disableNoResults ? (
               <tr key={'no-result'} data-testid="row_no_result">
                 <td colSpan={columns?.length}>
                   <NoResults
-                    clearFilters={clearFilters}
+                    clearFilters={onUnselectAllFilters}
                     label={noResultsLabel}
                     disableClearFilters={
-                      !!disableClearFilters ||
-                      !!(allFilters && !allFilters?.length) as any
+                      !!disableClearFiltersOnNoResults ||
+                      !!(filters && !filters?.length)
                     }
-                    clearFilersLabel={clearFilersLabel}
+                    clearFilersLabel={clearFilersOnNoResultLabel}
                   />
                 </td>
               </tr>
@@ -250,10 +265,12 @@ export const Table = (props: TableProps) => {
         <Tfoot bgcolor={footerBackground}>
           <tr>
             {columns?.map((col, cIdx) => {
-              const renderedFooterCell = col?.renderFooterCell?.(
-                footerData,
-                cIdx
-              )
+              const renderedFooterCell =
+                typeof col?.renderFooterCell === 'function' ? (
+                  col?.renderFooterCell?.(footerData, cIdx)
+                ) : typeof col?.renderFooterCell === 'string' ? (
+                  <td>{footerData[col?.renderFooterCell]}</td>
+                ) : null
               return !renderedFooterCell && renderedFooterCell !== null ? (
                 <td key={cIdx} />
               ) : (

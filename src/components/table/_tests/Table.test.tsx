@@ -17,7 +17,7 @@ const COLUMNS: TableProps['columns'] = [
   },
   {
     header: 'ID',
-    renderRow: (row) => <td>{row.id}</td>,
+    renderCell: (row) => <td>{row.id}</td>,
     // renderFooterCell: (footerData) => <td>{footerData.title}</td>,
     // additionalFilterKeys
     filterKey: 'id',
@@ -26,7 +26,7 @@ const COLUMNS: TableProps['columns'] = [
   {
     header: 'Name',
     // additionalFilterKeys
-    renderRow: (row) => <td>{row.name}</td>,
+    renderCell: (row) => <td>{row.name}</td>,
     renderFooterCell: (footerData) => <td>{footerData.total}</td>,
     filterKey: 'name',
     sortKey: 'name',
@@ -49,7 +49,7 @@ const FixtureComponent = (props: Partial<TableProps>) => {
       getRowColor={() => 'gray'}
       loading={false}
       noResultsLabel="There were no results found"
-      //   userSortingIdFieldKey=''
+      //   reorderRowId=''
       {...props}
     />
   )
@@ -85,7 +85,7 @@ const renderFixture = (
       setAllFilters={handleSetAllFilters}
       onSelectAll={handleSelectAll}
       onSelectRow={handleSelectRow}
-      onClearSelected={handleClearSelected}
+      onUnselectAll={handleClearSelected}
       onExpandedRow={handleExpandedRow}
       onReorder={handleReorder}
       onSetAllFilters={handleOnSetAllFilters}

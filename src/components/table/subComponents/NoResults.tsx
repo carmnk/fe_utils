@@ -1,17 +1,18 @@
+import { Box } from '@mui/material'
 import { Button } from '../../buttons/Button/Button'
 
 export type NoResultsProps =
   | {
-      clearFilters: () => any
+      clearFilters: () => void
       label?: string
       content?: React.ReactNode
       clearFilersLabel?: string
-      disableClearFilters?: true
+      disableClearFilters?: boolean
     }
   | {
       label?: string
       content?: React.ReactNode
-      disableClearFilters?: true
+      disableClearFilters?: boolean
     }
 
 export const NoResults = (props: NoResultsProps) => {
@@ -29,7 +30,7 @@ export const NoResults = (props: NoResultsProps) => {
     ...props,
   }
   return (
-    <section className="no-result">
+    <Box>
       {content}
       {label ? label : 'No results found'}
       {!disableClearFilters && clearFilters && (
@@ -39,6 +40,6 @@ export const NoResults = (props: NoResultsProps) => {
           variant="outlined"
         />
       )}
-    </section>
+    </Box>
   )
 }

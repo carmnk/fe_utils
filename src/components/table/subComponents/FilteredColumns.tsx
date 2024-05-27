@@ -21,11 +21,9 @@ export interface FilteredTableHeaderCellProps
   onClose?: () => void
   open: boolean
   selectedFilter?: string[]
-  allFilters: FilterType[]
-  onSetAllFilters?: (allValues: { value: string; filterKey: string }[]) => void
+  filters: FilterType[]
+  onSetFilters?: (allValues: { value: string; filterKey: string }[]) => void
   changeSorting: (filterKey: string) => void
-  setAllFilters: Dispatch<SetStateAction<FilterType[]>>
-  setPageNumber: any
   // misc
   disableTableHeader?: boolean // not required anymore?
 }
@@ -43,22 +41,20 @@ export const FilteredTableHeaderCell = forwardRef(
       getItemLabel,
       getFilterValue,
       renderFilterKey,
-      setAllFilters,
       filterKey,
       additionalFilterKeys,
-      allFilters,
+      filters,
       isFilterLocked,
-      setPageNumber,
       sortKey,
       headerToolTip,
-      onSetAllFilters,
+      onSetFilters,
       changeSorting,
       disableTableHeader,
     } = props
 
     const [searchValue, setSearchValue] = useState('')
     const initialFilters = useRef(selectedFilter)
-    const initialAllFilters = useRef(allFilters)
+    const initialAllFilters = useRef(filters)
     const filteredOptions = useMemo(() => {
       return !searchValue
         ? filterOptions
@@ -79,29 +75,18 @@ export const FilteredTableHeaderCell = forwardRef(
           selectedFilter.length > 0 &&
           selectedFilter.includes(value)
         ) {
-          const filteredAllFilters = allFilters.filter(
+          const filteredAllFilters = filters.filter(
             (item) => item.value !== value
           )
 
-          setAllFilters(filteredAllFilters)
-          onSetAllFilters?.(filteredAllFilters)
-          setPageNumber(1)
+          // setFilters(filteredAllFilters)
+          onSetFilters?.(filteredAllFilters)
         } else {
-          setAllFilters((current) => [...current, { value, filterKey: keyAdj }])
-          onSetAllFilters?.([...allFilters, { value, filterKey: keyAdj }])
-
-          setPageNumber(1)
+          // setFilters((current) => [...current, { value, filterKey: keyAdj }])
+          onSetFilters?.([...filters, { value, filterKey: keyAdj }])
         }
       },
-      [
-        setPageNumber,
-        getFilterValue,
-        selectedFilter,
-        setAllFilters,
-        allFilters,
-        renderFilterKey,
-        onSetAllFilters,
-      ]
+      [getFilterValue, selectedFilter, filters, renderFilterKey, onSetFilters]
     )
 
     const handleSearchValueChange = useCallback(
@@ -120,7 +105,7 @@ export const FilteredTableHeaderCell = forwardRef(
         return
       }
       initialFilters.current = selectedFilter
-      initialAllFilters.current = allFilters
+      initialAllFilters.current = filters
     }, [open]) // only when open changes!
 
     const anchor = useRef(null)
@@ -132,36 +117,42 @@ export const FilteredTableHeaderCell = forwardRef(
     }, [open, onOpen, onClose, isFilterLocked])
 
     const clearFilter = useCallback(() => {
-      setAllFilters((current) =>
-        current.filter(
+      // setFilters((current) =>
+      //   current.filter(
+      //     (filter) =>
+      //       ![filterKey, ...(additionalFilterKeys ?? [])]?.includes?.(
+      //         filter?.filterKey
+      //       )
+      //   )
+      // )
+      onSetFilters?.(
+        filters.filter(
           (filter) =>
             ![filterKey, ...(additionalFilterKeys ?? [])]?.includes?.(
               filter?.filterKey
             )
         )
       )
-      onSetAllFilters?.(
-        allFilters.filter(
-          (filter) =>
-            ![filterKey, ...(additionalFilterKeys ?? [])]?.includes?.(
-              filter?.filterKey
-            )
-        )
-      )
-      setPageNumber(1)
-    }, [
-      setAllFilters,
-      filterKey,
-      additionalFilterKeys,
-      allFilters,
-      onSetAllFilters,
-      setPageNumber,
-    ])
+    }, [filterKey, additionalFilterKeys, filters, onSetFilters])
 
     const selectAll = useCallback(() => {
       if (!filterKey) return
-      setAllFilters((current) => [
-        ...current.filter(
+      // setFilters((current) => [
+      //   ...current.filter(
+      //     (filter) =>
+      //       ![filterKey, ...(additionalFilterKeys ?? [])]?.includes?.(
+      //         filter?.filterKey
+      //       ) || additionalFilterKeys?.includes?.(filter?.filterKey)
+      //   ),
+      //   ...(filterOptions?.map((opt) => ({
+      //     value: getFilterValue?.(opt) ?? '',
+      //     filterKey: renderFilterKey
+      //       ? renderFilterKey(filterKey, getFilterValue?.(opt))
+      //       : filterKey,
+      //   })) ?? []),
+      // ])
+      onSetFilters?.([
+        ...filters.filter(
           (filter) =>
             ![filterKey, ...(additionalFilterKeys ?? [])]?.includes?.(
               filter?.filterKey
@@ -174,39 +165,21 @@ export const FilteredTableHeaderCell = forwardRef(
             : filterKey,
         })) ?? []),
       ])
-      onSetAllFilters?.([
-        ...allFilters.filter(
-          (filter) =>
-            ![filterKey, ...(additionalFilterKeys ?? [])]?.includes?.(
-              filter?.filterKey
-            ) || additionalFilterKeys?.includes?.(filter?.filterKey)
-        ),
-        ...(filterOptions?.map((opt) => ({
-          value: getFilterValue?.(opt) ?? '',
-          filterKey: renderFilterKey
-            ? renderFilterKey(filterKey, getFilterValue?.(opt))
-            : filterKey,
-        })) ?? []),
-      ])
-      setPageNumber(1)
     }, [
       filterOptions,
       filterKey,
       getFilterValue,
-      setAllFilters,
       additionalFilterKeys,
       renderFilterKey,
-      allFilters,
-      onSetAllFilters,
-      setPageNumber,
+      filters,
+      onSetFilters,
     ])
 
     const handleResetFilter = useCallback(() => {
-      setAllFilters?.(initialAllFilters.current)
-      onSetAllFilters?.(initialAllFilters.current)
-      setPageNumber(1)
+      // setFilters?.(initialAllFilters.current)
+      onSetFilters?.(initialAllFilters.current)
       onClose?.()
-    }, [onClose, onSetAllFilters])
+    }, [onClose, onSetFilters])
 
     const handleKeyUpMenuItem = useCallback(
       (e: KeyboardEvent, item: any) => {
@@ -243,10 +216,9 @@ export const FilteredTableHeaderCell = forwardRef(
       [filteredOptions, handleOnFilter, filterKey]
     )
     const sortings = useMemo(
-      () =>
-        allFilters?.filter((filter) => filter?.filterKey?.includes('sorting')),
+      () => filters?.filter((filter) => filter?.filterKey?.includes('sorting')),
 
-      [allFilters]
+      [filters]
     )
     const colSorting = sortings?.find((sorting) =>
       sorting?.value?.includes(sortKey ?? '')
@@ -337,22 +309,6 @@ export const FilteredTableHeaderCell = forwardRef(
                 )}
                 {!!isFilterLocked && (
                   <Button variant="text" iconButton icon={mdiLock} disabled />
-
-                  // <IconButton
-                  //   size="small"
-                  //   disabled
-                  //   sx={{
-                  //     p: '2px',
-                  //     borderRadius: '6px',
-                  //     width: 18,
-                  //     height: 18,
-                  //     ml: '2px',
-                  //   }}
-                  // >
-                  //   <div style={{ pointerEvents: 'none' }}>
-                  //     <Icon path={mdiLock} size={1} color="#000" />
-                  //   </div>
-                  // </IconButton>
                 )}
 
                 {!isFilterLocked && !selectedFilter?.length && (

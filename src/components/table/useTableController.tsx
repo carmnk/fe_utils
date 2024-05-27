@@ -16,7 +16,7 @@ export type TableUiType = {
   searchParam: string // input value
   pageNumber: number
   itemsPerPage: number
-  allFilters: FilterType[]
+  filters: FilterType[]
 }
 
 type GenericFilterType = { filterKey: string; value: any }
@@ -27,13 +27,13 @@ export type TableHookProps = {
   url: string
   externalFilters?: { filterKey: string; value: any }[]
   initial?: {
-    allFilters?: { filterKey: string; value: any }[]
+    filters?: { filterKey: string; value: any }[]
     searchParam?: string
     pageNumber?: number
     itemsPerPage?: number
   }
   onUpdateTableParams?: (newValue: {
-    allFilters: { filterKey: string; value: any }[]
+    filters: { filterKey: string; value: any }[]
     searchParam: string
     pageNumber: number
     itemsPerPage: number
@@ -70,7 +70,7 @@ export const useTableUi = (props: TableHookProps) => {
     scrollContainer,
   } = props ?? {}
   const {
-    allFilters: initialAllFilters,
+    filters: initialAllFilters,
     searchParam: initialSearchParam,
     pageNumber: initialPageNumber,
   } = initial || {}
@@ -84,7 +84,7 @@ export const useTableUi = (props: TableHookProps) => {
     searchParam: searchValue ?? initialSearchParam ?? '',
     pageNumber: initialPageNumber ?? 1,
     itemsPerPage: isUnpaginated ? 999999 : /*specificPaginationSize ||*/ 20,
-    allFilters: initialAllFilters ?? [],
+    filters: initialAllFilters ?? [],
   })
 
   const handleSeachChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +100,7 @@ export const useTableUi = (props: TableHookProps) => {
       if (!value && value !== '') return
       setTableUi((current) => {
         onUpdateTableParams?.({
-          allFilters: current?.allFilters,
+          filters: current?.filters,
           searchParam: value,
           pageNumber: current?.pageNumber,
           itemsPerPage: current?.itemsPerPage,
@@ -122,7 +122,7 @@ export const useTableUi = (props: TableHookProps) => {
         return
       setTableUi((current) => {
         onUpdateTableParams?.({
-          allFilters: current?.allFilters,
+          filters: current?.filters,
           searchParam: value,
           pageNumber: current?.pageNumber,
           itemsPerPage: current?.itemsPerPage,
@@ -135,12 +135,12 @@ export const useTableUi = (props: TableHookProps) => {
   const clearFilters = useCallback(() => {
     setTableUi((current) => {
       onUpdateTableParams?.({
-        allFilters: [],
+        filters: [],
         searchParam: current?.searchParam,
         pageNumber: current?.pageNumber ?? 1,
         itemsPerPage: current?.itemsPerPage,
       })
-      return { ...current, allFilters: [] }
+      return { ...current, filters: [] }
     })
   }, [onUpdateTableParams])
 
@@ -154,7 +154,7 @@ export const useTableUi = (props: TableHookProps) => {
       url,
       pageNumber: tableUi?.pageNumber,
       itemsPerPage: tableUi?.itemsPerPage,
-      allFilters: tableUi?.allFilters,
+      filters: tableUi?.filters,
     })
     return {
       fullUrl,
@@ -170,7 +170,7 @@ export const useTableUi = (props: TableHookProps) => {
     disablePagination,
     tableUi?.pageNumber,
     tableUi?.itemsPerPage,
-    tableUi?.allFilters,
+    tableUi?.filters,
     tableUi?.searchParam,
   ])
 
@@ -178,7 +178,7 @@ export const useTableUi = (props: TableHookProps) => {
     if (searchValue === undefined) return
     setTableUi((current) => {
       onUpdateTableParams?.({
-        allFilters: current?.allFilters,
+        filters: current?.filters,
         searchParam: searchValue,
         pageNumber: current?.pageNumber,
         itemsPerPage: current?.itemsPerPage,
@@ -206,7 +206,7 @@ export const useTableUi = (props: TableHookProps) => {
     //   disablePagination,
     //   tableUi?.pageNumber,
     //   tableUi?.itemsPerPage,
-    //   tableUi?.allFilters,
+    //   tableUi?.filters,
     //   tableUi?.searchParam,
     //   makeUrl,
     // ]
@@ -218,7 +218,7 @@ export const useTableUi = (props: TableHookProps) => {
   }, [handleFetchTableData])
 
   // migration Function
-  const setAllFilters = useCallback(
+  const setFilters = useCallback(
     (
       newValue:
         | ((current: GenericFilterType[]) => GenericFilterType[])
@@ -227,17 +227,18 @@ export const useTableUi = (props: TableHookProps) => {
       setTableUi((current) => {
         const newFiltersValue =
           typeof newValue === 'function'
-            ? newValue?.(current?.allFilters)
+            ? newValue?.(current?.filters)
             : newValue
         onUpdateTableParams?.({
-          allFilters: newFiltersValue,
+          filters: newFiltersValue,
           searchParam: current?.searchParam ?? '',
           pageNumber: current?.pageNumber ?? 1,
           itemsPerPage: current?.itemsPerPage,
         })
         return {
           ...current,
-          allFilters: newFiltersValue,
+          filters: newFiltersValue,
+          pageNumber: 1,
         }
       })
     },
@@ -251,7 +252,7 @@ export const useTableUi = (props: TableHookProps) => {
             ? newValue(current?.pageNumber)
             : newValue
         onUpdateTableParams?.({
-          allFilters: current?.allFilters,
+          filters: current?.filters,
           searchParam: current?.searchParam,
           pageNumber: newPageNumber,
           itemsPerPage: current?.itemsPerPage,
@@ -312,7 +313,7 @@ export const useTableUi = (props: TableHookProps) => {
     handleSeachParamChange,
     handleSearchKeyUp,
     clearFilters,
-    setAllFilters,
+    setFilters,
     updateData: handleFetchTableData,
     changePageNumber,
     changeItemsPerPage,

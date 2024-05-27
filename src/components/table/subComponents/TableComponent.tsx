@@ -11,7 +11,7 @@ const disableheaderStyles = {
   height: 0,
 }
 const emptyObject = {}
-const defaultTrStyles = { height: 53 }
+const defaultTrStyles = { height: undefined }
 
 export const TableComponent = (
   props: PropsWithChildren<TableComponentProps>
@@ -20,18 +20,17 @@ export const TableComponent = (
   const theme = useTheme()
   const hasFinePointer = useMediaQuery('(pointer: fine)')
 
-  const theadStyles = disableTableHeader ? disableheaderStyles : emptyObject
-  const trStyles = disableTableHeader ? disableheaderStyles : defaultTrStyles
-  const thStyles = disableTableHeader ? disableheaderStyles : emptyObject
-
-  const hoverBgColor =
-    theme.palette.mode === 'light'
-      ? lighten(theme.palette.primary.light, 0.66)
-      : theme.palette.primary.dark
-  const unevenBgColor = theme.palette.mode === 'light' ? '#fff' : '#666'
-  const evenBgColor = theme.palette.mode === 'light' ? '#f7f7f8' : '#333'
-
   const tableStyles = useMemo(() => {
+    const theadStyles = disableTableHeader ? disableheaderStyles : emptyObject
+    const trStyles = disableTableHeader ? disableheaderStyles : defaultTrStyles
+    const thStyles = disableTableHeader ? disableheaderStyles : emptyObject
+    const hoverBgColor =
+      theme.palette.mode === 'light'
+        ? lighten(theme.palette.primary.light, 0.66)
+        : theme.palette.primary.dark
+    const unevenBgColor = theme.palette.mode === 'light' ? '#fff' : '#666'
+    const evenBgColor = theme.palette.mode === 'light' ? '#f7f7f8' : '#333'
+
     return {
       color: theme.palette.text.primary,
       borderCollapse: 'collapse',
@@ -83,16 +82,7 @@ export const TableComponent = (
         },
       },
     }
-  }, [
-    evenBgColor,
-    hasFinePointer,
-    hoverBgColor,
-    theme,
-    theadStyles,
-    trStyles,
-    unevenBgColor,
-    thStyles,
-  ])
+  }, [hasFinePointer, theme, disableTableHeader])
 
   return (
     <Box component="table" width="100%" sx={tableStyles}>

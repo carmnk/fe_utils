@@ -10,7 +10,7 @@ export type MakeFilterUrlParams = {
   preprocessFilters?: (filters: FilterType[]) => FilterType[]
   postprocessFilters?: (filters: FilterType[]) => FilterType[]
   searchParamIn?: TableUiType['searchParam']
-  allFilters?: TableUiType['allFilters']
+  filters?: TableUiType['filters']
   pageNumber: number
   itemsPerPage: number
 }
@@ -23,7 +23,7 @@ export const makeFilterUrl = (params: MakeFilterUrlParams) => {
     preprocessFilters,
     postprocessFilters,
     searchParamIn,
-    allFilters,
+    filters,
     pageNumber = 1,
     itemsPerPage = 20,
   } = params
@@ -42,8 +42,8 @@ export const makeFilterUrl = (params: MakeFilterUrlParams) => {
       ? preprocessFilters?.(externalFilters)
       : externalFilters
   const transformedInternalFilters = preprocessFilters
-    ? preprocessFilters?.(allFilters ?? [])
-    : allFilters
+    ? preprocessFilters?.(filters ?? [])
+    : filters
 
   const adjInternalFilters = transformedInternalFilters?.filter((uiFilter) =>
     !transformedExternalFilters?.length

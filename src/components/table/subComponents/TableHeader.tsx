@@ -14,17 +14,15 @@ export type TableHeaderProps = {
   openFilters?: boolean[]
   handleOpenFilters?: (() => void)[]
   handleCloseFilters?: (() => void)[]
-  allFilters?: TableProps['allFilters']
-  setAllFilters: TableProps['setAllFilters']
-  setPageNumber?: TableProps['setPageNumber']
+  filters?: TableProps['filters']
   handleChangeSorting: (sortkey: string) => void
   disableTableHeader?: boolean
   headerBackground?: BoxProps['bgcolor']
   selectedRows?: (string | boolean | number)[]
-  onClearSelected?: TableProps['onClearSelected']
-  onSelectAll?: TableProps['onSelectAll']
+  onUnselectAll?: TableProps['onUnselectAllFilters']
+  onSelectAll?: TableProps['onSelectAllFilters']
   handleClickSelectAll?: () => void
-  onSetAllFilters: TableProps['onSetAllFilters']
+  onSetFilters: TableProps['onSetFilters']
 }
 
 export const TableHeader = (props: TableHeaderProps) => {
@@ -34,17 +32,16 @@ export const TableHeader = (props: TableHeaderProps) => {
     openFilters,
     handleOpenFilters,
     handleCloseFilters,
-    allFilters = [],
-    setAllFilters,
-    setPageNumber,
+    filters = [],
     handleChangeSorting,
     disableTableHeader,
     headerBackground,
     selectedRows,
-    onClearSelected,
+
+    onUnselectAll,
     onSelectAll,
     handleClickSelectAll,
-    onSetAllFilters,
+    onSetFilters,
   } = props
 
   const theme = useTheme()
@@ -56,11 +53,13 @@ export const TableHeader = (props: TableHeaderProps) => {
         style={{ visibility: disableTableHeader ? 'hidden' : 'visible' }}
       >
         {columns?.map((col, cIdx) => {
+          const sortKeyInt =
+            typeof col?.renderCell === 'string' ? col?.renderCell : col?.sortKey
           const colSorting = sortings?.find((sorting) =>
-            sorting?.value?.includes(col?.sortKey ?? '')
+            sorting?.value?.includes(sortKeyInt ?? '')
           )
 
-          const defaultSelectedFilter = allFilters
+          const defaultSelectedFilter = filters
             ?.filter((aparam: any) => aparam.filterKey === col?.filterKey)
             ?.map?.((aparam: any) => aparam?.value)
 
@@ -70,16 +69,16 @@ export const TableHeader = (props: TableHeaderProps) => {
               title={`Markiert alle sichtbaren Zeilen. Zum markieren aller Ergebnisse, "Einträge pro Seite" auf "Alle" stellen.`}
               placement="top"
               arrow
-              disableFocusListener={!onClearSelected || !onSelectAll}
-              disableHoverListener={!onClearSelected || !onSelectAll}
-              disableInteractive={!onClearSelected || !onSelectAll}
-              disableTouchListener={!onClearSelected || !onSelectAll}
+              disableFocusListener={!onUnselectAll || !onSelectAll}
+              disableHoverListener={!onUnselectAll || !onSelectAll}
+              disableInteractive={!onUnselectAll || !onSelectAll}
+              disableTouchListener={!onUnselectAll || !onSelectAll}
             >
               <td
                 // className={'hover:bg-gray-200 ' + col?.className || ''}
                 style={(col as any)?.style}
               >
-                {!disableTableHeader && onClearSelected && onSelectAll && (
+                {!disableTableHeader && onUnselectAll && onSelectAll && (
                   <Flex
                     // className="relative flex items-center justify-center cursor-pointer "
                     position="relative"
@@ -122,10 +121,8 @@ export const TableHeader = (props: TableHeaderProps) => {
               open={!!openFilters?.[cIdx]}
               selectedFilter={col?.selectedFilters ?? defaultSelectedFilter}
               getIcon={col?.getIcon}
-              setAllFilters={setAllFilters}
-              onSetAllFilters={onSetAllFilters}
-              allFilters={allFilters}
-              setPageNumber={setPageNumber}
+              onSetFilters={onSetFilters}
+              filters={filters}
               changeSorting={handleChangeSorting}
               disableTableHeader={disableTableHeader}
             />
@@ -161,10 +158,10 @@ export const TableHeader = (props: TableHeaderProps) => {
                                 ? mdiArrowUpThin
                                 : mdiMinus
                           }
-                          name={`${col?.sortKey}`}
-                          data-testid={`sort-${col?.sortKey}`}
+                          name={`${sortKeyInt}`}
+                          data-testid={`sort-${sortKeyInt}`}
                           onClick={() =>
-                            col?.sortKey && handleChangeSorting?.(col?.sortKey)
+                            sortKeyInt && handleChangeSorting?.(sortKeyInt)
                           }
                           // sx={{
                           //   p: '2px',

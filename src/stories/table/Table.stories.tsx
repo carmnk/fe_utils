@@ -31,7 +31,7 @@ const testColumns = ({ isSorted, isFiltered }): TableColumnType[] => [
   },
   {
     header: 'id',
-    renderRow: (row: any) => (
+    renderCell: (row: any) => (
       <td>
         <Typography>{row.id}</Typography>
       </td>
@@ -50,7 +50,7 @@ const testColumns = ({ isSorted, isFiltered }): TableColumnType[] => [
   },
   {
     header: 'name',
-    renderRow: (row: any) => (
+    renderCell: (row: any) => (
       <td>
         <Typography>{row.name}</Typography>
       </td>
@@ -64,7 +64,7 @@ const testColumns = ({ isSorted, isFiltered }): TableColumnType[] => [
   },
   {
     header: 'age',
-    renderRow: (row: any) => (
+    renderCell: (row: any) => (
       <td>
         <Typography>{row.age}</Typography>
       </td>
@@ -109,11 +109,9 @@ const meta = {
 
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
-    setPageNumber: { control: false },
+    // setPageNumber: { control: false },
     footerBackground: { control: 'color' },
-    clearFilters: { control: false },
-    setAllFilters: { control: false },
-    onSetAllFilters: { control: false },
+    onSetFilters: { control: false },
     selectedRows: { control: 'multi-select', options: [1, 2, 3] },
 
     // color: { control: 'color' },
@@ -124,14 +122,11 @@ const meta = {
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
   args: {
-    onClearSelected: fn(),
+    onUnselectAllFilters: fn(),
     onReorder: fn(),
-    onSelectAll: fn(),
+    onSelectAllFilters: fn(),
     onSelectRow: fn(),
-    onSetAllFilters: fn(),
-    setAllFilters: fn(),
-    setPageNumber: fn(),
-    clearFilters: fn(),
+    onSetFilters: fn(),
   },
 } satisfies Meta<typeof Table>
 
@@ -142,15 +137,15 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     columns: testColumns({}),
-    renderSelectedItem: (item: any) => item.id,
-    rows: testRows,
+    getSelectedRow: (item: any) => item.id,
+    data: testRows,
   },
 }
 export const NoData: Story = {
   args: {
     columns: testColumns({}),
-    renderSelectedItem: (item: any) => item.id,
-    rows: [],
+    getSelectedRow: (item: any) => item.id,
+    data: [],
     noResultsLabel: 'No data found in this test',
     disableNoResults: false,
   },
@@ -158,14 +153,14 @@ export const NoData: Story = {
 export const Sorted: Story = {
   args: {
     columns: testColumns({ isSorted: true }),
-    renderSelectedItem: (item: any) => item.id,
-    rows: testRows,
+    getSelectedRow: (item: any) => item.id,
+    data: testRows,
   },
 }
 export const AllFiltered: Story = {
   args: {
     columns: testColumns({ isSorted: true, isFiltered: true }),
-    renderSelectedItem: (item: any) => item.id,
-    rows: testRows,
+    getSelectedRow: (item: any) => item.id,
+    data: testRows,
   },
 }

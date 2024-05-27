@@ -4,13 +4,13 @@ import { useState, useMemo } from 'react'
 
 export type UseDraggableRowsParams = {
   rows: any[]
-  userSortingIdFieldKey?: string | undefined
+  reorderRowId?: string | undefined
   onReorder?: (startDragItem: any, currentHoverItem: any) => void
 }
 /**
  * Hook to make rows draggable
  * @param rows - array of rows (a row=object/dict) to be reordered
- * @param userSortingIdFieldKey - To enable dragging it is required to pass here the name of the id field/column in the row object (e.g. 'id')
+ * @param reorderRowId - To enable dragging it is required to pass here the name of the id field/column in the row object (e.g. 'id')
  * @param onReorder - callback function to be called when the row is dragged and dropped
  * @returns {..., draggedRows: any[]} - draggedRows is the reordered array of rows while dragging
  * @returns {..., bind: (...args: any[]) => ReactDOMAttributes } - is the bind object to be passed to the TableRow component (attaches dom event to <tr/>s)
@@ -23,7 +23,7 @@ export const useDraggableRows = (
   hoverItemId: string | number | boolean
   draggedItemId: string | number | boolean
 } => {
-  const { rows, userSortingIdFieldKey, onReorder } = params
+  const { rows, reorderRowId, onReorder } = params
   const [dragging, setDragging] = useState<{
     startDragItem: { [key: string]: any; _idx: number }
     currentHoverItem: { [key: string]: any; _idx: number }
@@ -62,7 +62,7 @@ export const useDraggableRows = (
       },
     },
     {
-      enabled: !!userSortingIdFieldKey,
+      enabled: !!reorderRowId,
       // hover :{
       //   po
       // }
@@ -70,36 +70,33 @@ export const useDraggableRows = (
     }
   )
 
-  const draggedItemId = !userSortingIdFieldKey
+  const draggedItemId = !reorderRowId
+    ? null
+    : rows?.find(
+        (row) => row?.[reorderRowId] === dragging?.startDragItem?.[reorderRowId]
+      )?.[reorderRowId]
+  const hoverItemId = !reorderRowId
     ? null
     : rows?.find(
         (row) =>
-          row?.[userSortingIdFieldKey] ===
-          dragging?.startDragItem?.[userSortingIdFieldKey]
-      )?.[userSortingIdFieldKey]
-  const hoverItemId = !userSortingIdFieldKey
-    ? null
-    : rows?.find(
-        (row) =>
-          row?.[userSortingIdFieldKey] ===
-          dragging?.currentHoverItem?.[userSortingIdFieldKey]
-      )?.[userSortingIdFieldKey]
+          row?.[reorderRowId] === dragging?.currentHoverItem?.[reorderRowId]
+      )?.[reorderRowId]
 
   const adjRows = useMemo(() => {
     if (
       !draggedItemId ||
       !hoverItemId ||
       draggedItemId === hoverItemId ||
-      !userSortingIdFieldKey
+      !reorderRowId
     )
       return rows
     return rows?.map((row, rIdx) =>
-      row?.[userSortingIdFieldKey] === draggedItemId
+      row?.[reorderRowId] === draggedItemId
         ? dragging?.currentHoverItem
-        : row?.[userSortingIdFieldKey] === hoverItemId
+        : row?.[reorderRowId] === hoverItemId
           ? dragging?.startDragItem
           : row
     )
-  }, [dragging, rows, draggedItemId, hoverItemId, userSortingIdFieldKey])
+  }, [dragging, rows, draggedItemId, hoverItemId, reorderRowId])
   return { draggedRows: adjRows, bind, draggedItemId, hoverItemId }
 }
