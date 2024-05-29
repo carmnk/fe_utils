@@ -73,7 +73,7 @@ export const SubformField = (props: SubformFieldProps) => {
           ...formData,
           [fieldName]: formData?.[fieldName]?.length
             ? formData?.[fieldName]?.map((f: any, fIdx: number) =>
-                fIdx === arrayIndex ? newFormData : f
+                fIdx === arrayIndex ? newFormData?.[fieldName]?.[arrayIndex] : f
               )
             : [newFormData],
         }
@@ -99,14 +99,15 @@ export const SubformField = (props: SubformFieldProps) => {
         ),
       }
       console.log(newFormData, fieldName, formData)
-      makeOnChangeArraySub(ui?.open)(
+      onChangeFormData?.(
         newFormData,
         fieldName,
-        newFormData[fieldName],
-        formData
+        formData?.[fieldName],
+        formData,
+        fieldName
       )
     },
-    [ui?.open, formData, fieldName, makeOnChangeArraySub]
+    [ui?.open, formData, fieldName, onChangeFormData]
   )
 
   const arrayTableProps = useMemo(
