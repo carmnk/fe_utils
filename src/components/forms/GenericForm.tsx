@@ -91,9 +91,8 @@ export type GenericFormProps<
   }
 }
 
-const stopAndPreventDefault = (e: React.KeyboardEvent) => {
+const preventDefault = (e: React.KeyboardEvent) => {
   e.preventDefault()
-  e.stopPropagation()
 }
 
 export const GenericForm = (props: GenericFormProps) => {
@@ -138,7 +137,7 @@ export const GenericForm = (props: GenericFormProps) => {
     <Box
       position="relative"
       component={!_path ? 'form' : undefined}
-      onKeyDown={stopAndPreventDefault}
+      onKeyDown={preventDefault}
       {...(!_path ? formContainer : subformContainer)}
     >
       <Grid
