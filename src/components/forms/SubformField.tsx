@@ -162,7 +162,7 @@ export const SubformField = (props: SubformFieldProps) => {
               </Box>
             ),
             style: {
-              width: '64px',
+              // width: '64px',
               display: 'flex',
               justifyContent: 'flex-end',
               pr: 0,
@@ -421,7 +421,6 @@ export const SubformField = (props: SubformFieldProps) => {
                               fIdx2 === ui?.open ? tempFormData : f
                           ),
                         }
-                       
                         onChangeFormData?.(
                           newFormData,
                           fieldName,
