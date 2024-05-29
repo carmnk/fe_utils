@@ -91,7 +91,7 @@ export const SubformField = (props: SubformFieldProps) => {
 
   const handleRemoveArrayItem = useCallback(
     (removeIdx: number) => {
-      if (!ui?.open || ui?.open === 'new' || !fieldName) return
+      if (!fieldName) return
       const newFormData = {
         ...formData,
         [fieldName]: formData?.[fieldName]?.filter(
@@ -107,7 +107,7 @@ export const SubformField = (props: SubformFieldProps) => {
         fieldName
       )
     },
-    [ui?.open, formData, fieldName, onChangeFormData]
+    [formData, fieldName, onChangeFormData]
   )
 
   const arrayTableProps = useMemo(
