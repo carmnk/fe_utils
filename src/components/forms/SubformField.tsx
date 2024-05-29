@@ -418,15 +418,16 @@ export const SubformField = (props: SubformFieldProps) => {
                           ...formData,
                           [fieldName]: formData?.[fieldName]?.map(
                             (f: any, fIdx2: number) =>
-                              fIdx2 === ui?.open ? tempFormData?.[fieldName] : f
+                              fIdx2 === ui?.open ? tempFormData : f
                           ),
                         }
-                        console.log(newFormData, fieldName, formData)
-                        makeOnChangeArraySub(ui?.open)(
+                       
+                        onChangeFormData?.(
                           newFormData,
                           fieldName,
-                          newFormData[fieldName],
-                          formData
+                          newFormData?.[fieldName],
+                          formData,
+                          fieldName
                         )
                       }
                 }
