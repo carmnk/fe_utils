@@ -3,6 +3,54 @@ import { fn } from '@storybook/test'
 import { GenericForm } from '../../components/forms/GenericForm'
 import { mdiPencil, mdiCheck, mdiClose } from '@mdi/js'
 
+const testFields: any[] = [
+  {
+    label: 'field1',
+    type: 'text',
+    name: 'field_1',
+    width12: { xs: 12, md: 6 },
+    form: {
+      showInArrayList: true,
+    },
+  },
+  {
+    label: 'field2',
+    type: 'text',
+    name: 'field_2',
+    width12: { xs: 12, md: 6 },
+    // fillWidth: true,
+  },
+  // {
+  //   type: 'inject',
+  //   name: 'inject_field',
+  //   component: () => <div>injected_text</div>,
+  // },
+  {
+    type: 'array',
+    name: 'subform',
+    label: 'Subform',
+    // options: ['option1', 'option2'],
+  },
+  {
+    type: 'select',
+    name: 'select_form',
+    label: 'SELECT',
+    form: {
+      showInArrayList: true,
+    },
+    // options: ['option1', 'option2'],
+  },
+  {
+    type: 'autocomplete',
+    name: 'autocomplete',
+    label: 'AutoComplete',
+    // options: ['option1', 'option2'],
+  },
+]
+const subforms = {
+  subform: { fields: testFields },
+}
+
 const optionsMuiColors = [
   'default',
   'inherit',
@@ -41,7 +89,11 @@ const meta = {
     // customTooltip: { control: 'text' },
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-  args: { onClick: fn() },
+  args: {
+    fields: testFields,
+    subforms,
+    formData: { subform: [{ field_1: 'test', select_form: 'bert' }] },
+  },
 } satisfies Meta<typeof GenericForm>
 
 export default meta
@@ -49,8 +101,5 @@ type Story = StoryObj<typeof meta>
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Default: Story = {
-  args: {
-    columns: [],
-    rows: [],
-  },
+  args: {},
 }

@@ -1,9 +1,11 @@
-import { mdiPlus } from '@mdi/js'
-import { Box, Divider, Typography } from '@mui/material'
+import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+import { Box, Divider, Grid, Typography, useTheme } from '@mui/material'
 import { GenericForm, GenericFormProps } from './GenericForm'
 import { Button } from '../buttons'
 import { DynamicFieldDefinition } from './fields'
 import { Fragment } from 'react/jsx-runtime'
+import { Table } from '../table'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 export type SubformFieldProps = {
   field: DynamicFieldDefinition
@@ -34,11 +36,107 @@ export const SubformField = (props: SubformFieldProps) => {
     slotProps,
   } = props
 
+  const [ui, setUi] = useState({
+    open: null as number | 'new' | null,
+  })
+
+  const handleSetOpen = useCallback((newUi: number | 'new' | null) => {
+    setUi((current) => ({
+      open: current?.open !== null && current.open === newUi ? null : newUi,
+    }))
+  }, [])
+
+  const theme = useTheme()
+
   const arrayIdxRaw = _path?.slice(-1)?.[0]
   const ArrayIdx = typeof arrayIdxRaw === 'number' ? arrayIdxRaw : undefined
 
   const fieldName: string | undefined = field?.name
   const subform = subforms?.[fieldName ?? '']
+
+  const sub = subforms?.[field?.name ?? '']
+  const subFieldsForList = useMemo(
+    () => sub?.fields?.filter((f: any) => f?.form?.showInArrayList) || [],
+    [sub?.fields]
+  )
+  const arrayTableProps = useMemo(
+    () =>
+      ({
+        getTrProps: (item: any, rIdx: number) =>
+          rIdx === ui.open
+            ? {
+                sx: { bgcolor: theme.palette.action.selected + ' !important' },
+              }
+            : undefined,
+        data: formData?.[fieldName ?? ''] || [],
+        columns: [
+          ...subFieldsForList.map((f: any) => ({
+            header: f.label,
+            renderCell: f.name,
+          })),
+          {
+            header: (
+              <Button
+                icon={mdiPlus}
+                iconButton
+                variant={ui?.open === 'new' ? 'outlined' : 'text'}
+                sx={
+                  ui?.open === 'new'
+                    ? { bgcolor: theme.palette.action.selected }
+                    : undefined
+                }
+                // variant="outlined"
+                // color="secondary"
+                onClick={() => {
+                  handleSetOpen('new')
+                }}
+              />
+            ),
+            renderCell: (item: any, cIdx: number, rIdx: number) => (
+              <Box component="td" display="flex" alignItems="center" gap={1}>
+                <Button
+                  icon={mdiPencil}
+                  iconButton
+                  variant={ui?.open === rIdx ? 'outlined' : 'text'}
+                  onClick={() => {
+                    handleSetOpen(rIdx)
+                  }}
+                />
+                <Button icon={mdiDelete} iconButton variant="text" />
+              </Box>
+            ),
+            style: {
+              width: '64px',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              pr: 0,
+            },
+          },
+        ],
+      }) as any,
+    [formData, fieldName, subFieldsForList, ui, theme.palette, handleSetOpen]
+  )
+
+  const [tempFormData, setTempFormData] = useState<any>({})
+
+  useEffect(() => {
+    if (ui?.open === 'new') {
+      setTempFormData(
+        sub?.injections?.initialFormData?.(formData, rootFormData, ArrayIdx) ||
+          {}
+      )
+    } else if (typeof ui?.open === 'number') {
+      console.log(
+        'FORMDATA',
+        formData,
+        fieldName,
+        ui?.open,
+        formData?.[fieldName ?? '']?.[ui?.open]
+      )
+      setTempFormData(formData?.[fieldName ?? '']?.[ui?.open] ?? {})
+    }
+  }, [ui?.open])
+
   if (!fieldName || !subform) return null
   const onChangeObjectSub = (
     newFormData: any,
@@ -89,12 +187,16 @@ export const SubformField = (props: SubformFieldProps) => {
 
     const injectedFormDataRaw =
       subforms?.[fieldName]?.injections?.initialFormData
-    const injectedFormData =
+    const injectedRawFormData =
       (typeof injectedFormDataRaw === 'function'
         ? injectedFormDataRaw(formData, rootFormData, (ArrayIdx ?? -1) + 1)
         : injectedFormDataRaw) ?? {}
+    const newItem = {
+      ...injectedFormDataRaw,
+      ...tempFormData,
+    }
 
-    const newValue = [...(prevArrayFormData ?? []), injectedFormData]
+    const newValue = [...(prevArrayFormData ?? []), newItem]
     const transformedNewFormData = {
       ...formData,
       [fieldName]: newValue,
@@ -106,8 +208,6 @@ export const SubformField = (props: SubformFieldProps) => {
       formData
     )
   }
-
-  if (!fieldName || !subform) return null
 
   return field.type === 'object' &&
     !Array.isArray(subform) &&
@@ -143,13 +243,30 @@ export const SubformField = (props: SubformFieldProps) => {
     </Fragment>
   ) : field.type === 'array' ? (
     <Fragment key={fIdx}>
-      <Box>
+      <Box py={2}>
         <Divider />
       </Box>
       <Typography fontWeight="bold">{fieldName}</Typography>
-      <Box mb={4}>
-        {(formData?.[fieldName]?.length ? formData?.[fieldName] : [{}])?.map?.(
-          (f: any, fIdx2: number) => {
+      <Box>
+        <Box>
+          <Table {...arrayTableProps} />
+          {/* <Box
+          display="grid"
+          gridTemplateColumns={subFieldsForList
+            .map(() => 'max-content')
+            .join(' ')}
+          gap={'0 16px'}
+          
+        >
+          {subFieldsForList?.map((f: any, fIdx2: number) => (
+            <Box key={fIdx + '_' + fIdx2} fontWeight={700} bgcolor="silver">
+              {f.label}
+            </Box>
+          ))}
+          {(formData?.[fieldName]?.length
+            ? formData?.[fieldName]
+            : [{}]
+          )?.map?.((f: any, fIdx2: number) => {
             const removeItemArraySub = () => {
               if (!field?.name) return
 
@@ -178,20 +295,28 @@ export const SubformField = (props: SubformFieldProps) => {
                 formData
               )
             }
-            const sub = subforms?.[field?.name ?? '']
+
             const injectedFormDataRaw = sub.injections?.initialFormData
             const injectedFormData =
               (typeof injectedFormDataRaw === 'function'
                 ? injectedFormDataRaw(formData, rootFormData, ArrayIdx)
                 : injectedFormDataRaw) ?? {}
-            return (
-              <Box key={fIdx + '_' + fIdx2}>
-                {fIdx2 ? (
+
+            console.log('sub', sub)
+            return formData?.[fieldName]?.map((f: any) =>
+              sub?.fields
+                ?.filter((f: any) => f?.form?.showInArrayList)
+                ?.map((field) => (
+                  <Box key={fIdx + '_' + fIdx2}>{f?.[field?.name]}</Box>
+                ))
+            )
+            {
+              /* {fIdx2 ? (
                   <Box mb={2} paddingX={4}>
                     <Divider variant="middle" />
                   </Box>
-                ) : null}
-                <GenericForm
+                ) : null} */}
+          {/* <GenericForm
                   useAlwaysArraysInFormData={useAlwaysArraysInFormData}
                   fields={sub?.fields}
                   injections={sub?.injections}
@@ -201,24 +326,77 @@ export const SubformField = (props: SubformFieldProps) => {
                     onChangeFormData as (newValue: any) => void
                   }
                   formData={formData?.[fieldName]?.[fIdx2] ?? injectedFormData}
-                  rootFormData={formData}
+                  rootFormData={rootFormData}
                   _removeFormFromArray={removeItemArraySub}
                   _path={[...(_path ?? []), field.name, fIdx2]}
                   showError={showError}
                   disableTopSpacing={true}
                   slotProps={slotProps}
-                />
-              </Box>
-            )
-          }
-        )}
+                /> 
+            }
 
-        <Button
-          variant="outlined"
-          label={subforms?.[field?.name ?? '']?.addArrayItemLabel ?? 'Add'}
-          onClick={() => addnewItemArraySub(field.name, formData)}
-          icon={mdiPlus}
-        />
+            // )
+          })}
+        </Box> */}
+        </Box>
+        {ui?.open !== null && (
+          <Box mt={2}>
+            <Typography>
+              {ui?.open === 'new'
+                ? `Add ${field.name} item`
+                : `Edit ${field.name} item`}
+            </Typography>
+            <GenericForm
+              useAlwaysArraysInFormData={useAlwaysArraysInFormData}
+              fields={sub?.fields}
+              injections={sub?.injections}
+              settings={settings}
+              onChangeFormData={setTempFormData}
+              // onChangeFormDataRoot={onChangeFormData as (newValue: any) => void}
+              // formData={formData?.[fieldName]?.[fIdx2] ?? injectedFormData}
+              // rootFormData={rootFormData}
+              // _removeFormFromArray={removeItemArraySub}
+              // _path={[...(_path ?? []), field.name, fIdx2]}
+              showError={showError}
+              disableTopSpacing={true}
+              slotProps={slotProps}
+              formData={tempFormData}
+              // onChangeFormData={onChangeObjectSub}
+            />
+            {ui?.open !== null && (
+              <Button
+                variant="outlined"
+                label={ui?.open === 'new' ? 'Add' : 'Edit'}
+                // onClick={() => addnewItemArraySub(field.name, formData)}
+                // onClick={() => setUi({ open: 'new' })}
+                onClick={
+                  ui?.open === 'new'
+                    ? () => addnewItemArraySub(field.name ?? '', formData)
+                    : () => {
+                        if (!ui?.open || ui?.open === 'new') return
+                        const newFormData = {
+                          ...formData,
+                          [fieldName]: formData?.[fieldName]?.map(
+                            (f: any, fIdx2: number) =>
+                              fIdx2 === ui?.open ? tempFormData : f
+                          ),
+                        }
+                        makeOnChangeArraySub(ui?.open)(
+                          newFormData,
+                          fieldName,
+                          newFormData[fieldName],
+                          formData
+                        )
+                      }
+                }
+                icon={ui?.open === 'new' ? mdiPlus : mdiPencil}
+              />
+            )}
+          </Box>
+        )}
+        <Box py={3}>
+          <Divider />
+        </Box>
       </Box>
     </Fragment>
   ) : null

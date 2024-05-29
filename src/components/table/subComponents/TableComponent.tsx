@@ -52,7 +52,7 @@ export const TableComponent = (
       },
       '& tbody': {
         '& tr': {
-          height: '53px',
+          // height: '53px',
           background: unevenBgColor,
         },
         ...(hasFinePointer

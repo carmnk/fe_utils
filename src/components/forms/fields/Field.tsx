@@ -39,7 +39,9 @@ export type StaticFieldDefinition<Type extends FormFieldType = FormFieldType> =
   InputFieldLayoutProps & { type: Type } & (Type extends 'inject'
       ? CustomFieldDefinition<any, any>
       : Type extends InputFieldType
-        ? Omit<GenericInputFieldProps<Type>, 'name'> & { name: string } // make required
+        ? Omit<GenericInputFieldProps<Type>, 'name' | 'value' | 'onChange'> & {
+            name: string
+          } // make required
         : Type extends 'array'
           ? ArrayInputFieldProps
           : Type extends 'object'

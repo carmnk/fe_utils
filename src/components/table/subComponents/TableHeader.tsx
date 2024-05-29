@@ -130,15 +130,17 @@ export const TableHeader = (props: TableHeaderProps) => {
             <td key={cIdx} style={(col as any)?.style}>
               {!disableTableHeader && (
                 <Tooltip arrow title={col?.headerToolTip ?? ''} placement="top">
-                  <Stack direction="row" gap="2px" pr={1}>
+                  <Stack direction="row" gap="2px" pr={!col?.sortKey ? 0 : 1}>
                     <Box width="100%">
-                      <EllipsisTextWithTooltip
-                        label={
-                          typeof col?.header === 'string' ? col?.header : ''
-                        }
-                        fullWidth={true}
-                        useTypography={true}
-                      />
+                      {typeof col?.header === 'string' ? (
+                        <EllipsisTextWithTooltip
+                          label={col?.header ?? ''}
+                          fullWidth={true}
+                          useTypography={true}
+                        />
+                      ) : (
+                        col?.header
+                      )}
                     </Box>
                     {col?.sortKey && (
                       <Stack

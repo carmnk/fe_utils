@@ -28,6 +28,10 @@ export const RowComponent = (
     enableDrag,
   } = props
 
+  const dragBind = useMemo(() => {
+    return bind({ ...row, _idx: rowIdx }, rowIdx)
+  }, [bind, row, rowIdx])
+
   const internalTrProps = useMemo(() => {
     const trBorderColor =
       typeof getTrLeftBorderColor === 'function'
@@ -60,7 +64,7 @@ export const RowComponent = (
               },
             }
           : {}),
-        ...bind({ ...row, _idx: rowIdx }, rowIdx),
+        ...(enableDrag ? bind({ ...row, _idx: rowIdx }, rowIdx) : {}),
       },
     }
   }, [

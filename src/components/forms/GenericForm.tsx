@@ -4,7 +4,6 @@ import { getDynamicFields } from './utils'
 import { Button, CButtonProps } from '../buttons/Button/Button'
 import { mdiDeleteOutline } from '@mdi/js'
 import { Field, StaticFieldDefinition } from './fields/Field'
-import { Subforms } from './Subforms'
 import { SubformField } from './SubformField'
 import { GenericInputFieldProps } from '../inputs/types'
 
@@ -140,7 +139,7 @@ export const GenericForm = (props: GenericFormProps) => {
         container
         spacing={settings?.gap ?? (disableTopSpacing ? '0 16px' : '16px')}
         pr={settings?.gap ?? '16px'}
-        width={settings?.gridWidth ?? 'calc(100% - 64px)'}
+        width={settings?.gridWidth} //?? 'calc(100% - 64px)'}
         {...fieldsContainer}
       >
         {dynamicFields
@@ -175,7 +174,6 @@ export const GenericForm = (props: GenericFormProps) => {
               <React.Fragment key={fIdx}>
                 <Grid
                   item
-                  // xs={field.width12 ?? 12}
                   {...width12}
                   alignSelf={field.type === 'bool' ? 'flex-end' : undefined}
                   display={field?.hidden ? 'none' : undefined}
@@ -203,7 +201,7 @@ export const GenericForm = (props: GenericFormProps) => {
               <Grid
                 item
                 // xs={field.width12 ?? 12}
-                // {...width12}
+                {...width12}
                 // alignSelf={field.type === 'bool' ? 'flex-end' : undefined}
                 display={field?.hidden ? 'none' : undefined}
                 {...fieldContainer}
