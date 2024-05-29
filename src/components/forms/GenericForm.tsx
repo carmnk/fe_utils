@@ -92,7 +92,7 @@ export type GenericFormProps<
 }
 
 const preventDefault = (e: React.KeyboardEvent) => {
-  return false
+  if (e.keyCode === 13) return false
 }
 
 export const GenericForm = (props: GenericFormProps) => {
