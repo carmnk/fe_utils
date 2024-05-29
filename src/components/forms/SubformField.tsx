@@ -19,6 +19,7 @@ export type SubformFieldProps = {
   _path?: any[]
   fIdx: any
   slotProps: GenericFormProps['slotProps']
+  disableUseFormElement?: boolean
 }
 
 export const SubformField = (props: SubformFieldProps) => {
@@ -34,6 +35,7 @@ export const SubformField = (props: SubformFieldProps) => {
     _path,
     fIdx,
     slotProps,
+    disableUseFormElement,
   } = props
 
   const [ui, setUi] = useState({
@@ -261,6 +263,7 @@ export const SubformField = (props: SubformFieldProps) => {
           {fieldName}
         </Typography>
         <GenericForm
+          disableUseFormElement={disableUseFormElement}
           useAlwaysArraysInFormData={useAlwaysArraysInFormData}
           key={fIdx}
           fields={subform?.fields}
@@ -387,6 +390,7 @@ export const SubformField = (props: SubformFieldProps) => {
                 : `Edit ${field.name} item`}
             </Typography>
             <GenericForm
+              disableUseFormElement={disableUseFormElement}
               useAlwaysArraysInFormData={useAlwaysArraysInFormData}
               fields={sub?.fields}
               injections={sub?.injections}

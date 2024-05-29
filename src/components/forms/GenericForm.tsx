@@ -224,6 +224,7 @@ export const GenericForm = (props: GenericFormProps) => {
                   useAlwaysArraysInFormData={!!useAlwaysArraysInFormData}
                   _path={_path}
                   slotProps={slotProps}
+                  disableUseFormElement={disableUseFormElement}
                 />
               </Grid>
             )
