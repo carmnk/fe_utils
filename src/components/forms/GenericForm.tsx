@@ -85,6 +85,7 @@ export type GenericFormProps<
   disableTopSpacing?: boolean
   addArrayItemLabel?: string
   useAlwaysArraysInFormData?: boolean
+  disableUseFormElement?: boolean
   settings?: {
     gap?: number
     gridWidth?: number | string
@@ -114,6 +115,7 @@ export const GenericForm = (props: GenericFormProps) => {
     onFileChange,
     files,
     slotProps,
+    disableUseFormElement,
   } = props
   const {
     subFormRemoveItemButton,
@@ -136,8 +138,7 @@ export const GenericForm = (props: GenericFormProps) => {
   return (
     <Box
       position="relative"
-      component={!_path ? 'form' : undefined}
-      onKeyDown={preventDefault}
+      component={!_path && !disableUseFormElement ? 'form' : undefined}
       {...(!_path ? formContainer : subformContainer)}
     >
       <Grid
