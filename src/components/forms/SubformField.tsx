@@ -59,6 +59,56 @@ export const SubformField = (props: SubformFieldProps) => {
     () => sub?.fields?.filter((f: any) => f?.form?.showInArrayList) || [],
     [sub?.fields]
   )
+
+  const makeOnChangeArraySub = useCallback(
+    (arrayIndex: number) => {
+      return (
+        newFormData: any,
+        changedPropertyName: any,
+        changedPropertyValue: any,
+        prevFormData: any
+      ) => {
+        if (!fieldName) return
+        const transformedNewFormData = {
+          ...formData,
+          [fieldName]: formData?.[fieldName]?.length
+            ? formData?.[fieldName]?.map((f: any, fIdx: number) =>
+                fIdx === arrayIndex ? newFormData : f
+              )
+            : [newFormData],
+        }
+        onChangeFormData?.(
+          transformedNewFormData,
+          changedPropertyName,
+          changedPropertyValue,
+          formData,
+          fieldName
+        )
+      }
+    },
+    [fieldName, formData, onChangeFormData]
+  )
+
+  const handleRemoveArrayItem = useCallback(
+    (removeIdx: number) => {
+      if (!ui?.open || ui?.open === 'new' || !fieldName) return
+      const newFormData = {
+        ...formData,
+        [fieldName]: formData?.[fieldName]?.filter(
+          (f: any, fIdx2: number) => fIdx2 !== removeIdx
+        ),
+      }
+      console.log(newFormData, fieldName, formData)
+      makeOnChangeArraySub(ui?.open)(
+        newFormData,
+        fieldName,
+        newFormData[fieldName],
+        formData
+      )
+    },
+    [ui?.open, formData, fieldName, makeOnChangeArraySub]
+  )
+
   const arrayTableProps = useMemo(
     () =>
       ({
@@ -102,7 +152,12 @@ export const SubformField = (props: SubformFieldProps) => {
                     handleSetOpen(rIdx)
                   }}
                 />
-                <Button icon={mdiDelete} iconButton variant="text" />
+                <Button
+                  icon={mdiDelete}
+                  iconButton
+                  variant="text"
+                  onClick={() => handleRemoveArrayItem(rIdx)}
+                />
               </Box>
             ),
             style: {
@@ -114,7 +169,15 @@ export const SubformField = (props: SubformFieldProps) => {
           },
         ],
       }) as any,
-    [formData, fieldName, subFieldsForList, ui, theme.palette, handleSetOpen]
+    [
+      formData,
+      fieldName,
+      subFieldsForList,
+      ui,
+      theme.palette,
+      handleSetOpen,
+      handleRemoveArrayItem,
+    ]
   )
 
   const [tempFormData, setTempFormData] = useState<any>({})
@@ -156,31 +219,7 @@ export const SubformField = (props: SubformFieldProps) => {
       fieldName
     )
   }
-  const makeOnChangeArraySub =
-    (arrayIndex: number) =>
-    (
-      newFormData: any,
-      changedPropertyName: any,
-      changedPropertyValue: any,
-      prevFormData: any
-    ) => {
-      if (!fieldName) return
-      const transformedNewFormData = {
-        ...formData,
-        [fieldName]: formData?.[fieldName]?.length
-          ? formData?.[fieldName]?.map((f: any, fIdx: number) =>
-              fIdx === arrayIndex ? newFormData : f
-            )
-          : [newFormData],
-      }
-      onChangeFormData?.(
-        transformedNewFormData,
-        changedPropertyName,
-        changedPropertyValue,
-        formData,
-        fieldName
-      )
-    }
+
   const addnewItemArraySub = (changedPropertyName: any, prevFormData: any) => {
     if (!fieldName) return
     const prevArrayFormData = prevFormData?.[fieldName]
@@ -378,9 +417,10 @@ export const SubformField = (props: SubformFieldProps) => {
                           ...formData,
                           [fieldName]: formData?.[fieldName]?.map(
                             (f: any, fIdx2: number) =>
-                              fIdx2 === ui?.open ? tempFormData : f
+                              fIdx2 === ui?.open ? tempFormData?.[fieldName] : f
                           ),
                         }
+                        console.log(newFormData, fieldName, formData)
                         makeOnChangeArraySub(ui?.open)(
                           newFormData,
                           fieldName,
