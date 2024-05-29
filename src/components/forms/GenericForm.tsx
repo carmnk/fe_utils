@@ -92,7 +92,7 @@ export type GenericFormProps<
 }
 
 const preventDefault = (e: React.KeyboardEvent) => {
-  e.preventDefault()
+  return false
 }
 
 export const GenericForm = (props: GenericFormProps) => {
