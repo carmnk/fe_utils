@@ -152,7 +152,14 @@ export const GenericInputField = <
     //   {...(rest as any)}
     // />
 
-    <JsonField value={value} {...(rest as any)} />
+    <JsonField
+      value={value}
+      name={name}
+      required={required}
+      sx={sxAdj}
+      error={error}
+      {...(rest as any)}
+    />
   ) : //
   // : type === 'file' ? (
   //   <FileUploader
