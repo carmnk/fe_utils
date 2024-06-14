@@ -18,8 +18,12 @@ export type JsonObjectFieldProps = {
   _path?: (string | number)[]
   editing?: EditPropertyType | null
   setEditing?: (prev: EditPropertyType | null) => EditPropertyType
-  onChange: (value: Record<string, any>) => void
+  onChange: (
+    value: Record<string, any>,
+    e: { target: { name: string } }
+  ) => void
   keysDict?: any
+  name?: string
 }
 
 export const JsonObjectField = (props: JsonObjectFieldProps) => {
@@ -30,6 +34,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     setEditing: setEditingIn,
     onChange,
     keysDict,
+    name: nameIn,
   } = props
 
   const [editingInt, setEditingInt] = useState<EditPropertyType | null>(null)
@@ -131,7 +136,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       newValue[name] = newPropertyValue
       if (name !== previousName) {
         delete newValue[previousName]
-        onChange(valueInCopy)
+        onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       }
     },
     [onChange, valueIn, keysDict]
@@ -162,7 +167,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //   )
       newValue[previousName] = value
       //   delete newValue[previousName]
-      onChange(valueInCopy)
+      onChange(valueInCopy, { target: { name: nameIn ?? '' } })
     },
     [onChange, valueIn]
   )
@@ -182,7 +187,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       console.log('NEW VALUE', newValue, pathAdj, previousName, valueInCopy)
       if (newValue[previousName] !== undefined) {
         delete newValue[previousName]
-        onChange(valueInCopy)
+        onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       }
     },
     [valueIn, onChange]
@@ -201,7 +206,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //     newValue = newValue[pathAdj[i]]
       //   }
       newValue['~new'] = ''
-      onChange(valueInCopy)
+      onChange(valueInCopy, { target: { name: nameIn ?? '' } })
     },
     [valueIn, onChange]
   )
@@ -430,10 +435,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             editing={editing}
                             setEditing={setEditing as any}
                             onChange={(newValuePerSubobject: any) =>
-                              onChange({
-                                ...valueIn,
-                                [key]: newValuePerSubobject,
-                              })
+                              onChange(
+                                {
+                                  ...valueIn,
+                                  [key]: newValuePerSubobject,
+                                },
+                                { target: { name: nameIn ?? '' } }
+                              )
                             }
                             keysDict={keysDict?.[key]}
                           />
@@ -444,10 +452,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             editing={editing}
                             setEditing={setEditing as any}
                             onChange={(newValuePerSubobject: any) =>
-                              onChange({
-                                ...valueIn,
-                                [key]: newValuePerSubobject,
-                              })
+                              onChange(
+                                {
+                                  ...valueIn,
+                                  [key]: newValuePerSubobject,
+                                },
+                                { target: { name: nameIn ?? '' } }
+                              )
                             }
                             keysDict={keysDict?.[key]}
                           />
@@ -544,8 +555,14 @@ export type JsonFieldProps = {
   _path?: (string | number)[]
   editing: EditPropertyType | null
   setEditing: (prev: EditPropertyType) => EditPropertyType
-  onChange: (value: Record<string, any>) => void
+  onChange: (
+    value: Record<string, any>,
+    e: {
+      target: { name: string }
+    }
+  ) => void
   keysDict?: any
+  name?: string
 }
 
 export const JsonField = (props: JsonFieldProps) => {
@@ -557,6 +574,7 @@ export const JsonField = (props: JsonFieldProps) => {
     onChange,
     label,
     keysDict,
+    name,
   } = props
   return (
     <Box>
@@ -577,7 +595,8 @@ export const JsonField = (props: JsonFieldProps) => {
                     onChange(
                       value?.map((v, vIdx) =>
                         vIdx === index ? newValuePerItem : v
-                      ) || []
+                      ) || [],
+                      { target: { name: name ?? '' } }
                     )
                   }
                 />
@@ -590,7 +609,9 @@ export const JsonField = (props: JsonFieldProps) => {
                   sx={{ position: 'absolute', bottom: 0, left: '16px' }}
                   label="Delete Item"
                   onClick={() => {
-                    onChange(value?.filter((v, vIdx) => vIdx !== index) || [])
+                    onChange(value?.filter((v, vIdx) => vIdx !== index) || [], {
+                      target: { name: name ?? '' },
+                    })
                   }}
                 />
               </Box>
@@ -605,7 +626,9 @@ export const JsonField = (props: JsonFieldProps) => {
               onClick={() => {
                 if (Array.isArray(keysDict)) {
                   const newItem = keysDict?.[0]
-                  onChange([...value, newItem])
+                  onChange([...value, newItem], {
+                    target: { name: name ?? '' },
+                  })
                 }
                 console.log(
                   'VALUE: ',
@@ -635,7 +658,9 @@ export const JsonField = (props: JsonFieldProps) => {
               onClick={() => {
                 if (Array.isArray(keysDict)) {
                   const newItem = keysDict?.[0]
-                  onChange([...value, newItem])
+                  onChange([...value, newItem], {
+                    target: { name: name ?? '' },
+                  })
                 }
                 console.log(
                   'VALUE: ',
