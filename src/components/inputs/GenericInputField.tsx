@@ -151,10 +151,8 @@ export const GenericInputField = <
     //   isInt
     //   {...(rest as any)}
     // />
-    <Box>
-      <Typography>JSON</Typography>
-      <JsonField value={value} {...(rest as any)} />
-    </Box>
+
+    <JsonField value={value} {...(rest as any)} />
   ) : //
   // : type === 'file' ? (
   //   <FileUploader

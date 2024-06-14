@@ -539,6 +539,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
 }
 
 export type JsonFieldProps = {
+  label?: string
   value: Record<string, any> | Record<string, any>[]
   _path?: (string | number)[]
   editing: EditPropertyType | null
@@ -548,107 +549,120 @@ export type JsonFieldProps = {
 }
 
 export const JsonField = (props: JsonFieldProps) => {
-  const { value, _path = [], editing, setEditing, onChange, keysDict } = props
-  return Array.isArray(value) ? (
-    value.length ? (
-      <Box>
-        <Typography color="gold">{`[`}</Typography>
-        {value.map((item, index) => (
-          <Box key={index} ml={2} position="relative">
-            <JsonField
-              keysDict={keysDict?.[0]}
-              value={item}
-              _path={[..._path, index]}
-              editing={editing}
-              setEditing={setEditing}
-              onChange={(newValuePerItem: any) =>
-                onChange(
-                  value?.map((v, vIdx) =>
-                    vIdx === index ? newValuePerItem : v
-                  ) || []
-                )
-              }
-            />
+  const {
+    value,
+    _path = [],
+    editing,
+    setEditing,
+    onChange,
+    label,
+    keysDict,
+  } = props
+  return (
+    <Box>
+      {!_path?.length && <Typography variant="caption">{label}</Typography>}
+      {Array.isArray(value) ? (
+        value.length ? (
+          <Box>
+            <Typography color="gold">{`[`}</Typography>
+            {value.map((item, index) => (
+              <Box key={index} ml={2} position="relative">
+                <JsonField
+                  keysDict={keysDict?.[0]}
+                  value={item}
+                  _path={[..._path, index]}
+                  editing={editing}
+                  setEditing={setEditing}
+                  onChange={(newValuePerItem: any) =>
+                    onChange(
+                      value?.map((v, vIdx) =>
+                        vIdx === index ? newValuePerItem : v
+                      ) || []
+                    )
+                  }
+                />
+                <Button
+                  icon={mdiDelete}
+                  variant="text"
+                  slotProps={{
+                    typography: { variant: 'caption' },
+                  }}
+                  sx={{ position: 'absolute', bottom: 0, left: '16px' }}
+                  label="Delete Item"
+                  onClick={() => {
+                    onChange(value?.filter((v, vIdx) => vIdx !== index) || [])
+                  }}
+                />
+              </Box>
+            ))}
             <Button
-              icon={mdiDelete}
+              icon={mdiPlus}
               variant="text"
               slotProps={{
                 typography: { variant: 'caption' },
               }}
-              sx={{ position: 'absolute', bottom: 0, left: '16px' }}
-              label="Delete Item"
+              sx={{ width: 'max-content', m: 0 }}
               onClick={() => {
-                onChange(value?.filter((v, vIdx) => vIdx !== index) || [])
+                if (Array.isArray(keysDict)) {
+                  const newItem = keysDict?.[0]
+                  onChange([...value, newItem])
+                }
+                console.log(
+                  'VALUE: ',
+                  value,
+                  'Path: ',
+                  _path,
+                  'Editing',
+                  editing,
+                  keysDict
+                )
               }}
-            />
+            >
+              Add Item
+            </Button>
+            <Typography color="gold">{`]`}</Typography>
           </Box>
-        ))}
-        <Button
-          icon={mdiPlus}
-          variant="text"
-          slotProps={{
-            typography: { variant: 'caption' },
-          }}
-          sx={{ width: 'max-content', m: 0 }}
-          onClick={() => {
-            if (Array.isArray(keysDict)) {
-              const newItem = keysDict?.[0]
-              onChange([...value, newItem])
-            }
-            console.log(
-              'VALUE: ',
-              value,
-              'Path: ',
-              _path,
-              'Editing',
-              editing,
-              keysDict
-            )
-          }}
-        >
-          Add Item
-        </Button>
-        <Typography color="gold">{`]`}</Typography>
-      </Box>
-    ) : (
-      <Flex>
-        <Typography>{`[`}</Typography>
-        <Button
-          icon={mdiPlus}
-          variant="text"
-          slotProps={{
-            typography: { variant: 'caption' },
-          }}
-          sx={{ width: 'max-content', m: 0 }}
-          onClick={() => {
-            if (Array.isArray(keysDict)) {
-              const newItem = keysDict?.[0]
-              onChange([...value, newItem])
-            }
-            console.log(
-              'VALUE: ',
-              value,
-              'Path: ',
-              _path,
-              'Editing',
-              editing,
-              keysDict
-            )
-          }}
-        >
-          Add Item
-        </Button>
-        <Typography>{`]`}</Typography>
-      </Flex>
-    )
-  ) : (
-    <JsonObjectField
-      value={value}
-      _path={[..._path]}
-      editing={editing}
-      setEditing={setEditing as any}
-      onChange={onChange}
-      keysDict={keysDict}
-    />
+        ) : (
+          <Flex>
+            <Typography>{`[`}</Typography>
+            <Button
+              icon={mdiPlus}
+              variant="text"
+              slotProps={{
+                typography: { variant: 'caption' },
+              }}
+              sx={{ width: 'max-content', m: 0 }}
+              onClick={() => {
+                if (Array.isArray(keysDict)) {
+                  const newItem = keysDict?.[0]
+                  onChange([...value, newItem])
+                }
+                console.log(
+                  'VALUE: ',
+                  value,
+                  'Path: ',
+                  _path,
+                  'Editing',
+                  editing,
+                  keysDict
+                )
+              }}
+            >
+              Add Item
+            </Button>
+            <Typography>{`]`}</Typography>
+          </Flex>
+        )
+      ) : (
+        <JsonObjectField
+          value={value}
+          _path={[..._path]}
+          editing={editing}
+          setEditing={setEditing as any}
+          onChange={onChange}
+          keysDict={keysDict}
+        />
+      )}
+    </Box>
   )
 }
