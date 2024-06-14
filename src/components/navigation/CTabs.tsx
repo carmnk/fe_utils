@@ -101,6 +101,7 @@ export const Tabs = forwardRef(
       >
         {items?.map?.((item, iIdx) => (
           <Tab
+            key={iIdx}
             sx={{
               p: 0,
               minWidth: 40,

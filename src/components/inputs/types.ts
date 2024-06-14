@@ -10,6 +10,7 @@ export type InputTextFieldType =
   | 'autocomplete'
   | 'textarea'
   | 'time'
+  | 'json'
 
 /** Def of all input field types */
 export type InputFieldType = InputTextFieldType | 'bool' | 'switch'

@@ -12,6 +12,7 @@ import { GenericInputFieldProps } from './types'
 import { useMemo } from 'react'
 import { CSelect2 } from './Select2'
 import { CTimeField } from './TimeField'
+import { JsonField, JsonFieldProps } from './JsonField'
 
 export type GenericInputFieldOption = {
   label: string
@@ -36,7 +37,9 @@ export type SpecificInputProps<T extends InputFieldType> = T extends 'text'
                 ? TextAreaProps
                 : T extends 'bool'
                   ? CheckboxProps
-                  : never
+                  : T extends 'json'
+                    ? JsonFieldProps
+                    : never
 
 export type GGenericInputFieldProps<T extends InputFieldType> =
   GenericInputFieldProps<T> &
@@ -136,6 +139,18 @@ export const GenericInputField = <
       isInt
       {...(rest as any)}
     />
+  ) : type === 'json' ? (
+    // <NumberField
+    //   label={label}
+    //   value={value as any}
+    //   name={name}
+    //   required={required}
+    //   sx={sxAdj}
+    //   error={error}
+    //   isInt
+    //   {...(rest as any)}
+    // />
+    <JsonField value={value} {...(rest as any)} />
   ) : //
   // : type === 'file' ? (
   //   <FileUploader
