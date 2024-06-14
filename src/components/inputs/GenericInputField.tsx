@@ -13,6 +13,7 @@ import { useMemo } from 'react'
 import { CSelect2 } from './Select2'
 import { CTimeField } from './TimeField'
 import { JsonField, JsonFieldProps } from './JsonField'
+import { Box, Typography } from '@mui/material'
 
 export type GenericInputFieldOption = {
   label: string
@@ -150,7 +151,10 @@ export const GenericInputField = <
     //   isInt
     //   {...(rest as any)}
     // />
-    <JsonField value={value} {...(rest as any)} />
+    <Box>
+      <Typography>JSON</Typography>
+      <JsonField value={value} {...(rest as any)} />
+    </Box>
   ) : //
   // : type === 'file' ? (
   //   <FileUploader
