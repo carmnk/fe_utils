@@ -430,6 +430,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       >
                         {Array.isArray(propertyValue) ? (
                           <JsonField
+                            name={nameIn}
                             value={propertyValue}
                             _path={[..._path, key]}
                             editing={editing}
@@ -447,6 +448,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                           />
                         ) : ['object'].includes(typeof propertyValue) ? (
                           <JsonField
+                            name={nameIn}
                             value={propertyValue}
                             _path={[..._path, key]}
                             editing={editing}
@@ -586,6 +588,7 @@ export const JsonField = (props: JsonFieldProps) => {
             {value.map((item, index) => (
               <Box key={index} ml={2} position="relative">
                 <JsonField
+                  name={name}
                   keysDict={keysDict?.[0]}
                   value={item}
                   _path={[..._path, index]}
@@ -680,6 +683,7 @@ export const JsonField = (props: JsonFieldProps) => {
         )
       ) : (
         <JsonObjectField
+          name={name}
           value={value}
           _path={[..._path]}
           editing={editing}
