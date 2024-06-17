@@ -269,36 +269,30 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               }}
                               onChange={(newValue: string, e) => {
                                 e?.stopPropagation()
-                                // handleChangePropertyName(
-                                //   [..._path, key],
-                                //   newValue
-                                // )
                                 handleChangeTempValue(newValue)
                               }}
                               onKeyUp={(e: any) => {
                                 const newValue = e?.target?.value
                                 const name = editing?.path?.at(-1)
-                                const newName = editing?.tempValue
-                                console.log('NEWNAME', newName)
+                                // const newName = editing?.tempValue
+                                // console.log('NEWNAME', newName)
                                 if (e.key === 'Enter' && name) {
-                                  //   alert('NAME + ' + editing?.tempValue)
                                   handleChangePropertyName(
                                     [..._path, key],
                                     newValue
                                   )
                                 }
                               }}
-                              //   onChangeCompleted={(newValue: any) => {
-                              //     alert('SXGS')
-                              //     console.warn('ARASRA', newValue, [
-                              //       ..._path,
-                              //       key,
-                              //     ])
-                              //     handleChangePropertyName(
-                              //       [..._path, key],
-                              //       newValue
-                              //     )
-                              //   }}
+                              onChangeCompleted={(newValue: any) => {
+                                console.warn('on change completed', newValue, [
+                                  ..._path,
+                                  key,
+                                ])
+                                handleChangePropertyName(
+                                  [..._path, key],
+                                  newValue
+                                )
+                              }}
                               size={'small'}
                               sx={{
                                 width: '100%',
