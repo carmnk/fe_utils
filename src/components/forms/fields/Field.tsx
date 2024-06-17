@@ -104,6 +104,15 @@ export const Field = (props: FieldProps) => {
     fieldProps,
   } = props as FieldProps
 
+  console.info(
+    'Field - relevant props: ',
+    formData,
+    showError,
+    field,
+    _path,
+    fieldProps
+  )
+
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
       const { name } = e?.target ?? {}
