@@ -308,6 +308,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 inputContainer: {
                                   sx: { height: 'auto !important' },
                                 },
+                                popper: {
+                                  sx: { width: 'auto' },
+                                },
                               }}
                               disableHelperText
                               disableLabel
