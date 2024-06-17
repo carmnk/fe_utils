@@ -45,7 +45,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
   const proposedPropertyKeyOptions = useMemo(
     () =>
       (keysDict &&
-        keysDict?.length &&
+        Object.keys(keysDict)?.length &&
         Object.keys(keysDict).map((val) => ({
           value: val,
           label: val,
