@@ -45,6 +45,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
   const proposedPropertyKeyOptions = useMemo(
     () =>
       (keysDict &&
+        keysDict?.length &&
         Object.keys(keysDict).map((val) => ({
           value: val,
           label: val,
@@ -255,7 +256,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             height={35}
                           >
                             <GenericInputField
-                              {...{ options: { proposedPropertyKeyOptions } }}
+                              {...{ options: proposedPropertyKeyOptions }}
                               autoFocus
                               type={
                                 proposedPropertyKeyOptions?.length
