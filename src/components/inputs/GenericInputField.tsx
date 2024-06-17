@@ -158,6 +158,7 @@ export const GenericInputField = <
       required={required}
       sx={sxAdj}
       error={error}
+      label={label}
       {...(rest as any)}
     />
   ) : //
