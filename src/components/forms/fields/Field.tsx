@@ -126,6 +126,7 @@ export const Field = (props: FieldProps) => {
         ...formData,
         [name]: newValue,
       }
+      console.debug('handleChange Adj OnBeforeChange', name, newValue)
       onChangeFormData(newValueWithInjections, name, newValue, formData)
     },
     [onBeforeChange, formData, onChangeFormData]
