@@ -539,8 +539,10 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
               typography: { variant: 'caption' },
             }}
             sx={{ width: 'max-content', m: 0 }}
+            onClick={handleAddObjectProperty}
+            disabled={valueIn['~new'] !== undefined}
           >
-            Add Item
+            Add Prop
           </Button>
           <Typography>{`}`}</Typography>
         </Flex>
