@@ -79,7 +79,7 @@ export const DatePicker = (props: DatePickerProps) => {
 
   const valueMoment = useMemo(() => moment(value), [value])
 
-  console.log('VALID DATE', validDate, value)
+  console.debug('VALID DATE', validDate, value)
 
   const handleChange = useCallback(
     (newValue: Moment | null) => {
@@ -209,10 +209,10 @@ export const DatePicker = (props: DatePickerProps) => {
 
   useEffect(() => {
     if (restInRef.current === restIn) {
-      console.log("restIn didn't change (shallow)")
+      console.debug("restIn didn't change (shallow)")
     }
     if (isEqual(restInRef.current, restIn)) {
-      console.log('restIn is deep-equal')
+      console.debug('restIn is deep-equal')
     }
     restInRef.current = restIn
   }, [restIn])

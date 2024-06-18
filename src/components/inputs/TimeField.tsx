@@ -87,7 +87,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
 
   const valueMoment = useMemo(() => moment(value), [value])
 
-  console.log('VALID DATE', validDate, value)
+  console.debug('VALID DATE', validDate, value)
 
   const handleChange = useCallback(
     (newValue: Moment | null) => {

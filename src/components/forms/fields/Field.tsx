@@ -116,7 +116,7 @@ export const Field = (props: FieldProps) => {
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
       const { name } = e?.target ?? {}
-      console.log('handleChange', name, newValue)
+      console.debug('handleChange', name, newValue)
       const newValueWithInjections = onBeforeChange?.(
         { ...formData, [name]: newValue },
         formData,

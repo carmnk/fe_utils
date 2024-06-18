@@ -108,7 +108,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     [setEditing]
   )
 
-  console.log('KEYS DICT', _path, keysDict, proposedPropertyKeyOptions)
+  console.debug('KEYS DICT', _path, keysDict, proposedPropertyKeyOptions)
 
   const handleChangePropertyName = useCallback(
     (path: (string | number)[], name: string) => {
@@ -140,7 +140,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       }
     },
-    [onChange, valueIn, keysDict]
+    [onChange, valueIn, keysDict, nameIn]
   )
 
   const handleChangePropertyValue = useCallback(
@@ -170,7 +170,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //   delete newValue[previousName]
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
     },
-    [onChange, valueIn]
+    [onChange, valueIn, nameIn]
   )
 
   const handleRemoveProperty = useCallback(
@@ -185,13 +185,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         }
         newValue = newValue[pathAdj[i]]
       }
-      console.log('NEW VALUE', newValue, pathAdj, previousName, valueInCopy)
+      console.debug('NEW VALUE', newValue, pathAdj, previousName, valueInCopy)
       if (newValue[previousName] !== undefined) {
         delete newValue[previousName]
         onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       }
     },
-    [valueIn, onChange]
+    [valueIn, onChange, nameIn]
   )
 
   const handleAddObjectProperty = useCallback(
@@ -209,7 +209,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       newValue['~new'] = ''
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
     },
-    [valueIn, onChange]
+    [valueIn, onChange, nameIn]
   )
 
   return typeof valueIn === 'object' ? (
@@ -248,7 +248,12 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                     >
                       {editing?.type === 'name' &&
                       isEqual(editing?.path, [..._path, key]) ? (
-                        <ClickAwayListener onClickAway={() => setEditing(null)}>
+                        <ClickAwayListener
+                          onClickAway={() => {
+                            console.debug("JsonField.tsx - PropertyName-Field Clickaway")
+                            setEditing(null)
+                          }}
+                        >
                           <Box
                             position={'relative'}
                             minWidth={0}
@@ -268,7 +273,6 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 e.stopPropagation()
                               }}
                               onChange={(newValue: string, e) => {
-                                e?.stopPropagation()
                                 handleChangeTempValue(newValue)
                               }}
                               onKeyUp={(e: any) => {
@@ -284,7 +288,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 }
                               }}
                               onChangeCompleted={(newValue: any) => {
-                                console.warn('on change completed', newValue, [
+                                console.debug('on change completed', newValue, [
                                   ..._path,
                                   key,
                                 ])
@@ -328,7 +332,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             onClick={(e) => {
                               e.stopPropagation()
                               const path = [..._path, key]
-                              console.log('PATH', path)
+                              console.debug('PATH', path)
                               handleRemoveProperty(path)
                             }}
                           />
@@ -633,7 +637,7 @@ export const JsonField = (props: JsonFieldProps) => {
                     target: { name: name ?? '' },
                   })
                 }
-                console.log(
+                console.debug(
                   'VALUE: ',
                   value,
                   'Path: ',
@@ -665,7 +669,7 @@ export const JsonField = (props: JsonFieldProps) => {
                     target: { name: name ?? '' },
                   })
                 }
-                console.log(
+                console.debug(
                   'VALUE: ',
                   value,
                   'Path: ',

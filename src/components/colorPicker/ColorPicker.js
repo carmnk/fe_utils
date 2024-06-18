@@ -35,7 +35,7 @@ var rgbaToObj = function (rgbaString, defaultRgbaStr) {
     var defaultColor = defaultRgbaStr
         ? rgbaToObj(defaultRgbaStr)
         : { r: 0, g: 0, b: 0, a: 1 };
-    console.log(rgbaString, colorParts, defaultColor, parseInt((colorParts === null || colorParts === void 0 ? void 0 : colorParts[0]) || defaultColor), 'r', (colorParts === null || colorParts === void 0 ? void 0 : colorParts[0]) || defaultColor);
+    console.debug(rgbaString, colorParts, defaultColor, parseInt((colorParts === null || colorParts === void 0 ? void 0 : colorParts[0]) || defaultColor), 'r', (colorParts === null || colorParts === void 0 ? void 0 : colorParts[0]) || defaultColor);
     return {
         r: parseInt((colorParts === null || colorParts === void 0 ? void 0 : colorParts[0]) || defaultColor),
         g: parseInt((colorParts === null || colorParts === void 0 ? void 0 : colorParts[1]) || defaultColor),

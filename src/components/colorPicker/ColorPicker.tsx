@@ -49,7 +49,7 @@ const rgbaToObj = (rgbaString?: string, defaultRgbaStr?: string) => {
   const defaultColor: any = defaultRgbaStr
     ? rgbaToObj(defaultRgbaStr)
     : { r: 0, g: 0, b: 0, a: 1 }
-  console.log(
+  console.debug(
     rgbaString,
     colorParts,
     defaultColor,

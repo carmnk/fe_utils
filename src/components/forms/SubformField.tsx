@@ -100,7 +100,7 @@ export const SubformField = (props: SubformFieldProps) => {
           (f: any, fIdx2: number) => fIdx2 !== removeIdx
         ),
       }
-      console.log(newFormData, fieldName, formData)
+      console.debug(newFormData, fieldName, formData)
       onChangeFormData?.(
         newFormData,
         fieldName,
@@ -192,7 +192,7 @@ export const SubformField = (props: SubformFieldProps) => {
           {}
       )
     } else if (typeof ui?.open === 'number') {
-      console.log(
+      console.debug(
         'FORMDATA',
         formData,
         fieldName,
@@ -345,7 +345,7 @@ export const SubformField = (props: SubformFieldProps) => {
                 ? injectedFormDataRaw(formData, rootFormData, ArrayIdx)
                 : injectedFormDataRaw) ?? {}
 
-            console.log('sub', sub)
+            console.debug('sub', sub)
             return formData?.[fieldName]?.map((f: any) =>
               sub?.fields
                 ?.filter((f: any) => f?.form?.showInArrayList)
