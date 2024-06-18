@@ -250,7 +250,15 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       isEqual(editing?.path, [..._path, key]) ? (
                         <ClickAwayListener
                           onClickAway={() => {
-                            console.debug("JsonField.tsx - PropertyName-Field Clickaway")
+                            console.debug(
+                              'JsonField.tsx - PropertyName-Field Clickaway',
+                              editing
+                            )
+                            const newTempValue = editing?.tempValue
+                            handleChangePropertyName(
+                              [..._path, key],
+                              newTempValue
+                            )
                             setEditing(null)
                           }}
                         >
@@ -273,6 +281,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 e.stopPropagation()
                               }}
                               onChange={(newValue: string, e) => {
+                                e?.stopPropagation()
                                 handleChangeTempValue(newValue)
                               }}
                               onKeyUp={(e: any) => {
@@ -352,7 +361,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             {...{ disableNumberSeparator: true }}
                             autoFocus
                             value={editing?.tempValue}
-                            onChange={(newValue: string) => {
+                            onChange={(newValue: string, e) => {
+                              e?.stopPropagation()
                               // handleChangePropertyName(
                               //   [..._path, key],
                               //   newValue
