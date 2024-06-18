@@ -270,6 +270,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               onChange={(newValue: string, e) => {
                                 e?.stopPropagation()
                                 handleChangeTempValue(newValue)
+                                toggleChangePropValue([..._path, key])
                               }}
                               onKeyUp={(e: any) => {
                                 const newValue = e?.target?.value
@@ -281,6 +282,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                     [..._path, key],
                                     newValue
                                   )
+                                  toggleChangePropValue([..._path, key])
                                 }
                               }}
                               onChangeCompleted={(newValue: any) => {
@@ -292,6 +294,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   [..._path, key],
                                   newValue
                                 )
+                                toggleChangePropValue([..._path, key])
                               }}
                               size={'small'}
                               sx={{
