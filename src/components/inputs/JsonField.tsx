@@ -281,12 +281,6 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                     [..._path, key],
                                     newValue
                                   )
-                                  setEditing({
-                                    path: _path,
-                                    type: 'value',
-                                    tempValue:
-                                      valueIn?.[_path?.[_path?.length - 1]],
-                                  })
                                 }
                               }}
                               onChangeCompleted={(newValue: any) => {
@@ -298,12 +292,6 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   [..._path, key],
                                   newValue
                                 )
-                                setEditing({
-                                  path: _path,
-                                  type: 'value',
-                                  tempValue:
-                                    valueIn?.[_path?.[_path?.length - 1]],
-                                })
                               }}
                               size={'small'}
                               sx={{
