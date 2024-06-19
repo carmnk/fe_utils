@@ -247,7 +247,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       const key = '~new'
       ;(setEditing as any)((current: any) => ({
         tempValue: valueInCopy[key],
-        type: 'value',
+        type: "name",
         path: [..._path, key],
       }))
     },
