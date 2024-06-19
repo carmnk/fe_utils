@@ -299,11 +299,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       isEqual(editing?.path, [..._path, key]) ? (
                         <ClickAwayListener
                           onClickAway={() => {
+                            const newTempValue = editing?.tempValue
+                            const newPropertyValue =
+                              keysDict?.[newTempValue] ?? ''
                             console.debug(
                               'JsonField.tsx - PropertyName-Field Clickaway',
-                              editing
+                              editing,
+                              newPropertyValue
                             )
-                            const newTempValue = editing?.tempValue
                             if (newTempValue) {
                               handleChangePropertyName(
                                 [..._path, key],
@@ -311,6 +314,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               )
                               ;(setEditing as any)((current: any) => ({
                                 ...current,
+                                tempValue: newPropertyValue,
                                 path: [..._path, newTempValue],
                                 type: 'value',
                               }))
@@ -363,8 +367,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                     [..._path, key],
                                     editing
                                   )
+                                  const newPropertyValue =
+                                    keysDict?.[newValue] ?? ''
                                   ;(setEditing as any)((current: any) => ({
                                     ...(current ?? {}),
+                                    tempValue: newPropertyValue,
                                     type: 'value',
                                     path: [..._path, newValue],
                                   }))
@@ -379,8 +386,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   [..._path, key],
                                   newValue
                                 )
+                                const newPropertyValue =
+                                  keysDict?.[newValue] ?? ''
                                 ;(setEditing as any)((current: any) => ({
                                   ...(current ?? {}),
+                                  tempValue: newPropertyValue,
                                   type: 'value',
                                   path: [..._path, newValue],
                                 }))
