@@ -135,7 +135,7 @@ export const GenericForm = (props: GenericFormProps) => {
     rootFormData,
   })
 
-  console.info('dynamicFields: ', dynamicFields)
+  console.debug('dynamicFields: ', dynamicFields)
 
   return (
     <Box

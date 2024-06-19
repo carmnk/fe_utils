@@ -92,7 +92,7 @@ export const FilteredTableHeaderCell = forwardRef(
     const handleSearchValueChange = useCallback(
       (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value as any
-        console.warn('value', value)
+        console.debug('value', value)
         if (!value && value !== '' && value !== 0) return
         setSearchValue(value)
       },
@@ -210,7 +210,7 @@ export const FilteredTableHeaderCell = forwardRef(
           // e?.sourceEvent === 'onClear'
         )
           return
-        console.warn('filteredOptions', filteredOptions, filterKey)
+        console.debug('filteredOptions', filteredOptions, filterKey)
         handleOnFilter?.(filteredOptions?.[0], filterKey)
       },
       [filteredOptions, handleOnFilter, filterKey]

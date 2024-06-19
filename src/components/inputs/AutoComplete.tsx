@@ -187,7 +187,7 @@ export const CAutoComplete = forwardRef(
               }
               params?.onChange?.(eventValue as any)
             }
-            console.warn('params', restProps, params)
+            // console.debug('params', restProps, params)
             return (
               <TextField
                 {...params}

@@ -54,6 +54,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     [keysDict]
   )
 
+  console.debug(
+    'JsonField.tsx - 123 Object keys - paths',
+    nameIn,
+    valueIn,
+    keysDict,
+    proposedPropertyKeyOptions
+  )
+
   const getNewPropertyValue = useCallback(
     (newValue: string) =>
       keysDict?.[newValue] ?? (newValue.includes('&') ? {} : ''),
@@ -104,7 +112,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         setEditing(null)
         return
       }
-      console.warn('JsonField.tsx - toggleChangePropValue - path:', path)
+      console.debug('JsonField.tsx - toggleChangePropValue - path:', path)
       setEditing({
         path,
         type: 'value',
@@ -144,7 +152,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       for (let i = 0; i < pathAdj.length - 1; i++) {
         // console.log('Current Value', newValue, pathAdj[i], valueInCopy)
         if (!(pathAdj[i] in newValue)) {
-          console.warn("Can't find path", pathAdj[i], newValue)
+          console.debug("Can't find path", pathAdj[i], newValue)
         }
         newValue = newValue[pathAdj[i]]
       }
@@ -182,7 +190,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       for (let i = 0; i < pathAdj.length - 1; i++) {
         // console.log('Current Value', newValue, pathAdj[i], valueInCopy)
         if (!(pathAdj[i] in newValue)) {
-          console.warn("Can't find path", pathAdj[i], newValue)
+          console.debug("Can't find path", pathAdj[i], newValue)
         }
         newValue = newValue[pathAdj[i]]
         // console.log('NEW VALUSE STEP', newValue?.[pathAdj?.[i]], pathAdj?.[i])
@@ -211,7 +219,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       const pathAdj = path?.slice(-1)
       for (let i = 0; i < pathAdj.length - 1; i++) {
         if (!(pathAdj[i] in newValue)) {
-          console.warn("Can't find path", pathAdj[i], newValue)
+          console.debug("Can't find path", pathAdj[i], newValue)
         }
         newValue = newValue[pathAdj[i]]
       }
@@ -240,7 +248,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //   const pathAdj = path?.slice(-1)
       //   for (let i = 0; i < pathAdj.length; i++) {
       //     if (!(pathAdj[i] in newValue)) {
-      //       console.warn("Can't find path", pathAdj[i], newValue)
+      //       console.debug("Can't find path", pathAdj[i], newValue)
       //     }
       //     newValue = newValue[pathAdj[i]]
       //   }
@@ -291,7 +299,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       //   alignItems="center"
                       onClick={(e) => {
                         e.stopPropagation()
-                        console.warn(
+                        console.debug(
                           'Current path is',
                           _path,
                           key,
@@ -371,7 +379,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 const name = editing?.path?.at(-1)
                                 // const newName = editing?.tempValue
                                 // console.log('NEWNAME', newName)
-                                console.info(
+                                console.debug(
                                   'JsonField.tsx - PropertyName Field - onKeyUp',
                                   e.key,
                                   name
@@ -395,7 +403,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   //   type: 'value',
                                   //   path: [..._path, newValue],
                                   // }))
-                                  console.info(
+                                  console.debug(
                                     'JsonField.tsx - PropertyName Field - onKeyUp - Enter pressed',
                                     e.key,
                                     name,
@@ -518,7 +526,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               e.stopPropagation()
                             }}
                             onChangeCompleted={(newValue: any) => {
-                              console.warn('ARASRA', newValue, [..._path, key])
+                              console.debug('ARASRA', newValue, [..._path, key])
                               handleChangePropertyValue(
                                 [..._path, key],
                                 newValue
@@ -583,7 +591,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             setEditing(null)
                             return
                           }
-                          console.warn(
+                          console.debug(
                             'Current path is',
                             _path,
                             key,

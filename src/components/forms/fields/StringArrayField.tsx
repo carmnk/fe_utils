@@ -29,7 +29,6 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
     onBeforeRemoveArrayItem,
   } = props as StringArrayFieldProps
 
-  console.warn('dynamicFields', dynamicFields)
   return dynamicFields
     ?.filter((field) => ['string-array']?.includes(field.type))
     ?.map((field, fIdx) => {
