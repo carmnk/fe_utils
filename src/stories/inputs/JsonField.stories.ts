@@ -61,3 +61,15 @@ export const Default: Story = {
     // fullName: 'C Menk',
   },
 }
+
+export const useModal: Story = {
+  args: {
+    label: 'Json Field with Modal',
+    value: { label: 'label', value: 1 },
+    keysDict: {
+      thisIsAnOption: 'with default text',
+    },
+    useModal: true,
+    // fullName: 'C Menk',
+  },
+}
