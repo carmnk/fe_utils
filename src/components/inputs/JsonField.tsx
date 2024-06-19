@@ -626,7 +626,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 { target: { name: nameIn ?? '' } }
                               )
                             }
-                            keysDict={keysDict?.[key]}
+                            keysDict={
+                              _path?.length &&
+                              _path?.length >= 1 &&
+                              _path?.at(-1)?.toString().includes('&') // last item of path is a jss subobject
+                                ? keysDict
+                                : keysDict?.[key]
+                            }
                           />
                         ) : typeof propertyValue === 'boolean' ? (
                           <Flex alignItems="center" gap={1}>
