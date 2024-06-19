@@ -247,7 +247,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       const key = '~new'
       ;(setEditing as any)((current: any) => ({
         tempValue: valueInCopy[key],
-        type: "name",
+        type: 'name',
         path: [..._path, key],
       }))
     },
@@ -304,11 +304,19 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               editing
                             )
                             const newTempValue = editing?.tempValue
-                            handleChangePropertyName(
-                              [..._path, key],
-                              newTempValue
-                            )
-                            setEditing(null)
+                            if (newTempValue) {
+                              handleChangePropertyName(
+                                [..._path, key],
+                                newTempValue
+                              )
+                              ;(setEditing as any)((current: any) => ({
+                                ...current,
+                                path: [..._path, key],
+                                type: 'value',
+                              }))
+                            } else {
+                              setEditing(null)
+                            }
                           }}
                         >
                           <Box
@@ -371,6 +379,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   [..._path, key],
                                   newValue
                                 )
+                                ;(setEditing as any)((current: any) => ({
+                                  ...(current ?? {}),
+                                  type: 'value',
+                                  path: [..._path, key],
+                                }))
                               }}
                               size={'small'}
                               sx={{
