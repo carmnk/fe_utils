@@ -312,12 +312,24 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 [..._path, key],
                                 newTempValue
                               )
-                              ;(setEditing as any)((current: any) => ({
-                                ...current,
-                                tempValue: newPropertyValue,
-                                path: [..._path, newTempValue],
-                                type: 'value',
-                              }))
+                              // ;(setEditing as any)((current: any) => ({
+                              //   ...current,
+                              //   tempValue: newPropertyValue,
+                              //   path: [..._path, newTempValue],
+                              //   type: 'value',
+                              // }))
+                              if (
+                                !Array.isArray(newPropertyValue) &&
+                                typeof newPropertyValue !== 'object'
+                              ) {
+                                // eslint-disable-next-line no-extra-semi
+                                ;(setEditing as any)((current: any) => ({
+                                  ...current,
+                                  tempValue: newPropertyValue,
+                                  path: [..._path, newTempValue],
+                                  type: 'value',
+                                }))
+                              }
                             } else {
                               setEditing(null)
                             }
@@ -372,12 +384,24 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   )
                                   const newPropertyValue =
                                     keysDict?.[newValue] ?? ''
-                                  ;(setEditing as any)((current: any) => ({
-                                    ...(current ?? {}),
-                                    tempValue: newPropertyValue,
-                                    type: 'value',
-                                    path: [..._path, newValue],
-                                  }))
+                                  // ;(setEditing as any)((current: any) => ({
+                                  //   ...(current ?? {}),
+                                  //   tempValue: newPropertyValue,
+                                  //   type: 'value',
+                                  //   path: [..._path, newValue],
+                                  // }))
+                                  if (
+                                    !Array.isArray(newPropertyValue) &&
+                                    typeof newPropertyValue !== 'object'
+                                  ) {
+                                    // eslint-disable-next-line no-extra-semi
+                                    ;(setEditing as any)((current: any) => ({
+                                      ...(current ?? {}),
+                                      tempValue: newPropertyValue,
+                                      type: 'value',
+                                      path: [..._path, newValue],
+                                    }))
+                                  }
                                 }
                               }}
                               onChangeCompleted={(newValue: any) => {
@@ -391,12 +415,18 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 )
                                 const newPropertyValue =
                                   keysDict?.[newValue] ?? ''
-                                ;(setEditing as any)((current: any) => ({
-                                  ...(current ?? {}),
-                                  tempValue: newPropertyValue,
-                                  type: 'value',
-                                  path: [..._path, newValue],
-                                }))
+                                if (
+                                  !Array.isArray(newPropertyValue) &&
+                                  typeof newPropertyValue !== 'object'
+                                ) {
+                                  // eslint-disable-next-line no-extra-semi
+                                  ;(setEditing as any)((current: any) => ({
+                                    ...(current ?? {}),
+                                    tempValue: newPropertyValue,
+                                    type: 'value',
+                                    path: [..._path, newValue],
+                                  }))
+                                }
                               }}
                               size={'small'}
                               sx={{
