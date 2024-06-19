@@ -111,6 +111,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
 
   const handleChangeTempValue = useCallback(
     (newValue: any) => {
+      console.debug('JsonField.tsx - handleChangeTempValue ', newValue, editing)
       setEditing(((prev: any) => {
         if (prev) {
           return { ...prev, tempValue: newValue }
@@ -118,7 +119,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         return null
       }) as any)
     },
-    [setEditing]
+    [setEditing, editing]
   )
 
   const handleChangePropertyName = useCallback(
@@ -331,10 +332,22 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 const name = editing?.path?.at(-1)
                                 // const newName = editing?.tempValue
                                 // console.log('NEWNAME', newName)
+                                console.debug(
+                                  'JsonField.tsx - PropertyName Field - onKeyUp',
+                                  e.key,
+                                  name
+                                )
                                 if (e.key === 'Enter' && name) {
                                   handleChangePropertyName(
                                     [..._path, key],
                                     newValue
+                                  )
+                                  console.debug(
+                                    'JsonField.tsx - PropertyName Field - onKeyUp - Enter',
+                                    e.key,
+                                    name,
+                                    [..._path, key],
+                                    editing
                                   )
                                   ;(setEditing as any)((current: any) => ({
                                     ...(current ?? {}),
