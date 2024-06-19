@@ -99,7 +99,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         setEditing(null)
         return
       }
-      console.debug('JsonField.tsx - toggleChangePropValue - path:', path)
+      console.warn('JsonField.tsx - toggleChangePropValue - path:', path)
       setEditing({
         path,
         type: 'value',
@@ -349,11 +349,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                     [..._path, key],
                                     editing
                                   )
-                                  ;(setEditing as any)((current: any) => ({
-                                    ...(current ?? {}),
-                                    type: 'value',
-                                    path: [..._path, key],
-                                  }))
+                                  // ;(setEditing as any)((current: any) => ({
+                                  //   ...(current ?? {}),
+                                  //   type: 'value',
+                                  //   path: [..._path, key],
+                                  // }))
                                 }
                               }}
                               onChangeCompleted={(newValue: any) => {
