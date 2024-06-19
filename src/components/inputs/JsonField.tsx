@@ -375,13 +375,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                     [..._path, key],
                                     newValue
                                   )
-                                  console.info(
-                                    'JsonField.tsx - PropertyName Field - onKeyUp - Enter',
-                                    e.key,
-                                    name,
-                                    [..._path, key],
-                                    editing
-                                  )
+
                                   const newPropertyValue =
                                     keysDict?.[newValue] ?? ''
                                   // ;(setEditing as any)((current: any) => ({
@@ -390,6 +384,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   //   type: 'value',
                                   //   path: [..._path, newValue],
                                   // }))
+                                  console.info(
+                                    'JsonField.tsx - PropertyName Field - onKeyUp - Enter pressed',
+                                    e.key,
+                                    name,
+                                    [..._path, key],
+                                    editing,
+                                    newPropertyValue
+                                  )
                                   if (
                                     !Array.isArray(newPropertyValue) &&
                                     typeof newPropertyValue !== 'object'
@@ -405,16 +407,17 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 }
                               }}
                               onChangeCompleted={(newValue: any) => {
-                                console.debug('on change completed', newValue, [
-                                  ..._path,
-                                  key,
-                                ])
                                 handleChangePropertyName(
                                   [..._path, key],
                                   newValue
                                 )
                                 const newPropertyValue =
                                   keysDict?.[newValue] ?? ''
+                                console.debug(
+                                  'JsonField.tsx - PropertyName Field - OnChangeCompleted',
+                                  newValue,
+                                  [..._path, key]
+                                )
                                 if (
                                   !Array.isArray(newPropertyValue) &&
                                   typeof newPropertyValue !== 'object'
