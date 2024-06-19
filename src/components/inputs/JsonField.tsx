@@ -289,8 +289,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                   nameIn,
                   propertyValue,
                   editing,
-                  [..._path, key]
+                  [..._path, key],
+                  ['object'].includes(typeof propertyValue),
+                  _path?.length,
+                  _path?.length >= 1,
+                  _path?.at(-1)?.toString().includes('&')
                 )
+
                 return (
                   <Fragment key={key}>
                     <Flex
