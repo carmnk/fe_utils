@@ -5,6 +5,7 @@ import { Button } from '../buttons'
 import { JsonObjectField, JsonObjectFieldProps } from './JsonObjectField'
 import { Fragment, useCallback, useState } from 'react'
 import { Modal } from '../surfaces'
+import Icon from '@mdi/react'
 
 export type JsonFieldProps = JsonObjectFieldProps & {
   label?: string
@@ -186,7 +187,12 @@ export const JsonField = (props: JsonFieldProps) => {
       <Modal
         open={open}
         onClose={handleClose}
-        header={props.label}
+        header={
+          <Flex alignItems={'center'} gap={1}>
+            <Typography>{props.label}</Typography>
+            <Icon path={mdiPencil} size={0.75} />
+          </Flex>
+        }
         disableTopRightCloseButton
       >
         <RawJsonField {...props} useModal={false} disableLabel />
