@@ -1,14 +1,16 @@
 import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
-import { Box, Modal, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { Flex } from '../_wrapper'
 import { Button } from '../buttons'
 import { JsonObjectField, JsonObjectFieldProps } from './JsonObjectField'
 import { Fragment, useCallback, useState } from 'react'
+import { Modal } from '../surfaces'
 
 export type JsonFieldProps = JsonObjectFieldProps & {
   label?: string
   value: Record<string, any> | Record<string, any>[]
   useModal?: boolean
+  disableLabel?: boolean
 
   // _path?: (string | number)[]
   // editing: EditPropertyType | null
@@ -36,10 +38,13 @@ export const RawJsonField = (props: JsonFieldProps) => {
     name,
     useModal,
     disabled,
+    disableLabel,
   } = props
   return (
     <Box>
-      {!_path?.length && <Typography variant="caption">{label}</Typography>}
+      {!_path?.length && !disableLabel && (
+        <Typography variant="caption">{label}</Typography>
+      )}
       {Array.isArray(value) ? (
         value.length ? (
           <Box>
@@ -177,9 +182,14 @@ export const JsonField = (props: JsonFieldProps) => {
   return useModal ? (
     <Fragment>
       <RawJsonField {...props} />
-      <Button label={props.label} onClick={handleOpen} />
-      <Modal open={open} onClose={handleClose}>
-        <RawJsonField {...props} />
+      <Button label={'Edit'} onClick={handleOpen} variant="outlined" />
+      <Modal
+        open={open}
+        onClose={handleClose}
+        header={props.label}
+        disableTopRightCloseButton
+      >
+        <RawJsonField {...props} disableLabel />
       </Modal>
     </Fragment>
   ) : (
