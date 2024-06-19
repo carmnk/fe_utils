@@ -54,6 +54,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     [keysDict]
   )
 
+  const getNewPropertyValue = useCallback(
+    (newValue: string) =>
+      keysDict?.[newValue] ?? (newValue.includes('&') ? {} : ''),
+    [keysDict]
+  )
   //   const [ui, setUi] = useState({
   //     editProperty: null as {
   //       path: (string | number)[]
@@ -271,11 +276,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                 const propertyValue = valueIn[key as keyof typeof valueIn]
                 const pathUi = editing?.path
                 const mappedPath = [..._path, key]
-                // console.debug(
-                //   'JsonField.tsx - Object keys - paths',
-                //   pathUi,
-                //   mappedPath
-                // )
+                console.debug(
+                  'JsonField.tsx - Object keys - paths',
+                  nameIn,
+                  propertyValue,
+                  editing,
+                  [..._path, key]
+                )
                 return (
                   <Fragment key={key}>
                     <Flex
@@ -301,8 +308,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                           onClickAway={() => {
                             const newTempValue = editing?.tempValue
                             const newPropertyValue =
-                              keysDict?.[newTempValue] ??
-                              (newTempValue.includes('&') ? {} : '')
+                              getNewPropertyValue(newTempValue)
+                            // keysDict?.[newTempValue] ??
+                            // (newTempValue.includes('&') ? {} : '')
                             console.debug(
                               'JsonField.tsx - PropertyName-Field Clickaway',
                               editing,
@@ -378,8 +386,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   )
 
                                   const newPropertyValue =
-                                    keysDict?.[newValue] ??
-                                    (newValue.includes('&') ? {} : '')
+                                    getNewPropertyValue(newValue)
+                                  // keysDict?.[newValue] ??
+                                  // (newValue.includes('&') ? {} : '')
                                   // ;(setEditing as any)((current: any) => ({
                                   //   ...(current ?? {}),
                                   //   tempValue: newPropertyValue,
@@ -414,8 +423,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   newValue
                                 )
                                 const newPropertyValue =
-                                  keysDict?.[newValue] ??
-                                  (newValue.includes('&') ? {} : '')
+                                  getNewPropertyValue(newValue)
+                                // keysDict?.[newValue] ??
+                                // (newValue.includes('&') ? {} : '')
                                 console.debug(
                                   'JsonField.tsx - PropertyName Field - OnChangeCompleted',
                                   newValue,
