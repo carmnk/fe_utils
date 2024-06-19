@@ -24,6 +24,7 @@ export type JsonObjectFieldProps = {
   ) => void
   keysDict?: any
   name?: string
+  disabled?: boolean
 }
 
 export const JsonObjectField = (props: JsonObjectFieldProps) => {
@@ -35,6 +36,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     onChange,
     keysDict,
     name: nameIn,
+    disabled,
   } = props
 
   const [editingInt, setEditingInt] = useState<EditPropertyType | null>(null)
@@ -315,7 +317,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       position="relative"
                       minWidth={0}
                     >
-                      {editing?.type === 'name' &&
+                      {!disabled &&
+                      editing?.type === 'name' &&
                       isEqual(editing?.path, [..._path, key]) ? (
                         <ClickAwayListener
                           onClickAway={() => {
@@ -497,22 +500,25 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       ) : (
                         <>
                           {`${key}:`}
-                          <Button
-                            iconButton
-                            icon={mdiDelete}
-                            iconSize={0.5}
-                            sx={{ width: '1rem', height: '1rem', mt: 0.5 }}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              const path = [..._path, key]
-                              console.debug('PATH', path)
-                              handleRemoveProperty(path)
-                            }}
-                          />
+                          {!disabled && (
+                            <Button
+                              iconButton
+                              icon={mdiDelete}
+                              iconSize={0.5}
+                              sx={{ width: '1rem', height: '1rem', mt: 0.5 }}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                const path = [..._path, key]
+                                console.debug('PATH', path)
+                                handleRemoveProperty(path)
+                              }}
+                            />
+                          )}
                         </>
                       )}
                     </Flex>
-                    {editing?.type === 'value' &&
+                    {!disabled &&
+                    editing?.type === 'value' &&
                     isEqual(editing?.path, [..._path, key]) ? (
                       <ClickAwayListener onClickAway={() => setEditing(null)}>
                         <Box position={'relative'} minWidth={0} height={35}>
@@ -596,6 +602,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                         onClick={(e) => {
                           e.stopPropagation()
                           if (
+                            disabled ||
                             Array.isArray(propertyValue) ||
                             typeof propertyValue === 'object'
                           ) {
@@ -613,6 +620,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       >
                         {Array.isArray(propertyValue) ? (
                           <JsonField
+                            disabled={disabled}
                             name={nameIn}
                             value={propertyValue}
                             _path={[..._path, key]}
@@ -631,6 +639,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                           />
                         ) : ['object'].includes(typeof propertyValue) ? (
                           <JsonField
+                            disabled={disabled}
                             name={nameIn}
                             value={propertyValue}
                             _path={[..._path, key]}
@@ -662,6 +671,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               size="small"
                               sx={{ p: 0, pl: 1 }}
                               onChange={() => {
+                                if (disabled) {
+                                  return
+                                }
                                 handleChangePropertyValue(
                                   [..._path, key],
                                   !propertyValue as any
@@ -756,6 +768,8 @@ export type JsonFieldProps = {
   ) => void
   keysDict?: any
   name?: string
+  useModal?: boolean
+  disabled?: boolean
 }
 
 export const JsonField = (props: JsonFieldProps) => {
@@ -768,6 +782,8 @@ export const JsonField = (props: JsonFieldProps) => {
     label,
     keysDict,
     name,
+    useModal,
+    disabled,
   } = props
   return (
     <Box>
@@ -779,6 +795,8 @@ export const JsonField = (props: JsonFieldProps) => {
             {value.map((item, index) => (
               <Box key={index} ml={2} position="relative">
                 <JsonField
+                  useModal={useModal}
+                  disabled={disabled}
                   name={name}
                   keysDict={keysDict?.[0]}
                   value={item}
@@ -794,86 +812,96 @@ export const JsonField = (props: JsonFieldProps) => {
                     )
                   }
                 />
-                <Button
-                  icon={mdiDelete}
-                  variant="text"
-                  slotProps={{
-                    typography: { variant: 'caption' },
-                  }}
-                  sx={{ position: 'absolute', bottom: 0, left: '16px' }}
-                  label="Delete Item"
-                  onClick={() => {
-                    onChange(value?.filter((v, vIdx) => vIdx !== index) || [], {
-                      target: { name: name ?? '' },
-                    })
-                  }}
-                />
+                {!useModal && (
+                  <Button
+                    icon={mdiDelete}
+                    variant="text"
+                    slotProps={{
+                      typography: { variant: 'caption' },
+                    }}
+                    sx={{ position: 'absolute', bottom: 0, left: '16px' }}
+                    label="Delete Item"
+                    onClick={() => {
+                      onChange(
+                        value?.filter((v, vIdx) => vIdx !== index) || [],
+                        {
+                          target: { name: name ?? '' },
+                        }
+                      )
+                    }}
+                  />
+                )}
               </Box>
             ))}
-            <Button
-              icon={mdiPlus}
-              variant="text"
-              slotProps={{
-                typography: { variant: 'caption' },
-              }}
-              sx={{ width: 'max-content', m: 0 }}
-              onClick={() => {
-                if (Array.isArray(keysDict)) {
-                  const newItem = keysDict?.[0]
-                  onChange([...value, newItem], {
-                    target: { name: name ?? '' },
-                  })
-                }
-                console.debug(
-                  'VALUE: ',
-                  value,
-                  'Path: ',
-                  _path,
-                  'Editing',
-                  editing,
-                  keysDict
-                )
-              }}
-            >
-              Add Item
-            </Button>
+            {!useModal && (
+              <Button
+                icon={mdiPlus}
+                variant="text"
+                slotProps={{
+                  typography: { variant: 'caption' },
+                }}
+                sx={{ width: 'max-content', m: 0 }}
+                onClick={() => {
+                  if (Array.isArray(keysDict)) {
+                    const newItem = keysDict?.[0]
+                    onChange([...value, newItem], {
+                      target: { name: name ?? '' },
+                    })
+                  }
+                  console.debug(
+                    'VALUE: ',
+                    value,
+                    'Path: ',
+                    _path,
+                    'Editing',
+                    editing,
+                    keysDict
+                  )
+                }}
+              >
+                Add Item
+              </Button>
+            )}
             <Typography color="gold">{`]`}</Typography>
           </Box>
         ) : (
           <Flex>
             <Typography>{`[`}</Typography>
-            <Button
-              icon={mdiPlus}
-              variant="text"
-              slotProps={{
-                typography: { variant: 'caption' },
-              }}
-              sx={{ width: 'max-content', m: 0 }}
-              onClick={() => {
-                if (Array.isArray(keysDict)) {
-                  const newItem = keysDict?.[0]
-                  onChange([...value, newItem], {
-                    target: { name: name ?? '' },
-                  })
-                }
-                console.debug(
-                  'VALUE: ',
-                  value,
-                  'Path: ',
-                  _path,
-                  'Editing',
-                  editing,
-                  keysDict
-                )
-              }}
-            >
-              Add Item
-            </Button>
+            {!useModal && (
+              <Button
+                icon={mdiPlus}
+                variant="text"
+                slotProps={{
+                  typography: { variant: 'caption' },
+                }}
+                sx={{ width: 'max-content', m: 0 }}
+                onClick={() => {
+                  if (Array.isArray(keysDict)) {
+                    const newItem = keysDict?.[0]
+                    onChange([...value, newItem], {
+                      target: { name: name ?? '' },
+                    })
+                  }
+                  console.debug(
+                    'VALUE: ',
+                    value,
+                    'Path: ',
+                    _path,
+                    'Editing',
+                    editing,
+                    keysDict
+                  )
+                }}
+              >
+                Add Item
+              </Button>
+            )}
             <Typography>{`]`}</Typography>
           </Flex>
         )
       ) : (
         <JsonObjectField
+          disabled={useModal || disabled}
           name={name}
           value={value}
           _path={[..._path]}
