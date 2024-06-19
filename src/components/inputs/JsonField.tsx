@@ -189,7 +189,7 @@ export const JsonField = (props: JsonFieldProps) => {
         header={props.label}
         disableTopRightCloseButton
       >
-        <RawJsonField {...props} disableLabel />
+        <RawJsonField {...props} useModal={false} disableLabel />
       </Modal>
     </Fragment>
   ) : (
