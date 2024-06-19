@@ -408,10 +408,17 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               }}
                               slotProps={{
                                 input: {
-                                  sx: { py: '4px !important', px: '2px' },
+                                  sx: {
+                                    py: '4px !important',
+                                    px: '2px',
+                                    pl: '0px !important',
+                                  },
                                 },
                                 inputContainer: {
-                                  sx: { height: 'auto !important' },
+                                  sx: {
+                                    height: 'auto !important',
+                                    pl: '0px !important',
+                                  },
                                 },
                                 popper: {
                                   sx: { width: 'auto !important' },
@@ -492,10 +499,17 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             }}
                             slotProps={{
                               input: {
-                                sx: { py: '4px !important', px: '2px' },
+                                sx: {
+                                  py: '4px !important',
+                                  px: '2px',
+                                  pl: '0px !important',
+                                },
                               },
                               inputContainer: {
-                                sx: { height: 'auto !important' },
+                                sx: {
+                                  height: 'auto !important',
+                                  pl: '0px !important',
+                                },
                               },
                             }}
                             disableHelperText

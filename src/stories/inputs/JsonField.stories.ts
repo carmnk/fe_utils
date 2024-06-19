@@ -55,6 +55,9 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     value: { label: 'label', value: 1 },
+    keysDict: {
+      thisIsAnOption: 'with default text',
+    },
     // fullName: 'C Menk',
   },
 }
