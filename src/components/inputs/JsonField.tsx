@@ -355,7 +355,10 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   e.key,
                                   name
                                 )
-                                if (e.key === 'Enter' && name) {
+                                if (
+                                  (e.key === 'Enter' || e.key === 'Tab') &&
+                                  name
+                                ) {
                                   handleChangePropertyName(
                                     [..._path, key],
                                     newValue
