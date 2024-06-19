@@ -227,6 +227,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
               .sort()
               ?.map((key) => {
                 const propertyValue = valueIn[key as keyof typeof valueIn]
+                const pathUi = editing?.path
+                const mappedPath = [..._path, key]
+                console.debug(
+                  'JsonField.tsx - Object keys - paths',
+                  pathUi,
+                  mappedPath
+                )
                 return (
                   <Fragment key={key}>
                     <Flex
@@ -294,6 +301,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                     [..._path, key],
                                     newValue
                                   )
+                                  ;(setEditing as any)((current: any) => ({
+                                    ...(current ?? {}),
+                                    type: 'value',
+                                    path: [..._path, key],
+                                  }))
                                 }
                               }}
                               onChangeCompleted={(newValue: any) => {
