@@ -351,6 +351,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   path: [..._path, newTempValue],
                                   type: 'value',
                                 }))
+                              } else {
+                                setEditing(null)
                               }
                             } else {
                               setEditing(null)
@@ -427,6 +429,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                       type: 'value',
                                       path: [..._path, newValue],
                                     }))
+                                  } else {
+                                    setEditing(null)
                                   }
                                 }
                               }}
@@ -455,6 +459,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                     type: 'value',
                                     path: [..._path, newValue],
                                   }))
+                                } else {
+                                  setEditing(null)
                                 }
                               }}
                               size={'small'}
