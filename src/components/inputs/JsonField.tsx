@@ -301,7 +301,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                           onClickAway={() => {
                             const newTempValue = editing?.tempValue
                             const newPropertyValue =
-                              keysDict?.[newTempValue] ?? ''
+                              keysDict?.[newTempValue] ??
+                              (newTempValue.includes('&') ? {} : '')
                             console.debug(
                               'JsonField.tsx - PropertyName-Field Clickaway',
                               editing,
@@ -377,7 +378,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   )
 
                                   const newPropertyValue =
-                                    keysDict?.[newValue] ?? ''
+                                    keysDict?.[newValue] ??
+                                    (newValue.includes('&') ? {} : '')
                                   // ;(setEditing as any)((current: any) => ({
                                   //   ...(current ?? {}),
                                   //   tempValue: newPropertyValue,
@@ -412,7 +414,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   newValue
                                 )
                                 const newPropertyValue =
-                                  keysDict?.[newValue] ?? ''
+                                  keysDict?.[newValue] ??
+                                  (newValue.includes('&') ? {} : '')
                                 console.debug(
                                   'JsonField.tsx - PropertyName Field - OnChangeCompleted',
                                   newValue,
