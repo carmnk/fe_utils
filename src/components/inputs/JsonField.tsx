@@ -640,9 +640,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               )
                             }
                             keysDict={
-                              _path?.length &&
-                              _path?.length >= 1 &&
-                              _path?.at(-1)?.toString().includes('&') // last item of path is a jss subobject
+                              [..._path, key]?.length &&
+                              [..._path, key]?.length >= 1 &&
+                              [..._path, key]?.at(-1)?.toString().includes('&') // last item of path is a jss subobject
                                 ? keysDict
                                 : keysDict?.[key]
                             }
