@@ -195,7 +195,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //   delete newValue[previousName]
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
     },
-    [onChange, valueIn, nameIn]
+    [onChange, valueIn, nameIn, keysDict]
   )
 
   const handleRemoveProperty = useCallback(
@@ -244,8 +244,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         target: { name: nameIn ?? '' },
       })
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
+      const key = '~new'
+      ;(setEditing as any)((current: any) => ({
+        tempValue: valueInCopy[key],
+        type: 'value',
+        path: [..._path, key],
+      }))
     },
-    [valueIn, onChange, nameIn]
+    [valueIn, onChange, nameIn, _path, setEditing]
   )
 
   return typeof valueIn === 'object' ? (
@@ -332,7 +338,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 const name = editing?.path?.at(-1)
                                 // const newName = editing?.tempValue
                                 // console.log('NEWNAME', newName)
-                                console.debug(
+                                console.info(
                                   'JsonField.tsx - PropertyName Field - onKeyUp',
                                   e.key,
                                   name
@@ -342,18 +348,18 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                     [..._path, key],
                                     newValue
                                   )
-                                  console.debug(
+                                  console.info(
                                     'JsonField.tsx - PropertyName Field - onKeyUp - Enter',
                                     e.key,
                                     name,
                                     [..._path, key],
                                     editing
                                   )
-                                  // ;(setEditing as any)((current: any) => ({
-                                  //   ...(current ?? {}),
-                                  //   type: 'value',
-                                  //   path: [..._path, key],
-                                  // }))
+                                  ;(setEditing as any)((current: any) => ({
+                                    ...(current ?? {}),
+                                    type: 'value',
+                                    path: [..._path, key],
+                                  }))
                                 }
                               }}
                               onChangeCompleted={(newValue: any) => {
