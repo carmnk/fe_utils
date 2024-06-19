@@ -65,11 +65,19 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     (path: (string | number)[]) => {
       // sth is already in edit mode
       if (editing) {
+        console.debug(
+          'JsonField.tsx - toggleChangePropName editing=true -> close - path:',
+          path
+        )
         setEditing(null)
         return
       }
       const propertyKeyValue = path[path.length - 1]
-      console.warn('Current path is', path, propertyKeyValue)
+      console.debug(
+        'JsonField.tsx - toggleChangePropName - path:',
+        path,
+        propertyKeyValue
+      )
       setEditing({
         path,
         type: 'name',
@@ -84,9 +92,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     (path: (string | number)[]) => {
       // sth is already in edit mode
       if (editing) {
+        console.debug(
+          'JsonField.tsx - toggleChangePropValue editing=true -> close - path:',
+          path
+        )
         setEditing(null)
         return
       }
+      console.debug('JsonField.tsx - toggleChangePropValue - path:', path)
       setEditing({
         path,
         type: 'value',
@@ -108,14 +121,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     [setEditing]
   )
 
-  console.debug('KEYS DICT', _path, keysDict, proposedPropertyKeyOptions)
-
   const handleChangePropertyName = useCallback(
     (path: (string | number)[], name: string) => {
-      console.log(
-        'HANDLE CHANGE PROPERTY NAME',
+      console.debug(
+        'JsonField.tsx - handleChangePropertyName',
         path,
-        'NAME',
         name,
         valueIn,
         keysDict
@@ -137,6 +147,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       newValue[name] = newPropertyValue
       if (name !== previousName) {
         delete newValue[previousName]
+        console.debug(
+          'JsonField.tsx - handleChangePropertyName - before onChange()',
+          valueInCopy,
+          { target: { name: nameIn ?? '' } }
+        )
         onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       }
     },
@@ -149,6 +164,15 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       const valueInCopy = cloneDeep(valueIn)
       let newValue = valueInCopy
       const pathAdj = path?.slice(-1)
+
+      console.debug(
+        'JsonField.tsx - handleChangePropertyName',
+        path,
+        previousName,
+        valueIn,
+        keysDict,
+        newValue
+      )
       for (let i = 0; i < pathAdj.length - 1; i++) {
         // console.log('Current Value', newValue, pathAdj[i], valueInCopy)
         if (!(pathAdj[i] in newValue)) {
@@ -185,9 +209,17 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         }
         newValue = newValue[pathAdj[i]]
       }
-      console.debug('NEW VALUE', newValue, pathAdj, previousName, valueInCopy)
+
       if (newValue[previousName] !== undefined) {
         delete newValue[previousName]
+        console.debug(
+          'JsonField.tsx - handleRemoveProperty',
+          path,
+          valueInCopy,
+          {
+            target: { name: nameIn ?? '' },
+          }
+        )
         onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       }
     },
@@ -207,6 +239,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //     newValue = newValue[pathAdj[i]]
       //   }
       newValue['~new'] = ''
+      console.debug('JsonField.tsx - handleAddObjectProperty', e, valueInCopy, {
+        target: { name: nameIn ?? '' },
+      })
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
     },
     [valueIn, onChange, nameIn]
@@ -229,11 +264,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                 const propertyValue = valueIn[key as keyof typeof valueIn]
                 const pathUi = editing?.path
                 const mappedPath = [..._path, key]
-                console.debug(
-                  'JsonField.tsx - Object keys - paths',
-                  pathUi,
-                  mappedPath
-                )
+                // console.debug(
+                //   'JsonField.tsx - Object keys - paths',
+                //   pathUi,
+                //   mappedPath
+                // )
                 return (
                   <Fragment key={key}>
                     <Flex
