@@ -25,22 +25,20 @@ export const CSelect2 = (props: CSelect2Props) => {
   return (
     <CTextField {...rest} select>
       {optionGroupNames?.length && groupBy
-        ? optionGroupNames.map((groupName, gIdx) => (
-            <Fragment key={gIdx}>
-              <ListSubheader>{groupName}</ListSubheader>
-              {options
-                ?.filter((opt) => groupBy(opt) === groupName)
-                .map((opt, oIdx) => (
-                  <MenuItem
-                    value={opt?.value as any}
-                    {...menuItemProps}
-                    key={oIdx}
-                  >
-                    {opt.label}
-                  </MenuItem>
-                ))}
-            </Fragment>
-          ))
+        ? optionGroupNames.map((groupName, gIdx) => [
+            <ListSubheader key={gIdx + '_list_header'}>{groupName}</ListSubheader>,
+            options
+              ?.filter((opt) => groupBy(opt) === groupName)
+              .map((opt, oIdx) => (
+                <MenuItem
+                  value={opt?.value as any}
+                  {...menuItemProps}
+                  key={oIdx}
+                >
+                  {opt.label}
+                </MenuItem>
+              )),
+          ])
         : options?.map((opt, oIdx) => (
             <MenuItem value={opt?.value as any} {...menuItemProps} key={oIdx}>
               {opt.label}
