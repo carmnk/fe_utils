@@ -1,6 +1,6 @@
 {
   "name": "@cmk/fe_utils",
-  "version": "0.1.131",
+  "version": "0.1.132",
   "description": "frontend utility library",
   "type": "module",
   "main": "dist/index.cjs.js",
