@@ -762,18 +762,20 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         <Flex justifyContent="flex-start" alignItems="center" gap={1}>
           <Typography>{`{`}</Typography>
 
-          <Button
-            icon={mdiPlus}
-            variant="text"
-            slotProps={{
-              typography: { variant: 'caption' },
-            }}
-            sx={{ width: 'max-content', m: 0 }}
-            onClick={handleAddObjectProperty}
-            disabled={valueIn['~new'] !== undefined}
-          >
-            Add Prop
-          </Button>
+          {!disabled && (
+            <Button
+              icon={mdiPlus}
+              variant="text"
+              slotProps={{
+                typography: { variant: 'caption' },
+              }}
+              sx={{ width: 'max-content', m: 0 }}
+              onClick={handleAddObjectProperty}
+              disabled={valueIn['~new'] !== undefined}
+            >
+              Add Prop
+            </Button>
+          )}
           <Typography>{`}`}</Typography>
         </Flex>
       )}
