@@ -192,7 +192,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         previousName,
         valueIn,
         keysDict,
-        newValue
+        newValue,
+        value
       )
       for (let i = 0; i < pathAdj.length - 1; i++) {
         // console.log('Current Value', newValue, pathAdj[i], valueInCopy)
@@ -355,7 +356,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               // }))
                               if (
                                 !Array.isArray(newPropertyValue) &&
-                                typeof newPropertyValue !== 'object'
+                                typeof newPropertyValue !== 'object' &&
+                                typeof newPropertyValue !== 'boolean'
                               ) {
                                 // eslint-disable-next-line no-extra-semi
                                 ;(setEditing as any)((current: any) => ({
@@ -433,7 +435,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   )
                                   if (
                                     !Array.isArray(newPropertyValue) &&
-                                    typeof newPropertyValue !== 'object'
+                                    typeof newPropertyValue !== 'object' &&
+                                    typeof newPropertyValue !== 'boolean'
                                   ) {
                                     // eslint-disable-next-line no-extra-semi
                                     ;(setEditing as any)((current: any) => ({
@@ -463,7 +466,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 )
                                 if (
                                   !Array.isArray(newPropertyValue) &&
-                                  typeof newPropertyValue !== 'object'
+                                  typeof newPropertyValue !== 'object' &&
+                                  typeof newPropertyValue !== 'boolean'
                                 ) {
                                   // eslint-disable-next-line no-extra-semi
                                   ;(setEditing as any)((current: any) => ({
@@ -552,8 +556,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             onClick={(e: any) => {
                               e.stopPropagation()
                             }}
-                            onChangeCompleted={(newValue: any) => {
-                              console.debug('ARASRA', newValue, [..._path, key])
+                            onChangeCompleted={(newValue: any, e: any) => {
+                              console.debug(
+                                'JsonObjectField.tsx - PropertyValue Field - OnChangeCompleted',
+                                newValue,
+                                [..._path, key],
+                                e
+                              )
                               handleChangePropertyValue(
                                 [..._path, key],
                                 newValue
@@ -563,7 +572,10 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               if (e.key === 'Enter') {
                                 //   alert('NAME + ' + editing?.tempValue)
                                 console.debug(
-                                  'JsonObjectField.tsx - PropertyValue Field - onKeyUp - Enter pressed'
+                                  'JsonObjectField.tsx - PropertyValue Field - onKeyUp - Enter pressed',
+                                  e,
+                                  [..._path, key],
+                                  editing?.tempValue
                                 )
                                 handleChangePropertyValue(
                                   [..._path, key],

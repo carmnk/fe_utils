@@ -41,7 +41,7 @@ const meta = {
     // customTooltip: { control: 'text' },
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-  args: { onClick: fn() },
+  args: { onChange: fn(), onChangeCompleted: fn(), onKeyUp: fn() },
 } satisfies Meta<typeof GenericInputField>
 
 export default meta
@@ -51,6 +51,16 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     type: 'text',
+    value: '',
+    label: 'Label',
+
+    // fullName: 'C Menk',
+  },
+}
+
+export const Number: Story = {
+  args: {
+    type: 'number',
     value: '',
     label: 'Label',
 
