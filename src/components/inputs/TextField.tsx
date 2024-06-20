@@ -39,6 +39,7 @@ export type CustomTextFieldProps = {
     formHelperText?: MTextFieldProps['FormHelperTextProps']
     notchedInputLabel?: MTextFieldProps['InputLabelProps']
     label?: TypographyProps
+    select?: MTextFieldProps['SelectProps']
   }
 }
 
@@ -80,6 +81,7 @@ export const CTextField = forwardRef(
       formHelperText,
       notchedInputLabel,
       rootContainer,
+      select,
     } = slotProps ?? {}
 
     // console.warn('PROPS TEXTFIELD', props)
@@ -140,6 +142,7 @@ export const CTextField = forwardRef(
           title: name,
           ...input,
         },
+        SelectProps: select,
         InputLabelProps: notchedInputLabel,
         InputProps: {
           notched: false,
@@ -222,6 +225,7 @@ export const CTextField = forwardRef(
       inputContainer,
       input,
       notchedInputLabel,
+      select,
     ])
 
     return (
