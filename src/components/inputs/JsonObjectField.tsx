@@ -127,7 +127,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
 
   const handleChangeTempValue = useCallback(
     (newValue: any) => {
-      console.debug('JsonObjectField.tsx - handleChangeTempValue ', newValue, editing)
+      console.debug(
+        'JsonObjectField.tsx - handleChangeTempValue ',
+        newValue,
+        editing
+      )
       setEditing(((prev: any) => {
         if (prev) {
           return { ...prev, tempValue: newValue }
@@ -183,7 +187,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       const pathAdj = path?.slice(-1)
 
       console.debug(
-        'JsonObjectField.tsx - handleChangePropertyName',
+        'JsonObjectField.tsx - handleChangePropertyValue',
         path,
         previousName,
         valueIn,
@@ -256,9 +260,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //     newValue = newValue[pathAdj[i]]
       //   }
       newValue['~new'] = ''
-      console.debug('JsonObjectField.tsx - handleAddObjectProperty', e, valueInCopy, {
-        target: { name: nameIn ?? '' },
-      })
+      console.debug(
+        'JsonObjectField.tsx - handleAddObjectProperty',
+        e,
+        valueInCopy,
+        {
+          target: { name: nameIn ?? '' },
+        }
+      )
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       const key = '~new'
       ;(setEditing as any)((current: any) => ({
@@ -553,6 +562,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             onKeyUp={(e: any) => {
                               if (e.key === 'Enter') {
                                 //   alert('NAME + ' + editing?.tempValue)
+                                console.debug(
+                                  'JsonObjectField.tsx - PropertyValue Field - onKeyUp - Enter pressed'
+                                )
                                 handleChangePropertyValue(
                                   [..._path, key],
                                   editing?.tempValue
