@@ -3,9 +3,11 @@ import CTextField, { CTextFieldProps } from './TextField'
 import { Fragment, useMemo } from 'react'
 import { uniq } from 'lodash'
 
+type SelectOption = { value: string | number | boolean; label: string }
+
 export type CSelect2Props = CTextFieldProps & {
-  options: { value: string | number | boolean; label: string }[]
-  groupBy?: (item: string | number | boolean) => string | number
+  options: SelectOption[]
+  groupBy?: (item: SelectOption) => string
   // onChange?: (newValue: string, e: React.ChangeEvent<HTMLInputElement>) => void
   slotProps?: CTextFieldProps['slotProps'] & {
     menuItem?: MenuItemProps
@@ -17,9 +19,7 @@ export const CSelect2 = (props: CSelect2Props) => {
   const menuItemProps = rest?.slotProps?.menuItem
 
   const optionGroupNames = useMemo(() => {
-    return groupBy
-      ? uniq(options?.map?.((opt) => groupBy(opt.value)) ?? [])
-      : null
+    return groupBy ? uniq(options?.map?.((opt) => groupBy(opt)) ?? []) : null
   }, [groupBy, options])
 
   return (
@@ -29,7 +29,7 @@ export const CSelect2 = (props: CSelect2Props) => {
             <Fragment key={gIdx}>
               <ListSubheader>{groupName}</ListSubheader>
               {options
-                ?.filter((opt) => groupBy(opt.value) === groupName)
+                ?.filter((opt) => groupBy(opt) === groupName)
                 .map((opt, oIdx) => (
                   <MenuItem
                     value={opt?.value as any}
