@@ -83,9 +83,9 @@ export const SubformField = (props: SubformFieldProps) => {
         }
         const transformedAdjNewFormData = injections?.onBeforeChange?.(
           transformedNewFormData,
+          formData,
           changedPropertyName,
-          changedPropertyValue,
-          formData
+          changedPropertyValue
         )
 
         onChangeFormData?.(
@@ -110,15 +110,21 @@ export const SubformField = (props: SubformFieldProps) => {
         ),
       }
       console.debug(newFormData, fieldName, formData)
-      onChangeFormData?.(
+      const AdjNewFormData = injections?.onBeforeChange?.(
         newFormData,
+        formData,
+        fieldName,
+        formData?.[fieldName]
+      )
+      onChangeFormData?.(
+        AdjNewFormData ?? newFormData,
         fieldName,
         formData?.[fieldName],
         formData,
         fieldName
       )
     },
-    [formData, fieldName, onChangeFormData]
+    [formData, fieldName, onChangeFormData, injections]
   )
 
   const arrayTableProps = useMemo(
@@ -223,8 +229,14 @@ export const SubformField = (props: SubformFieldProps) => {
       ...formData,
       [fieldName]: useAlwaysArraysInFormData ? [newFormData] : newFormData,
     }
-    onChangeFormData?.(
+    const AdjNewFormData = injections?.onBeforeChange?.(
       transformedNewFormData,
+      formData,
+      changedPropertyName,
+      changedPropertyValue
+    )
+    onChangeFormData?.(
+      AdjNewFormData ?? transformedNewFormData,
       changedPropertyName,
       changedPropertyValue,
       formData,
@@ -252,8 +264,15 @@ export const SubformField = (props: SubformFieldProps) => {
       ...formData,
       [fieldName]: newValue,
     }
-    onChangeFormData?.(
+
+    const AdjNewFormData = injections?.onBeforeChange?.(
       transformedNewFormData,
+      formData,
+      changedPropertyName,
+      newValue
+    )
+    onChangeFormData?.(
+      AdjNewFormData ?? transformedNewFormData,
       changedPropertyName,
       newValue,
       formData
@@ -434,8 +453,14 @@ export const SubformField = (props: SubformFieldProps) => {
                               fIdx2 === ui?.open ? tempFormData : f
                           ),
                         }
-                        onChangeFormData?.(
+                        const AdjNewFormData = injections?.onBeforeChange?.(
                           newFormData,
+                          formData,
+                          fieldName,
+                          formData?.[fieldName]
+                        )
+                        onChangeFormData?.(
+                          AdjNewFormData ?? newFormData,
                           fieldName,
                           newFormData?.[fieldName],
                           formData,
