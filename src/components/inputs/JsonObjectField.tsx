@@ -57,13 +57,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     [keysDict]
   )
 
-//   console.debug(
-//     'JsonObjectField.tsx - 123 Object keys - paths',
-//     nameIn,
-//     valueIn,
-//     keysDict,
-//     proposedPropertyKeyOptions
-//   )
+  //   console.debug(
+  //     'JsonObjectField.tsx - 123 Object keys - paths',
+  //     nameIn,
+  //     valueIn,
+  //     keysDict,
+  //     proposedPropertyKeyOptions
+  //   )
 
   const getNewPropertyValue = useCallback(
     (newValue: string) =>
@@ -89,11 +89,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         return
       }
       const propertyKeyValue = path[path.length - 1]
-    //   console.debug(
-    //     'JsonObjectField.tsx - toggleChangePropName - path:',
-    //     path,
-    //     propertyKeyValue
-    //   )
+      //   console.debug(
+      //     'JsonObjectField.tsx - toggleChangePropName - path:',
+      //     path,
+      //     propertyKeyValue
+      //   )
       setEditing({
         path,
         type: 'name',
@@ -115,7 +115,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         setEditing(null)
         return
       }
-    //   console.debug('JsonObjectField.tsx - toggleChangePropValue - path:', path)
+      //   console.debug('JsonObjectField.tsx - toggleChangePropValue - path:', path)
       setEditing({
         path,
         type: 'value',
@@ -127,11 +127,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
 
   const handleChangeTempValue = useCallback(
     (newValue: any) => {
-    //   console.debug(
-    //     'JsonObjectField.tsx - handleChangeTempValue ',
-    //     newValue,
-    //     editing
-    //   )
+      //   console.debug(
+      //     'JsonObjectField.tsx - handleChangeTempValue ',
+      //     newValue,
+      //     editing
+      //   )
       setEditing(((prev: any) => {
         if (prev) {
           return { ...prev, tempValue: newValue }
@@ -144,13 +144,13 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
 
   const handleChangePropertyName = useCallback(
     (path: (string | number)[], name: string) => {
-    //   console.debug(
-    //     'JsonObjectField.tsx - handleChangePropertyName',
-    //     path,
-    //     name,
-    //     valueIn,
-    //     keysDict
-    //   )
+      //   console.debug(
+      //     'JsonObjectField.tsx - handleChangePropertyName',
+      //     path,
+      //     name,
+      //     valueIn,
+      //     keysDict
+      //   )
 
       const previousName = path[path.length - 1]
       const valueInCopy = cloneDeep(valueIn)
@@ -186,15 +186,15 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       let newValue = valueInCopy
       const pathAdj = path?.slice(-1)
 
-    //   console.debug(
-    //     'JsonObjectField.tsx - handleChangePropertyValue',
-    //     path,
-    //     previousName,
-    //     valueIn,
-    //     keysDict,
-    //     newValue,
-    //     value
-    //   )
+      //   console.debug(
+      //     'JsonObjectField.tsx - handleChangePropertyValue',
+      //     path,
+      //     previousName,
+      //     valueIn,
+      //     keysDict,
+      //     newValue,
+      //     value
+      //   )
       for (let i = 0; i < pathAdj.length - 1; i++) {
         // console.log('Current Value', newValue, pathAdj[i], valueInCopy)
         if (!(pathAdj[i] in newValue)) {
@@ -261,14 +261,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //     newValue = newValue[pathAdj[i]]
       //   }
       newValue['~new'] = ''
-    //   console.debug(
-    //     'JsonObjectField.tsx - handleAddObjectProperty',
-    //     e,
-    //     valueInCopy,
-    //     {
-    //       target: { name: nameIn ?? '' },
-    //     }
-    //   )
+      //   console.debug(
+      //     'JsonObjectField.tsx - handleAddObjectProperty',
+      //     e,
+      //     valueInCopy,
+      //     {
+      //       target: { name: nameIn ?? '' },
+      //     }
+      //   )
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       const key = '~new'
       ;(setEditing as any)((current: any) => ({
@@ -297,17 +297,17 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                 const propertyValue = valueIn[key as keyof typeof valueIn]
                 const pathUi = editing?.path
                 const mappedPath = [..._path, key]
-                console.debug(
-                  'JsonObjectField.tsx - Object keys - paths',
-                  nameIn,
-                  propertyValue,
-                  editing,
-                  [..._path, key],
-                  ['object'].includes(typeof propertyValue),
-                  _path?.length,
-                  _path?.length >= 1,
-                  _path?.at(-1)?.toString().includes('&')
-                )
+                // console.debug(
+                //   'JsonObjectField.tsx - Object keys - paths',
+                //   nameIn,
+                //   propertyValue,
+                //   editing,
+                //   [..._path, key],
+                //   ['object'].includes(typeof propertyValue),
+                //   _path?.length,
+                //   _path?.length >= 1,
+                //   _path?.at(-1)?.toString().includes('&')
+                // )
 
                 return (
                   <Fragment key={key}>
@@ -338,11 +338,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               getNewPropertyValue(newTempValue)
                             // keysDict?.[newTempValue] ??
                             // (newTempValue.includes('&') ? {} : '')
-                            console.debug(
-                              'JsonObjectField.tsx - PropertyName-Field Clickaway',
-                              editing,
-                              newPropertyValue
-                            )
+                            // console.debug(
+                            //   'JsonObjectField.tsx - PropertyName-Field Clickaway',
+                            //   editing,
+                            //   newPropertyValue
+                            // )
                             if (newTempValue) {
                               handleChangePropertyName(
                                 [..._path, key],
@@ -401,11 +401,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                 const name = editing?.path?.at(-1)
                                 // const newName = editing?.tempValue
                                 // console.log('NEWNAME', newName)
-                                console.debug(
-                                  'JsonObjectField.tsx - PropertyName Field - onKeyUp',
-                                  e.key,
-                                  name
-                                )
+                                // console.debug(
+                                //   'JsonObjectField.tsx - PropertyName Field - onKeyUp',
+                                //   e.key,
+                                //   name
+                                // )
                                 if (
                                   (e.key === 'Enter' || e.key === 'Tab') &&
                                   name
@@ -425,14 +425,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   //   type: 'value',
                                   //   path: [..._path, newValue],
                                   // }))
-                                  console.debug(
-                                    'JsonObjectField.tsx - PropertyName Field - onKeyUp - Enter pressed',
-                                    e.key,
-                                    name,
-                                    [..._path, key],
-                                    editing,
-                                    newPropertyValue
-                                  )
+                                  //   console.debug(
+                                  //     'JsonObjectField.tsx - PropertyName Field - onKeyUp - Enter pressed',
+                                  //     e.key,
+                                  //     name,
+                                  //     [..._path, key],
+                                  //     editing,
+                                  //     newPropertyValue
+                                  //   )
                                   if (
                                     !Array.isArray(newPropertyValue) &&
                                     typeof newPropertyValue !== 'object' &&
@@ -459,11 +459,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   getNewPropertyValue(newValue)
                                 // keysDict?.[newValue] ??
                                 // (newValue.includes('&') ? {} : '')
-                                console.debug(
-                                  'JsonObjectField.tsx - PropertyName Field - OnChangeCompleted',
-                                  newValue,
-                                  [..._path, key]
-                                )
+                                // console.debug(
+                                //   'JsonObjectField.tsx - PropertyName Field - OnChangeCompleted',
+                                //   newValue,
+                                //   [..._path, key]
+                                // )
                                 if (
                                   !Array.isArray(newPropertyValue) &&
                                   typeof newPropertyValue !== 'object' &&
@@ -523,7 +523,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               onClick={(e) => {
                                 e.stopPropagation()
                                 const path = [..._path, key]
-                                console.debug('PATH', path)
+                                // console.debug('PATH', path)
                                 handleRemoveProperty(path)
                               }}
                             />
@@ -557,12 +557,12 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               e.stopPropagation()
                             }}
                             onChangeCompleted={(newValue: any, e: any) => {
-                              console.debug(
-                                'JsonObjectField.tsx - PropertyValue Field - OnChangeCompleted',
-                                newValue,
-                                [..._path, key],
-                                e
-                              )
+                              //   console.debug(
+                              //     'JsonObjectField.tsx - PropertyValue Field - OnChangeCompleted',
+                              //     newValue,
+                              //     [..._path, key],
+                              //     e
+                              //   )
                               handleChangePropertyValue(
                                 [..._path, key],
                                 newValue
@@ -571,12 +571,12 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             onKeyUp={(e: any) => {
                               if (e.key === 'Enter') {
                                 //   alert('NAME + ' + editing?.tempValue)
-                                console.debug(
-                                  'JsonObjectField.tsx - PropertyValue Field - onKeyUp - Enter pressed',
-                                  e,
-                                  [..._path, key],
-                                  editing?.tempValue
-                                )
+                                // console.debug(
+                                //   'JsonObjectField.tsx - PropertyValue Field - onKeyUp - Enter pressed',
+                                //   e,
+                                //   [..._path, key],
+                                //   editing?.tempValue
+                                // )
                                 handleChangePropertyValue(
                                   [..._path, key],
                                   editing?.tempValue
@@ -634,12 +634,12 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             setEditing(null)
                             return
                           }
-                          console.debug(
-                            'Current path is',
-                            _path,
-                            key,
-                            propertyValue
-                          )
+                          //   console.debug(
+                          //     'Current path is',
+                          //     _path,
+                          //     key,
+                          //     propertyValue
+                          //   )
                           toggleChangePropValue([..._path, key])
                         }}
                       >

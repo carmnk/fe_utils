@@ -121,7 +121,13 @@ export const SubformField = (props: SubformFieldProps) => {
         newFormData,
         fieldName,
         formData,
-        injections,
+        injections?.onBeforeChange,
+        injections?.onBeforeChange?.(
+          newFormData,
+          formData,
+          fieldName,
+          formData?.[fieldName]
+        ),
         AdjNewFormData
       )
       onChangeFormData?.(
@@ -249,7 +255,13 @@ export const SubformField = (props: SubformFieldProps) => {
       changedPropertyName,
       changedPropertyValue,
       formData,
-      injections,
+      injections?.onBeforeChange,
+      injections?.onBeforeChange?.(
+        transformedNewFormData,
+        formData,
+        changedPropertyName,
+        changedPropertyValue
+      ),
       AdjNewFormData
     )
     onChangeFormData?.(
@@ -294,7 +306,13 @@ export const SubformField = (props: SubformFieldProps) => {
       changedPropertyName,
       newValue,
       formData,
-      injections,
+      injections?.onBeforeChange,
+      injections?.onBeforeChange?.(
+        transformedNewFormData,
+        formData,
+        changedPropertyName,
+        newValue
+      ),
       AdjNewFormData
     )
     onChangeFormData?.(
@@ -347,94 +365,6 @@ export const SubformField = (props: SubformFieldProps) => {
       <Box>
         <Box>
           <Table {...arrayTableProps} />
-          {/* <Box
-          display="grid"
-          gridTemplateColumns={subFieldsForList
-            .map(() => 'max-content')
-            .join(' ')}
-          gap={'0 16px'}
-          
-        >
-          {subFieldsForList?.map((f: any, fIdx2: number) => (
-            <Box key={fIdx + '_' + fIdx2} fontWeight={700} bgcolor="silver">
-              {f.label}
-            </Box>
-          ))}
-          {(formData?.[fieldName]?.length
-            ? formData?.[fieldName]
-            : [{}]
-          )?.map?.((f: any, fIdx2: number) => {
-            const removeItemArraySub = () => {
-              if (!field?.name) return
-
-              const newValue = formData?.[field?.name]?.filter(
-                (dat: any, dIdx: number) => dIdx !== fIdx
-              )
-              const transformedNewFormData = {
-                ...formData,
-                [field.name]: newValue,
-              }
-
-              const injectedFormData =
-                (
-                  subforms?.[fieldName] as any
-                )?.injections?.onBeforeRemoveArrayItem?.(
-                  transformedNewFormData,
-                  formData,
-                  field.name,
-                  fIdx
-                ) ?? transformedNewFormData
-
-              onChangeFormData?.(
-                injectedFormData,
-                field.name,
-                newValue,
-                formData
-              )
-            }
-
-            const injectedFormDataRaw = sub.injections?.initialFormData
-            const injectedFormData =
-              (typeof injectedFormDataRaw === 'function'
-                ? injectedFormDataRaw(formData, rootFormData, ArrayIdx)
-                : injectedFormDataRaw) ?? {}
-
-            console.debug('sub', sub)
-            return formData?.[fieldName]?.map((f: any) =>
-              sub?.fields
-                ?.filter((f: any) => f?.form?.showInArrayList)
-                ?.map((field) => (
-                  <Box key={fIdx + '_' + fIdx2}>{f?.[field?.name]}</Box>
-                ))
-            )
-            {
-              /* {fIdx2 ? (
-                  <Box mb={2} paddingX={4}>
-                    <Divider variant="middle" />
-                  </Box>
-                ) : null} */}
-          {/* <GenericForm
-                  useAlwaysArraysInFormData={useAlwaysArraysInFormData}
-                  fields={sub?.fields}
-                  injections={sub?.injections}
-                  settings={settings}
-                  onChangeFormData={makeOnChangeArraySub(fIdx2)}
-                  onChangeFormDataRoot={
-                    onChangeFormData as (newValue: any) => void
-                  }
-                  formData={formData?.[fieldName]?.[fIdx2] ?? injectedFormData}
-                  rootFormData={rootFormData}
-                  _removeFormFromArray={removeItemArraySub}
-                  _path={[...(_path ?? []), field.name, fIdx2]}
-                  showError={showError}
-                  disableTopSpacing={true}
-                  slotProps={slotProps}
-                /> 
-            }
-
-            // )
-          })}
-        </Box> */}
         </Box>
         {ui?.open !== null && (
           <Box mt={2}>
@@ -450,16 +380,10 @@ export const SubformField = (props: SubformFieldProps) => {
               injections={sub?.injections}
               settings={settings}
               onChangeFormData={setTempFormData}
-              // onChangeFormDataRoot={onChangeFormData as (newValue: any) => void}
-              // formData={formData?.[fieldName]?.[fIdx2] ?? injectedFormData}
-              // rootFormData={rootFormData}
-              // _removeFormFromArray={removeItemArraySub}
-              // _path={[...(_path ?? []), field.name, fIdx2]}
               showError={showError}
               disableTopSpacing={true}
               slotProps={slotProps}
               formData={tempFormData}
-              // onChangeFormData={onChangeObjectSub}
             />
             {ui?.open !== null && (
               <Button
