@@ -142,6 +142,7 @@ export const Button = React.forwardRef(
           dropdown: dropdown,
           endIcon: endIconIn,
           borderRadius,
+          fullWidth: props?.fullWidth,
         }),
       [
         theme,
@@ -154,6 +155,7 @@ export const Button = React.forwardRef(
         dropdown,
         endIconIn,
         borderRadius,
+        props?.fullWidth,
       ]
     )
 

@@ -22,8 +22,18 @@ type ButtonStartIconProps = {
   >['loadingProgress']
 }
 export const ButtonStartIcon = (props: ButtonStartIconProps) => {
-  const { loading, icon, iconSize, iconColor, disabled, variant, iconButton } =
-    props
+  const {
+    loading,
+    icon,
+    iconSize,
+    iconColor,
+    disabled,
+    variant,
+    iconButton,
+    startIconProps,
+    loadingIconContainerProps,
+    loadingProgressProps,
+  } = props
   const theme = useTheme()
   return loading ? (
     <Stack
@@ -31,8 +41,9 @@ export const ButtonStartIcon = (props: ButtonStartIconProps) => {
       alignItems="center"
       width="17px"
       mr={iconButton ? undefined : 1}
+      {...loadingIconContainerProps}
     >
-      <CircularProgress color="inherit" size={17} />
+      <CircularProgress color="inherit" size={17} {...loadingProgressProps} />
     </Stack>
   ) : typeof icon === 'string' ? (
     <Icon
@@ -46,6 +57,7 @@ export const ButtonStartIcon = (props: ButtonStartIconProps) => {
             ? theme.palette.text.primary
             : theme.palette.primary.contrastText)
       }
+      {...startIconProps}
     />
   ) : (
     icon

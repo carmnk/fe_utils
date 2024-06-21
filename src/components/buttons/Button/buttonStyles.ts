@@ -4,6 +4,7 @@ import { CButtonProps } from './Button'
 export const makeButtonStyles = (
   props: Pick<
     CButtonProps,
+    | 'fullWidth'
     | 'variant'
     | 'disableHover'
     | 'iconButton'
@@ -27,6 +28,7 @@ export const makeButtonStyles = (
     icon,
     endIcon,
     borderRadius,
+    fullWidth,
   } = props
 
   const padding = iconButton ? '4px' : variant === 'text' ? '4px 16px' : 'auto'
@@ -48,7 +50,13 @@ export const makeButtonStyles = (
       ml: 'auto',
       pl: '5px',
     },
-    width: iconButton && dropdown ? 53 : iconButton ? 28 : 'auto',
+    width: fullWidth
+      ? '100%'
+      : iconButton && dropdown
+        ? 53
+        : iconButton
+          ? 28
+          : 'auto',
     pr: iconButton && dropdown ? 1 : undefined,
   }
   // const secondaryBgColor =
