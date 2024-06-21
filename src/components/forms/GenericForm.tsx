@@ -41,6 +41,7 @@ export type GenericFormProps<
     required?: DynamicInjectedDict<boolean, F>
     error?: DynamicInjectedDict<boolean, F>
     helperText?: DynamicInjectedDict<boolean, F>
+    keysDict?: DynamicInjectedDict<any, F>
     onBeforeChange?: (
       newFormData: F,
       prevFormData: F,

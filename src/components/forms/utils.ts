@@ -36,6 +36,7 @@ export const getDynamicFields = (params: {
           ) as any,
           invisible: getInjectedValue(injections?.invisible?.[field.name]),
           hidden: getInjectedValue(injections?.hidden?.[field.name]),
+          keysDict: getInjectedValue(injections?.keysDict?.[field.name]),
         }
       : {}
     return {
