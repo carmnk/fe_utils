@@ -64,41 +64,41 @@ export const SubformField = (props: SubformFieldProps) => {
     [sub?.fields]
   )
 
-  const makeOnChangeArraySub = useCallback(
-    (arrayIndex: number) => {
-      return (
-        newFormData: any,
-        changedPropertyName: any,
-        changedPropertyValue: any,
-        prevFormData: any
-      ) => {
-        if (!fieldName) return
-        const transformedNewFormData = {
-          ...formData,
-          [fieldName]: formData?.[fieldName]?.length
-            ? formData?.[fieldName]?.map((f: any, fIdx: number) =>
-                fIdx === arrayIndex ? newFormData?.[fieldName]?.[arrayIndex] : f
-              )
-            : [newFormData],
-        }
-        const transformedAdjNewFormData = injections?.onBeforeChange?.(
-          transformedNewFormData,
-          formData,
-          changedPropertyName,
-          changedPropertyValue
-        )
+  // const makeOnChangeArraySub = useCallback(
+  //   (arrayIndex: number) => {
+  //     return (
+  //       newFormData: any,
+  //       changedPropertyName: any,
+  //       changedPropertyValue: any,
+  //       prevFormData: any
+  //     ) => {
+  //       if (!fieldName) return
+  //       const transformedNewFormData = {
+  //         ...formData,
+  //         [fieldName]: formData?.[fieldName]?.length
+  //           ? formData?.[fieldName]?.map((f: any, fIdx: number) =>
+  //               fIdx === arrayIndex ? newFormData?.[fieldName]?.[arrayIndex] : f
+  //             )
+  //           : [newFormData],
+  //       }
+  //       const transformedAdjNewFormData = injections?.onBeforeChange?.(
+  //         transformedNewFormData,
+  //         formData,
+  //         changedPropertyName,
+  //         changedPropertyValue
+  //       )
 
-        onChangeFormData?.(
-          transformedAdjNewFormData ?? transformedNewFormData,
-          changedPropertyName,
-          changedPropertyValue,
-          formData,
-          fieldName
-        )
-      }
-    },
-    [fieldName, formData, onChangeFormData, injections]
-  )
+  //       onChangeFormData?.(
+  //         transformedAdjNewFormData ?? transformedNewFormData,
+  //         changedPropertyName,
+  //         changedPropertyValue,
+  //         formData,
+  //         fieldName
+  //       )
+  //     }
+  //   },
+  //   [fieldName, formData, onChangeFormData, injections]
+  // )
 
   const handleRemoveArrayItem = useCallback(
     (removeIdx: number) => {
@@ -109,12 +109,20 @@ export const SubformField = (props: SubformFieldProps) => {
           (f: any, fIdx2: number) => fIdx2 !== removeIdx
         ),
       }
-      console.debug(newFormData, fieldName, formData)
+
       const AdjNewFormData = injections?.onBeforeChange?.(
         newFormData,
         formData,
         fieldName,
         formData?.[fieldName]
+      )
+      console.debug(
+        'SubFormField.tsx',
+        newFormData,
+        fieldName,
+        formData,
+        injections,
+        AdjNewFormData
       )
       onChangeFormData?.(
         AdjNewFormData ?? newFormData,
@@ -235,6 +243,15 @@ export const SubformField = (props: SubformFieldProps) => {
       changedPropertyName,
       changedPropertyValue
     )
+    console.debug(
+      'SubFormField.tsx',
+      transformedNewFormData,
+      changedPropertyName,
+      changedPropertyValue,
+      formData,
+      injections,
+      AdjNewFormData
+    )
     onChangeFormData?.(
       AdjNewFormData ?? transformedNewFormData,
       changedPropertyName,
@@ -270,6 +287,15 @@ export const SubformField = (props: SubformFieldProps) => {
       formData,
       changedPropertyName,
       newValue
+    )
+    console.debug(
+      'SubFormField.tsx',
+      transformedNewFormData,
+      changedPropertyName,
+      newValue,
+      formData,
+      injections,
+      AdjNewFormData
     )
     onChangeFormData?.(
       AdjNewFormData ?? transformedNewFormData,
@@ -458,6 +484,15 @@ export const SubformField = (props: SubformFieldProps) => {
                           formData,
                           fieldName,
                           formData?.[fieldName]
+                        )
+                        console.debug(
+                          'SubFormField.tsx',
+                          newFormData,
+                          fieldName,
+                          formData?.[fieldName],
+                          formData,
+                          injections,
+                          AdjNewFormData
                         )
                         onChangeFormData?.(
                           AdjNewFormData ?? newFormData,
