@@ -20,6 +20,7 @@ export type SubformFieldProps = {
   fIdx: any
   slotProps: GenericFormProps['slotProps']
   disableUseFormElement?: boolean
+  injections?: GenericFormProps['injections']
 }
 
 export const SubformField = (props: SubformFieldProps) => {
@@ -36,6 +37,7 @@ export const SubformField = (props: SubformFieldProps) => {
     fIdx,
     slotProps,
     disableUseFormElement,
+    injections,
   } = props
 
   const [ui, setUi] = useState({
@@ -79,8 +81,15 @@ export const SubformField = (props: SubformFieldProps) => {
               )
             : [newFormData],
         }
-        onChangeFormData?.(
+        const transformedAdjNewFormData = injections?.onBeforeChange?.(
           transformedNewFormData,
+          changedPropertyName,
+          changedPropertyValue,
+          formData
+        )
+
+        onChangeFormData?.(
+          transformedAdjNewFormData ?? transformedNewFormData,
           changedPropertyName,
           changedPropertyValue,
           formData,
@@ -88,7 +97,7 @@ export const SubformField = (props: SubformFieldProps) => {
         )
       }
     },
-    [fieldName, formData, onChangeFormData]
+    [fieldName, formData, onChangeFormData, injections]
   )
 
   const handleRemoveArrayItem = useCallback(

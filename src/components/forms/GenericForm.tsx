@@ -222,6 +222,7 @@ export const GenericForm = (props: GenericFormProps) => {
                   onChangeFormData={onChangeFormData}
                   showError={!!showError}
                   field={field as any}
+                  injections={injections}
                   subforms={subforms}
                   settings={settings}
                   useAlwaysArraysInFormData={!!useAlwaysArraysInFormData}
