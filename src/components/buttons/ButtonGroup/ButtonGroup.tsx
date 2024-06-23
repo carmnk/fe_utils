@@ -24,6 +24,7 @@ export type ButtonGroupProps = {
     buttonSlots?: CButtonProps['slotProps']
     divider?: DividerProps
   }
+  sx?: FlexProps['sx']
   rootInjection?: ReactNode
 }
 
@@ -39,6 +40,7 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
     iconButtons,
     slotProps,
     rootInjection,
+    sx,
   } = props
   const itemsAdj = items
 
@@ -60,6 +62,7 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
       border={'1px solid ' + theme.palette.divider}
       width="max-content"
       {...(slotProps?.flexContainer ?? {})}
+      sx={sx}
     >
       {itemsAdj?.map?.((item, bIdx) => {
         const isItemSelected =

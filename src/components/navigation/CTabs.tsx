@@ -1,5 +1,12 @@
 import { ForwardedRef, ReactNode, forwardRef, useMemo } from 'react'
-import { Stack, Tab, Tooltip, Typography, useTheme } from '@mui/material'
+import {
+  Stack,
+  Tab,
+  TabsProps,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import { Tabs as MTabs } from '@mui/material'
 import Icon from '@mdi/react'
 
@@ -23,6 +30,7 @@ export type CTabsProps = {
   visibleScrollbar?: boolean
   disableBorderBottom?: boolean
   useTabBorders?: boolean
+  sx?: TabsProps['sx']
   rootInjection?: ReactNode
 }
 
@@ -40,6 +48,7 @@ export const Tabs = forwardRef(
       visibleScrollbar,
       disableBorderBottom,
       useTabBorders,
+      sx,
       rootInjection,
     } = props
     const theme = useTheme()
@@ -86,7 +95,7 @@ export const Tabs = forwardRef(
       <MTabs
         ref={ref}
         sx={{
-          // pl: 1,
+          ...(sx ?? {}),
           borderBottom: disableBorderBottom
             ? undefined
             : '1px solid ' + theme.palette.divider,

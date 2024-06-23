@@ -1,8 +1,9 @@
-import { Box, lighten, useMediaQuery, useTheme } from '@mui/material'
+import { Box, BoxProps, lighten, useMediaQuery, useTheme } from '@mui/material'
 import { PropsWithChildren, useMemo } from 'react'
 
 export type TableComponentProps = {
   disableTableHeader?: boolean
+  sx?: BoxProps<'table'>['sx']
 }
 
 const disableheaderStyles = {
@@ -16,7 +17,7 @@ const defaultTrStyles = { height: undefined }
 export const TableComponent = (
   props: PropsWithChildren<TableComponentProps>
 ) => {
-  const { disableTableHeader } = props
+  const { disableTableHeader, sx } = props
   const theme = useTheme()
   const hasFinePointer = useMediaQuery('(pointer: fine)')
 
@@ -81,8 +82,9 @@ export const TableComponent = (
           },
         },
       },
+      ...((sx as any) ?? {}),
     }
-  }, [hasFinePointer, theme, disableTableHeader])
+  }, [hasFinePointer, theme, disableTableHeader, sx])
 
   return (
     <Box component="table" width="100%" sx={tableStyles}>

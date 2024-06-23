@@ -54,6 +54,7 @@ export const Table = (props: TableProps) => {
     onSelectAllFilters,
     onUnselectAllFilters,
     onSetFilters,
+    sx,
     rootInjection,
   } = props
 
@@ -138,7 +139,7 @@ export const Table = (props: TableProps) => {
   }, [selectedRows, onSelectAllFilters, onUnselectAllFilters])
 
   return (
-    <TableComponent disableTableHeader={disableTableHeader}>
+    <TableComponent disableTableHeader={disableTableHeader} sx={sx}>
       <TableHeader
         columns={columns}
         sortings={sortings}
@@ -160,11 +161,13 @@ export const Table = (props: TableProps) => {
         {loading ? (
           new Array(loadingRows ?? 10).fill(0).map((x, xIdx) => (
             <Tr key={xIdx}>
-              {(columns?.length ? columns : new Array(5).fill(0))?.map((y, yIdx) => (
-                <td key={`${xIdx}-${yIdx}`} style={{ height: '48px' }}>
-                  <Skeleton variant="text" height="36px" />
-                </td>
-              ))}
+              {(columns?.length ? columns : new Array(5).fill(0))?.map(
+                (y, yIdx) => (
+                  <td key={`${xIdx}-${yIdx}`} style={{ height: '48px' }}>
+                    <Skeleton variant="text" height="36px" />
+                  </td>
+                )
+              )}
             </Tr>
           ))
         ) : (

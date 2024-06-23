@@ -96,5 +96,6 @@ export type TableProps<
   ) => void
 
   reorderRowId?: string
+  sx?: BoxProps['sx']
   rootInjection?: ReactNode
 }
