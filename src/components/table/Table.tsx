@@ -54,6 +54,7 @@ export const Table = (props: TableProps) => {
     onSelectAllFilters,
     onUnselectAllFilters,
     onSetFilters,
+    rootInjection,
   } = props
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -280,6 +281,7 @@ export const Table = (props: TableProps) => {
           </tr>
         </Tfoot>
       )}
+      {rootInjection}
     </TableComponent>
   )
 }

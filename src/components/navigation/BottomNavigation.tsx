@@ -25,10 +25,11 @@ export type CBottomNavigationProps = MBottomNavigationProps & {
     bottomNavigationSelectedAction?: BottomNavigationActionProps
     bottomNavigationAction?: BottomNavigationActionProps
   }
+  rootInjection?: ReactNode
 }
 
 export const BottomNavigation = (props: CBottomNavigationProps) => {
-  const { value, onChange, items, showLabels } = props
+  const { value, onChange, items, showLabels, rootInjection } = props
 
   const handleChangeItem = useCallback(
     (e: any, newValue: string) => {
@@ -55,6 +56,7 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
           />
         )
       })}
+      {rootInjection}
     </MBottomNavigation>
   )
 }

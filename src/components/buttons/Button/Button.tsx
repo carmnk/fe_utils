@@ -48,6 +48,7 @@ export type CButtonProps = Omit<
     loadingProgress?: CircularProgressProps
   }
   borderRadius?: CSSProperties['borderRadius']
+  rootInjection?: React.ReactNode
 }
 
 export const Button = React.forwardRef(
@@ -72,6 +73,7 @@ export const Button = React.forwardRef(
       disableTooltipWhenDisabled,
       slotProps,
       borderRadius,
+      rootInjection,
       ...rest
     } = props
     const {
@@ -186,6 +188,7 @@ export const Button = React.forwardRef(
                 {label ?? children}
               </Typography>
             )}
+            {rootInjection}
           </MuiButton>
         ) : variant === 'text' ? (
           <MuiButton
@@ -212,6 +215,7 @@ export const Button = React.forwardRef(
                 {label ?? children}
               </Typography>
             )}
+            {rootInjection}
           </MuiButton>
         ) : (
           <MuiButton
@@ -240,6 +244,7 @@ export const Button = React.forwardRef(
                 {label ?? children}
               </Typography>
             )}
+            {rootInjection}
           </MuiButton>
         ),
       [
@@ -257,6 +262,7 @@ export const Button = React.forwardRef(
         ref,
         typography,
         rest, // could be a problem
+        rootInjection,
       ]
     )
 

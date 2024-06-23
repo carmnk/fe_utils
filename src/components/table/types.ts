@@ -96,4 +96,5 @@ export type TableProps<
   ) => void
 
   reorderRowId?: string
+  rootInjection?: ReactNode
 }

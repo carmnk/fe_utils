@@ -1,5 +1,5 @@
 import { Divider, DividerProps, useTheme } from '@mui/material'
-import { useCallback } from 'react'
+import { ReactNode, useCallback } from 'react'
 import { ButtonGroupButton, ButtonGroupButtonProps } from './ButtonGroupButton'
 import { CButtonProps } from '../Button/Button'
 import { Flex, FlexProps } from '../../_wrapper'
@@ -24,6 +24,7 @@ export type ButtonGroupProps = {
     buttonSlots?: CButtonProps['slotProps']
     divider?: DividerProps
   }
+  rootInjection?: ReactNode
 }
 
 export const ButtonGroup = (props: ButtonGroupProps) => {
@@ -37,6 +38,7 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
     selectedButtonProps,
     iconButtons,
     slotProps,
+    rootInjection,
   } = props
   const itemsAdj = items
 
@@ -85,6 +87,7 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
           />
         )
       }) ?? null}
+      {rootInjection}
     </Flex>
   )
 }

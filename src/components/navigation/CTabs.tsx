@@ -23,6 +23,7 @@ export type CTabsProps = {
   visibleScrollbar?: boolean
   disableBorderBottom?: boolean
   useTabBorders?: boolean
+  rootInjection?: ReactNode
 }
 
 export const Tabs = forwardRef(
@@ -39,6 +40,7 @@ export const Tabs = forwardRef(
       visibleScrollbar,
       disableBorderBottom,
       useTabBorders,
+      rootInjection,
     } = props
     const theme = useTheme()
 
@@ -152,6 +154,7 @@ export const Tabs = forwardRef(
             onClick={handleChangeTab?.[iIdx]}
           />
         )) ?? null}
+        {rootInjection}
       </MTabs>
     )
   }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { Box, BoxProps, Grid, GridProps, Stack } from '@mui/material'
 import { getDynamicFields } from './utils'
 import { Button, CButtonProps } from '../buttons/Button/Button'
@@ -91,6 +91,7 @@ export type GenericFormProps<
     gap?: number
     gridWidth?: number | string
   }
+  rootInjection?: ReactNode
 }
 
 const preventDefault = (e: React.KeyboardEvent) => {
@@ -117,7 +118,9 @@ export const GenericForm = (props: GenericFormProps) => {
     files,
     slotProps,
     disableUseFormElement,
+    rootInjection,
   } = props
+
   const {
     subFormRemoveItemButton,
     commonFieldProps,
@@ -285,6 +288,7 @@ export const GenericForm = (props: GenericFormProps) => {
         settings={settings}
         _removeFormFromArray={_removeFormFromArray}
       /> */}
+      {!_path && rootInjection}
     </Box>
   )
 }

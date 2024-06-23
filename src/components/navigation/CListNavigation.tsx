@@ -40,6 +40,7 @@ export type ListNavigationProps = Omit<
     listItemTextSecondaryTypography?: ListItemTextProps['secondaryTypographyProps']
     touchRipple?: ListItemButtonProps['TouchRippleProps']
   }
+  rootInjection?: ReactNode
 }
 
 export const ListNavigation = (props: ListNavigationProps) => {
@@ -51,6 +52,7 @@ export const ListNavigation = (props: ListNavigationProps) => {
     disablePadding,
     subheader,
     slotProps,
+    rootInjection,
     ...others
   } = props
 
@@ -110,6 +112,7 @@ export const ListNavigation = (props: ListNavigationProps) => {
           </ListItemButton>
         </ListItem>
       ))}
+      {rootInjection}
     </List>
   )
 }
