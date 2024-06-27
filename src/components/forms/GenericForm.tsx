@@ -139,8 +139,6 @@ export const GenericForm = (props: GenericFormProps) => {
     rootFormData,
   })
 
-  console.debug('dynamicFields: ', dynamicFields)
-
   return (
     <Box
       position="relative"
