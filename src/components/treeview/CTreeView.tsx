@@ -96,6 +96,7 @@ export type CTreeViewProps = {
   maxWidth?: number
   disableItemsFocusable?: boolean
   width?: number
+  enableNullSelection?: boolean
 }
 
 export const CTreeView = (props: CTreeViewProps) => {
@@ -112,6 +113,7 @@ export const CTreeView = (props: CTreeViewProps) => {
     onDragDrop,
     onDragging,
     width,
+    enableNullSelection,
   } = props
 
   const [ui, setUi] = React.useState<{
@@ -216,6 +218,21 @@ export const CTreeView = (props: CTreeViewProps) => {
     },
     [onToggleExpand]
   )
+
+  const selected = selectedItems?.[0]
+  React.useEffect(() => {
+    if (!enableNullSelection) {
+      return
+    }
+    if (selected === null) {
+      const focusedItem = treeViewRef.current?.querySelector(
+        '.MuiTreeItem-content.Mui-focused'
+      )
+      if (focusedItem) {
+        focusedItem.classList.remove('Mui-focused')
+      }
+    }
+  }, [selected, enableNullSelection])
 
   return (
     <>
