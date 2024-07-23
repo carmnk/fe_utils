@@ -1,5 +1,11 @@
-import { MouseEvent, useCallback } from 'react'
-import { MenuItem, Tooltip, Stack, CircularProgress } from '@mui/material'
+import { MouseEvent, useCallback, useMemo } from 'react'
+import {
+  MenuItem,
+  Tooltip,
+  Stack,
+  CircularProgress,
+  MenuItemProps,
+} from '@mui/material'
 import { useTheme, Divider, Typography } from '@mui/material'
 import Icon from '@mdi/react'
 
@@ -13,6 +19,7 @@ export type DropDownMenuItemProps = {
   label: string
   onPointerDown?: any
   onKeyDown?: any
+  sx?: MenuItemProps['sx']
 }
 
 const SlimDivider = (props: { id: string }) => (
@@ -21,7 +28,7 @@ const SlimDivider = (props: { id: string }) => (
     key={'menu-offer-divider' + (props?.id ?? '')}
   />
 )
-const itemStyles = { px: 2, py: 1.25 }
+const itemStyles = { px: 2, py: 1.25, width: '100%' }
 
 export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
   const {
@@ -34,6 +41,7 @@ export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
     label,
     onPointerDown,
     onKeyDown,
+    sx,
   } = props
   const theme = useTheme()
   const handleOnClick = useCallback(
@@ -44,10 +52,12 @@ export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
     [disabled, loading, onClick]
   )
 
+  const itemStylesAdj = useMemo(() => ({ ...itemStyles, ...sx }), [sx])
+
   return (
     <>
       <MenuItem
-        sx={itemStyles}
+        sx={itemStylesAdj}
         key={id}
         onClick={handleOnClick}
         disabled={disabled}
