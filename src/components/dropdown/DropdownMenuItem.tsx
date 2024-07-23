@@ -100,6 +100,7 @@ export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
                   : theme.palette.text.primary,
               }}
               variant="body2"
+              width={'100%'}
             >
               {label}
             </Typography>
