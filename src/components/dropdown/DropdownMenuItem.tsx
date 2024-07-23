@@ -70,6 +70,7 @@ export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
             justifyItems="center"
             alignItems="center"
             gap={loading || icon ? 2 : 0}
+            width={'100%'}
           >
             <Stack
               direction="row"
