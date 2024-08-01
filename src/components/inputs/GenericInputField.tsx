@@ -258,7 +258,15 @@ export const GenericInputField = <
   ) : type === 'multiselect' ? (
     <MultiSelect
       label={label}
-      value={(value as any) || []}
+      value={
+        (value
+          ? typeof value === 'string' &&
+            value.startsWith('[') &&
+            value.endsWith(']')
+            ? JSON.parse(value)
+            : value
+          : []) || []
+      }
       name={name}
       required={required}
       options={options ?? []}
