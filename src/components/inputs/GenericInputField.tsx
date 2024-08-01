@@ -255,8 +255,16 @@ export const GenericInputField = <
       error={error}
       {...(rest as any)}
     />
-  ) : //  : type === 'multiselect' ? (
-  //   <MultiSelect label={label} value={value} name={name} required={required} />
-  // )
-  null
+  ) : type === 'multiselect' ? (
+    <MultiSelect
+      label={label}
+      value={value as any}
+      name={name}
+      required={required}
+      options={options ?? []}
+      sx={sxAdj}
+      error={error}
+      {...(rest as any)}
+    />
+  ) : null
 }

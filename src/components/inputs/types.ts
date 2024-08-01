@@ -7,6 +7,7 @@ export type InputTextFieldType =
   | 'int'
   | 'date'
   | 'select'
+  | 'multiselect'
   | 'autocomplete'
   | 'textarea'
   | 'time'
