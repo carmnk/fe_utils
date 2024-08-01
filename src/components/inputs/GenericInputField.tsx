@@ -273,6 +273,10 @@ export const GenericInputField = <
       sx={sxAdj}
       error={error}
       {...(rest as any)}
+      ContainerProps={{
+        ...(rest as any)?.ContainerProps,
+        sx: { width: '100%', ...((rest as any)?.ContainerProps?.sx ?? {}) },
+      }}
     />
   ) : null
 }
