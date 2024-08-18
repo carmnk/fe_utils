@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback } from 'react'
+import { ChangeEvent, useCallback, useEffect } from 'react'
 import { GenericInputField } from '../../inputs/GenericInputField'
 import { CustomField, CustomFieldDefinition } from './CustomField'
 import { GenericInputFieldProps, InputFieldType } from '../../inputs/types'
@@ -104,15 +104,6 @@ export const Field = (props: FieldProps) => {
     fieldProps,
   } = props as FieldProps
 
-  // console.info(
-  //   'Field - relevant props: ',
-  //   formData,
-  //   showError,
-  //   field,
-  //   _path,
-  //   fieldProps
-  // )
-
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
       const { name } = e?.target ?? {}
@@ -142,56 +133,6 @@ export const Field = (props: FieldProps) => {
     },
     [onBeforeChange, formData, onChangeFormData]
   )
-  // const handleCheckbox = useCallback(
-  //   (e: ChangeEvent<HTMLInputElement>, value: any) => {
-  //     const { name } = e?.target ?? {}
-  //     const newValueWithInjections = onBeforeChange?.(
-  //       { ...formData, [name]: value },
-  //       formData,
-  //       name,
-  //       value
-  //     ) ?? {
-  //       ...formData,
-  //       [name]: value,
-  //     }
-
-  //     onChangeFormData(newValueWithInjections, name, value, formData)
-  //   },
-  //   [onBeforeChange, formData, onChangeFormData]
-  // )
-
-  // const handleChangeDate = useCallback(
-  //   (newvalue: string, name: string) => {
-  //     const newValueWithInjections = onBeforeChange?.(
-  //       { ...formData, [name]: newvalue },
-  //       formData,
-  //       name,
-  //       newvalue
-  //     ) ?? {
-  //       ...formData,
-  //       [name]: moment(newvalue).format('YYYY-MM-DD'),
-  //     }
-  //     onChangeFormData(newValueWithInjections, name, newvalue, formData)
-  //   },
-  //   [formData, onChangeFormData, onBeforeChange]
-  // )
-
-  // const handleChangeSelect = useCallback(
-  //   (value: string, e: ChangeEvent<HTMLInputElement>) => {
-  //     const name = e?.target?.name
-  //     const newValueWithInjections = onBeforeChange?.(
-  //       { ...formData, [name]: value },
-  //       formData,
-  //       name,
-  //       value
-  //     ) ?? {
-  //       ...formData,
-  //       [name]: value,
-  //     }
-  //     onChangeFormData(newValueWithInjections, name, value, formData)
-  //   },
-  //   [onBeforeChange, formData, onChangeFormData]
-  // )
   const injectIsInt = field.type === 'int' ? { isInt: true } : {}
 
   // const FieldComponent = (field as any)?.component
@@ -208,6 +149,10 @@ export const Field = (props: FieldProps) => {
       ? field?.required(formData, rootFormData)
       : field?.required
   const fieldValue = formData?.[field?.name ?? '']
+
+  useEffect(() => {
+    console.log('FORM FIELD RENDERS', field?.name, field?.type, fieldValue)
+  }, [])
 
   return field.type === 'inject' ? (
     <CustomField

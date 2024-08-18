@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 /** the properties/params to define a custom field in the generic form's -> fields property  */
 export type CustomFieldDefinition<F, P> = {
@@ -54,6 +54,14 @@ export const CustomField = <
 
   const FieldComponent = useMemo(() => field.component, [field])
 
+  useEffect(() => {
+    console.log(
+      'FORM CUSTOM FIELD RENDERS',
+      field?.name,
+      field?.type,
+      formData?.[field?.name ?? '']
+    )
+  }, [])
   return (
     <Box>
       <FieldComponent

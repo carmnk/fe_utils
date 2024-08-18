@@ -201,6 +201,7 @@ export const GenericForm = (props: GenericFormProps) => {
                     onFileChange={onFileChange}
                     files={files}
                     fieldProps={commonFieldProps}
+                    key={field.name}
                   />
                 </Grid>
                 {field?.width12 && field?.fillWidth && (
@@ -230,6 +231,7 @@ export const GenericForm = (props: GenericFormProps) => {
                   _path={_path}
                   slotProps={slotProps}
                   disableUseFormElement={disableUseFormElement}
+                  key={field.name}
                 />
               </Grid>
             )
