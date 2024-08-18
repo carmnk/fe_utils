@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 /** the properties/params to define a custom field in the generic form's -> fields property  */
 export type CustomFieldDefinition<F, P> = {
   type: 'inject'
-  name?: string
+  name: string
   component: React.FC<CustomFieldComponentProps<F, P>>
   params?: P
 }
@@ -68,6 +68,7 @@ export const CustomField = <
         files={files}
         onFileChange={onFileChange}
         field={field}
+        key={field.name}
       />
     </Box>
   )
