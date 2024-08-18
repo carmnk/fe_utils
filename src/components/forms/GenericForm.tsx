@@ -92,6 +92,7 @@ export type GenericFormProps<
     gridWidth?: number | string
   }
   rootInjection?: ReactNode
+  useChangeCompleted?: boolean
 }
 
 const preventDefault = (e: React.KeyboardEvent) => {
@@ -119,6 +120,7 @@ export const GenericForm = (props: GenericFormProps) => {
     slotProps,
     disableUseFormElement,
     rootInjection,
+    useChangeCompleted,
   } = props
 
   const {
@@ -202,6 +204,7 @@ export const GenericForm = (props: GenericFormProps) => {
                     files={files}
                     fieldProps={commonFieldProps}
                     key={field.name}
+                    useChangeCompleted={useChangeCompleted}
                   />
                 </Grid>
                 {field?.width12 && field?.fillWidth && (

@@ -87,6 +87,7 @@ export type FieldProps = {
   files?: any
   onFileChange?: any
   fieldProps?: GenericInputFieldProps
+  useChangeCompleted?: boolean
 }
 
 export const Field = (props: FieldProps) => {
@@ -102,6 +103,7 @@ export const Field = (props: FieldProps) => {
     field,
     _path,
     fieldProps,
+    useChangeCompleted,
   } = props as FieldProps
 
   const handleChange = useCallback(
@@ -192,14 +194,36 @@ export const Field = (props: FieldProps) => {
       {...(injectIsInt as any)}
       value={formData?.[field?.name ?? ''] ?? ''}
       onChange={
-        // ['select', 'autocomplete', 'dropdown'].includes(field.type)
-        //   ? (handleChangeSelect as any)
-        //   : field.type === 'date'
-        //     ? handleChangeDate
-        //     : field.type === 'bool'
-        //       ? handleCheckbox
-        //       :
-        handleChange
+        useChangeCompleted &&
+        [
+          'text',
+          'number',
+          'date',
+          'time',
+          'select',
+          'autocomplete',
+          'textarea',
+          'number',
+          'int',
+        ].includes(field.type)
+          ? undefined
+          : handleChange
+      }
+      onChangeCompleted={
+        useChangeCompleted &&
+        [
+          'text',
+          'number',
+          'date',
+          'time',
+          'select',
+          'autocomplete',
+          'textarea',
+          'number',
+          'int',
+        ].includes(field.type)
+          ? handleChange
+          : undefined
       }
       {...fieldProps}
       // onFileChange={onFileChange}
