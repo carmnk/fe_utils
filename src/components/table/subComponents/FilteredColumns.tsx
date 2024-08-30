@@ -371,52 +371,64 @@ export const FilteredTableHeaderCell = forwardRef(
               >
                 {filteredOptions &&
                   filteredOptions.length > 0 &&
-                  filteredOptions.map((item, idx) => (
-                    <MenuItem
-                      tabIndex={0}
-                      onClick={(e) => handleClickMenuItem?.(e, item)}
-                      onKeyUp={(e) => handleKeyUpMenuItem(e, item)}
-                      key={idx}
-                      sx={{
-                        borderBottom: '1px solid #efefef',
-                        height: 55,
-                      }}
-                    >
-                      <ListItemIcon>
-                        <div className="flex items-center">
-                          {selectedFilter &&
-                            selectedFilter.length > 0 &&
-                            selectedFilter.includes(getFilterValue!(item)) && (
-                              <Icon path={mdiCheck} size={1} color="#5FC086" />
-                            )}
-                          <div className="pr-2">
-                            {getIcon && getIcon?.(item)}
-                          </div>
-                        </div>
-                      </ListItemIcon>
-
-                      <Typography>
-                        {getItemLabel && (
-                          <div
-                            className={
-                              selectedFilter &&
+                  filteredOptions.map((item, idx) => {
+                    const value =
+                      typeof getFilterValue === 'function'
+                        ? getFilterValue?.(item)
+                        : typeof getFilterValue === 'string'
+                          ? item[getFilterValue]
+                          : item
+                    return (
+                      <MenuItem
+                        tabIndex={0}
+                        onClick={(e) => handleClickMenuItem?.(e, item)}
+                        onKeyUp={(e) => handleKeyUpMenuItem(e, item)}
+                        key={idx}
+                        sx={{
+                          borderBottom: '1px solid #efefef',
+                          height: 55,
+                        }}
+                      >
+                        <ListItemIcon>
+                          <div className="flex items-center">
+                            {selectedFilter &&
                               selectedFilter.length > 0 &&
-                              getFilterValue?.(item) &&
-                              selectedFilter.includes(getFilterValue?.(item))
-                                ? 'font-bold'
-                                : ''
-                            }
-                          >
-                            {typeof getItemLabel === 'function'
-                              ? getItemLabel(item)
-                              : typeof getItemLabel === 'string'
-                                ? item[getItemLabel]
-                                : item}
+                              selectedFilter.includes(value) && (
+                                <Icon
+                                  path={mdiCheck}
+                                  size={1}
+                                  color="#5FC086"
+                                />
+                              )}
+                            <div className="pr-2">
+                              {getIcon && getIcon?.(item)}
+                            </div>
                           </div>
-                        )}
-                      </Typography>
-                    </MenuItem>
-                  ))}
+                        </ListItemIcon>
+
+                        <Typography>
+                          {getItemLabel && (
+                            <div
+                              className={
+                                selectedFilter &&
+                                selectedFilter.length > 0 &&
+                                value &&
+                                selectedFilter.includes(value)
+                                  ? 'font-bold'
+                                  : ''
+                              }
+                            >
+                              {typeof getItemLabel === 'function'
+                                ? getItemLabel(item)
+                                : typeof getItemLabel === 'string'
+                                  ? item[getItemLabel]
+                                  : item}
+                            </div>
+                          )}
+                        </Typography>
+                      </MenuItem>
+                    )
+                  })}
               </div>
             </div>
             <Stack
