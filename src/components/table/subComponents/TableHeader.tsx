@@ -112,7 +112,7 @@ export const TableHeader = (props: TableHeaderProps) => {
                 )}
               </td>
             </Tooltip>
-          ) : col?.filterOptions && col?.filterKey && col?.getFilterValue ? (
+          ) : col?.filterOptions && col?.filterKey ? (
             <FilteredTableHeaderCell
               {...col}
               key={cIdx}
