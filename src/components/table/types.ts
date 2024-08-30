@@ -33,9 +33,9 @@ export interface FilteredTableHeaderCellProps<
   additionalFilterKeys?: string[]
   filterKey?: string
   filterOptions?: OptionType[]
-  getFilterValue?: (item: OptionType) => string
+  getFilterValue?: ((item: OptionType) => string) | string | undefined
   getIcon?: (item: TableDataType) => ReactNode
-  getItemLabel?: (item: OptionType) => string
+  getItemLabel?: ((item: OptionType) => string) | string | undefined
   isFilterLocked?: boolean
   renderFilterKey?: (key: any, value: any) => any
   selectedFilters?: string[]

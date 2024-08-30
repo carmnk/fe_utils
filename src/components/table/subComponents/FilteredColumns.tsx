@@ -1,5 +1,5 @@
-import { ChangeEvent, Dispatch, KeyboardEvent, MouseEvent } from 'react'
-import { SetStateAction, forwardRef, useCallback } from 'react'
+import { ChangeEvent, KeyboardEvent, MouseEvent } from 'react'
+import { forwardRef, useCallback } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Popover, Stack } from '@mui/material'
 import { Tooltip, Typography, MenuItem } from '@mui/material'
@@ -59,15 +59,25 @@ export const FilteredTableHeaderCell = forwardRef(
       return !searchValue
         ? filterOptions
         : filterOptions?.filter((opt) =>
-            (getItemLabel?.(opt)?.toLowerCase() || '').includes(
-              searchValue.toLowerCase()
-            )
+            (
+              (typeof getItemLabel === 'function'
+                ? getItemLabel?.(opt)
+                : typeof getItemLabel === 'string'
+                  ? opt['string']
+                  : opt
+              )?.toLowerCase() || ''
+            ).includes(searchValue.toLowerCase())
           )
     }, [searchValue, filterOptions, getItemLabel])
 
     const handleOnFilter = useCallback(
       (val: any, key: any) => {
-        const value = getFilterValue?.(val)
+        const value =
+          typeof getFilterValue === 'function'
+            ? getFilterValue?.(val)
+            : typeof getFilterValue === 'string'
+              ? val[getFilterValue]
+              : val
         if (value === undefined) return
         const keyAdj = renderFilterKey ? renderFilterKey(key, value) : key
         if (
@@ -117,14 +127,6 @@ export const FilteredTableHeaderCell = forwardRef(
     }, [open, onOpen, onClose, isFilterLocked])
 
     const clearFilter = useCallback(() => {
-      // setFilters((current) =>
-      //   current.filter(
-      //     (filter) =>
-      //       ![filterKey, ...(additionalFilterKeys ?? [])]?.includes?.(
-      //         filter?.filterKey
-      //       )
-      //   )
-      // )
       onSetFilters?.(
         filters.filter(
           (filter) =>
@@ -137,20 +139,6 @@ export const FilteredTableHeaderCell = forwardRef(
 
     const selectAll = useCallback(() => {
       if (!filterKey) return
-      // setFilters((current) => [
-      //   ...current.filter(
-      //     (filter) =>
-      //       ![filterKey, ...(additionalFilterKeys ?? [])]?.includes?.(
-      //         filter?.filterKey
-      //       ) || additionalFilterKeys?.includes?.(filter?.filterKey)
-      //   ),
-      //   ...(filterOptions?.map((opt) => ({
-      //     value: getFilterValue?.(opt) ?? '',
-      //     filterKey: renderFilterKey
-      //       ? renderFilterKey(filterKey, getFilterValue?.(opt))
-      //       : filterKey,
-      //   })) ?? []),
-      // ])
       onSetFilters?.([
         ...filters.filter(
           (filter) =>
@@ -158,12 +146,20 @@ export const FilteredTableHeaderCell = forwardRef(
               filter?.filterKey
             ) || additionalFilterKeys?.includes?.(filter?.filterKey)
         ),
-        ...(filterOptions?.map((opt) => ({
-          value: getFilterValue?.(opt) ?? '',
-          filterKey: renderFilterKey
-            ? renderFilterKey(filterKey, getFilterValue?.(opt))
-            : filterKey,
-        })) ?? []),
+        ...(filterOptions?.map((opt) => {
+          const value =
+            (typeof getFilterValue === 'function'
+              ? getFilterValue?.(opt)
+              : typeof getFilterValue === 'string'
+                ? opt[getFilterValue]
+                : opt) ?? ''
+          return {
+            value,
+            filterKey: renderFilterKey
+              ? renderFilterKey(filterKey, value)
+              : filterKey,
+          }
+        }) ?? []),
       ])
     }, [
       filterOptions,
@@ -176,7 +172,6 @@ export const FilteredTableHeaderCell = forwardRef(
     ])
 
     const handleResetFilter = useCallback(() => {
-      // setFilters?.(initialAllFilters.current)
       onSetFilters?.(initialAllFilters.current)
       onClose?.()
     }, [onClose, onSetFilters])
@@ -210,7 +205,6 @@ export const FilteredTableHeaderCell = forwardRef(
           // e?.sourceEvent === 'onClear'
         )
           return
-        // console.debug('filteredOptions', filteredOptions, filterKey)
         handleOnFilter?.(filteredOptions?.[0], filterKey)
       },
       [filteredOptions, handleOnFilter, filterKey]
@@ -413,7 +407,11 @@ export const FilteredTableHeaderCell = forwardRef(
                                 : ''
                             }
                           >
-                            {getItemLabel(item)}
+                            {typeof getItemLabel === 'function'
+                              ? getItemLabel(item)
+                              : typeof getItemLabel === 'string'
+                                ? item[getItemLabel]
+                                : item}
                           </div>
                         )}
                       </Typography>

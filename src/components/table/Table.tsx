@@ -109,23 +109,25 @@ export const Table = (props: TableProps) => {
   )
 
   const handleOpenFilters = React.useMemo(() => {
-    return columns.map((col, cIdx) => () => {
-      setOpenFilters((current) => [
-        ...current.slice(0, cIdx),
-        true,
-        ...current.slice(cIdx + 1),
-      ])
-    })
+    return (
+      columns?.map?.((col, cIdx) => () => {
+        setOpenFilters((current) => [
+          ...current.slice(0, cIdx),
+          true,
+          ...current.slice(cIdx + 1),
+        ])
+      }) ?? []
+    )
   }, [columns])
   const handleCloseFilters = React.useMemo(
     () =>
-      columns.map((col, cIdx) => () => {
+      columns?.map?.((col, cIdx) => () => {
         setOpenFilters((current) => [
           ...current.slice(0, cIdx),
           false,
           ...current.slice(cIdx + 1),
         ])
-      }),
+      }) ?? [],
     [columns]
   )
 
