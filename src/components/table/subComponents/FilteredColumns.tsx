@@ -378,6 +378,11 @@ export const FilteredTableHeaderCell = forwardRef(
                         : typeof getFilterValue === 'string'
                           ? item[getFilterValue]
                           : item
+                        const itemLabel = typeof getItemLabel === 'function'
+                        ? getItemLabel(item)
+                        : typeof getItemLabel === 'string'
+                          ? item[getItemLabel]
+                          : item
                     return (
                       <MenuItem
                         tabIndex={0}
@@ -407,7 +412,7 @@ export const FilteredTableHeaderCell = forwardRef(
                         </ListItemIcon>
 
                         <Typography>
-                          {getItemLabel && (
+                          {itemLabel && (
                             <div
                               className={
                                 selectedFilter &&
@@ -418,11 +423,7 @@ export const FilteredTableHeaderCell = forwardRef(
                                   : ''
                               }
                             >
-                              {typeof getItemLabel === 'function'
-                                ? getItemLabel(item)
-                                : typeof getItemLabel === 'string'
-                                  ? item[getItemLabel]
-                                  : item}
+                              {itemLabel}
                             </div>
                           )}
                         </Typography>
