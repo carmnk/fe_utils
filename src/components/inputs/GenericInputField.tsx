@@ -66,6 +66,8 @@ export type GGenericInputFieldProps<T extends InputFieldType> =
         ? { [key: string]: { file: File; filename: string }[] }
         : never
       onFileChange?: (name: string, files: File[]) => void
+      onKeyDown?: (e: any) => void
+      onKeyUp?: (e: any) => void
     }
 
 // export type GenericInputFieldProps<T extends InputFieldType> =

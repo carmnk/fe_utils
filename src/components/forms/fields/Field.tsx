@@ -225,6 +225,15 @@ export const Field = (props: FieldProps) => {
           ? handleChange
           : undefined
       }
+      onKeyDown={
+        useChangeCompleted
+          ? (e: any) => {
+              if (e.key === 'Enter') {
+                handleChange(e.target.value, e)
+              }
+            }
+          : undefined
+      }
       {...fieldProps}
       // onFileChange={onFileChange}
       // files={files}
