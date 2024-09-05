@@ -228,6 +228,7 @@ export const Field = (props: FieldProps) => {
       onKeyDown={
         useChangeCompleted
           ? (e: any) => {
+              console.log('KEYDOWN', e.key)
               if (e.key === 'Enter') {
                 handleChange(e.target.value, e)
               }
