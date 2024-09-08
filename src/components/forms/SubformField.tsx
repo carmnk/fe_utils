@@ -64,7 +64,7 @@ export const SubformField = (props: SubformFieldProps) => {
     [sub?.fields]
   )
 
-  console.log('LIST ARRAY', subFieldsForList, sub)
+  // console.log('LIST ARRAY', subFieldsForList, sub)
   // const makeOnChangeArraySub = useCallback(
   //   (arrayIndex: number) => {
   //     return (
