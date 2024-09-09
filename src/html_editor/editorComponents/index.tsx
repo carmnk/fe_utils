@@ -19,3 +19,7 @@ export type {
   SchemaType,
   StringType,
 } from './schemaTypes'
+
+export { propertyFormFactory } from './propertiesFormFactory'
+export type { DynamicFormInjectionsType } from './propertiesFormFactory'
+export * from './commonSchemas'

@@ -168,8 +168,6 @@ export type ServerConfigType = {
   postgres_password: string
 }
 
-export type AlternativeViewportElement = ElementType
-
 export type TemplateComponent = {
   template_id: string
   template_name: string
@@ -216,10 +214,10 @@ export type EditorStateType = {
   project: ProjectType
   elements: ElementType[]
   alternativeViewports: {
-    sm: AlternativeViewportElement[]
-    md: AlternativeViewportElement[]
-    lg: AlternativeViewportElement[]
-    xl: AlternativeViewportElement[]
+    sm: ElementType[]
+    md: ElementType[]
+    lg: ElementType[]
+    xl: ElementType[]
   }
   cssSelectors: CssSelectorType[]
   assets: {

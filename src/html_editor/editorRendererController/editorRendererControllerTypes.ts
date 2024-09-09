@@ -6,8 +6,6 @@ export type EditorRendererControllerType<
   editorState: EditorStateType
   appController: EditorControllerAppStateReturnType
   setEditorState: React.Dispatch<React.SetStateAction<EditorStateType>>
-
-  // getSelectedCssClass: (className?: string) => CSSProperties;
   getRecursiveChildren: (
     elements: ElementType[],
     parentId: string

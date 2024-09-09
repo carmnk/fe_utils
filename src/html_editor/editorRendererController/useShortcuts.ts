@@ -35,40 +35,6 @@ export const useShortcuts = (params: {
     return currentViewportElements?.length
       ? currentViewportElements
       : editorState.elements
-
-    // const baseviewElements = editorState.elements
-    // const viewportElements = editorState.alternativeViewports[currentViewport]
-    // if (!viewportElements?.length) return baseviewElements
-    // let currentViewportsElements: AlternativeViewportElement[] =
-    //   baseviewElements as any
-    // for (let v = 0; v < viewportElements.length; v++) {
-    //   const viewportElement = viewportElements[v]
-    //   const baseviewElementChildrenToRemove = viewportElement
-    //     ? getRecursiveChildren(editorState.elements, viewportElement._id)
-    //     : null
-    //   const viewportElementChildren = viewportElement
-    //     ? viewportElements.filter((el) => el._parentId === viewportElement._id)
-    //     : []
-    //   currentViewportsElements = currentViewportsElements.map((el) => {
-    //     if (el._id === viewportElement._id) {
-    //       return viewportElement
-    //     }
-    //     return el
-    //   })
-    //   currentViewportsElements = currentViewportsElements.filter(
-    //     (el) =>
-    //       !baseviewElementChildrenToRemove?.map((el) => el._id).includes(el._id)
-    //   )
-    //   const viewportElementIdx = currentViewportsElements.findIndex(
-    //     (el) => el._id === viewportElement._id
-    //   )
-    //   currentViewportsElements.splice(
-    //     viewportElementIdx + 1,
-    //     0,
-    //     ...viewportElementChildren
-    //   )
-    // }
-    // return currentViewportsElements
   }, [
     editorState.elements,
     editorState.alternativeViewports,

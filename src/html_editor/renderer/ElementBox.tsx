@@ -1,6 +1,9 @@
 import { useMemo, useEffect, useRef } from 'react'
 import { CSSProperties, PropsWithChildren, MouseEvent } from 'react'
-import { EditorStateType, ElementType } from '../editorRendererController/editorState'
+import {
+  EditorStateType,
+  ElementType,
+} from '../editorRendererController/editorState'
 import { Box } from '@mui/material'
 import { getStylesFromClasses } from './getStylesFromClasses'
 import { useNavigate } from 'react-router-dom'
@@ -25,6 +28,12 @@ export type ElementBoxProps<
   onSelectElement: (element: ElementType, isHovering: boolean) => void
   isProduction?: boolean
   isPointerProduction?: boolean
+  OverlayComponent?: React.FC<{
+    element: ElementType
+    isProduction?: boolean
+    editorState: EditorStateType
+    actions?: ControllreActionsType
+  }>
 }
 
 const sx = {
@@ -48,6 +57,7 @@ export const ElementBox = <
     COMPONENT_MODELS,
     selectedElement,
     actions,
+    OverlayComponent,
   } = props
   const navigate = useNavigate()
 
@@ -348,6 +358,7 @@ export const ElementBox = <
       selectedElement={selectedElement}
       actions={actions}
       isProduction={!!isProduction}
+      OverlayComponent={OverlayComponent}
     />
   ) : ['br', 'hr', 'img'].includes(element?._type) ? ( // null
     <Box {...boxProps} {...linkProps} src={imageSrc} ref={elementRef} />

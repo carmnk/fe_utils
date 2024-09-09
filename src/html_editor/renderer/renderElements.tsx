@@ -1,4 +1,7 @@
-import { EditorStateType, ElementType } from '../editorRendererController/editorState'
+import {
+  EditorStateType,
+  ElementType,
+} from '../editorRendererController/editorState'
 import { ElementBox } from './ElementBox'
 import { AppBar, Box, Paper, Theme } from '@mui/material'
 import { EditorRendererControllerType } from '../editorRendererController/editorRendererControllerTypes'
@@ -441,6 +444,7 @@ export const renderElements = <
         key={element._id}
         isProduction={isProduction || isPointerProduction}
         isPointerProduction={isPointerProduction}
+        OverlayComponent={OverlayComponent}
       >
         {!disableOverlay && OverlayComponent && (
           <OverlayComponent {...rootElementOverlayProps} />

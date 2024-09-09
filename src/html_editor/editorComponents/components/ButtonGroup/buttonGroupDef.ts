@@ -21,4 +21,3 @@ export const buttonGroupEditorComponentDef: ComponentDefType = {
   schema: ButtonGroupPropsSchema,
 }
 
-// ButtonPropsSchema

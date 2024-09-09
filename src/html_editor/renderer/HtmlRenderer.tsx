@@ -2,10 +2,13 @@ import { Box, Theme, ThemeProvider } from '@mui/material'
 import { SetStateAction, Dispatch, FC } from 'react'
 import { useEffect, useMemo, useCallback } from 'react'
 import { renderElements } from './renderElements'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { uniq } from 'lodash'
 import { useMdiIcons } from './icons/useMdiIcons'
-import { EditorStateType, ElementType } from '../editorRendererController/editorState'
+import {
+  EditorStateType,
+  ElementType,
+} from '../editorRendererController/editorState'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import { EditorRendererControllerType } from '../editorRendererController'
 
@@ -31,6 +34,7 @@ export type HtmlRendererProps<
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
   selectedElement: ElementType | null
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
+  pageName: string //const pageName = location.pathname.slice(1) || 'index'
 }
 
 export const HtmlRenderer = <
@@ -50,11 +54,10 @@ export const HtmlRenderer = <
     COMPONENT_MODELS,
     selectedElement,
     appController,
+    pageName,
   } = props
 
   const selectElement = actions?.ui.selectElement
-
-  const location = useLocation()
 
   const icons = useMdiIcons(
     selectedPageElements,
@@ -119,8 +122,7 @@ export const HtmlRenderer = <
     if (!isProduction) {
       return
     }
-    console.log('location changed', location.pathname)
-    const pageName = location.pathname.slice(1) || 'index'
+
     setEditorState((current) => ({
       ...current,
       ui: {
@@ -128,7 +130,7 @@ export const HtmlRenderer = <
         selected: { ...current.ui.selected, page: pageName },
       },
     }))
-  }, [location.pathname, isProduction, setEditorState])
+  }, [isProduction, setEditorState, pageName])
 
   const remainingPages = useMemo(() => {
     if (!isProduction) {

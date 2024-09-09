@@ -19,7 +19,6 @@ export const BottomNavComponentDef: ComponentDefType = {
   state: 'test',
   formGen: ({ editorState }) =>
     propertyFormFactory(BottomNavPropsSchema, editorState),
-  //   formGen: ButtonGroupComponentPropsFormFactory,
   icon: mdiDockBottom,
   category: 'navigation',
   component: BottomNavigation,

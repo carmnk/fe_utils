@@ -1,10 +1,9 @@
 import { Box } from '@mui/material'
 import { EditorRendererControllerType } from '../editorRendererController/editorRendererControllerTypes'
-import { EditorStateType, ElementType } from '../editorRendererController/editorState'
 import {
-  RootElementOverlay,
-  RootElementOverlayProps,
-} from './RootElementOverlay'
+  EditorStateType,
+  ElementType,
+} from '../editorRendererController/editorState'
 import { renderElements } from './renderElements'
 
 export type ComponentElementBoxProps<
@@ -21,6 +20,12 @@ export type ComponentElementBoxProps<
   actions?: ControllreActionsType
   //
   isProduction: boolean
+  OverlayComponent?: React.FC<{
+    element: ElementType
+    isProduction?: boolean
+    editorState: EditorStateType
+    actions?: ControllreActionsType
+  }>
 }
 
 export const ComponentElementBox = <
@@ -38,6 +43,7 @@ export const ComponentElementBox = <
     COMPONENT_MODELS,
     selectedElement,
     isProduction,
+    OverlayComponent,
   } = props
 
   let debugId = ''
@@ -45,13 +51,12 @@ export const ComponentElementBox = <
     debugId = '81156cd5-7296-4040-8bb5-e25754790580'
   }
 
-  const rootElementOverlayProps: RootElementOverlayProps<ControllreActionsType> =
-    {
-      element,
-      isProduction,
-      editorState,
-      actions,
-    }
+  const rootElementOverlayProps = {
+    element,
+    isProduction,
+    editorState,
+    actions,
+  }
 
   return (
     <Box position="relative">
@@ -83,9 +88,9 @@ export const ComponentElementBox = <
           element?.ref_component_id ?? element?.component_id ?? undefined,
         disableOverlay: true,
         rootCompositeElementId: element._id,
-        OverlayComponent: RootElementOverlay,
+        OverlayComponent: OverlayComponent,
       })}
-      {<RootElementOverlay {...rootElementOverlayProps} />}
+      {OverlayComponent && <OverlayComponent {...rootElementOverlayProps} />}
     </Box>
   )
 }

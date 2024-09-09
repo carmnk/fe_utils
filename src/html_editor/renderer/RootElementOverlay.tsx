@@ -33,10 +33,6 @@ export const RootElementOverlay = <
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [openMenu, setOpenMenu] = useState(false)
 
-  // const handleMenuClose = useCallback(() => {
-  //   setOpenMenu(false)
-  // }, [])
-
   const handleToggleMenu = useCallback((e: any) => {
     e.stopPropagation()
     setOpenMenu((prev) => !prev)

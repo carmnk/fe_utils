@@ -17,11 +17,6 @@ export const useEditorRendererController = (params?: {
   injections?: {
     components?: any[]
     actions?: any[]
-    // hooks?: {
-    //   onAppMounted?: () => void
-    //   onAppUnmounted?: () => void
-    //   onNavigate?: (currentPath: string, newPath: string) => void
-    // }
   }
 }) => {
   // load initial state if provided
@@ -64,20 +59,6 @@ export const useEditorRendererController = (params?: {
 
   const appController = useAppController()
 
-  // const actions = useEditorActions({
-  //   editorState,
-  //   setEditorState,
-  //   selectedElement,
-  //   selectedElementStyleAttributes,
-  //   selectedPageElements,
-  //   currentViewportElements,
-  //   appController,
-  //   components: COMPONENT_MODELS,
-  //   COMPONENT_MODELS,
-  //   getRecursiveChildren,
-  //   getStyleAttributesDictByElementId,
-  // })
-
   return {
     selectedElement,
     selectedPageElements,
@@ -88,7 +69,6 @@ export const useEditorRendererController = (params?: {
     appController,
     setEditorState,
     getSelectedImage,
-    // actions,
     getRecursiveChildren,
     getStyleAttributesDictByElementId,
   }
