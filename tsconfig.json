@@ -21,7 +21,8 @@
     "noFallthroughCasesInSwitch": true, // Requires handling all cases in a switch statement.
     "declaration": true, // Generates declaration files for TypeScript.
 
-    "outDir": "./dist" // Specifies an output directory for the generated files.
+    "outDir": "./dist", // Specifies an output directxory for the generated files.
+    "types": ["node", "jest"] // Specifies the types that should be included in the compilation.
   },
   "include": ["src"], // Specifies the directory to include when searching for TypeScript files.
 
@@ -29,6 +30,7 @@
     "src/**/__docs__",
     "src/**/_tests",
     "src/**/**.test.tsx",
-    "src/stories/**"
+    "src/stories/**",
+    "dist/**/*"
   ]
 }

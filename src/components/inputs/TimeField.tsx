@@ -34,7 +34,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
     disableFuture,
     disableIgnoringDatePartForTimeValidation,
     disablePast,
-    enableAccessibleFieldDOMStructure,
+    // enableAccessibleFieldDOMStructure,
     format,
     formatDensity,
     maxTime,
@@ -222,7 +222,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
           disableIgnoringDatePartForTimeValidation
         }
         disablePast={disablePast}
-        enableAccessibleFieldDOMStructure={enableAccessibleFieldDOMStructure}
+        // enableAccessibleFieldDOMStructure={enableAccessibleFieldDOMStructure}
         format={format}
         formatDensity={formatDensity}
         maxTime={maxTime}

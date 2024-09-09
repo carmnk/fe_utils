@@ -1,6 +1,6 @@
 {
   "name": "@cmk/fe_utils",
-  "version": "0.1.166",
+  "version": "0.1.167",
   "description": "frontend utility library",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -38,7 +38,6 @@
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@mui/material": "^5.15.1",
-    "@mui/x-date-pickers": "^7.3.1",
     "@mui/x-tree-view": "^6.17.0",
     "@types/react": "^17.0.0 || ^18.0.0",
     "react": "^17.0.0 || ^18.0.0",
@@ -90,6 +89,7 @@
     "@dnd-kit/modifiers": "^7.0.0",
     "@mdi/js": "^7.3.67",
     "@mdi/react": "^1.6.1",
+    "@mui/x-date-pickers": "^6.20.2",
     "@use-gesture/react": "^10.3.1",
     "axios": "^1.6.8",
     "lodash": "^4.17.21",
