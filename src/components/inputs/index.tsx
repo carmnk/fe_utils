@@ -44,3 +44,6 @@ export type { CTimeFieldProps } from './TimeField'
 
 export { GenericArrayField } from './GenericArrayField'
 export type { GenericArrayFieldProps } from './GenericArrayField'
+
+export { JsonField } from './JsonField'
+export type { JsonFieldProps } from './JsonField'

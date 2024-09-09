@@ -396,6 +396,12 @@ export const SubformField = (props: SubformFieldProps) => {
                   ui?.open === 'new'
                     ? () => addnewItemArraySub(field.name ?? '', formData)
                     : () => {
+                        console.log(
+                          'SubFormField.tsx',
+                          formData,
+                          fieldName,
+                          ui?.open
+                        )
                         if (!ui?.open || ui?.open === 'new') return
                         const newFormData = {
                           ...formData,

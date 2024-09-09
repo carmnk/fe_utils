@@ -280,9 +280,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     [valueIn, onChange, nameIn, _path, setEditing]
   )
 
-  return typeof valueIn === 'object' ? (
+  return valueIn && typeof valueIn === 'object' ? (
     <Box>
-      {Object.keys(valueIn)?.length ? (
+      {Object.keys(valueIn ?? {})?.length ? (
         <Fragment>
           <Typography color="lightseagreen">{`{`}</Typography>
           <Box

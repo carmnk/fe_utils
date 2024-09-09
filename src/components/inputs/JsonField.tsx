@@ -70,7 +70,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
                     )
                   }
                 />
-                {!useModal && (
+                {!useModal && !disabled && (
                   <Button
                     icon={mdiDelete}
                     variant="text"
@@ -91,7 +91,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
                 )}
               </Box>
             ))}
-            {!useModal && (
+            {!useModal && !disabled && (
               <Button
                 icon={mdiPlus}
                 variant="text"
@@ -125,7 +125,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
         ) : (
           <Flex>
             <Typography>{`[`}</Typography>
-            {!useModal && (
+            {!useModal && !disabled && (
               <Button
                 icon={mdiPlus}
                 variant="text"
