@@ -402,7 +402,11 @@ export const SubformField = (props: SubformFieldProps) => {
                           fieldName,
                           ui?.open
                         )
-                        if (!ui?.open || ui?.open === 'new') return
+                        if (
+                          (!ui?.open && typeof ui?.open !== 'number') ||
+                          ui?.open === 'new'
+                        )
+                          return
                         const newFormData = {
                           ...formData,
                           [fieldName]: formData?.[fieldName]?.map(
