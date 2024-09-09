@@ -28,3 +28,5 @@ export type {
   ServerConfigType,
   TemplateComponent,
 } from './editorState'
+export { useAppController } from './appController'
+export { useEditorRendererController } from './editorRendererController'
