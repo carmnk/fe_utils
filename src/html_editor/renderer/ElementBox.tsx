@@ -6,7 +6,7 @@ import {
 } from '../editorRendererController/editorState'
 import { Box } from '@mui/material'
 import { getStylesFromClasses } from './getStylesFromClasses'
-import { useNavigate } from 'react-router-dom'
+import { NavigateFunction } from 'react-router-dom'
 import { EditorRendererControllerType } from '../editorRendererController/editorRendererControllerTypes'
 import { queryAction } from './queryAction'
 import { ComponentElementBox } from './ComponentElementBox'
@@ -34,6 +34,7 @@ export type ElementBoxProps<
     editorState: EditorStateType
     actions?: ControllreActionsType
   }>
+  navigate: NavigateFunction
 }
 
 const sx = {
@@ -58,8 +59,8 @@ export const ElementBox = <
     selectedElement,
     actions,
     OverlayComponent,
+    navigate,
   } = props
-  const navigate = useNavigate()
 
   const elementAttributs = editorState.attributes.filter(
     (attr) => attr.element_id === element._id
@@ -359,6 +360,7 @@ export const ElementBox = <
       actions={actions}
       isProduction={!!isProduction}
       OverlayComponent={OverlayComponent}
+      navigate={navigate}
     />
   ) : ['br', 'hr', 'img'].includes(element?._type) ? ( // null
     <Box {...boxProps} {...linkProps} src={imageSrc} ref={elementRef} />

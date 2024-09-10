@@ -10,6 +10,7 @@ import { PropertyType } from '../editorComponents/schemaTypes'
 import { isComponentType } from './utils'
 import { queryAction } from './queryAction'
 import { replaceTemplateInString } from './templates'
+import { NavigateFunction } from 'react-router-dom'
 
 export const isStringLowerCase = (str: string): boolean => {
   return str === str.toLowerCase()
@@ -43,6 +44,7 @@ export const renderElements = <
     editorState: EditorStateType
     actions?: ControllreActionsType
   }>
+  navigate: NavigateFunction
 }): React.ReactNode => {
   const {
     elements,
@@ -63,6 +65,7 @@ export const renderElements = <
     disableOverlay,
     rootCompositeElementId,
     OverlayComponent,
+    navigate,
   } = params
 
   const tableUis = editorState.ui.tableUis
@@ -248,6 +251,7 @@ export const renderElements = <
         disableOverlay,
         rootCompositeElementId,
         OverlayComponent,
+        navigate,
       })
 
     const TabChildren =
@@ -271,6 +275,7 @@ export const renderElements = <
         disableOverlay,
         rootCompositeElementId,
         OverlayComponent,
+        navigate,
       })
 
     const clientFilters = tableUis?.[element._id]?.filters ?? []
@@ -445,6 +450,7 @@ export const renderElements = <
         isProduction={isProduction || isPointerProduction}
         isPointerProduction={isPointerProduction}
         OverlayComponent={OverlayComponent}
+        navigate={navigate}
       >
         {!disableOverlay && OverlayComponent && (
           <OverlayComponent {...rootElementOverlayProps} />

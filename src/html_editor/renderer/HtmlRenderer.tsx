@@ -2,7 +2,7 @@ import { Box, Theme, ThemeProvider } from '@mui/material'
 import { SetStateAction, Dispatch, FC } from 'react'
 import { useEffect, useMemo, useCallback } from 'react'
 import { renderElements } from './renderElements'
-import { Route, Routes } from 'react-router-dom'
+import { NavigateFunction, Route, Routes } from 'react-router-dom'
 import { uniq } from 'lodash'
 import { useMdiIcons } from './icons/useMdiIcons'
 import {
@@ -35,6 +35,7 @@ export type HtmlRendererProps<
   selectedElement: ElementType | null
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
   pageName: string //const pageName = location.pathname.slice(1) || 'index'
+  navigate: NavigateFunction
 }
 
 export const HtmlRenderer = <
@@ -55,6 +56,7 @@ export const HtmlRenderer = <
     selectedElement,
     appController,
     pageName,
+    navigate,
   } = props
 
   const selectElement = actions?.ui.selectElement
@@ -99,6 +101,7 @@ export const HtmlRenderer = <
           ? undefined
           : editorState.ui.pointerMode === 'production',
         OverlayComponent: OverlayComponent,
+        navigate,
       })
     },
     [
@@ -114,6 +117,7 @@ export const HtmlRenderer = <
       theme,
       isProduction,
       OverlayComponent,
+      navigate,
     ]
   )
 

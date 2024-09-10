@@ -5,6 +5,7 @@ import {
   ElementType,
 } from '../editorRendererController/editorState'
 import { renderElements } from './renderElements'
+import { NavigateFunction } from 'react-router-dom'
 
 export type ComponentElementBoxProps<
   ControllreActionsType extends { [key: string]: any },
@@ -26,6 +27,7 @@ export type ComponentElementBoxProps<
     editorState: EditorStateType
     actions?: ControllreActionsType
   }>
+  navigate: NavigateFunction
 }
 
 export const ComponentElementBox = <
@@ -44,12 +46,8 @@ export const ComponentElementBox = <
     selectedElement,
     isProduction,
     OverlayComponent,
+    navigate,
   } = props
-
-  let debugId = ''
-  if (element?._type === 'composite') {
-    debugId = '81156cd5-7296-4040-8bb5-e25754790580'
-  }
 
   const rootElementOverlayProps = {
     element,
@@ -89,6 +87,7 @@ export const ComponentElementBox = <
         disableOverlay: true,
         rootCompositeElementId: element._id,
         OverlayComponent: OverlayComponent,
+        navigate,
       })}
       {OverlayComponent && <OverlayComponent {...rootElementOverlayProps} />}
     </Box>
