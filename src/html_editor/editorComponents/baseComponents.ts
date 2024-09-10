@@ -11,6 +11,7 @@ import { formEditorComponentDef } from './components/Form/formDef'
 import { ComponentDefType } from './componentDefType'
 import { navigationContainerDef } from './components/NavigationContainer/navigationContainerDef'
 import { paperDef } from './components/Paper/paperDef'
+import { treeViewDef } from './components/TreeView/TreeViewDef'
 
 export const baseComponents = [
   typographyEditorComponentDef,
@@ -27,6 +28,7 @@ export const baseComponents = [
   buttonGroupEditorComponentDef,
 
   tableEditorComponentDef,
+  treeViewDef,
   formEditorComponentDef,
 
   // Navigation container, currently treated specially/hardcoded (use for generic?)

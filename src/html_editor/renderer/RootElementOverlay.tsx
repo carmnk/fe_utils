@@ -17,7 +17,7 @@ export type RootElementOverlayProps<ControllreActionsType> = {
   isProduction?: boolean
   editorState: EditorStateType
   actions?: ControllreActionsType
-}
+} 
 
 export const RootElementOverlay = <
   ControllreActionsType extends { [key: string]: any },

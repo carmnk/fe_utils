@@ -672,7 +672,20 @@ export const renderElements = <
             </Box>
           )
         })()
-      ) : null
+      ) : (
+        <CurrentComponent
+          {...(elementPropsObject ?? {})}
+          {...injectedIconsDict}
+          {...elementArrayIconInjectionDict}
+          rootInjection={
+            !disableOverlay &&
+            OverlayComponent && (
+              <OverlayComponent {...rootElementOverlayProps} />
+            )
+          }
+          {...eventHandlerProps}
+        />
+      )
     ) : null
   })
   return rawElements
