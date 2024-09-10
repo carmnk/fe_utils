@@ -6,7 +6,6 @@ import {
 } from '../editorRendererController/editorState'
 import { Box } from '@mui/material'
 import { getStylesFromClasses } from './getStylesFromClasses'
-import { NavigateFunction } from 'react-router-dom'
 import { EditorRendererControllerType } from '../editorRendererController/editorRendererControllerTypes'
 import { queryAction } from './queryAction'
 import { ComponentElementBox } from './ComponentElementBox'
@@ -34,7 +33,7 @@ export type ElementBoxProps<
     editorState: EditorStateType
     actions?: ControllreActionsType
   }>
-  navigate: NavigateFunction
+  navigate: any
 }
 
 const sx = {

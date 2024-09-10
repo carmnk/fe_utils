@@ -2,7 +2,6 @@ import { Box, Theme, ThemeProvider } from '@mui/material'
 import { SetStateAction, Dispatch, FC } from 'react'
 import { useEffect, useMemo, useCallback } from 'react'
 import { renderElements } from './renderElements'
-import { NavigateFunction } from 'react-router-dom'
 import { uniq } from 'lodash'
 import { useMdiIcons } from './icons/useMdiIcons'
 import {
@@ -35,7 +34,7 @@ export type HtmlRendererProps<
   selectedElement: ElementType | null
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
   pageName: string //const pageName = location.pathname.slice(1) || 'index'
-  navigate: NavigateFunction
+  navigate: any
 }
 
 export const HtmlRenderer = <
@@ -136,15 +135,6 @@ export const HtmlRenderer = <
     }))
   }, [isProduction, setEditorState, pageName])
 
-  const remainingPages = useMemo(() => {
-    if (!isProduction) {
-      return []
-    }
-    const pages = uniq(currentViewportElements?.map((el) => el._page) ?? [])
-    const pagesExIndex = pages.filter((page) => page !== 'index')
-    return pagesExIndex
-  }, [currentViewportElements, isProduction])
-
   const renderedCurrentPageElements = useMemo(() => {
     return isProduction || !editorState.ui.selected.page
       ? null
@@ -220,16 +210,6 @@ export const HtmlRenderer = <
           sx={containerStyles}
         >
           {renderPage(pageName)}
-          {/* <Routes>
-            <Route path="/" element={renderPage('index')} />
-            {remainingPages?.map((pageName: any) => (
-              <Route
-                key={pageName}
-                path={`/${pageName}`}
-                element={renderPage(pageName)}
-              />
-            ))}
-          </Routes> */}
         </Box>
       ) : (
         <Box

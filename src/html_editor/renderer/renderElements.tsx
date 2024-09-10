@@ -10,7 +10,6 @@ import { PropertyType } from '../editorComponents/schemaTypes'
 import { isComponentType } from './utils'
 import { queryAction } from './queryAction'
 import { replaceTemplateInString } from './templates'
-import { NavigateFunction } from 'react-router-dom'
 
 export const isStringLowerCase = (str: string): boolean => {
   return str === str.toLowerCase()
@@ -44,7 +43,7 @@ export const renderElements = <
     editorState: EditorStateType
     actions?: ControllreActionsType
   }>
-  navigate: NavigateFunction
+  navigate: any
 }): React.ReactNode => {
   const {
     elements,

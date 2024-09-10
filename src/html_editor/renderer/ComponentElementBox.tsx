@@ -5,7 +5,6 @@ import {
   ElementType,
 } from '../editorRendererController/editorState'
 import { renderElements } from './renderElements'
-import { NavigateFunction } from 'react-router-dom'
 
 export type ComponentElementBoxProps<
   ControllreActionsType extends { [key: string]: any },
@@ -27,7 +26,7 @@ export type ComponentElementBoxProps<
     editorState: EditorStateType
     actions?: ControllreActionsType
   }>
-  navigate: NavigateFunction
+  navigate: any
 }
 
 export const ComponentElementBox = <
