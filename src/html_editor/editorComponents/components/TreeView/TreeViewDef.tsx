@@ -1,7 +1,7 @@
 import { mdiTreeOutline } from '@mdi/js'
-import { propertyFormFactory } from '@cmk/fe_utils'
+import { propertyFormFactory } from '../../propertiesFormFactory'
 import { treeViewPropsSchema } from './treeViewPropsRawSchema'
-import { CTreeView } from '@cmk/fe_utils'
+import { CTreeView } from '../../../../components/treeview'
 import { ComponentDefType } from '../../componentDefType'
 
 export const treeViewDef: ComponentDefType = {

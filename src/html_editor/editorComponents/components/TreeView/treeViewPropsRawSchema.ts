@@ -1,11 +1,11 @@
-import { PropertyType, ExtendedObjectSchemaType } from '@cmk/fe_utils'
+import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 
 // raw schema to use until schema can be generated reliably from typescript parser/checker
 export const treeViewPropsSchema: ExtendedObjectSchemaType = {
   type: PropertyType.Object,
   required: true,
   properties: {
-    data: {
+    items: {
       type: PropertyType.json,
       required: false,
       form: {
@@ -20,14 +20,5 @@ export const treeViewPropsSchema: ExtendedObjectSchemaType = {
       label: 'Data',
       category: 'data',
     } as any,
-
-    loading: {
-      type: PropertyType.Boolean,
-      required: false,
-      form: {
-        defaultValue: false,
-      },
-      category: 'shortcut',
-    },
   },
 }
