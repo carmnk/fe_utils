@@ -42,7 +42,7 @@ export const getStructuredEntityJoinings = (
     [],
   ]
   const addToCurrentLevel = (joining: ENRICHED_ENTITY_JOININGS_MODEL_TYPE) => {
-    structuredEntityJoinings?.[structuredEntityJoinings?.length - 1 ?? ''].push(
+    structuredEntityJoinings?.[structuredEntityJoinings?.length - 1].push(
       joining
     )
   }

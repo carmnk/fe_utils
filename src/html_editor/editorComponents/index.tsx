@@ -15,10 +15,10 @@ export type {
   LiteralType,
   NumberType,
   ObjectSchemaType,
-  PropertyType,
   SchemaType,
   StringType,
 } from './schemaTypes'
+export { PropertyType } from './schemaTypes'
 
 export { propertyFormFactory } from './propertiesFormFactory'
 export type { DynamicFormInjectionsType } from './propertiesFormFactory'

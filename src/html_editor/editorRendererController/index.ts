@@ -3,14 +3,17 @@ export type {
   EditorControllerAppStateType,
   EditorRendererControllerType,
 } from './editorRendererControllerTypes'
-export { defaultEditorState, defaultPageElements } from './editorState'
+export {
+  defaultEditorState,
+  defaultPageElements,
+  EditorStateLeftMenuBackendTabs,
+  EditorStateLeftMenuGlobalTabs,
+  EditorStateLeftMenuTabs,
+} from './editorState'
 export type {
   EditorStateType,
   ElementType,
   Endpoint,
-  EditorStateLeftMenuBackendTabs,
-  EditorStateLeftMenuGlobalTabs,
-  EditorStateLeftMenuTabs,
   ElementEvent,
   ElementKeyType,
   ExternalApi,
