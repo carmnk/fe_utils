@@ -30,3 +30,4 @@ export type {
 } from './editorState'
 export { useAppController } from './appController'
 export { useEditorRendererController } from './editorRendererController'
+export * from './apiController'
