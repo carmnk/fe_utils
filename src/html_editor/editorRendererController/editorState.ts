@@ -147,6 +147,7 @@ export type ProjectType = {
   html_pages_title: string
   html_pages_description: string
   html_pages_favicon: string | null
+  github_updated_version_edited_datetime?: string | null
 
   // from ui
 }
