@@ -2,7 +2,7 @@ import { Box, Theme, ThemeProvider } from '@mui/material'
 import { SetStateAction, Dispatch, FC } from 'react'
 import { useEffect, useMemo, useCallback } from 'react'
 import { renderElements } from './renderElements'
-import { NavigateFunction, Route, Routes } from 'react-router-dom'
+import { NavigateFunction } from 'react-router-dom'
 import { uniq } from 'lodash'
 import { useMdiIcons } from './icons/useMdiIcons'
 import {
@@ -219,7 +219,8 @@ export const HtmlRenderer = <
           color={'text.primary'}
           sx={containerStyles}
         >
-          <Routes>
+          {renderPage(pageName)}
+          {/* <Routes>
             <Route path="/" element={renderPage('index')} />
             {remainingPages?.map((pageName: any) => (
               <Route
@@ -228,7 +229,7 @@ export const HtmlRenderer = <
                 element={renderPage(pageName)}
               />
             ))}
-          </Routes>
+          </Routes> */}
         </Box>
       ) : (
         <Box
