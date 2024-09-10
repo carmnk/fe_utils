@@ -633,7 +633,7 @@ export const renderElements = <
             <OverlayComponent {...rootElementOverlayProps} />
           )}
         </AppBar>
-      ) : element?._type === 'Paper' ? (
+      ) : ['Paper', 'Dialog'].includes(element?._type) ? (
         <Paper
           {...((elementPropsObject as any) ?? {})}
           {...injectedIconsDict}

@@ -45,7 +45,8 @@ const recursiveMap = (
         typeof events?.actions === 'function'
           ? events?.actions(item)
           : events?.actions
-      const children = (item?.children ?? []) as StyledTreeItemProps[]
+      const children = (items?.filter((it) => it._parentId === item.nodeId) ??
+        []) as StyledTreeItemProps[]
       const { children: _c, ...props } = item
       return (
         <StyledTreeItem
@@ -87,16 +88,18 @@ export type CTreeViewProps = {
   items: StyledTreeItemProps[]
   actions?: AdditionalActionGenType
   additionalActions?: AdditionalActionGenType
-  onToggleExpand?: (id: string, e: any) => void
+
+  selectedItems?: string[]
   onToggleSelect?: (id: string, e: any) => void
   onDragDrop?: (event: any, draggedItem: any, droppedItem: any) => void // nodeId is the id of the dropped item
   onDragging?: (event: any, active: boolean, draggedItem: any) => void
   expandedItems?: string[]
-  selectedItems?: string[]
-  maxWidth?: number
-  disableItemsFocusable?: boolean
-  width?: number
+  defaultExpanded?: string[]
+  onToggleExpand?: (id: string, e: any) => void
   enableNullSelection?: boolean
+  disableItemsFocusable?: boolean
+  maxWidth?: number
+  width?: number
 }
 
 export const CTreeView = (props: CTreeViewProps) => {
@@ -114,6 +117,7 @@ export const CTreeView = (props: CTreeViewProps) => {
     onDragging,
     width,
     enableNullSelection,
+    defaultExpanded,
   } = props
 
   const [ui, setUi] = React.useState<{
@@ -243,6 +247,7 @@ export const CTreeView = (props: CTreeViewProps) => {
       >
         <TreeView
           ref={treeViewRef}
+          defaultExpanded={defaultExpanded}
           disabledItemsFocusable={disableItemsFocusable}
           aria-label="tree-view"
           expanded={expandedItems as any}
@@ -267,9 +272,7 @@ export const CTreeView = (props: CTreeViewProps) => {
           // }}
           selected={selectedItems?.[0]}
           // multiSelect={true}
-          // defaultCollapseIcon={<Icon path={mdiChevronDown} size={1} />}
-          // defaultExpandIcon={<Icon path={mdiChevronRight} size={1} />}
-          // defaultEndIcon={<div style={{ width: 24 }} />}
+
           sx={{
             overflowY: 'auto',
             maxWidth: maxWidth,
