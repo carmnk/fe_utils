@@ -37,10 +37,10 @@ export const queryAction = async (
     headers: Object.keys(headers ?? {}).reduce((acc, key) => {
       return { ...acc, [key]: replacePlaceholders(payload[key], placeholders) }
     }, {}),
-    params: Object.keys(headers ?? {}).reduce((acc, key) => {
+    params: Object.keys(params ?? {}).reduce((acc, key) => {
       return { ...acc, [key]: replacePlaceholders(payload[key], placeholders) }
     }, {}),
-    responseType: replacePlaceholders(url, placeholders) as any,
+    responseType: replacePlaceholders(responseType, placeholders) as any,
   }
 
   // IMPLEMENTATION -> replace all relevantProps with placeholders if any
