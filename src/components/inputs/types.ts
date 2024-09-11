@@ -128,6 +128,7 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
                 useNotchedLabel?: boolean
                 notchedLabelBgColor?: string
                 notchedLabelMarginLeft?: number
+                enableVirtualization?: boolean
               }
             : never)
 

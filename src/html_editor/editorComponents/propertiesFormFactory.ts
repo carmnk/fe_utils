@@ -63,22 +63,24 @@ const convertPropertiesToFields = (
           }
         : {}
 
+    const fieldTypeAdj =
+      doOverrideSelectType && prop?.type === PropertyType.icon
+        ? 'autocomplete'
+        : doOverrideSelectType && prop?.type === PropertyType.eventHandler
+          ? 'multiselect'
+          : doOverrideSelectType
+            ? 'select'
+            : convertSchemaToFormType(prop.type)
     const field: Omit<StaticFieldDefinition, 'value' | 'onChange'> & {
       _prop_type: string
       _enum?: any[]
       label: string
       items?: Omit<StaticFieldDefinition, 'value' | 'onChange'>[]
+      enableVirtualization?: boolean
     } = {
       ...(prop ?? {}),
       _prop_type: prop.type,
-      type:
-        doOverrideSelectType && prop?.type === PropertyType.icon
-          ? 'autocomplete'
-          : doOverrideSelectType && prop?.type === PropertyType.eventHandler
-            ? 'multiselect'
-            : doOverrideSelectType
-              ? 'select'
-              : convertSchemaToFormType(prop.type),
+      type: fieldTypeAdj,
       name: key,
       label: prop?.form?.label ?? key,
       _enum: 'enum' in prop ? prop?.enum : undefined,
@@ -87,6 +89,8 @@ const convertPropertiesToFields = (
           ? ((prop.items?.[0] as any)?.properties as any)
           : undefined,
       ...injectedObjectProperties,
+      enableVirtualization:
+        !!doOverrideSelectType && prop?.type === PropertyType.icon,
     }
     return field
   })
