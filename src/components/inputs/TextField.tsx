@@ -257,14 +257,17 @@ export const CTextField = forwardRef(
                 </Box>
               )}
             </Typography>
-            <Button
-              variant="outlined"
-              iconButton
-              icon={mdiInformation}
-              tooltip={
-                labelRightInfo && (parseSimpleFormating(labelRightInfo) as any)
-              }
-            />
+            {labelRightInfo && (
+              <Button
+                variant="outlined"
+                iconButton
+                icon={mdiInformation}
+                tooltip={
+                  labelRightInfo &&
+                  (parseSimpleFormating(labelRightInfo) as any)
+                }
+              />
+            )}
           </Flex>
         )}
         <MTextField {...textFieldProps} ref={ref} />
