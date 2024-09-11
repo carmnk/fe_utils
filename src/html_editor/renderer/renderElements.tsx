@@ -402,7 +402,7 @@ export const renderElements = <
                 'fnParams',
                 fnParams,
                 'elementTemplateValuesDictAdj',
-                elementArrayIconInjectionDict
+                elementTemplateValuesDictAdj
               )
               queryAction(
                 appController,
