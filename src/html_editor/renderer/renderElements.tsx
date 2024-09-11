@@ -380,12 +380,22 @@ export const renderElements = <
                         typeof elementTemplateValuesDict?.[
                           cur as keyof typeof elementTemplateValuesDict
                         ]
+                      const replaceValue = fnParams?.[1] as string
+                      const newValue = value?.replaceAll?.(
+                        '{itemId}',
+                        replaceValue
+                      )
+                      console.log(
+                        'REPLACEALL',
+                        value,
+                        replaceValue,
+                        newValue,
+                        elementTemplateValuesDict
+                      )
+
                       return {
                         ...acc,
-                        [cur]: value?.replaceAll?.(
-                          '{itemId}',
-                          fnParams?.[1] as string
-                        ),
+                        [cur]: newValue,
                       }
                     }, {})
                   : elementTemplateValuesDict
@@ -402,7 +412,9 @@ export const renderElements = <
                 'fnParams',
                 fnParams,
                 'elementTemplateValuesDictAdj',
-                elementTemplateValuesDictAdj
+                elementTemplateValuesDictAdj,
+                '/',
+                fnParams?.[1]
               )
               queryAction(
                 appController,
