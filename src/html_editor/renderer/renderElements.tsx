@@ -323,7 +323,7 @@ export const renderElements = <
         if (!eventProps) return acc
         return {
           ...acc,
-          [currentEventName]: (fnParams: unknown) => {
+          [currentEventName]: (...fnParams: unknown[]) => {
             // click actions are currently assosiacted with endpoint events only!
             const clickActionIds: string[] = eventProps
             const clickActions = editorState.actions.filter((act) =>
@@ -381,7 +381,7 @@ export const renderElements = <
                 fnParams
               )
               const elementTemplateValuesDictAdj =
-                isItemEvent && typeof fnParams === 'string'
+                isItemEvent && typeof fnParams?.[1] === 'string'
                   ? Object.keys(elementTemplateValuesDict).reduce<
                       Record<string, any>
                     >((acc, cur) => {
@@ -393,7 +393,7 @@ export const renderElements = <
                         ...acc,
                         [cur]: value?.replaceAll?.(
                           '{itemId}',
-                          fnParams as string
+                          fnParams?.[1] as string
                         ),
                       }
                     }, {})
