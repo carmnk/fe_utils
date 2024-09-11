@@ -122,11 +122,17 @@ export const ItemPropsFormFactory = (
         type: 'select',
         name: 'value',
         label: 'value',
+        form: {
+          showInArrayList: true,
+        },
       },
       {
         type: 'select',
         name: 'childId',
         label: 'childId',
+        form: {
+          showInArrayList: true,
+        },
       },
     ],
     injections: {

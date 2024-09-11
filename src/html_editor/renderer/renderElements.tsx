@@ -634,7 +634,7 @@ export const renderElements = <
           )}
         </AppBar>
       ) : ['Paper', 'Dialog'].includes(element?._type) ? (
-        <Paper
+        <CurrentComponent
           {...((elementPropsObject as any) ?? {})}
           {...injectedIconsDict}
           {...elementArrayIconInjectionDict}
@@ -654,7 +654,7 @@ export const renderElements = <
           {!disableOverlay && OverlayComponent && (
             <OverlayComponent {...rootElementOverlayProps} />
           )}
-        </Paper>
+        </CurrentComponent>
       ) : // Navigation Container -> specific render case (but could be component, too)
       element?._type === 'NavContainer' ? (
         (() => {
