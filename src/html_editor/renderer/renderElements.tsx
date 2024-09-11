@@ -370,16 +370,7 @@ export const renderElements = <
               const isItemEvent = COMPONENT_MODELS.find(
                 (mod) => mod.type === element._type
               )?.schema?.properties[currentEventName]?.eventType
-              console.log(
-                'ON REACT EL ACTION - ',
-                currentEventName,
-                clickAction,
-                endpoint,
-                action,
-                elementTemplateValuesDict,
-                isItemEvent,
-                fnParams
-              )
+
               const elementTemplateValuesDictAdj =
                 isItemEvent && typeof fnParams?.[1] === 'string'
                   ? Object.keys(elementTemplateValuesDict).reduce<
@@ -398,6 +389,21 @@ export const renderElements = <
                       }
                     }, {})
                   : elementTemplateValuesDict
+
+              console.log(
+                'ON REACT EL ACTION - ',
+                currentEventName,
+                clickAction,
+                endpoint,
+                action,
+                'elementTemplateValuesDict',
+                elementTemplateValuesDict,
+                isItemEvent,
+                'fnParams',
+                fnParams,
+                'elementTemplateValuesDictAdj',
+                elementArrayIconInjectionDict
+              )
               queryAction(
                 appController,
                 action?.action_id ?? '', // should never happen -> should always have action
