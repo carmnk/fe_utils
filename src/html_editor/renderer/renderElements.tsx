@@ -323,7 +323,7 @@ export const renderElements = <
         if (!eventProps) return acc
         return {
           ...acc,
-          [currentEventName]: () => {
+          [currentEventName]: (fnParams: unknown) => {
             // click actions are currently assosiacted with endpoint events only!
             const clickActionIds: string[] = eventProps
             const clickActions = editorState.actions.filter((act) =>
@@ -367,6 +367,15 @@ export const renderElements = <
                     [cur.param_name]: cur.param_value,
                   }
                 }, {})
+              console.log(
+                'ON REACT EL ACTION - ',
+                currentEventName,
+                clickAction,
+                endpoint,
+                action,
+                elementTemplateValuesDict,
+                params
+              )
               queryAction(
                 appController,
                 action?.action_id ?? '', // should never happen -> should always have action

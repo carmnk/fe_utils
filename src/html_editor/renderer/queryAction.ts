@@ -43,11 +43,11 @@ export const queryAction = async (
     responseType: replacePlaceholders(url, placeholders) as any,
   }
 
-  console.log('queryAction -> adjParams', adjParams, placeholders)
   // IMPLEMENTATION -> replace all relevantProps with placeholders if any
   // -> url, payload per key, headers per key, params per key, responseType, method,
 
   const response = await query(adjMethod as any, adjParams)
+  console.log('query triggered', adjParams, placeholders, 'response', response)
 
   if (response?.data) {
     appController.actions.updateData(actionId, response.data)
