@@ -297,6 +297,7 @@ export type EditorStateType = {
       serverSetting: 'ssl' | 'cors'
       entity: string | null
       entityElement: 'fields' | 'lists' | 'values' | 'joinings'
+      //
       activeElementBoundingRect: {
         top: number
         left: number
@@ -372,6 +373,45 @@ export type EditorStateType = {
   endpoints: Endpoint[]
   events: ElementEvent[]
   actions: Action[]
+}
+
+export type FastEditorState = {
+  hovering: {
+    rightMenu: boolean
+    leftMenu: boolean
+  }
+  dragging: {
+    elementIdFrom: string
+    elementIdTo?: string
+    currentPointerPos?: {
+      x: number
+      y: number
+    }
+    startPointerPos?: {
+      x: number
+      y: number
+    }
+    side?: 'top' | 'bottom' | 'left' | 'right'
+  } | null
+  editorDragStartState: { mouseDownX: number; width: number } | null
+  activeElementBoundingRect: {
+    top: number
+    left: number
+    width: number
+    height: number
+    p: {
+      paddingTop: number
+      paddingRight: number
+      paddingBottom: number
+      paddingLeft: number
+    }
+    m: {
+      marginTop: number
+      marginRight: number
+      marginBottom: number
+      marginLeft: number
+    }
+  } | null
 }
 
 export const defaultPageElements = () =>
@@ -525,3 +565,13 @@ export const defaultEditorState = (): EditorStateType => {
     actions: [],
   }
 }
+
+export const defaultFastEditorState = (): FastEditorState => ({
+  hovering: {
+    rightMenu: false,
+    leftMenu: false,
+  },
+  dragging: null,
+  editorDragStartState: null,
+  activeElementBoundingRect: null,
+})

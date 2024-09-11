@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
-import { EditorStateType, defaultEditorState } from './editorState'
+import {
+  EditorStateType,
+  defaultEditorState,
+  defaultFastEditorState,
+} from './editorState'
 import { useAppController } from './appController'
 import { useShortcuts } from './useShortcuts'
 
@@ -26,6 +30,10 @@ export const useEditorRendererController = (params?: {
     ...(initialEditorState ?? {}),
   }
   const [editorState, setEditorState] = useState(initialEditorStateAdj)
+  const [fastEditorState, setFastEditorState] = useState(
+    defaultFastEditorState()
+  )
+
   const {
     currentViewportElements,
     selectedElement,
@@ -71,5 +79,7 @@ export const useEditorRendererController = (params?: {
     getSelectedImage,
     getRecursiveChildren,
     getStyleAttributesDictByElementId,
+    fastEditorState,
+    setFastEditorState,
   }
 }

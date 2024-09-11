@@ -1,9 +1,10 @@
-import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+import { mdiDelete, mdiMinus, mdiPencil, mdiPlus } from '@mdi/js'
 import { Box, Typography } from '@mui/material'
 import { Flex } from '../_wrapper'
 import { Button } from '../buttons'
 import { JsonObjectField, JsonObjectFieldProps } from './JsonObjectField'
-import { Fragment, useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { Dispatch, Fragment, SetStateAction } from 'react'
 import { Modal } from '../surfaces'
 import Icon from '@mdi/react'
 
@@ -12,20 +13,15 @@ export type JsonFieldProps = JsonObjectFieldProps & {
   value: Record<string, any> | Record<string, any>[]
   useModal?: boolean
   disableLabel?: boolean
-
-  // _path?: (string | number)[]
-  // editing: EditPropertyType | null
-  // setEditing: (prev: EditPropertyType) => EditPropertyType
-  // onChange: (
-  //   value: Record<string, any>,
-  //   e: {
-  //     target: { name: string }
-  //   }
-  // ) => void
-  // keysDict?: any
-  // name?: string
-  // disabled?: boolean
+  _collapsedPaths?: string[]
+  _setCollapsedPaths?: Dispatch<SetStateAction<string[]>>
+  startCollapsed?: boolean
 }
+
+const buttonSlotProps = {
+  typography: { variant: 'caption' as const },
+}
+const miniButtonStyles = { width: 'max-content' as const, m: 0 }
 
 export const RawJsonField = (props: JsonFieldProps) => {
   const {
@@ -40,7 +36,39 @@ export const RawJsonField = (props: JsonFieldProps) => {
     useModal,
     disabled,
     disableLabel,
+    _collapsedPaths,
+    _setCollapsedPaths,
+    startCollapsed,
   } = props
+
+  const startCollapsedAdj = startCollapsed
+
+  const expandedItems =
+    startCollapsedAdj && _collapsedPaths ? _collapsedPaths : []
+  const isCurrentFieldExpanded = startCollapsedAdj
+    ? expandedItems.includes(_path.join('.'))
+    : !_collapsedPaths?.includes(_path.join('.'))
+
+  const handleAddItem = useCallback(() => {
+    if (Array.isArray(keysDict)) {
+      const newItem = keysDict?.[0]
+      onChange([...((value as any) || []), newItem], {
+        target: { name: name ?? '' },
+      })
+    }
+    // console.debug(
+    //   'VALUE: ',
+    //   value,
+    //   'Path: ',
+    //   _path,
+    //   'Editing',
+    //   editing,
+    //   keysDict
+    // )
+  }, [value, keysDict, onChange, name])
+
+  const newPath = useMemo(() => [..._path], [_path])
+
   return (
     <Box>
       {!_path?.length && !disableLabel && (
@@ -49,73 +77,81 @@ export const RawJsonField = (props: JsonFieldProps) => {
       {Array.isArray(value) ? (
         value.length ? (
           <Box>
-            <Typography color="gold">{`[`}</Typography>
-            {value.map((item, index) => (
-              <Box key={index} ml={2} position="relative">
-                <JsonField
-                  useModal={useModal}
-                  disabled={disabled}
-                  name={name}
-                  keysDict={keysDict?.[0]}
-                  value={item}
-                  _path={[..._path, index]}
-                  editing={editing}
-                  setEditing={setEditing}
-                  onChange={(newValuePerItem: any) =>
-                    onChange(
-                      value?.map((v, vIdx) =>
-                        vIdx === index ? newValuePerItem : v
-                      ) || [],
-                      { target: { name: name ?? '' } }
-                    )
-                  }
-                />
-                {!useModal && !disabled && (
-                  <Button
-                    icon={mdiDelete}
-                    variant="text"
-                    slotProps={{
-                      typography: { variant: 'caption' },
-                    }}
-                    sx={{ position: 'absolute', bottom: 0, left: '16px' }}
-                    label="Delete Item"
-                    onClick={() => {
-                      onChange(
-                        value?.filter((v, vIdx) => vIdx !== index) || [],
-                        {
-                          target: { name: name ?? '' },
-                        }
-                      )
-                    }}
-                  />
-                )}
-              </Box>
-            ))}
+            <Flex>
+              <Typography component="span" color="gold">{`[`}</Typography>
+              {/* Collapse/Expand Array */}
+              <Button
+                icon={isCurrentFieldExpanded ? mdiMinus : mdiPlus}
+                iconButton
+                variant="text"
+                slotProps={buttonSlotProps}
+                label={isCurrentFieldExpanded ? 'Collapse' : 'Expand'}
+                onClick={() => {
+                  console.log(
+                    'Collapsed Paths: ',
+                    _collapsedPaths,
+                    value,
+                    _path
+                  )
+                  _setCollapsedPaths?.((current) =>
+                    current.includes(_path.join('.'))
+                      ? current.filter((path) => path !== _path.join('.'))
+                      : [...current, _path.join('.')]
+                  )
+                }}
+              />
+            </Flex>
+            {isCurrentFieldExpanded &&
+              value.map((item, index) => {
+                const handleDeleteItem = () => {
+                  onChange(value?.filter((v, vIdx) => vIdx !== index) || [], {
+                    target: { name: name ?? '' },
+                  })
+                }
+                const handleChangeJsonField = (newValuePerItem: any) =>
+                  onChange(
+                    value?.map((v, vIdx) =>
+                      vIdx === index ? newValuePerItem : v
+                    ) || [],
+                    { target: { name: name ?? '' } }
+                  )
+
+                const newPath = [..._path, index]
+                return (
+                  <Box key={index} ml={2} position="relative">
+                    <JsonField
+                      _collapsedPaths={_collapsedPaths}
+                      _setCollapsedPaths={_setCollapsedPaths}
+                      useModal={useModal}
+                      disabled={disabled}
+                      name={name}
+                      keysDict={keysDict?.[0]}
+                      value={item}
+                      _path={newPath}
+                      editing={editing}
+                      setEditing={setEditing}
+                      onChange={handleChangeJsonField}
+                    />
+                    {!useModal && !disabled && (
+                      <Button
+                        icon={mdiDelete}
+                        variant="text"
+                        slotProps={buttonSlotProps}
+                        sx={{ position: 'absolute', bottom: 0, left: '16px' }}
+                        label="Delete Item"
+                        onClick={handleDeleteItem}
+                      />
+                    )}
+                  </Box>
+                )
+              })}
             {!useModal && !disabled && (
               <Button
                 icon={mdiPlus}
                 variant="text"
-                slotProps={{
-                  typography: { variant: 'caption' },
-                }}
-                sx={{ width: 'max-content', m: 0 }}
-                onClick={() => {
-                  if (Array.isArray(keysDict)) {
-                    const newItem = keysDict?.[0]
-                    onChange([...value, newItem], {
-                      target: { name: name ?? '' },
-                    })
-                  }
-                  console.debug(
-                    'VALUE: ',
-                    value,
-                    'Path: ',
-                    _path,
-                    'Editing',
-                    editing,
-                    keysDict
-                  )
-                }}
+                slotProps={buttonSlotProps}
+                sx={miniButtonStyles}
+                onClick={handleAddItem}
               >
                 Add Item
               </Button>
@@ -129,27 +165,9 @@ export const RawJsonField = (props: JsonFieldProps) => {
               <Button
                 icon={mdiPlus}
                 variant="text"
-                slotProps={{
-                  typography: { variant: 'caption' },
-                }}
-                sx={{ width: 'max-content', m: 0 }}
-                onClick={() => {
-                  if (Array.isArray(keysDict)) {
-                    const newItem = keysDict?.[0]
-                    onChange([...value, newItem], {
-                      target: { name: name ?? '' },
-                    })
-                  }
-                  console.debug(
-                    'VALUE: ',
-                    value,
-                    'Path: ',
-                    _path,
-                    'Editing',
-                    editing,
-                    keysDict
-                  )
-                }}
+                slotProps={buttonSlotProps}
+                sx={miniButtonStyles}
+                onClick={handleAddItem}
               >
                 Add Item
               </Button>
@@ -162,11 +180,14 @@ export const RawJsonField = (props: JsonFieldProps) => {
           disabled={useModal || disabled}
           name={name}
           value={value}
-          _path={[..._path]}
+          _path={newPath}
           editing={editing}
           setEditing={setEditing as any}
           onChange={onChange}
           keysDict={keysDict}
+          _collapsedPaths={_collapsedPaths}
+          _setCollapsedPaths={_setCollapsedPaths}
+          startCollapsed={startCollapsed}
         />
       )}
     </Box>
@@ -174,15 +195,22 @@ export const RawJsonField = (props: JsonFieldProps) => {
 }
 
 export const JsonField = (props: JsonFieldProps) => {
-  const { useModal, ...rest } = props
+  const { useModal, _collapsedPaths, _setCollapsedPaths, ...rest } = props
   const [open, setOpen] = useState(false)
+
+  const isChildComponent = !!_collapsedPaths // shall not be used by the dev user
+  const [collapsedPaths, setCollapsedPaths] = useState<string[]>([])
 
   const handleClose = useCallback(() => setOpen(false), [])
   const handleOpen = useCallback(() => setOpen(true), [])
 
   return useModal ? (
     <Fragment>
-      <RawJsonField {...props} />
+      <RawJsonField
+        {...props}
+        _collapsedPaths={collapsedPaths}
+        _setCollapsedPaths={setCollapsedPaths}
+      />
       <Button label={'Edit'} onClick={handleOpen} variant="outlined" />
       <Modal
         open={open}
@@ -195,10 +223,21 @@ export const JsonField = (props: JsonFieldProps) => {
         }
         disableTopRightCloseButton
       >
-        <RawJsonField {...props} useModal={false} disableLabel />
+        <RawJsonField
+          {...props}
+          useModal={false}
+          disableLabel
+          _collapsedPaths={collapsedPaths}
+          _setCollapsedPaths={setCollapsedPaths}
+        />
       </Modal>
     </Fragment>
   ) : (
-    <RawJsonField {...rest} useModal={false} />
+    <RawJsonField
+      {...rest}
+      useModal={false}
+      _collapsedPaths={collapsedPaths}
+      _setCollapsedPaths={setCollapsedPaths}
+    />
   )
 }
