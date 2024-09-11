@@ -70,6 +70,34 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       required: false,
       category: 'shortcut',
     },
+    href: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
+
+    icon: {
+      type: PropertyType.icon,
+      required: false,
+      enum: iconNames,
+      category: 'shortcut',
+    },
+    endIcon: {
+      type: PropertyType.icon,
+      required: false,
+      enum: iconNames,
+      category: 'shortcut',
+    },
+    iconColor: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
+    fontColor: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
     iconButton: {
       type: PropertyType.Boolean,
       required: false,
@@ -157,34 +185,6 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       form: {
         defaultValue: false,
       },
-      category: 'shortcut',
-    },
-    href: {
-      type: PropertyType.String,
-      required: false,
-      category: 'shortcut',
-    },
-
-    icon: {
-      type: PropertyType.icon,
-      required: false,
-      enum: iconNames,
-      category: 'shortcut',
-    },
-    endIcon: {
-      type: PropertyType.icon,
-      required: false,
-      enum: iconNames,
-      category: 'shortcut',
-    },
-    iconColor: {
-      type: PropertyType.String,
-      required: false,
-      category: 'shortcut',
-    },
-    fontColor: {
-      type: PropertyType.String,
-      required: false,
       category: 'shortcut',
     },
 

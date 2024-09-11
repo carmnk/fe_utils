@@ -10,6 +10,10 @@ import {
   defaultInputContainerTextFieldStyles,
   defaultLabelTextFieldStyles,
 } from './defaultTextFieldStyles'
+import { Flex } from '../_wrapper'
+import { mdiInformation } from '@mdi/js'
+import { Button } from '../buttons'
+import { parseSimpleFormating } from '../../utils/formatReactText'
 
 const requiredFieldText = 'This field is required'
 
@@ -41,6 +45,7 @@ export type CustomTextFieldProps = {
     label?: TypographyProps
     select?: MTextFieldProps['SelectProps']
   }
+  labelRightInfo?: string
 }
 
 export type CTextFieldProps = GenericInputFieldProps<'text'> &
@@ -71,6 +76,7 @@ export const CTextField = forwardRef(
       notchedLabelMarginLeft = 24,
       borderRadius,
       slotProps,
+      labelRightInfo,
       ...rest
     } = props
 
@@ -117,8 +123,9 @@ export const CTextField = forwardRef(
       return {
         ...defaultLabelTextFieldStyles,
         color: error ? 'error.main' : disabled ? 'action.disabled' : undefined,
+        paddingBottom: labelRightInfo ? 0 : '4px',
       }
-    }, [error, disabled])
+    }, [error, disabled, labelRightInfo])
 
     const textFieldProps: MTextFieldProps = useMemo(() => {
       return {
@@ -237,14 +244,28 @@ export const CTextField = forwardRef(
         {...(rootContainer ?? {})}
       >
         {!disableLabel && !useNotchedLabel && (
-          <Typography {...defaultLabelProps} {...(labelProps ?? {})}>
-            {label}{' '}
-            {required && (
-              <Box component="strong" color="error.main" fontWeight="700">
-                *
-              </Box>
-            )}
-          </Typography>
+          <Flex
+            alignItems="center"
+            justifyContent="space-between"
+            mb={labelRightInfo ? 0.5 : 0}
+          >
+            <Typography {...defaultLabelProps} {...(labelProps ?? {})}>
+              {label}{' '}
+              {required && (
+                <Box component="strong" color="error.main" fontWeight="700">
+                  *
+                </Box>
+              )}
+            </Typography>
+            <Button
+              variant="outlined"
+              iconButton
+              icon={mdiInformation}
+              tooltip={
+                labelRightInfo && (parseSimpleFormating(labelRightInfo) as any)
+              }
+            />
+          </Flex>
         )}
         <MTextField {...textFieldProps} ref={ref} />
         {injectComponent}
@@ -253,4 +274,3 @@ export const CTextField = forwardRef(
   }
 )
 CTextField.displayName = 'CTextField'
-export default CTextField

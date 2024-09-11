@@ -12,7 +12,7 @@ import {
   FilteredTableHeaderCellProps as FilteredTableHeaderCellPropsIn,
   FilterType,
 } from '../types'
-import TextField from '../../inputs/TextField'
+import { CTextField } from '../../inputs/TextField'
 
 export interface FilteredTableHeaderCellProps
   extends FilteredTableHeaderCellPropsIn {
@@ -349,7 +349,7 @@ export const FilteredTableHeaderCell = forwardRef(
                   </Button>
                 </Stack>
                 <div>
-                  <TextField
+                  <CTextField
                     fullWidth={true}
                     value={searchValue}
                     onChange={handleSearchValueChange as any}
@@ -378,7 +378,8 @@ export const FilteredTableHeaderCell = forwardRef(
                         : typeof getFilterValue === 'string'
                           ? item[getFilterValue]
                           : item
-                        const itemLabel = typeof getItemLabel === 'function'
+                    const itemLabel =
+                      typeof getItemLabel === 'function'
                         ? getItemLabel(item)
                         : typeof getItemLabel === 'string'
                           ? item[getItemLabel]

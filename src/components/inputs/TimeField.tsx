@@ -6,7 +6,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { GenericInputFieldProps } from './types'
 import { Button } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
-import CTextField, { CTextFieldProps } from './TextField'
+import { CTextField, CTextFieldProps } from './TextField'
 import { TimeField, TimeFieldProps } from '@mui/x-date-pickers/TimeField'
 
 export type CTimeFieldProps = GenericInputFieldProps<'time'> &

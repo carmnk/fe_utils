@@ -1,5 +1,5 @@
 import React, { ForwardedRef, useMemo } from 'react'
-import TextField, { CTextFieldProps } from './TextField'
+import { CTextField, CTextFieldProps } from './TextField'
 
 const formatGermanNumberString = (
   number: number,
@@ -229,7 +229,7 @@ export const NumberField = React.forwardRef(
     ])
 
     return (
-      <TextField
+      <CTextField
         {...muiTextfieldProps}
         disableLabel={disableLabel}
         label={label}

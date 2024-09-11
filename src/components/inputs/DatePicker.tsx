@@ -10,7 +10,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { GenericInputFieldProps } from './types'
 import { Button } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
-import CTextField, { CTextFieldProps } from './TextField'
+import { CTextField, CTextFieldProps } from './TextField'
 import { isEqual } from 'lodash'
 
 type MDatePickerExTextfieldProps = Omit<

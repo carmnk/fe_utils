@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { Autocomplete, InputAdornment, TextFieldProps } from '@mui/material'
 import { AutocompleteProps, Box, useTheme } from '@mui/material'
 import { GenericInputFieldProps } from './types'
-import TextField, { CTextFieldProps } from './TextField'
+import { CTextFieldProps, CTextField } from './TextField'
 import Icon from '@mdi/react'
 import { defaultInputContainerTextFieldStyles } from './defaultTextFieldStyles'
 import { ListboxComponent } from './AutoCompleteVirtualization'
@@ -176,7 +176,7 @@ export const CAutoComplete = forwardRef(
               params?.onChange?.(eventValue as any)
             }
             return (
-              <TextField
+              <CTextField
                 {...params}
                 rows={params?.rows as any}
                 value={params?.value as string}

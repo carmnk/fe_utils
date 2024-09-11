@@ -1,5 +1,5 @@
 import { ListSubheader, MenuItem, MenuItemProps } from '@mui/material'
-import CTextField, { CTextFieldProps } from './TextField'
+import { CTextField, CTextFieldProps } from './TextField'
 import { Fragment, useMemo } from 'react'
 import { uniq } from 'lodash'
 
@@ -26,7 +26,9 @@ export const CSelect2 = (props: CSelect2Props) => {
     <CTextField {...rest} select>
       {optionGroupNames?.length && groupBy
         ? optionGroupNames.map((groupName, gIdx) => [
-            <ListSubheader key={gIdx + '_list_header'}>{groupName}</ListSubheader>,
+            <ListSubheader key={gIdx + '_list_header'}>
+              {groupName}
+            </ListSubheader>,
             options
               ?.filter((opt) => groupBy(opt) === groupName)
               .map((opt, oIdx) => (
