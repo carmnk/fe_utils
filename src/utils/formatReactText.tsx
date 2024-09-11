@@ -1,6 +1,32 @@
 import { Box } from '@mui/material'
 import { Fragment } from 'react/jsx-runtime'
 
+const parseLink = (lineText: string) => {
+  const regex = /(https?:\/\/[^\s]+)/g
+  const matches = lineText.match(regex)
+  return (
+    matches?.map((match, idx) => {
+      const start = lineText.indexOf(match)
+      const end = start + match.length
+      const prevText = lineText.slice(0, start)
+      const nextText = lineText.slice(end)
+      return (
+        <Fragment key={idx}>
+          {prevText}
+          <a
+            href={match.replace('(', '').replace(')', '')}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {match}
+          </a>
+          {nextText}
+        </Fragment>
+      )
+    }) ?? lineText
+  )
+}
+
 const inlineFormat = (lineText: string) => {
   const boldMarkDown = /\*\*(.*?)\*\*/g
   // const boldMarkdownWithUnderScore = /__(.*?)__/g;
@@ -12,7 +38,7 @@ const inlineFormat = (lineText: string) => {
   }))
 
   return !boldMarkDownMatches || !boldMatches?.length
-    ? lineText
+    ? parseLink(lineText)
     : boldMatches.reduce<any[]>((acc, match, idx, arr) => {
         const { match: bold, start, end } = match
         const prevBoldEnd = arr[idx - 1]?.end ?? 0
@@ -20,7 +46,7 @@ const inlineFormat = (lineText: string) => {
         const boldText = bold.slice(2, bold.length - 2)
         const boldComponent = (
           <Box component="strong" key={idx}>
-            {boldText}
+            {parseLink(boldText)}
           </Box>
         )
         return [

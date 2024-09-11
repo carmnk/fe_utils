@@ -77,7 +77,7 @@ const convertPropertiesToFields = (
       label: string
       items?: Omit<StaticFieldDefinition, 'value' | 'onChange'>[]
       enableVirtualization?: boolean
-      labelInfo?: string
+      labelRightInfo?: string
     } = {
       ...(prop ?? {}),
       _prop_type: prop.type,
@@ -92,7 +92,7 @@ const convertPropertiesToFields = (
       ...injectedObjectProperties,
       enableVirtualization:
         !!doOverrideSelectType && prop?.type === PropertyType.icon,
-      labelInfo:
+      labelRightInfo:
         !!doOverrideSelectType && prop?.type === PropertyType.icon
           ? 'Mdi Icons are supported, check the library at https://pictogrammers.com/library/mdi/'
           : undefined,
