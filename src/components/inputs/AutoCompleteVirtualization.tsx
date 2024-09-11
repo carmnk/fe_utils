@@ -16,6 +16,7 @@ const OuterElementContext = createContext({})
 
 function renderRow(props: ListChildComponentProps) {
   const { data, index, style } = props
+  console.log('renderRow', props)
   const dataSet = data[index]
   const inlineStyle = {
     ...style,
@@ -41,7 +42,7 @@ function renderRow(props: ListChildComponentProps) {
       noWrap
       style={inlineStyle}
     >
-      {`#${dataSet[2] + 1} - ${dataSet[1]}`}
+      {dataSet?.value || ''}
     </Typography>
   )
 }
