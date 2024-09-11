@@ -361,7 +361,7 @@ export const renderElements = <
               )
               const elementTemplateValuesDict = editorState.actionParams
                 .filter((ap) => ap.element_id === element._id)
-                .reduce((acc, cur) => {
+                .reduce<Record<string, any>>((acc, cur) => {
                   return {
                     ...acc,
                     [cur.param_name]: cur.param_value,
@@ -377,7 +377,7 @@ export const renderElements = <
                       Record<string, any>
                     >((acc, cur) => {
                       const value =
-                        typeof elementTemplateValuesDict?.[
+                        elementTemplateValuesDict?.[
                           cur as keyof typeof elementTemplateValuesDict
                         ]
                       const replaceValue = fnParams?.[1] as string
@@ -387,6 +387,7 @@ export const renderElements = <
                       )
                       console.log(
                         'REPLACEALL',
+                        cur,
                         value,
                         replaceValue,
                         newValue,
