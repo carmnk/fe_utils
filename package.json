@@ -1,6 +1,6 @@
 {
   "name": "@cmk/fe_utils",
-  "version": "0.1.184",
+  "version": "0.1.185",
   "description": "frontend utility library",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -64,6 +64,7 @@
     "@types/node": "^20.12.7",
     "@types/react-color": "^3.0.12",
     "@types/react-copy-to-clipboard": "^5.0.7",
+    "@types/react-window": "^1.8.8",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
     "babel-jest": "^29.7.0",
@@ -97,6 +98,7 @@
     "react-color": "^2.19.3",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dropzone": "^14.2.3",
+    "react-window": "^1.8.10",
     "uuid": "^9.0.1"
   }
 }

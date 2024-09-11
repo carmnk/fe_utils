@@ -1,28 +1,14 @@
-import {
-  ReactNode,
-  ChangeEvent,
-  SyntheticEvent,
-  useState,
-  useRef,
-  forwardRef,
-  ForwardedRef,
-} from 'react'
+import { forwardRef, ForwardedRef, SyntheticEvent } from 'react'
+import { ReactNode, ChangeEvent, useState, useRef } from 'react'
 import { FocusEvent, KeyboardEvent, useEffect } from 'react'
 import { useMemo } from 'react'
-import {
-  Autocomplete,
-  InputAdornment,
-  TextFieldProps,
-  useTheme,
-} from '@mui/material'
-// import { FormHelperText, Typography } from '@mui/material'
-import { FormControlProps, AutocompleteProps, Box } from '@mui/material'
+import { Autocomplete, InputAdornment, TextFieldProps } from '@mui/material'
+import { AutocompleteProps, Box, useTheme } from '@mui/material'
 import { GenericInputFieldProps } from './types'
 import TextField, { CTextFieldProps } from './TextField'
 import Icon from '@mdi/react'
 import { defaultInputContainerTextFieldStyles } from './defaultTextFieldStyles'
-
-const requiredFieldText = 'This field is required'
+import { ListboxComponent } from './AutoCompleteVirtualization'
 
 export type CustomAutocompleteProps = {
   // onChange?: (newValue: string, e: ChangeEvent<HTMLInputElement>) => void
@@ -39,6 +25,7 @@ export type CustomAutocompleteProps = {
     CTextFieldProps['slotProps'] & {
       // textfield?: CTextFieldProps
     }
+  enableVirtualization?: boolean
 }
 
 export type SpecificMuiAutoCompleteProps = Omit<
@@ -78,6 +65,7 @@ export const CAutoComplete = forwardRef(
       startIcon,
       endIcon: _e,
       borderRadius,
+      enableVirtualization,
       ...restProps
     } = props
 
@@ -187,7 +175,6 @@ export const CAutoComplete = forwardRef(
               }
               params?.onChange?.(eventValue as any)
             }
-            // console.debug('params', restProps, params)
             return (
               <TextField
                 {...params}
@@ -238,12 +225,16 @@ export const CAutoComplete = forwardRef(
             )
           },
           size: 'small',
-          renderOption: (props: any, option: any) => (
-            <Box fontSize={14} component="li" {...props}>
-              {option?.label}
-            </Box>
-          ),
+          renderOption: enableVirtualization
+            ? (props, option, state) =>
+                [props, option, state.index] as React.ReactNode
+            : (props: any, option: any) => (
+                <Box fontSize={14} component="li" {...props}>
+                  {option?.label}
+                </Box>
+              ),
           ...restProps,
+          ListboxComponent: enableVirtualization ? ListboxComponent : undefined,
           slotProps: {
             ...muiAutoSelectSlotProps,
             popper: {
@@ -271,6 +262,7 @@ export const CAutoComplete = forwardRef(
           onInputChange: handleInputChange,
           onBlur: handleBlur,
           onKeyUp: restProps?.onKeyUp || onEnter,
+          disableListWrap: true,
         }
       }, [
         inputValue,
@@ -281,9 +273,11 @@ export const CAutoComplete = forwardRef(
         freeSolo,
         theme,
         name,
-        // label,
         slotProps,
         ref,
+        borderRadius,
+        startIcon,
+        enableVirtualization,
       ])
 
     // update inner inputValue when outer value is changed
@@ -312,21 +306,7 @@ export const CAutoComplete = forwardRef(
     }, [inputValue])
 
     return (
-      // <FormControl {...formControlProps}>
-      //   {!disableLabel && !useNotchedLabel && (
-      //     <Typography {...labelTypographyProps}>
-      //       {label}
-      //       {required && <strong style={themeErrorText}> *</strong>}
-      //     </Typography>
-      //   )}
-
       <Autocomplete<string, false, false, boolean> {...autoCompleteProps} />
-      //   {/* {!disableHelperText && (
-      //     <FormHelperText sx={formHelperTextStyles} {...formHelperTextProps}>
-      //       {helperText ? helperText : error ? requiredFieldText : ' '}
-      //     </FormHelperText>
-      //   )}
-      // </FormControl>*/}
     )
   }
 )
