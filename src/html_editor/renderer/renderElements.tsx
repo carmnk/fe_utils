@@ -367,6 +367,9 @@ export const renderElements = <
                     [cur.param_name]: cur.param_value,
                   }
                 }, {})
+              const isItemEvent = COMPONENT_MODELS.find(
+                (mod) => mod.type === element._type
+              )?.schema?.properties[currentEventName]?.eventType
               console.log(
                 'ON REACT EL ACTION - ',
                 currentEventName,
@@ -374,8 +377,27 @@ export const renderElements = <
                 endpoint,
                 action,
                 elementTemplateValuesDict,
-                params
+                isItemEvent,
+                fnParams
               )
+              const elementTemplateValuesDictAdj =
+                isItemEvent && typeof fnParams === 'string'
+                  ? Object.keys(elementTemplateValuesDict).reduce<
+                      Record<string, any>
+                    >((acc, cur) => {
+                      const value =
+                        typeof elementTemplateValuesDict?.[
+                          cur as keyof typeof elementTemplateValuesDict
+                        ]
+                      return {
+                        ...acc,
+                        [cur]: value?.replaceAll?.(
+                          '{itemId}',
+                          fnParams as string
+                        ),
+                      }
+                    }, {})
+                  : elementTemplateValuesDict
               queryAction(
                 appController,
                 action?.action_id ?? '', // should never happen -> should always have action
@@ -387,7 +409,7 @@ export const renderElements = <
                 endpoint?.params,
                 endpoint?.responseType,
                 undefined,
-                elementTemplateValuesDict
+                elementTemplateValuesDictAdj
               )
             }
 
