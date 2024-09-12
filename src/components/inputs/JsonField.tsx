@@ -1,12 +1,15 @@
 import { mdiDelete, mdiMinus, mdiPencil, mdiPlus } from '@mdi/js'
 import { Box, Typography } from '@mui/material'
-import { Flex } from '../_wrapper'
-import { Button } from '../buttons'
+import { Flex } from '../_wrapper/Flex'
+import { Button } from '../buttons/Button'
 import { JsonObjectField, JsonObjectFieldProps } from './JsonObjectField'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Dispatch, Fragment, SetStateAction } from 'react'
-import { Modal } from '../surfaces'
+import { Modal } from '../surfaces/Modal'
 import Icon from '@mdi/react'
+import { getAmountJsonChildren } from './getAmountJsonChildren'
+
+const lineHeight = 28.8 // 28.8 + 2px gap
 
 export type JsonFieldProps = JsonObjectFieldProps & {
   label?: string
@@ -16,6 +19,8 @@ export type JsonFieldProps = JsonObjectFieldProps & {
   _collapsedPaths?: string[]
   _setCollapsedPaths?: Dispatch<SetStateAction<string[]>>
   startCollapsed?: boolean
+  _index?: number
+  hideLineNumbers?: boolean
 }
 
 const buttonSlotProps = {
@@ -39,6 +44,10 @@ export const RawJsonField = (props: JsonFieldProps) => {
     _collapsedPaths,
     _setCollapsedPaths,
     startCollapsed,
+    hideLineNumbers,
+    itemsWindowStartIndex,
+    itemsWindowEndIndex,
+    _index,
   } = props
 
   const startCollapsedAdj = startCollapsed
@@ -68,6 +77,37 @@ export const RawJsonField = (props: JsonFieldProps) => {
   }, [value, keysDict, onChange, name])
 
   const newPath = useMemo(() => [..._path], [_path])
+  const newIndexesArrayRaw = useMemo(
+    () =>
+      Array.isArray(value)
+        ? value.map((val, vIdx) =>
+            getAmountJsonChildren(
+              val,
+              [...newPath, vIdx],
+              _collapsedPaths ?? []
+            )
+          )
+        : [],
+    [value, newPath, _collapsedPaths]
+  )
+
+  const newIndexesArray = newIndexesArrayRaw.map((val, vIDx) => {
+    // const key = valueInKeysSorted[vIDx]
+    const newPath = [..._path]
+    if (_collapsedPaths?.includes(newPath.join('.'))) {
+      return 0
+    }
+    return val
+  })
+
+  const newIndexesArrayForChildren = newIndexesArrayRaw.map((val, vIDx) => {
+    const key = value[vIDx]
+    const newPath = [..._path, key]
+    if (_collapsedPaths?.includes(newPath.join('.'))) {
+      return 0
+    }
+    return val
+  })
 
   return (
     <Box>
@@ -87,12 +127,6 @@ export const RawJsonField = (props: JsonFieldProps) => {
                 slotProps={buttonSlotProps}
                 label={isCurrentFieldExpanded ? 'Collapse' : 'Expand'}
                 onClick={() => {
-                  console.log(
-                    'Collapsed Paths: ',
-                    _collapsedPaths,
-                    value,
-                    _path
-                  )
                   _setCollapsedPaths?.((current) =>
                     current.includes(_path.join('.'))
                       ? current.filter((path) => path !== _path.join('.'))
@@ -102,23 +136,27 @@ export const RawJsonField = (props: JsonFieldProps) => {
               />
             </Flex>
             {isCurrentFieldExpanded &&
-              value.map((item, index) => {
+              value.map((item, arrIdx) => {
                 const handleDeleteItem = () => {
-                  onChange(value?.filter((v, vIdx) => vIdx !== index) || [], {
+                  onChange(value?.filter((v, vIdx) => vIdx !== arrIdx) || [], {
                     target: { name: name ?? '' },
                   })
                 }
                 const handleChangeJsonField = (newValuePerItem: any) =>
                   onChange(
                     value?.map((v, vIdx) =>
-                      vIdx === index ? newValuePerItem : v
+                      vIdx === arrIdx ? newValuePerItem : v
                     ) || [],
                     { target: { name: name ?? '' } }
                   )
 
-                const newPath = [..._path, index]
+                const newPath = [..._path, arrIdx]
+                const indexesBefore = newIndexesArray
+                  .slice(0, arrIdx)
+                  .reduce((acc, item) => acc + item, 0)
+
                 return (
-                  <Box key={index} ml={2} position="relative">
+                  <Box key={arrIdx} ml={2} position="relative">
                     <JsonField
                       _collapsedPaths={_collapsedPaths}
                       _setCollapsedPaths={_setCollapsedPaths}
@@ -131,6 +169,10 @@ export const RawJsonField = (props: JsonFieldProps) => {
                       editing={editing}
                       setEditing={setEditing}
                       onChange={handleChangeJsonField}
+                      _index={(_index ?? 0) + 1 + indexesBefore}
+                      hideLineNumbers={hideLineNumbers}
+                      itemsWindowStartIndex={itemsWindowStartIndex}
+                      itemsWindowEndIndex={itemsWindowEndIndex}
                     />
                     {!useModal && !disabled && (
                       <Button
@@ -156,7 +198,14 @@ export const RawJsonField = (props: JsonFieldProps) => {
                 Add Item
               </Button>
             )}
-            <Typography color="gold">{`]`}</Typography>
+            <Typography color="gold">
+              {!hideLineNumbers &&
+                (_index ?? 0) +
+                  1 +
+                  newIndexesArray.reduce((acc, item) => acc + item, 0) +
+                  1}
+              :{`]`}
+            </Typography>
           </Box>
         ) : (
           <Flex>
@@ -188,6 +237,10 @@ export const RawJsonField = (props: JsonFieldProps) => {
           _collapsedPaths={_collapsedPaths}
           _setCollapsedPaths={_setCollapsedPaths}
           startCollapsed={startCollapsed}
+          _index={_index}
+          hideLineNumbers={hideLineNumbers}
+          itemsWindowStartIndex={itemsWindowStartIndex}
+          itemsWindowEndIndex={itemsWindowEndIndex}
         />
       )}
     </Box>
@@ -195,7 +248,14 @@ export const RawJsonField = (props: JsonFieldProps) => {
 }
 
 export const JsonField = (props: JsonFieldProps) => {
-  const { useModal, _collapsedPaths, _setCollapsedPaths, ...rest } = props
+  const {
+    useModal,
+    _collapsedPaths,
+    _setCollapsedPaths,
+    itemsWindowEndIndex,
+    itemsWindowStartIndex,
+    ...rest
+  } = props
   const [open, setOpen] = useState(false)
 
   const isChildComponent = !!_collapsedPaths // shall not be used by the dev user
@@ -204,14 +264,79 @@ export const JsonField = (props: JsonFieldProps) => {
   const handleClose = useCallback(() => setOpen(false), [])
   const handleOpen = useCallback(() => setOpen(true), [])
 
+  const [scrollPosition, setScrollPosition] = useState(0)
+  const rootContainerRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (open) {
+      setScrollPosition(window.scrollY)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+      window.scrollTo(0, scrollPosition)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (isChildComponent) {
+      return
+    }
+    const handleScroll = () => {
+      if (rootContainerRef.current) {
+        setScrollPosition(rootContainerRef.current.scrollTop)
+        const scrollPos = rootContainerRef.current.scrollTop
+      }
+    }
+    rootContainerRef.current?.addEventListener('scroll', handleScroll)
+    return () => {
+      rootContainerRef.current?.removeEventListener?.('scroll', handleScroll)
+    }
+  }, [isChildComponent])
+
+  useEffect(() => {
+    if (isChildComponent) {
+      return
+    }
+  }, [isChildComponent])
+
+  // if (!isChildComponent) {
+  //   console.log(
+  //     'CURRENT WINDOW IS ',
+  //     rootContainerRef.current?.clientHeight,
+  //     'indexes',
+  //     scrollPosition / lineHeight,
+  //     scrollPosition / lineHeight +
+  //       (rootContainerRef.current?.clientHeight ?? 0) / lineHeight
+  //   )
+  // }
+
+  const collapsedPathsAdj = isChildComponent ? _collapsedPaths : collapsedPaths
+  const setCollapsedPathsAdj = isChildComponent
+    ? _setCollapsedPaths
+    : setCollapsedPaths
+
+  const itemsWindowStartIndexAdj = isChildComponent
+    ? itemsWindowStartIndex
+    : Math.floor(scrollPosition / lineHeight)
+  const itemsWindowEndIndexAdj = isChildComponent
+    ? itemsWindowEndIndex
+    : Math.ceil(
+        (scrollPosition + (rootContainerRef.current?.clientHeight ?? 0)) /
+          lineHeight
+      )
+
   return useModal ? (
     <Fragment>
       <RawJsonField
         {...props}
-        _collapsedPaths={collapsedPaths}
-        _setCollapsedPaths={setCollapsedPaths}
+        _collapsedPaths={collapsedPathsAdj}
+        _setCollapsedPaths={setCollapsedPathsAdj}
+        itemsWindowStartIndex={itemsWindowStartIndexAdj}
+        itemsWindowEndIndex={itemsWindowEndIndexAdj}
       />
-      <Button label={'Edit'} onClick={handleOpen} variant="outlined" />
+      {!isChildComponent && (
+        <Button label={'Edit'} onClick={handleOpen} variant="outlined" />
+      )}
       <Modal
         open={open}
         onClose={handleClose}
@@ -227,17 +352,32 @@ export const JsonField = (props: JsonFieldProps) => {
           {...props}
           useModal={false}
           disableLabel
-          _collapsedPaths={collapsedPaths}
-          _setCollapsedPaths={setCollapsedPaths}
+          _collapsedPaths={collapsedPathsAdj}
+          _setCollapsedPaths={setCollapsedPathsAdj}
+          itemsWindowStartIndex={itemsWindowStartIndexAdj}
+          itemsWindowEndIndex={itemsWindowEndIndexAdj}
         />
       </Modal>
     </Fragment>
-  ) : (
+  ) : isChildComponent ? (
     <RawJsonField
       {...rest}
       useModal={false}
-      _collapsedPaths={collapsedPaths}
-      _setCollapsedPaths={setCollapsedPaths}
+      _collapsedPaths={collapsedPathsAdj}
+      _setCollapsedPaths={setCollapsedPathsAdj}
+      itemsWindowStartIndex={itemsWindowStartIndexAdj}
+      itemsWindowEndIndex={itemsWindowEndIndexAdj}
     />
+  ) : (
+    <Box height="100%" overflow="auto" ref={rootContainerRef}>
+      <RawJsonField
+        {...rest}
+        useModal={false}
+        _collapsedPaths={collapsedPathsAdj}
+        _setCollapsedPaths={setCollapsedPathsAdj}
+        itemsWindowStartIndex={itemsWindowStartIndexAdj}
+        itemsWindowEndIndex={itemsWindowEndIndexAdj}
+      />
+    </Box>
   )
 }

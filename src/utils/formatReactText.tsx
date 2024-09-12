@@ -1,3 +1,4 @@
+import Icon from '@mdi/react'
 import { Box } from '@mui/material'
 import { Fragment } from 'react/jsx-runtime'
 
@@ -12,7 +13,7 @@ const parseLink = (lineText: string) => {
       const nextText = lineText.slice(end)
       return (
         <Fragment key={idx}>
-          {prevText}
+          {parseIcon(prevText)}
           <a
             href={match.replace('(', '').replace(')', '')}
             target="_blank"
@@ -20,6 +21,30 @@ const parseLink = (lineText: string) => {
           >
             {match}
           </a>
+          {parseIcon(nextText)}
+        </Fragment>
+      )
+    }) ?? parseIcon(lineText)
+  )
+}
+
+const parseIcon = (lineText: string) => {
+  const regex = /\{mdi[A-z]+\}/g
+  const matches = lineText.match(regex)
+  console.log(' Icon matches: ', matches)
+  return (
+    matches?.map((match, idx) => {
+      const start = lineText.indexOf(match)
+      const end = start + match.length
+      const prevText = lineText.slice(0, start)
+      const nextText = lineText.slice(end)
+      const matchAdj = match.replaceAll('{', '').replaceAll('}', '')
+      return (
+        <Fragment key={idx}>
+          {prevText}
+          <Icon path={matchAdj} size={0.8} />
+          {/* {match} */}
+
           {nextText}
         </Fragment>
       )

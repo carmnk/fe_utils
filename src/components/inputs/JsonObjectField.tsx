@@ -7,6 +7,7 @@ import { Flex } from '../_wrapper'
 import { Button } from '../buttons'
 import { GenericInputField } from './GenericInputField'
 import { JsonField } from './JsonField'
+import { getAmountJsonChildren } from './getAmountJsonChildren'
 
 const tooltipSlotProps = { tooltip: { sx: { fontSize: 16 } } }
 const buttonSlotProps = {
@@ -91,6 +92,10 @@ export type JsonObjectFieldProps = {
   _setCollapsedPaths?: Dispatch<SetStateAction<string[]>>
   startCollapsed?: boolean
   startObjectsCollapsed?: boolean
+  _index?: number
+  hideLineNumbers?: boolean
+  itemsWindowEndIndex?: number
+  itemsWindowStartIndex?: number
 }
 
 export const JsonObjectField = (props: JsonObjectFieldProps) => {
@@ -107,6 +112,10 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     _setCollapsedPaths,
     startCollapsed,
     startObjectsCollapsed,
+    _index,
+    hideLineNumbers,
+    itemsWindowStartIndex,
+    itemsWindowEndIndex,
   } = props
   const startCollapsedAdj = startObjectsCollapsed ?? startCollapsed
 
@@ -260,12 +269,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
   )
 
   const handleToggleExpandObject = useCallback(() => {
-    console.log('Collapsed Paths: ', _collapsedPaths, _path)
-    _setCollapsedPaths?.((current) =>
-      current.includes(_path.join('.'))
+    _setCollapsedPaths?.((current) => {
+      return current.includes(_path.join('.'))
         ? current.filter((path) => path !== _path.join('.'))
         : [...current, _path.join('.')]
-    )
+    })
   }, [_collapsedPaths, _path, _setCollapsedPaths])
 
   const expandedItems = useMemo(
@@ -276,12 +284,44 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     ? expandedItems.includes(_path.join('.'))
     : !_collapsedPaths?.includes(_path.join('.'))
 
+  const valueInKeysSorted = useMemo(
+    () => Object.keys(valueIn ?? {}).sort(),
+    [valueIn]
+  )
+  const previosItemsAmountArrRaw = valueInKeysSorted.map((key) =>
+    getAmountJsonChildren(valueIn[key], [..._path, key], _collapsedPaths ?? [])
+  )
+  const previosItemsAmountArr = previosItemsAmountArrRaw.map((val, vIDx) => {
+    const key = valueInKeysSorted[vIDx]
+    const newPath = [..._path]
+    if (_collapsedPaths?.includes(newPath.join('.'))) {
+      return 0
+    }
+    return val
+  })
+  const previousItemsForChildren = previosItemsAmountArrRaw.map((val, vIDx) => {
+    const key = valueInKeysSorted[vIDx]
+    const newPath = [..._path, key]
+    if (_collapsedPaths?.includes(newPath.join('.'))) {
+      return 2
+    }
+    return val
+  })
+
+  const startLineIndex = (_index ?? 0) + 1
+  const endLineIndex =
+    startLineIndex +
+    previosItemsAmountArr.reduce((acc, curr) => acc + curr, 0) +
+    1
+
   return valueIn && typeof valueIn === 'object' ? (
     <Box>
       {Object.keys(valueIn ?? {})?.length ? (
         <Fragment>
           <Flex>
-            <Typography color="lightseagreen">{`{`}</Typography>
+            <Typography color="lightseagreen">{`${
+              !hideLineNumbers && startLineIndex
+            }:{`}</Typography>
             <Button
               icon={isCurrentFieldExpanded ? mdiMinus : mdiPlus}
               iconButton
@@ -295,48 +335,25 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
             <Box
               display="grid"
               gridTemplateColumns="max-content max-content"
-              gap={'2px 24px'}
+              gap={'0px 24px'}
               ml={2}
             >
-              {Object.keys(valueIn)
-                .sort()
-                ?.map((key) => {
-                  const propertyValue = valueIn[key as keyof typeof valueIn]
-                  // const pathUi = editing?.path
-                  // const mappedPath = [..._path, key]
-                  const handleClickPropName = (e: any) => {
-                    e.stopPropagation()
-                    console.debug('Current path is', _path, key, propertyValue)
-                    toggleChangePropName([..._path, key])
-                  }
-                  const handleChangePropName = (newValue: string, e: any) => {
-                    e?.stopPropagation()
-                    handleChangeTempValue(newValue)
-                  }
-                  const handleKeyUpPropName = (e: any) => {
-                    const newValue = e?.target?.value
-                    const name = editing?.path?.at(-1)
-                    if ((e.key === 'Enter' || e.key === 'Tab') && name) {
-                      handleChangePropertyName([..._path, key], newValue)
-                      const newPropertyValue = getNewPropertyValue(newValue)
-                      if (
-                        !Array.isArray(newPropertyValue) &&
-                        typeof newPropertyValue !== 'object' &&
-                        typeof newPropertyValue !== 'boolean'
-                      ) {
-                        // eslint-disable-next-line no-extra-semi
-                        ;(setEditing as any)((current: any) => ({
-                          ...(current ?? {}),
-                          tempValue: newPropertyValue,
-                          type: 'value',
-                          path: [..._path, newValue],
-                        }))
-                      } else {
-                        setEditing(null)
-                      }
-                    }
-                  }
-                  const handleChangeCompletedPropName = (newValue: any) => {
+              {valueInKeysSorted?.map((key, kIdx) => {
+                const propertyValue = valueIn[key as keyof typeof valueIn]
+                // const pathUi = editing?.path
+                // const mappedPath = [..._path, key]
+                const handleClickPropName = (e: any) => {
+                  e.stopPropagation()
+                  toggleChangePropName([..._path, key])
+                }
+                const handleChangePropName = (newValue: string, e: any) => {
+                  e?.stopPropagation()
+                  handleChangeTempValue(newValue)
+                }
+                const handleKeyUpPropName = (e: any) => {
+                  const newValue = e?.target?.value
+                  const name = editing?.path?.at(-1)
+                  if ((e.key === 'Enter' || e.key === 'Tab') && name) {
                     handleChangePropertyName([..._path, key], newValue)
                     const newPropertyValue = getNewPropertyValue(newValue)
                     if (
@@ -355,264 +372,298 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       setEditing(null)
                     }
                   }
-                  const handleClickAwayOnEdit = () => {
-                    const newTempValue = editing?.tempValue
-                    const newPropertyValue = getNewPropertyValue(newTempValue)
-                    if (newTempValue) {
-                      handleChangePropertyName([..._path, key], newTempValue)
-                      if (
-                        !Array.isArray(newPropertyValue) &&
-                        typeof newPropertyValue !== 'object' &&
-                        typeof newPropertyValue !== 'boolean'
-                      ) {
-                        // eslint-disable-next-line no-extra-semi
-                        ;(setEditing as any)((current: any) => ({
-                          ...current,
-                          tempValue: newPropertyValue,
-                          path: [..._path, newTempValue],
-                          type: 'value',
-                        }))
-                      } else {
-                        setEditing(null)
-                      }
+                }
+                const handleChangeCompletedPropName = (newValue: any) => {
+                  handleChangePropertyName([..._path, key], newValue)
+                  const newPropertyValue = getNewPropertyValue(newValue)
+                  if (
+                    !Array.isArray(newPropertyValue) &&
+                    typeof newPropertyValue !== 'object' &&
+                    typeof newPropertyValue !== 'boolean'
+                  ) {
+                    // eslint-disable-next-line no-extra-semi
+                    ;(setEditing as any)((current: any) => ({
+                      ...(current ?? {}),
+                      tempValue: newPropertyValue,
+                      type: 'value',
+                      path: [..._path, newValue],
+                    }))
+                  } else {
+                    setEditing(null)
+                  }
+                }
+                const handleClickAwayOnEdit = () => {
+                  const newTempValue = editing?.tempValue
+                  const newPropertyValue = getNewPropertyValue(newTempValue)
+                  if (newTempValue) {
+                    handleChangePropertyName([..._path, key], newTempValue)
+                    if (
+                      !Array.isArray(newPropertyValue) &&
+                      typeof newPropertyValue !== 'object' &&
+                      typeof newPropertyValue !== 'boolean'
+                    ) {
+                      // eslint-disable-next-line no-extra-semi
+                      ;(setEditing as any)((current: any) => ({
+                        ...current,
+                        tempValue: newPropertyValue,
+                        path: [..._path, newTempValue],
+                        type: 'value',
+                      }))
                     } else {
                       setEditing(null)
                     }
+                  } else {
+                    setEditing(null)
                   }
-                  const handleDeleteProperty = (e: any) => {
-                    e.stopPropagation()
-                    const path = [..._path, key]
-                    // console.debug('PATH', path)
-                    handleRemoveProperty(path)
-                  }
+                }
+                const handleDeleteProperty = (e: any) => {
+                  e.stopPropagation()
+                  const path = [..._path, key]
+                  // console.debug('PATH', path)
+                  handleRemoveProperty(path)
+                }
 
-                  const handleChangePropValue = (newValue: string, e: any) => {
-                    e?.stopPropagation()
-                    handleChangeTempValue(newValue)
-                  }
-                  const handleChangeCompletedPropValue = (
-                    newValue: any,
-                    e: any
-                  ) => {
-                    handleChangePropertyValue([..._path, key], newValue)
-                  }
+                const handleChangePropValue = (newValue: string, e: any) => {
+                  e?.stopPropagation()
+                  handleChangeTempValue(newValue)
+                }
+                const handleChangeCompletedPropValue = (
+                  newValue: any,
+                  e: any
+                ) => {
+                  handleChangePropertyValue([..._path, key], newValue)
+                }
 
-                  const handleKeyUpPropValue = (e: any) => {
-                    if (e.key === 'Enter') {
-                      handleChangePropertyValue(
-                        [..._path, key],
-                        editing?.tempValue
-                      )
-                      setEditing(null)
-                    }
-                  }
-                  const handleToggleChangePropValue = (e: any) => {
-                    e.stopPropagation()
-                    if (
-                      disabled ||
-                      Array.isArray(propertyValue) ||
-                      typeof propertyValue === 'object'
-                    ) {
-                      setEditing(null)
-                      return
-                    }
-                    toggleChangePropValue([..._path, key])
-                  }
-                  const handleChangeSubJsonField = (
-                    newValuePerSubobject: any
-                  ) =>
-                    onChange(
-                      {
-                        ...valueIn,
-                        [key]: newValuePerSubobject,
-                      },
-                      { target: { name: nameIn ?? '' } }
-                    )
-                  const subJsonKeysDict =
-                    [..._path, key]?.length &&
-                    [..._path, key]?.length >= 1 &&
-                    [..._path, key]?.at(-1)?.toString().includes('&') // last item of path is a jss subobject
-                      ? keysDict
-                      : keysDict?.[key]
-
-                  const handleChangeBooleanValue = () => {
-                    if (disabled) {
-                      return
-                    }
+                const handleKeyUpPropValue = (e: any) => {
+                  if (e.key === 'Enter') {
                     handleChangePropertyValue(
                       [..._path, key],
-                      !propertyValue as any
+                      editing?.tempValue
                     )
+                    setEditing(null)
+                  }
+                }
+                const handleToggleChangePropValue = (e: any) => {
+                  e.stopPropagation()
+                  if (
+                    disabled ||
+                    Array.isArray(propertyValue) ||
+                    typeof propertyValue === 'object'
+                  ) {
+                    setEditing(null)
                     return
                   }
+                  toggleChangePropValue([..._path, key])
+                }
+                const handleChangeSubJsonField = (newValuePerSubobject: any) =>
+                  onChange(
+                    {
+                      ...valueIn,
+                      [key]: newValuePerSubobject,
+                    },
+                    { target: { name: nameIn ?? '' } }
+                  )
+                const subJsonKeysDict =
+                  [..._path, key]?.length &&
+                  [..._path, key]?.length >= 1 &&
+                  [..._path, key]?.at(-1)?.toString().includes('&') // last item of path is a jss subobject
+                    ? keysDict
+                    : keysDict?.[key]
 
-                  return (
-                    <Fragment key={key}>
-                      <Flex
-                        gap={2}
-                        justifyContent="space-between"
-                        onClick={handleClickPropName}
-                        position="relative"
-                        minWidth={0}
-                        maxWidth={200}
-                      >
-                        {!disabled &&
-                        editing?.type === 'name' &&
-                        isEqual(editing?.path, [..._path, key]) ? (
-                          <ClickAwayListener
-                            onClickAway={handleClickAwayOnEdit}
-                          >
-                            <Box
-                              position={'relative'}
-                              minWidth={0}
-                              width="100%"
-                              height={35}
-                            >
-                              <GenericInputField
-                                {...{ options: proposedPropertyKeyOptions }}
-                                autoFocus
-                                type={
-                                  proposedPropertyKeyOptions?.length
-                                    ? 'autocomplete'
-                                    : 'text'
-                                }
-                                value={editing?.tempValue}
-                                onClick={stopPropagation}
-                                onChange={handleChangePropName}
-                                onKeyUp={handleKeyUpPropName}
-                                onChangeCompleted={
-                                  handleChangeCompletedPropName
-                                }
-                                size={'small'}
-                                {...genericInputFieldProps}
-                                disableHelperText
-                                disableLabel
-                              />
-                            </Box>
-                          </ClickAwayListener>
-                        ) : (
-                          <>
-                            <Tooltip
-                              placement="top"
-                              arrow
-                              title={key}
-                              slotProps={tooltipSlotProps}
-                              disableInteractive
-                            >
-                              <Typography
-                                whiteSpace="nowrap"
-                                overflow="hidden"
-                                textOverflow="ellipsis"
-                                color="inherit"
-                              >
-                                {`${key}:`}
-                              </Typography>
-                            </Tooltip>
-                            {!disabled && (
-                              <Button
-                                iconButton
-                                icon={mdiDelete}
-                                iconSize={0.5}
-                                sx={{ width: '1rem', height: '1rem', mt: 0.5 }}
-                                onClick={handleDeleteProperty}
-                              />
-                            )}
-                          </>
-                        )}
-                      </Flex>
+                const handleChangeBooleanValue = () => {
+                  if (disabled) {
+                    return
+                  }
+                  handleChangePropertyValue(
+                    [..._path, key],
+                    !propertyValue as any
+                  )
+                  return
+                }
+
+                const currentLineIndex =
+                  startLineIndex +
+                  1 +
+                  previousItemsForChildren
+                    .slice(0, kIdx)
+                    .reduce((acc, curr) => acc + curr, 0)
+                const isOutsideVirtualizationWindow =
+                  currentLineIndex < (itemsWindowStartIndex ?? 0) - 10 ||
+                  currentLineIndex > (itemsWindowEndIndex ?? 0) + 10
+                return (
+                  <Fragment key={key}>
+                    <Flex
+                      gap={2}
+                      justifyContent="space-between"
+                      onClick={handleClickPropName}
+                      position="relative"
+                      minWidth={0}
+                      maxWidth={200}
+                    >
                       {!disabled &&
-                      editing?.type === 'value' &&
+                      editing?.type === 'name' &&
                       isEqual(editing?.path, [..._path, key]) ? (
-                        <ClickAwayListener onClickAway={() => setEditing(null)}>
-                          <Box position={'relative'} minWidth={0} height={35}>
+                        <ClickAwayListener onClickAway={handleClickAwayOnEdit}>
+                          <Box
+                            position={'relative'}
+                            minWidth={0}
+                            width="100%"
+                            height={35}
+                          >
+                            {!hideLineNumbers &&
+                              currentLineIndex.toString() + ':'}
                             <GenericInputField
+                              {...{ options: proposedPropertyKeyOptions }}
+                              autoFocus
                               type={
-                                typeof propertyValue === 'number'
-                                  ? 'number'
+                                proposedPropertyKeyOptions?.length
+                                  ? 'autocomplete'
                                   : 'text'
                               }
-                              {...{ disableNumberSeparator: true }}
-                              autoFocus
                               value={editing?.tempValue}
-                              onChange={handleChangePropValue}
                               onClick={stopPropagation}
-                              onChangeCompleted={handleChangeCompletedPropValue}
-                              onKeyUp={handleKeyUpPropValue}
+                              onChange={handleChangePropName}
+                              onKeyUp={handleKeyUpPropName}
+                              onChangeCompleted={handleChangeCompletedPropName}
                               size={'small'}
-                              {...genericInputFieldPropValueProps}
+                              {...genericInputFieldProps}
                               disableHelperText
                               disableLabel
                             />
                           </Box>
                         </ClickAwayListener>
+                      ) : isOutsideVirtualizationWindow ? (
+                        <Box height={28.8} width="120px" visibility="hidden">
+                          _
+                        </Box>
                       ) : (
-                        <Box
-                          color={
-                            typeof propertyValue === 'number'
-                              ? 'lightgreen'
-                              : typeof propertyValue === 'string'
-                                ? 'orange'
-                                : typeof propertyValue === 'boolean'
-                                  ? 'royalblue'
-                                  : 'gray'
-                          }
-                          whiteSpace="nowrap"
-                          overflow="hidden"
-                          textOverflow="ellipsis"
-                          onClick={handleToggleChangePropValue}
-                        >
-                          {Array.isArray(propertyValue) ? (
-                            <JsonField
-                              disabled={disabled}
-                              name={nameIn}
-                              value={propertyValue}
-                              _path={[..._path, key]}
-                              editing={editing}
-                              setEditing={setEditing as any}
-                              onChange={handleChangeSubJsonField}
-                              keysDict={keysDict?.[key]}
-                            />
-                          ) : ['object'].includes(typeof propertyValue) ? (
-                            <JsonField
-                              disabled={disabled}
-                              name={nameIn}
-                              value={propertyValue}
-                              _path={[..._path, key]}
-                              editing={editing}
-                              setEditing={setEditing as any}
-                              onChange={handleChangeSubJsonField}
-                              keysDict={subJsonKeysDict}
-                            />
-                          ) : typeof propertyValue === 'boolean' ? (
-                            <Flex alignItems="center" gap={1}>
-                              {propertyValue.toString()}{' '}
-                              <GenericInputField
-                                value={propertyValue}
-                                type="bool"
-                                size="small"
-                                sx={{ p: 0, pl: 1 }}
-                                onChange={handleChangeBooleanValue}
-                              />
-                            </Flex>
-                          ) : typeof propertyValue === 'string' ? (
-                            <Tooltip
-                              title={propertyValue}
-                              slotProps={tooltipSlotProps}
-                              placement="top"
-                              arrow
-                              disableInteractive
+                        <>
+                          <Tooltip
+                            placement="top"
+                            arrow
+                            title={key}
+                            slotProps={tooltipSlotProps}
+                            disableInteractive
+                          >
+                            <Typography
+                              whiteSpace="nowrap"
+                              overflow="hidden"
+                              textOverflow="ellipsis"
+                              color="inherit"
                             >
-                              <Typography
-                                width={200}
-                                whiteSpace="nowrap"
-                                overflow="hidden"
-                                textOverflow="ellipsis"
-                                color="inherit"
-                              >
-                                {`"${propertyValue}"`}
-                              </Typography>
-                            </Tooltip>
-                          ) : (
+                              {!hideLineNumbers &&
+                                currentLineIndex.toString() + ':'}
+                              {`${key}:`}
+                            </Typography>
+                          </Tooltip>
+                          {!disabled && (
+                            <Button
+                              iconButton
+                              icon={mdiDelete}
+                              iconSize={0.5}
+                              sx={{ width: '1rem', height: '1rem', mt: 0.5 }}
+                              onClick={handleDeleteProperty}
+                            />
+                          )}
+                        </>
+                      )}
+                    </Flex>
+                    {!disabled &&
+                    editing?.type === 'value' &&
+                    isEqual(editing?.path, [..._path, key]) ? (
+                      <ClickAwayListener onClickAway={() => setEditing(null)}>
+                        <Box position={'relative'} minWidth={0} height={35}>
+                          <GenericInputField
+                            type={
+                              typeof propertyValue === 'number'
+                                ? 'number'
+                                : 'text'
+                            }
+                            {...{ disableNumberSeparator: true }}
+                            autoFocus
+                            value={editing?.tempValue}
+                            onChange={handleChangePropValue}
+                            onClick={stopPropagation}
+                            onChangeCompleted={handleChangeCompletedPropValue}
+                            onKeyUp={handleKeyUpPropValue}
+                            size={'small'}
+                            {...genericInputFieldPropValueProps}
+                            disableHelperText
+                            disableLabel
+                          />
+                        </Box>
+                      </ClickAwayListener>
+                    ) : (
+                      <Box
+                        color={
+                          typeof propertyValue === 'number'
+                            ? 'lightgreen'
+                            : typeof propertyValue === 'string'
+                              ? 'orange'
+                              : typeof propertyValue === 'boolean'
+                                ? 'royalblue'
+                                : 'gray'
+                        }
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        onClick={handleToggleChangePropValue}
+                      >
+                        {Array.isArray(propertyValue) ? (
+                          <JsonField
+                            disabled={disabled}
+                            name={nameIn}
+                            value={propertyValue}
+                            _path={[..._path, key]}
+                            editing={editing}
+                            setEditing={setEditing as any}
+                            onChange={handleChangeSubJsonField}
+                            keysDict={keysDict?.[key]}
+                            _index={startLineIndex + kIdx} // array start in the same line of the containing object prop
+                            _collapsedPaths={_collapsedPaths}
+                            _setCollapsedPaths={_setCollapsedPaths}
+                            itemsWindowStartIndex={itemsWindowStartIndex}
+                            itemsWindowEndIndex={itemsWindowEndIndex}
+                          />
+                        ) : ['object'].includes(typeof propertyValue) ? (
+                          <JsonField
+                            disabled={disabled}
+                            name={nameIn}
+                            value={propertyValue}
+                            _path={[..._path, key]}
+                            editing={editing}
+                            setEditing={setEditing as any}
+                            onChange={handleChangeSubJsonField}
+                            keysDict={subJsonKeysDict}
+                            _index={startLineIndex + kIdx} // start on the same line as containing object prop
+                            _collapsedPaths={_collapsedPaths}
+                            _setCollapsedPaths={_setCollapsedPaths}
+                            itemsWindowStartIndex={itemsWindowStartIndex}
+                            itemsWindowEndIndex={itemsWindowEndIndex}
+                          />
+                        ) : isOutsideVirtualizationWindow ? (
+                          <Box height={28.8} width="120px" visibility="hidden">
+                            _
+                          </Box>
+                        ) : typeof propertyValue === 'boolean' ? (
+                          <Flex alignItems="center" gap={1}>
+                            {propertyValue.toString()}{' '}
+                            <GenericInputField
+                              value={propertyValue}
+                              type="bool"
+                              size="small"
+                              sx={{ p: 0, pl: 1 }}
+                              onChange={handleChangeBooleanValue}
+                            />
+                          </Flex>
+                        ) : typeof propertyValue === 'string' ? (
+                          <Tooltip
+                            title={propertyValue}
+                            slotProps={tooltipSlotProps}
+                            placement="top"
+                            arrow
+                            disableInteractive
+                          >
                             <Typography
                               width={200}
                               whiteSpace="nowrap"
@@ -620,14 +671,25 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               textOverflow="ellipsis"
                               color="inherit"
                             >
-                              {propertyValue as number}
+                              {`"${propertyValue}"`}
                             </Typography>
-                          )}
-                        </Box>
-                      )}
-                    </Fragment>
-                  )
-                })}
+                          </Tooltip>
+                        ) : (
+                          <Typography
+                            width={200}
+                            whiteSpace="nowrap"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            color="inherit"
+                          >
+                            {propertyValue as number}
+                          </Typography>
+                        )}
+                      </Box>
+                    )}
+                  </Fragment>
+                )
+              })}
 
               {!disabled && (
                 <Button
@@ -643,7 +705,10 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
               )}
             </Box>
           )}
-          <Typography color="lightseagreen">{`}`}</Typography>
+          <Typography color="lightseagreen">
+            {!hideLineNumbers && endLineIndex.toString() + ':'}
+            {`}`}
+          </Typography>
         </Fragment>
       ) : (
         <Flex justifyContent="flex-start" alignItems="center" gap={1}>

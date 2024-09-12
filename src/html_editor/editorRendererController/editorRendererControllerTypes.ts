@@ -1,11 +1,9 @@
-import { EditorStateType, ElementType, FastEditorState } from './editorState'
+import { EditorStateType, ElementType } from './editorState'
 
 export type EditorRendererControllerType<
   ControllreActionsType extends { [key: string]: any },
 > = {
   editorState: EditorStateType
-  fastEditorState: FastEditorState
-  setFastEditorState: React.Dispatch<React.SetStateAction<FastEditorState>>
   appController: EditorControllerAppStateReturnType
   setEditorState: React.Dispatch<React.SetStateAction<EditorStateType>>
   getRecursiveChildren: (
