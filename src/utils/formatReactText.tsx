@@ -2,7 +2,7 @@ import Icon from '@mdi/react'
 import { Box } from '@mui/material'
 import { Fragment } from 'react/jsx-runtime'
 
-const parseLink = (lineText: string) => {
+const parseLink = (lineText: string, icons?: Record<string, string>) => {
   const regex = /(https?:\/\/[^\s]+)/g
   const matches = lineText.match(regex)
   return (
@@ -13,7 +13,7 @@ const parseLink = (lineText: string) => {
       const nextText = lineText.slice(end)
       return (
         <Fragment key={idx}>
-          {parseIcon(prevText)}
+          {parseIcon(prevText, icons)}
           <a
             href={match.replace('(', '').replace(')', '')}
             target="_blank"
@@ -21,14 +21,15 @@ const parseLink = (lineText: string) => {
           >
             {match}
           </a>
-          {parseIcon(nextText)}
+          {parseIcon(nextText, icons)}
         </Fragment>
       )
     }) ?? parseIcon(lineText)
   )
 }
 
-const parseIcon = (lineText: string) => {
+const parseIcon = (lineText: string, icons?: Record<string, string>) => {
+  if (!icons) return lineText
   const regex = /\{mdi[A-z]+\}/g
   const matches = lineText.match(regex)
   console.log(' Icon matches: ', matches)
@@ -42,7 +43,7 @@ const parseIcon = (lineText: string) => {
       return (
         <Fragment key={idx}>
           {prevText}
-          <Icon path={matchAdj} size={0.8} />
+          <Icon path={icons[matchAdj]} size={0.8} />
           {/* {match} */}
 
           {nextText}
@@ -52,7 +53,7 @@ const parseIcon = (lineText: string) => {
   )
 }
 
-const inlineFormat = (lineText: string) => {
+const inlineFormat = (lineText: string, icons?: Record<string, string>) => {
   const boldMarkDown = /\*\*(.*?)\*\*/g
   // const boldMarkdownWithUnderScore = /__(.*?)__/g;
   const boldMarkDownMatches = lineText.match(boldMarkDown)
@@ -63,7 +64,7 @@ const inlineFormat = (lineText: string) => {
   }))
 
   return !boldMarkDownMatches || !boldMatches?.length
-    ? parseLink(lineText)
+    ? parseLink(lineText, icons)
     : boldMatches.reduce<any[]>((acc, match, idx, arr) => {
         const { match: bold, start, end } = match
         const prevBoldEnd = arr[idx - 1]?.end ?? 0
@@ -71,7 +72,7 @@ const inlineFormat = (lineText: string) => {
         const boldText = bold.slice(2, bold.length - 2)
         const boldComponent = (
           <Box component="strong" key={idx}>
-            {parseLink(boldText)}
+            {parseLink(boldText, icons)}
           </Box>
         )
         return [
@@ -85,7 +86,10 @@ const inlineFormat = (lineText: string) => {
       }, [])
 }
 
-export const parseSimpleFormating = (text: string) => {
+export const parseSimpleFormating = (
+  text: string,
+  icons?: Record<string, string>
+) => {
   return text.split('\n').map((txt, tIdx, arr) => (
     <Fragment key={tIdx}>
       {txt?.trim().startsWith('•') ? (
@@ -98,11 +102,11 @@ export const parseSimpleFormating = (text: string) => {
             '&::marker': { pl: 2 },
           }}
         >
-          {inlineFormat(txt.trim().slice(1)) as any}
+          {inlineFormat(txt.trim().slice(1), icons) as any}
         </Box>
       ) : (
         <>
-          {inlineFormat(txt)} <br />
+          {inlineFormat(txt, icons)} <br />
         </>
       )}
     </Fragment>
