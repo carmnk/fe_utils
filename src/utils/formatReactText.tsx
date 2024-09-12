@@ -24,7 +24,7 @@ const parseLink = (lineText: string, icons?: Record<string, string>) => {
           {parseIcon(nextText, icons)}
         </Fragment>
       )
-    }) ?? parseIcon(lineText)
+    }) ?? parseIcon(lineText, icons)
   )
 }
 
