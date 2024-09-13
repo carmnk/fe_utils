@@ -162,8 +162,8 @@ export const HtmlRenderer = <
                 )
               ? 'ew-resize'
               : 'default',
-      border: isInHelpMode ? '3px solid ' + 'limegreen' : (undefined as any),
-      background: isInHelpModeSelected ? '#32CD3233' : (undefined as any),
+      border: isInHelpMode ? '3px solid limegreen' : (undefined as any),
+      bgcolor: isInHelpModeSelected ? '#32CD3233' : (undefined as any),
     }
   }, [
     editorState?.ui?.dragging,
