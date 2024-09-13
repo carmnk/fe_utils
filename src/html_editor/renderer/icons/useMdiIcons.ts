@@ -3,7 +3,7 @@ import {
   EditorStateType,
   ElementType,
 } from '../../editorRendererController/editorState'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 // extracts a component's icon keys (properties of type 'icon')
 export const getIconKeys = (elementType: any, components: any[]) => {
@@ -36,12 +36,14 @@ export const getIconKeys = (elementType: any, components: any[]) => {
   return { directIconKeys, arrayOfObjectProperties, arrayOfObjectIconKeys }
 }
 
+type Icons = { [key: string]: string }
+
 export const useMdiIcons = (
   selectedPageElements: ElementType[],
   components: any[],
   properties: EditorStateType['properties']
-) => {
-  const [icons, setIcons] = useState<{ [key: string]: string }>({})
+): [{ [key: string]: string }, Dispatch<SetStateAction<Icons>>] => {
+  const [icons, setIcons] = useState<Icons>({})
 
   useEffect(() => {
     const getPropByName = (key: string, element_id: string) =>
@@ -90,5 +92,5 @@ export const useMdiIcons = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPageElements])
 
-  return icons
+  return [icons, setIcons]
 }

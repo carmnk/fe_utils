@@ -35,6 +35,8 @@ export type HtmlRendererProps<
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
   pageName: string //const pageName = location.pathname.slice(1) || 'index'
   navigate: any
+  isInHelpMode?: boolean
+  isInHelpModeSelected?: boolean
 }
 
 export const HtmlRenderer = <
@@ -56,11 +58,13 @@ export const HtmlRenderer = <
     appController,
     pageName,
     navigate,
+    isInHelpMode,
+    isInHelpModeSelected,
   } = props
 
   const selectElement = actions?.ui.selectElement
 
-  const icons = useMdiIcons(
+  const [icons, setIcons] = useMdiIcons(
     selectedPageElements,
     COMPONENT_MODELS,
     editorState.properties
@@ -158,11 +162,15 @@ export const HtmlRenderer = <
                 )
               ? 'ew-resize'
               : 'default',
+      border: isInHelpMode ? '3px solid ' + 'limegreen' : (undefined as any),
+      background: isInHelpModeSelected ? '#32CD3233' : (undefined as any),
     }
   }, [
     editorState?.ui?.dragging,
     editorState.ui?.dragMode,
     editorState.ui?.selected?.hoveredElementSide,
+    isInHelpMode,
+    isInHelpModeSelected,
   ])
 
   const windowSize = useWindowSize()
@@ -208,6 +216,7 @@ export const HtmlRenderer = <
           bgcolor="background.default"
           color={'text.primary'}
           sx={containerStyles}
+          id="editorRenderer"
         >
           {renderPage(pageName)}
         </Box>
