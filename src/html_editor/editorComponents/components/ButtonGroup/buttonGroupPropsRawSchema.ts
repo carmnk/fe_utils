@@ -1,4 +1,4 @@
-import { iconNames } from '../../../defs/mdiIcons'
+import { ICON_NAMES } from '../../../defs/iconNames'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 import { buttonEditorComponentDef } from '../Button/buttonDef'
 
@@ -39,7 +39,7 @@ export const ButtonGroupPropsSchema: ExtendedObjectSchemaType = {
               type: PropertyType.String,
               form: { showInArrayList: true },
             },
-            icon: { type: PropertyType.icon, enum: iconNames },
+            icon: { type: PropertyType.icon, enum: ICON_NAMES },
           },
         },
       ],

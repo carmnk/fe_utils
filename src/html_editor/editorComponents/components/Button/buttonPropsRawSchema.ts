@@ -1,5 +1,5 @@
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
-import { iconNames } from '../../../defs/mdiIcons'
+import { ICON_NAMES } from '../../../defs/iconNames'
 import { MuiSize } from '../../../defs/muiSizeDict'
 import { BASE_POINTER_EVENTS } from '../../commonSchemas/basePointerEvents'
 import { CLIPBOARD_EVENTS } from '../../commonSchemas/clipboardEvents'
@@ -79,13 +79,13 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
     icon: {
       type: PropertyType.icon,
       required: false,
-      enum: iconNames,
+      enum: ICON_NAMES,
       category: 'shortcut',
     },
     endIcon: {
       type: PropertyType.icon,
       required: false,
-      enum: iconNames,
+      enum: ICON_NAMES,
       category: 'shortcut',
     },
     iconColor: {

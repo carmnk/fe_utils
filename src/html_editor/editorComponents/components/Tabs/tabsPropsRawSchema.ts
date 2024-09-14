@@ -1,5 +1,5 @@
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
-import { iconNames } from '../../../defs/mdiIcons'
+import { ICON_NAMES } from '../../../defs/iconNames'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 
 // raw schema to use until schema can be generated reliably from typescript parser/checker
@@ -21,7 +21,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
               type: PropertyType.String,
               form: { showInArrayList: true },
             },
-            icon: { type: PropertyType.icon, enum: iconNames },
+            icon: { type: PropertyType.icon, enum: ICON_NAMES },
           },
         },
       ],

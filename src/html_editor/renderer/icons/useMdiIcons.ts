@@ -1,9 +1,9 @@
-import * as iconLibrary from '@mdi/js'
 import {
   EditorStateType,
   ElementType,
 } from '../../editorRendererController/editorState'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { importIconByName } from './asyncImportMdiIcon'
 
 // extracts a component's icon keys (properties of type 'icon')
 export const getIconKeys = (elementType: any, components: any[]) => {
@@ -80,12 +80,20 @@ export const useMdiIcons = (
         .filter((el) => el && !Object.keys(icons).includes(el))
       if (!iconsNames.length) return
       const iconsNew: any = {}
-      for (const iconName of iconsNames) {
+
+      for (let i = 0; i < iconsNames.length; i++) {
+        const iconName = iconsNames[i]
         if (!icons[iconName]) {
-          iconsNew[iconName] =
-            iconLibrary?.[iconName as keyof typeof iconLibrary]
+          iconsNew[iconName] = await importIconByName(iconName)
         }
       }
+
+      // for (const iconName of iconsNames) {
+      //   if (!icons[iconName]) {
+      //     iconsNew[iconName] =
+      //       iconLibrary?.[iconName as keyof typeof iconLibrary]
+      //   }
+      // }
       setIcons((current) => ({ ...current, ...iconsNew }))
     }
     updateIcons()

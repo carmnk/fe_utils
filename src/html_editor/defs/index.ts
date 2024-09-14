@@ -1,4 +1,4 @@
-export { iconNames, iconOptions } from './mdiIcons'
+export { ICON_NAMES } from './iconNames'
 
 export {
   CSS_ALIGN,
