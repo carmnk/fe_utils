@@ -63,6 +63,7 @@ export const HtmlRenderer = <
   } = props
 
   const selectElement = actions?.ui.selectElement
+  const themeAdj = theme ?? editorState.theme
 
   const [icons, setIcons] = useMdiIcons(
     selectedPageElements,
@@ -97,7 +98,7 @@ export const HtmlRenderer = <
         selectedElement,
         actions,
         onSelectElement: handleSelectElement,
-        theme,
+        theme: themeAdj,
         isProduction,
         icons,
         isPointerProduction: isProduction
@@ -117,7 +118,7 @@ export const HtmlRenderer = <
       actions,
       handleSelectElement,
       icons,
-      theme,
+      themeAdj,
       isProduction,
       OverlayComponent,
       navigate,
@@ -163,14 +164,12 @@ export const HtmlRenderer = <
               ? 'ew-resize'
               : 'default',
       border: isInHelpMode ? '3px solid limegreen' : (undefined as any),
-      bgcolor: isInHelpModeSelected ? '#32CD3233' : (undefined as any),
     }
   }, [
     editorState?.ui?.dragging,
     editorState.ui?.dragMode,
     editorState.ui?.selected?.hoveredElementSide,
     isInHelpMode,
-    isInHelpModeSelected,
   ])
 
   const windowSize = useWindowSize()
@@ -209,7 +208,7 @@ export const HtmlRenderer = <
   ])
 
   return (
-    <ThemeProvider theme={theme ?? editorState.theme}>
+    <ThemeProvider theme={themeAdj}>
       {isProduction ? (
         <Box
           height="100%"
@@ -224,7 +223,7 @@ export const HtmlRenderer = <
         <Box
           zIndex={10} // for preview mode -> must be on top of the right menu
           flexGrow={1}
-          bgcolor={'background.default'}
+          bgcolor={isInHelpModeSelected ? '#32CD3233' : 'background.default'}
           color={'text.primary'}
           overflow={'auto'}
           position={editorState.ui.previewMode ? 'absolute' : 'relative'}
