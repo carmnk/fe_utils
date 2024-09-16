@@ -205,6 +205,7 @@ export const GenericForm = (props: GenericFormProps) => {
                     fieldProps={commonFieldProps}
                     key={field.name}
                     useChangeCompleted={useChangeCompleted}
+                    fields={fields}
                   />
                 </Grid>
                 {field?.width12 && field?.fillWidth && (

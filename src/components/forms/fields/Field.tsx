@@ -88,6 +88,7 @@ export type FieldProps = {
   onFileChange?: any
   fieldProps?: GenericInputFieldProps
   useChangeCompleted?: boolean
+  fields: any
 }
 
 export const Field = (props: FieldProps) => {
@@ -104,6 +105,7 @@ export const Field = (props: FieldProps) => {
     _path,
     fieldProps,
     useChangeCompleted,
+    fields,
   } = props as FieldProps
 
   const handleChange = useCallback(
@@ -169,6 +171,7 @@ export const Field = (props: FieldProps) => {
       field={field as any}
       onFileChange={onFileChange}
       files={files}
+      fields={fields}
     />
   ) : ['array', 'object', 'string-array'].includes(field.type) ? null : (
     <GenericInputField

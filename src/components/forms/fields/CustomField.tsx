@@ -31,6 +31,7 @@ export type CustomFieldComponentProps<F, P> = {
   field: CustomFieldDefinition<F, P>
   onFileChange?: (name: string, files: File[]) => void
   files?: { [key: string]: { file: File; filename: string }[] }
+  fields: any
 }
 
 export const CustomField = <
@@ -50,6 +51,7 @@ export const CustomField = <
     field,
     files,
     onFileChange,
+    fields,
   } = props
 
   const FieldComponent = useMemo(() => field.component, [field])
@@ -77,6 +79,7 @@ export const CustomField = <
         onFileChange={onFileChange}
         field={field}
         key={field.name}
+        fields={fields}
       />
     </Box>
   )
