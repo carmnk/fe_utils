@@ -236,7 +236,18 @@ export const transformEditorStateFromPayload = (
             element?.element_type !== 'Typography')
             ? (() => {
                 try {
-                  return JSON.parse(prop.prop_value)
+                  const propValue = prop.prop_value
+                  // check if propValue is a placeholder
+                  if (typeof propValue === 'string') {
+                    const regexPlaceholder = /{(_data|form|props)\.[^}]*}/g
+                    const matches = propValue?.match?.(regexPlaceholder)
+                    if (matches) {
+                      return propValue
+                    }
+                  }
+
+                  // const isPlaceholder =
+                  return JSON.parse(propValue)
                 } catch (e) {
                   // console.error(e, prop)
                   return prop.prop_value
