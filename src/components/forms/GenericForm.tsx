@@ -93,6 +93,7 @@ export type GenericFormProps<
   }
   rootInjection?: ReactNode
   useChangeCompleted?: boolean
+  disableInitialArrayDivider?: boolean
 }
 
 const preventDefault = (e: React.KeyboardEvent) => {
@@ -121,6 +122,7 @@ export const GenericForm = (props: GenericFormProps) => {
     disableUseFormElement,
     rootInjection,
     useChangeCompleted,
+    disableInitialArrayDivider,
   } = props
 
   const {
@@ -206,6 +208,7 @@ export const GenericForm = (props: GenericFormProps) => {
                     key={field.name}
                     useChangeCompleted={useChangeCompleted}
                     fields={fields}
+                    subforms={subforms}
                   />
                 </Grid>
                 {field?.width12 && field?.fillWidth && (
@@ -236,6 +239,7 @@ export const GenericForm = (props: GenericFormProps) => {
                   slotProps={slotProps}
                   disableUseFormElement={disableUseFormElement}
                   key={field.name}
+                  disableInitialDivider={disableInitialArrayDivider}
                 />
               </Grid>
             )

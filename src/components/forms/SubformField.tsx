@@ -21,6 +21,7 @@ export type SubformFieldProps = {
   slotProps: GenericFormProps['slotProps']
   disableUseFormElement?: boolean
   injections?: GenericFormProps['injections']
+  disableInitialDivider?: boolean
 }
 
 export const SubformField = (props: SubformFieldProps) => {
@@ -38,6 +39,7 @@ export const SubformField = (props: SubformFieldProps) => {
     slotProps,
     disableUseFormElement,
     injections,
+    disableInitialDivider,
   } = props
 
   const [ui, setUi] = useState({
@@ -359,9 +361,11 @@ export const SubformField = (props: SubformFieldProps) => {
     </Fragment>
   ) : field.type === 'array' ? (
     <Fragment key={fIdx}>
-      <Box py={2}>
-        <Divider />
-      </Box>
+      {!disableInitialDivider && (
+        <Box py={2}>
+          <Divider />
+        </Box>
+      )}
       <Typography fontWeight="bold">{fieldName}</Typography>
       <Box>
         <Box>
