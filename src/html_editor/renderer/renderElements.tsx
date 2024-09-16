@@ -454,16 +454,19 @@ export const renderElements = <
 
     if (element._type.toLowerCase().includes('treeview')) {
       console.log(element._type, elementPropsObject, element)
-      console.log('ABBCC', {
-        ...(elementPropsObject ?? {}),
-        ...injectedIconsDict,
-        ...elementArrayIconInjectionDict,
-        rootInjection: !disableOverlay && OverlayComponent,
-        ...eventHandlerProps,
-      }),
+      console.log(
+        'ABBCC',
+        {
+          ...(elementPropsObject ?? {}),
+          ...injectedIconsDict,
+          ...elementArrayIconInjectionDict,
+          rootInjection: !disableOverlay && OverlayComponent,
+          ...eventHandlerProps,
+        },
         injectedIconsDict,
         elementArrayIconInjectionDict,
         eventHandlerProps
+      )
     }
 
     if (element._type === 'Form') {
