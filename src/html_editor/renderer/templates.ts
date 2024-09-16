@@ -103,6 +103,17 @@ export const replaceTemplateInString = (
       ) {
         const path = template.placeholderCutted?.slice(1).split('.')
         const value = getDeepPropertyByPath(template.value, path)
+        console.debug(
+          'BEFORE EVAL VALUE',
+          value,
+          newText,
+          '-',
+          typeof newText,
+          newText === text,
+          text,
+          'templ',
+          templates
+        )
         if (typeof value === 'object') {
           newText = value
           break
@@ -121,6 +132,9 @@ export const replaceTemplateInString = (
   if (typeof newText === 'string') {
     newText = newText.replaceAll('{props.', '').replaceAll('}', '')
   }
+  // if (typeof newText === 'object') {
+
+  // }
   try {
     console.debug(
       'BEFORE EVAL -',
@@ -128,10 +142,13 @@ export const replaceTemplateInString = (
       '-',
       typeof newText,
       newText === text,
-      text
+      text,
+      'templ',
+      templates
     )
     // this will though prevent calculations without placeholders
-    const evalText = newText === text ? newText : eval(newText)
+    const evalText =
+      newText === text || typeof newText !== 'string' ? newText : eval(newText)
     return evalText === 'true' ? true : evalText === 'false' ? false : evalText
   } catch (e) {
     console.error('Error in eval', e, newText)
