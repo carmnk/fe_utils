@@ -176,6 +176,10 @@ export const renderElements = <
       }
     }, {})
 
+    if (element._type.toLowerCase().includes('treeview')) {
+      console.log(element._type, elementPropsObject, element)
+    }
+
     const regex = /{(_data|form|props)\.[^}]*}/g
     const matches = element._content?.match?.(regex)
     const content = matches
