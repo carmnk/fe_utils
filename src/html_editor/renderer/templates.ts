@@ -149,6 +149,7 @@ export const replaceTemplateInString = (
     // this will though prevent calculations without placeholders
     const evalText =
       newText === text || typeof newText !== 'string' ? newText : eval(newText)
+    console.log('AFTER EVAL', evalText)
     return evalText === 'true' ? true : evalText === 'false' ? false : evalText
   } catch (e) {
     console.error('Error in eval', e, newText)
