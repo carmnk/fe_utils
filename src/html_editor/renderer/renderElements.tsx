@@ -741,9 +741,10 @@ export const renderElements = <
         })()
       ) : (
         <CurrentComponent
-          {...(elementPropsObject ?? {})}
           {...injectedIconsDict}
           {...elementArrayIconInjectionDict}
+          //  array icons and elementprops collide but elementprops is used when querriying
+          {...(elementPropsObject ?? {})}
           rootInjection={
             !disableOverlay &&
             OverlayComponent && (
