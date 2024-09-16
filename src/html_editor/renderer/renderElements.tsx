@@ -460,7 +460,10 @@ export const renderElements = <
         ...elementArrayIconInjectionDict,
         rootInjection: !disableOverlay && OverlayComponent,
         ...eventHandlerProps,
-      })
+      }),
+        injectedIconsDict,
+        elementArrayIconInjectionDict,
+        eventHandlerProps
     }
 
     if (element._type === 'Form') {
