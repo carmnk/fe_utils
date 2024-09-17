@@ -84,6 +84,9 @@ export const replaceTemplateInString = (
 
   let newText = text
   const templates = getTemplates(text)
+  if (!templates.length) {
+    return text
+  }
 
   const undefinedPlaceholders = []
   for (const template of templates) {

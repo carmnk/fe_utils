@@ -178,6 +178,7 @@ export const transformEditorStateFromPayload = (
 
   return {
     ...currentEditorState,
+    transformers: data?.transformers ?? [],
     properties:
       data?.properties?.map((prop) => {
         const element = elements.find((el) => el._id === prop.element_id)
