@@ -84,7 +84,7 @@ export const replaceTemplateInString = (
   }
 
   let newText = text
-  const templates = getTemplates(text)
+  const templates = typeof text === 'string' ? getTemplates(text) : []
 
   const undefinedPlaceholders = []
   for (const template of templates) {

@@ -171,7 +171,7 @@ export const renderElements = <
           )
         : keyValue
       const transformerStr = editorState.transformers.find(
-        (tr) => tr.prop_id === cur.prop_id
+        (tr) => tr.prop_id === cur.prop_id && tr.element_id === element._id
       )?.transformer_string
       const transformerFn = transformerStr
         ? replaceTemplateInString(
@@ -183,20 +183,24 @@ export const renderElements = <
             undefined,
             true
           )
-        : keyValueAdj
+        : null
 
-      console.debug(
-        baseComponent,
-        key,
-        transformerFn,
-        typeof transformerFn,
-        transformerFn,
-        keyValueAdj,
-        typeof transformerFn === 'function'
-          ? transformerFn?.(keyValueAdj)
-          : 'no function',
-        transformerStr
-      )
+      if (element._type.toLowerCase().includes('treeview')) {
+        console.debug(
+          baseComponent,
+          key,
+          cur,
+          'fn',
+          transformerFn,
+          typeof transformerFn,
+          keyValueAdj,
+          typeof transformerFn === 'function'
+            ? transformerFn?.(keyValueAdj)
+            : 'no function',
+          transformerStr,
+          editorState.transformers
+        )
+      }
       return {
         ...acc,
         [key]: keyValueAdj,
