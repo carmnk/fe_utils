@@ -185,22 +185,17 @@ export const renderElements = <
           )
         : keyValueAdj
 
-      const keyValueAdjTrandformed =
-        typeof transformerFn === 'function'
-          ? transformerFn(keyValueAdj)
-          : keyValueAdj
-
       console.debug(
         transformerFn,
         typeof transformerFn,
         transformerFn,
         keyValueAdj,
-        transformerFn(keyValueAdj),
+        transformerFn?.(keyValueAdj),
         transformerStr
       )
       return {
         ...acc,
-        [key]: keyValueAdjTrandformed,
+        [key]: keyValueAdj,
       }
     }, {})
 
