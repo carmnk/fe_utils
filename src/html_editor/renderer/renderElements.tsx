@@ -175,7 +175,7 @@ export const renderElements = <
       )?.transformer_string
       const transformerFn = transformerStr
         ? replaceTemplateInString(
-            keyValueAdj,
+            transformerStr,
             appController.state,
             editorState.compositeComponentProps,
             editorState.properties,
@@ -201,9 +201,13 @@ export const renderElements = <
           editorState.transformers
         )
       }
+      const keyValueAdj2 =
+        typeof transformerFn === 'function' && Array.isArray(keyValueAdj)
+          ? transformerFn?.(keyValueAdj)
+          : keyValueAdj
       return {
         ...acc,
-        [key]: keyValueAdj,
+        [key]: keyValueAdj2,
       }
     }, {})
 
