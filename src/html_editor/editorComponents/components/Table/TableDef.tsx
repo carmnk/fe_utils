@@ -48,7 +48,7 @@ export const tableEditorComponentDef: ComponentDefType = {
 
       dynamicKeysDict: {
         data: (f: any, g: any) => {
-          console.log('DATA dynamicKeysDict', f, g)
+          console.debug('DATA dynamicKeysDict', f, g)
           if (!f?.columns) return []
           const columnHeaders = f?.columns?.map?.(
             (column: any) => column.header

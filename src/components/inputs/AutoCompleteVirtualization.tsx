@@ -16,7 +16,7 @@ const OuterElementContext = createContext({})
 
 function renderRow(props: ListChildComponentProps) {
   const { data, index, style } = props
-  console.log('renderRow', props)
+  // console.log('renderRow', props)
   const dataSet = data[index] as any // [Record<string, any>, any, string]
   const inlineStyle = {
     ...style,

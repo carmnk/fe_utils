@@ -84,8 +84,12 @@ EditorControllerAppStateReturnType => {
     }
   }, [setAppState, appState?.forms])
 
-  return {
-    state: appState,
-    actions,
-  }
+  const controller = useMemo(() => {
+    return {
+      state: appState,
+      actions,
+    }
+  }, [appState, actions])
+
+  return controller
 }

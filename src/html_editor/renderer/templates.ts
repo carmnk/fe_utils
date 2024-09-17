@@ -152,7 +152,7 @@ export const replaceTemplateInString = (
       (newText === text || typeof newText !== 'string') && !forceEval
         ? newText
         : eval(newText)
-    console.log('AFTER EVAL', evalText)
+    console.debug('AFTER EVAL', evalText)
     return evalText === 'true' ? true : evalText === 'false' ? false : evalText
   } catch (e) {
     console.error('Error in eval', e, newText)

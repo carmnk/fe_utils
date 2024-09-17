@@ -128,11 +128,6 @@ const genericMethodQuery = async <
 ): ReturnType<QueryFnType<PayloadType, ResponseType>> => {
   const axiosQueryConfig = makeAxiosQueryConfig(method, params)
   const response = axios(axiosQueryConfig)
-  console.log(
-    'query triggered in httpQuerys utils deeper ',
-    response,
-    axiosQueryConfig
-  )
   return response
 }
 
@@ -153,13 +148,6 @@ export const query = async <PayloadType = unknown, ResponseType = unknown>(
       statusText: res.statusText,
       headers: res?.headers as Record<string, string>,
     }
-    console.log(
-      'query triggered in httpQuerys utils',
-      params,
-      'response',
-      res,
-      response
-    )
     return response
   } catch (e) {
     const error: AxiosError = e as AxiosError

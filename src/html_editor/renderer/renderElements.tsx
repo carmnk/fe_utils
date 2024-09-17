@@ -420,14 +420,6 @@ export const renderElements = <
                         '{itemId}',
                         replaceValue
                       )
-                      console.log(
-                        'REPLACEALL',
-                        cur,
-                        value,
-                        replaceValue,
-                        newValue,
-                        elementTemplateValuesDict
-                      )
 
                       return {
                         ...acc,
@@ -435,23 +427,6 @@ export const renderElements = <
                       }
                     }, {})
                   : elementTemplateValuesDict
-
-              console.log(
-                'ON REACT EL ACTION - ',
-                currentEventName,
-                clickAction,
-                endpoint,
-                action,
-                'elementTemplateValuesDict',
-                elementTemplateValuesDict,
-                isItemEvent,
-                'fnParams',
-                fnParams,
-                'elementTemplateValuesDictAdj',
-                elementTemplateValuesDictAdj,
-                '/',
-                fnParams?.[1]
-              )
               queryAction(
                 appController,
                 action?.action_id ?? '', // should never happen -> should always have action
@@ -488,8 +463,8 @@ export const renderElements = <
     )
 
     if (element._type.toLowerCase().includes('treeview')) {
-      console.log(element._type, elementPropsObject, element)
-      console.log(
+      console.debug(element._type, elementPropsObject, element)
+      console.debug(
         'ABBCC',
         {
           ...(elementPropsObject ?? {}),
@@ -529,7 +504,6 @@ export const renderElements = <
         ),
         ...eventHandlerProps,
       }
-      console.log('formProps', formProps)
     }
 
     const elementAdj2 = {
