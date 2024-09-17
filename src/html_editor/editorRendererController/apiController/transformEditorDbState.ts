@@ -301,7 +301,7 @@ export const transformEditorStateFromPayload = (
     ui,
     assets: newImageAssets,
     themes,
-    theme: themes.find(
+    theme: themes?.find?.(
       (theme: ExtendedTheme) => theme.palette.mode === defaultTheme
     ),
     externalApis,

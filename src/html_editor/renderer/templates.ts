@@ -11,7 +11,8 @@ export const replaceTemplateInString = (
   componentPropertyDefinitions: EditorStateType['compositeComponentProps'],
   properties: EditorStateType['properties'],
   selectedElement: EditorRendererControllerType<any>['selectedElement'],
-  rootCompositeElementId?: string
+  rootCompositeElementId?: string,
+  forceEval?: boolean
 ) => {
   const getTemplates = (text: string) => {
     let templatesOut: {
@@ -84,9 +85,6 @@ export const replaceTemplateInString = (
 
   let newText = text
   const templates = getTemplates(text)
-  if (!templates.length) {
-    return text
-  }
 
   const undefinedPlaceholders = []
   for (const template of templates) {
@@ -132,7 +130,7 @@ export const replaceTemplateInString = (
       console.warn('Template value is not a string', template)
     }
   }
-  if (typeof newText === 'string') {
+  if (typeof newText === 'string' && templates.length) {
     newText = newText.replaceAll('{props.', '').replaceAll('}', '')
   }
   // if (typeof newText === 'object') {
@@ -151,7 +149,9 @@ export const replaceTemplateInString = (
     )
     // this will though prevent calculations without placeholders
     const evalText =
-      newText === text || typeof newText !== 'string' ? newText : eval(newText)
+      (newText === text || typeof newText !== 'string') && !forceEval
+        ? newText
+        : eval(newText)
     console.log('AFTER EVAL', evalText)
     return evalText === 'true' ? true : evalText === 'false' ? false : evalText
   } catch (e) {

@@ -170,9 +170,29 @@ export const renderElements = <
             rootCompositeElementId
           )
         : keyValue
+      const transformerStr = editorState.transformers.find(
+        (tr) => tr.prop_id === cur.prop_id
+      )?.transformer_string
+      const transformerFn = transformerStr
+        ? replaceTemplateInString(
+            keyValueAdj,
+            appController.state,
+            editorState.compositeComponentProps,
+            editorState.properties,
+            selectedElement,
+            undefined,
+            true
+          )
+        : keyValueAdj
+
+      const keyValueAdjTrandformed =
+        typeof transformerFn === 'function'
+          ? transformerFn(keyValueAdj)
+          : keyValueAdj
+
       return {
         ...acc,
-        [key]: keyValueAdj,
+        [key]: keyValueAdjTrandformed,
       }
     }, {})
 
