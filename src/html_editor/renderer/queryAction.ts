@@ -49,8 +49,10 @@ export const queryAction = async (
   const response = await query(adjMethod as any, adjParams)
   console.log('query triggered', adjParams, placeholders, 'response', response)
 
+  const responseRaw = response?.data as any
+  const responseAdj = responseRaw?.success ? responseRaw.data : responseRaw
   if (response?.data) {
-    appController.actions.updateData(actionId, response.data)
+    appController.actions.updateData(actionId, responseAdj)
   }
 
   return response

@@ -90,25 +90,33 @@ export const parseSimpleFormating = (
   text: string,
   icons?: Record<string, string>
 ) => {
-  return text.split('\n').map((txt, tIdx, arr) => (
-    <Fragment key={tIdx}>
-      {txt?.trim().startsWith('•') ? (
-        <Box
-          component="li"
-          sx={{
-            ml: 2,
-            mt: arr[tIdx - 1]?.trim().startsWith('•') ? 0 : 1,
-            mb: arr[tIdx + 1]?.trim().startsWith('•') ? 0 : 1,
-            '&::marker': { pl: 2 },
-          }}
-        >
-          {inlineFormat(txt.trim().slice(1), icons) as any}
-        </Box>
-      ) : (
-        <>
-          {inlineFormat(txt, icons)} <br />
-        </>
-      )}
-    </Fragment>
-  ))
+  console.log('Text: ', text)
+  return text.split('\n').map((txt, tIdx, arr) => {
+    const isListItem =
+      txt?.trim().startsWith('•') || txt?.trim().startsWith('-')
+    const isSubListItem =
+      txt?.trim().startsWith('••') || txt?.trim().startsWith('--')
+    return (
+      <Fragment key={tIdx}>
+        {isListItem ? (
+          <Box
+            component="li"
+            sx={{
+              ml: 2,
+              mt: arr[tIdx - 1]?.trim().startsWith('•') ? 0 : 1,
+              mb: arr[tIdx + 1]?.trim().startsWith('•') ? 0 : 1,
+              '&::marker': { pl: isSubListItem ? 4 : 2 },
+            }}
+            color={txt?.startsWith('  •') ? 'primary.main' : 'text.primary'}
+          >
+            {inlineFormat(txt.trim().slice(1), icons) as any}
+          </Box>
+        ) : (
+          <>
+            {inlineFormat(txt, icons)} <br />
+          </>
+        )}
+      </Fragment>
+    )
+  })
 }
