@@ -186,11 +186,15 @@ export const renderElements = <
         : keyValueAdj
 
       console.debug(
+        baseComponent,
+        key,
         transformerFn,
         typeof transformerFn,
         transformerFn,
         keyValueAdj,
-        transformerFn?.(keyValueAdj),
+        typeof transformerFn === 'function'
+          ? transformerFn?.(keyValueAdj)
+          : 'no function',
         transformerStr
       )
       return {
