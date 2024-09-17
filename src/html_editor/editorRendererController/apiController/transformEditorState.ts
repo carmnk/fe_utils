@@ -287,5 +287,6 @@ export const transformEditorStateToPayload = (
     templates: payload.templateComponents,
     composite_component_props: payload.compositeComponentProps,
     action_params: payload.actionParams,
+    transformers: payload.transformers,
   }
 }

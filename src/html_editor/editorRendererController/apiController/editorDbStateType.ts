@@ -129,6 +129,7 @@ export type EditorStateDbDataType = {
   }[]
   themes: SerializedThemeType[]
   action_params: EditorStateType['actionParams']
+  transformers: EditorStateType['transformers']
   externalApis: ExternalApiDb[]
   composite_component_props: EditorStateType['compositeComponentProps']
   endpoints: EndpointDb[]

@@ -207,6 +207,16 @@ export type ActionsParams = {
   component_id: string | null
 }
 
+export type Transfomer = {
+  transformer_id: string
+  transformer_string: string
+  component_id: string | null
+  template_id: string | null
+  project_id: string
+  element_id: string | null
+  prop_id: string
+}
+
 export type EditorStateType = {
   components: Component[]
   compositeComponentProps: CompositePropertyDefinition[]
@@ -248,12 +258,7 @@ export type EditorStateType = {
     prop_id: string
     component_id: string | null
   }[]
-  localUi: {
-    hovering: {
-      rightMenu: boolean
-      leftMenu: boolean
-    }
-  }
+  transformers: Transfomer[]
   ui: {
     tableUis: {
       [key: string]: {
@@ -405,6 +410,7 @@ export const defaultEditorState = (): EditorStateType => {
     templateComponents: [],
     attributes: [],
     properties: [],
+    transformers: [],
     elements: defaultPageElements(),
     alternativeViewports: {
       sm: [],
@@ -422,12 +428,12 @@ export const defaultEditorState = (): EditorStateType => {
     // themes2: [],
     theme: muiLightSiteTheme,
     themes: [muiLightSiteTheme, muiDarkSiteTheme] as any,
-    localUi: {
-      hovering: {
-        rightMenu: false,
-        leftMenu: false,
-      },
-    },
+    // localUi: {
+    //   hovering: {
+    //     rightMenu: false,
+    //     leftMenu: false,
+    //   },
+    // },
     ui: {
       isAutoSaveReady: false,
       initializeProjectModal: true,
