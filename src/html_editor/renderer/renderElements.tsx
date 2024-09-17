@@ -190,6 +190,14 @@ export const renderElements = <
           ? transformerFn(keyValueAdj)
           : keyValueAdj
 
+      console.debug(
+        transformerFn,
+        typeof transformerFn,
+        transformerFn,
+        keyValueAdj,
+        transformerFn(keyValueAdj),
+        transformerStr
+      )
       return {
         ...acc,
         [key]: keyValueAdjTrandformed,
