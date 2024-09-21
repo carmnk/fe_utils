@@ -2,13 +2,12 @@ import { mdiListBoxOutline } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { formPropsSchema } from './formPropsRawSchema'
 import { GenericForm } from '../../../../components/forms/GenericForm'
-import { ComponentDefType } from '../../componentDefType'
 
-export const formEditorComponentDef: ComponentDefType = {
+export const formEditorComponentDef = {
   type: 'Form' as const,
 
   component: GenericForm,
-  formGen: ({ editorState }) =>
+  formGen: ({ editorState }: any) =>
     propertyFormFactory(formPropsSchema, editorState, {
       dynamicKeysDict: {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

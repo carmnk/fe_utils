@@ -1,11 +1,11 @@
 import { Box } from '@mui/material'
-import { useEffect, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 
 /** the properties/params to define a custom field in the generic form's -> fields property  */
 export type CustomFieldDefinition<F, P> = {
   type: 'inject'
   name: string
-  component: React.FC<CustomFieldComponentProps<F, P>>
+  component: FC<CustomFieldComponentProps<F, P>>
   params?: P
 }
 

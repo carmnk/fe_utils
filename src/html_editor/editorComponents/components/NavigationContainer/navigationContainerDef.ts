@@ -1,8 +1,7 @@
 import { mdiRectangleOutline } from '@mdi/js'
 import { NavContainerComponentPropsFormFactory } from './NavContainerPropFormFactory'
-import { ComponentDefType } from '../../componentDefType'
 
-export const navigationContainerDef: ComponentDefType = {
+export const navigationContainerDef = {
   type: 'NavContainer' as const,
   props: {
     // children: "test",
@@ -11,7 +10,7 @@ export const navigationContainerDef: ComponentDefType = {
     // navigationElementId: null,
     children: [],
   },
-  formGen: NavContainerComponentPropsFormFactory,
+  formGen: NavContainerComponentPropsFormFactory as any,
   icon: mdiRectangleOutline,
   category: 'navigation',
   schema: null as any,

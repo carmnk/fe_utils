@@ -2,17 +2,10 @@ import { Box, Theme, ThemeProvider } from '@mui/material'
 import { SetStateAction, Dispatch, FC } from 'react'
 import { useEffect, useMemo, useCallback } from 'react'
 import { renderElements } from './renderElements'
-import { uniq } from 'lodash'
 import { useMdiIcons } from './icons/useMdiIcons'
-import {
-  EditorStateType,
-  ElementType,
-} from '../editorRendererController/editorState'
+import { EditorStateType, Element } from '../editorRendererController/types'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import { EditorRendererControllerType } from '../editorRendererController'
-
-// -> must be generated dynamically!
-// import siteProps from '../site_props.json'
 
 export type HtmlRendererProps<
   ControllreActionsType extends { [key: string]: any },
@@ -20,18 +13,18 @@ export type HtmlRendererProps<
   isProduction?: boolean
   theme: Theme
   OverlayComponent?: FC<{
-    element: ElementType
+    element: Element
     isProduction?: boolean
     editorState: EditorStateType
     actions?: ControllreActionsType
   }>
   editorState: EditorStateType
   setEditorState: Dispatch<SetStateAction<EditorStateType>>
-  currentViewportElements: ElementType[]
-  selectedPageElements: ElementType[]
+  currentViewportElements: Element[]
+  selectedPageElements: Element[]
   actions?: ControllreActionsType
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
-  selectedElement: ElementType | null
+  selectedElement: Element | null
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
   pageName: string //const pageName = location.pathname.slice(1) || 'index'
   navigate: any
@@ -72,7 +65,7 @@ export const HtmlRenderer = <
   )
 
   const handleSelectElement = useCallback(
-    (element: ElementType, boundingRect: any) => {
+    (element: Element, boundingRect: any) => {
       if (isProduction) {
         return
       }

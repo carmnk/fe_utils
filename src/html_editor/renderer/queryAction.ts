@@ -1,5 +1,5 @@
 import { query } from '../../api/utils/httpQuerys'
-import { EditorControllerAppStateReturnType } from '../editorRendererController/editorRendererControllerTypes'
+import { AppController } from '../editorRendererController/types'
 
 const replacePlaceholders = (
   text: string,
@@ -13,7 +13,7 @@ const replacePlaceholders = (
 }
 
 export const queryAction = async (
-  appController: EditorControllerAppStateReturnType,
+  appController: AppController,
   actionId: string,
   method: any,
   url: string,

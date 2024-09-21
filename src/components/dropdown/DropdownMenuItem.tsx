@@ -1,18 +1,13 @@
-import { MouseEvent, useCallback, useMemo } from 'react'
-import {
-  MenuItem,
-  Tooltip,
-  Stack,
-  CircularProgress,
-  MenuItemProps,
-} from '@mui/material'
+import { MouseEvent, ReactNode, useCallback, useMemo } from 'react'
+import { MenuItem, Tooltip, Stack } from '@mui/material'
+import { CircularProgress, MenuItemProps } from '@mui/material'
 import { useTheme, Divider, Typography } from '@mui/material'
 import Icon from '@mdi/react'
 
 export type DropDownMenuItemProps = {
   onClick: (e: MouseEvent) => void
-  tooltip?: React.ReactNode
-  icon?: React.ReactNode
+  tooltip?: ReactNode
+  icon?: ReactNode
   id: string
   disabled?: boolean
   loading?: boolean

@@ -3,7 +3,14 @@ import { Button } from '../buttons/Button/Button'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
 import { useDropzone } from 'react-dropzone'
 import { mdiDeleteOutline, mdiTrayArrowDown, mdiTrayArrowUp } from '@mdi/js'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 const REQUIRED_FIELD_HELPER_TEXT = 'This field is required'
 
 const LOADING_TEXT = 'Loading...'
@@ -34,7 +41,7 @@ export type FileUploaderProps = {
   isLoading: boolean
   handleUpload: (file: any, e: any, idx?: number) => void
   accept: string
-  label: React.ReactNode
+  label: ReactNode
   error?: boolean
   required?: boolean
   helperText?: string

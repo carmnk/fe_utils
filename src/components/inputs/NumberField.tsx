@@ -1,4 +1,12 @@
-import React, { ForwardedRef, useMemo } from 'react'
+import {
+  ChangeEvent,
+  ForwardedRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { CTextField, CTextFieldProps } from './TextField'
 
 const formatGermanNumberString = (
@@ -20,10 +28,10 @@ export type CNumberFieldProps = Omit<CTextFieldProps, 'value'> & {
   isInt?: boolean
   disableNumberSeparator?: boolean
   maxDecimalDigits?: number
-  onChange?: (newValue: number, e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (newValue: number, e: ChangeEvent<HTMLInputElement>) => void
 }
 
-export const NumberField = React.forwardRef(
+export const NumberField = forwardRef(
   (props: CNumberFieldProps, ref: ForwardedRef<any>) => {
     const {
       value,
@@ -44,12 +52,10 @@ export const NumberField = React.forwardRef(
       ...rest
     } = props
 
-    const [innerValue, setInnerValue] = React.useState<string | undefined>(
-      undefined
-    )
-    const [valueStarted, setValueStarted] = React.useState('')
+    const [innerValue, setInnerValue] = useState<string | undefined>(undefined)
+    const [valueStarted, setValueStarted] = useState('')
 
-    React.useEffect(() => {
+    useEffect(() => {
       const isLastCharComma = innerValue?.slice?.(-1) === ','
       const innerValueString = (
         isLastCharComma ? innerValue.slice(0, -1) : innerValue
@@ -87,7 +93,7 @@ export const NumberField = React.forwardRef(
       }
     }, [value])
 
-    const handleChangeCompleted = React.useCallback(
+    const handleChangeCompleted = useCallback(
       (e: any) => {
         //dont trigger if value has not changed
         if (
@@ -101,15 +107,15 @@ export const NumberField = React.forwardRef(
       [onChangeCompleted, value, valueStarted, name]
     )
 
-    const handleChangeStarted = React.useCallback(() => {
+    const handleChangeStarted = useCallback(() => {
       if (!value) return
       setValueStarted?.(value?.toString?.())
     }, [value])
 
-    const handleChangeNumber = React.useCallback(
+    const handleChangeNumber = useCallback(
       (
         newValue: string,
-        e: React.ChangeEvent<HTMLInputElement>
+        e: ChangeEvent<HTMLInputElement>
         // nameIn?: string
       ) => {
         // const { name, value: valueIn } = e.target

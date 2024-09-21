@@ -2,12 +2,12 @@ import Icon from '@mdi/react'
 import { ButtonDropdown } from './defs'
 import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
 import { CircularProgress, Stack, useTheme } from '@mui/material'
-import { CSSProperties } from 'react'
+import { CSSProperties, ReactNode } from 'react'
 import { CButtonProps } from './Button'
 
 type ButtonStartIconProps = {
   loading?: boolean
-  icon?: React.ReactNode
+  icon?: ReactNode
   iconButton?: boolean
   iconSize?: CSSProperties['fontSize']
   iconColor?: string
@@ -66,7 +66,7 @@ export const ButtonStartIcon = (props: ButtonStartIconProps) => {
 
 export const ButtonEndIcon = (
   props: Pick<ButtonStartIconProps, 'disabled' | 'iconColor' | 'variant'> & {
-    endIcon: React.ReactNode
+    endIcon: ReactNode
     dropdown?: ButtonDropdown
     endIconProps?: NonNullable<CButtonProps['slotProps']>['endIcon']
   }

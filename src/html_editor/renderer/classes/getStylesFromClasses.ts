@@ -1,7 +1,9 @@
+import { CSSProperties } from 'react'
+
 export const getStylesFromClasses = (
   selectorId: string,
   cssSelectors: any[]
-): React.CSSProperties => {
+): CSSProperties => {
   const className = cssSelectors.find((sel) => sel._id === selectorId)?._userId
 
   const classNames = className?.trim?.()?.split?.(' ') || []

@@ -1,31 +1,17 @@
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
-import { EditorStateType } from './editorState'
-import {
-  EditorControllerAppStateReturnType,
-  EditorControllerAppStateType,
-} from './editorRendererControllerTypes'
+import { AppState, EditorStateType } from './types'
+import { AppController } from './types'
 
 export type EditorControllerAppStateParams = {
   editorState: EditorStateType
   setEditorState: Dispatch<SetStateAction<EditorStateType>>
-  // initialAppState?: EditorControllerAppStateType
 }
 
-export const useAppController = (): // params: EditorControllerAppStateParams
-EditorControllerAppStateReturnType => {
-  // const { editorState, setEditorState } = params
-  const [appState, setAppState] = useState<EditorControllerAppStateType>({
+export const useAppController = (): AppController => {
+  const [appState, setAppState] = useState<AppState>({
     forms: {},
     _data: {},
   })
-  // const [stateValues, setStateValues] = useState<any>({})
-
-  // const removeProperty = (key: string) => {
-  //   setAppState((current) => {
-  //     const { [key]: _, ...rest } = current
-  //     return rest
-  //   })
-  // }
 
   const actions = useMemo(() => {
     // key is the element id

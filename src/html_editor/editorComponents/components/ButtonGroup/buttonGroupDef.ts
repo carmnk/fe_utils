@@ -2,9 +2,8 @@ import { mdiCheckboxMultipleBlank } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ButtonGroupPropsSchema } from './buttonGroupPropsRawSchema'
 import { ButtonGroup } from '../../../../components/buttons/ButtonGroup'
-import { ComponentDefType } from '../../componentDefType'
 
-export const buttonGroupEditorComponentDef: ComponentDefType = {
+export const buttonGroupEditorComponentDef = {
   type: 'ButtonGroup' as const,
   props: {
     // children: "test",
@@ -13,7 +12,7 @@ export const buttonGroupEditorComponentDef: ComponentDefType = {
     items: [{ value: 'test', label: 'test' }],
   },
   state: 'test',
-  formGen: ({ editorState }) =>
+  formGen: ({ editorState }: any) =>
     propertyFormFactory(ButtonGroupPropsSchema, editorState),
   icon: mdiCheckboxMultipleBlank,
   category: 'navigation',

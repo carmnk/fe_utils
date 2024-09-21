@@ -4,7 +4,7 @@ import { TabsPropsSchema } from './tabsPropsRawSchema'
 import { Tabs } from '../../../../components/navigation/CTabs'
 import { ComponentDefType } from '../../componentDefType'
 
-export const TabsComponentDef: ComponentDefType = {
+export const TabsComponentDef = {
   type: 'Tabs' as const,
   props: {
     // children: "test",
@@ -22,7 +22,7 @@ export const TabsComponentDef: ComponentDefType = {
     },
   },
   state: 'test',
-  formGen: ({ editorState }) =>
+  formGen: ({ editorState }: any) =>
     propertyFormFactory(TabsPropsSchema, editorState),
   icon: mdiTab,
   category: 'navigation',

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
-import { EditorStateType, defaultEditorState } from './editorState'
+import { useState } from 'react'
+import { defaultEditorState } from './defaultEditorState'
 import { useAppController } from './appController'
 import { useShortcuts } from './useShortcuts'
+import { EditorStateType } from './types'
 
-export const useEditorRendererController = (params?: {
+export type EditorRendererControllerParams = {
   initialEditorState?: Pick<
     EditorStateType,
     | 'assets'
@@ -18,7 +19,11 @@ export const useEditorRendererController = (params?: {
     components?: any[]
     actions?: any[]
   }
-}) => {
+}
+
+export const useEditorRendererController = (
+  params?: EditorRendererControllerParams
+) => {
   // load initial state if provided
   const { initialEditorState, injections } = params ?? {}
   const initialEditorStateAdj = {
@@ -37,26 +42,6 @@ export const useEditorRendererController = (params?: {
     COMPONENT_MODELS,
     getRecursiveChildren,
   } = useShortcuts({ editorState, customComponents: injections?.components })
-
-  // initialize default props for elements/components
-  useEffect(() => {
-    if (!initialEditorState?.elements?.length || !editorState?.elements?.length)
-      return // no initial elements
-    editorState?.elements?.forEach((el) => {
-      const defaultComponentProps = COMPONENT_MODELS.find(
-        (comp) => comp.type === el._type
-      )
-      if (!defaultComponentProps) return
-      if ('state' in defaultComponentProps) {
-        const _id = el._id
-        appController.actions.addProperty(
-          _id,
-          (defaultComponentProps as any)?.state ?? ''
-        )
-      }
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // only run once
 
   const appController = useAppController()
 

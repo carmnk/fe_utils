@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { ExtendedTheme } from '../../theme/muiTheme'
 import { createMuiTheme } from '../../theme/createTheme'
-import { SerializedThemeType } from './editorDbStateType'
+import { SerializedThemeType } from '../types/serializedTheme'
 
 export const transformEditorStateTheme = (
   themes: ExtendedTheme[],

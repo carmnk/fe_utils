@@ -1,6 +1,6 @@
 import { Menu, MenuProps } from '@mui/material'
 import { DropDownMenuItemProps, DropdownMenuItem } from './DropdownMenuItem'
-import { useMemo } from 'react'
+import { PropsWithChildren, useMemo } from 'react'
 
 export type DropdownMenuProps = Omit<MenuProps, 'slotProps'> & {
   id?: string
@@ -30,9 +30,7 @@ const menuOrigins: Pick<MenuProps, 'anchorOrigin' | 'transformOrigin'> = {
 const defaultMenuListProps = { sx: { pt: 0, pb: 0 } }
 const defaultSlotProps = { paper: { sx: { borderRadius: 1 } } }
 
-export const DropdownMenu = (
-  props: React.PropsWithChildren<DropdownMenuProps>
-) => {
+export const DropdownMenu = (props: PropsWithChildren<DropdownMenuProps>) => {
   const {
     children,
     anchorEl,

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Skeleton, Box } from '@mui/material'
 import { Checkbox, BoxProps } from '@mui/material'
 import { RowComponent } from './subComponents/TableRow'
@@ -7,6 +6,7 @@ import { TableHeader } from './subComponents/TableHeader'
 import { TableProps } from './types'
 import { useDraggableRows } from './useDraggableRows'
 import { TableComponent } from './subComponents/TableComponent'
+import { useState, useEffect, useMemo, useCallback, Fragment } from 'react'
 
 const Tfoot = (props: BoxProps) => <Box component="tfoot" {...props} />
 const Tr = (props: BoxProps) => <Box component="tr" {...props} />
@@ -65,21 +65,21 @@ export const Table = (props: TableProps) => {
     reorderRowId,
   })
 
-  const [openFilters, setOpenFilters] = React.useState(
+  const [openFilters, setOpenFilters] = useState(
     () => columns?.map?.(() => false) || []
   )
-  React.useEffect(() => {
+  useEffect(() => {
     if (columns?.length === openFilters?.length) return
     setOpenFilters(columns?.map?.(() => false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns])
 
-  const sortings = React.useMemo(
+  const sortings = useMemo(
     () => filters?.filter((filter) => filter?.filterKey?.includes('sorting')),
     [filters]
   )
 
-  const handleChangeNewSorting = React.useCallback(
+  const handleChangeNewSorting = useCallback(
     (sortValue: string) => {
       const sortKey = 'sorting'
       const curSortFilter = filters?.find(
@@ -108,7 +108,7 @@ export const Table = (props: TableProps) => {
     [filters, onSetFilters]
   )
 
-  const handleOpenFilters = React.useMemo(() => {
+  const handleOpenFilters = useMemo(() => {
     return (
       columns?.map?.((col, cIdx) => () => {
         setOpenFilters((current) => [
@@ -119,7 +119,7 @@ export const Table = (props: TableProps) => {
       }) ?? []
     )
   }, [columns])
-  const handleCloseFilters = React.useMemo(
+  const handleCloseFilters = useMemo(
     () =>
       columns?.map?.((col, cIdx) => () => {
         setOpenFilters((current) => [
@@ -131,7 +131,7 @@ export const Table = (props: TableProps) => {
     [columns]
   )
 
-  const handleClickSelectAll = React.useCallback(() => {
+  const handleClickSelectAll = useCallback(() => {
     if (!selectedRows?.length) {
       onSelectAllFilters?.()
     } else {
@@ -183,7 +183,7 @@ export const Table = (props: TableProps) => {
                       ? row[getSelectedRow]
                       : ''
                 return (
-                  <React.Fragment key={rIdx}>
+                  <Fragment key={rIdx}>
                     <RowComponent
                       enableDrag={!!reorderRowId}
                       isDragged={
@@ -246,7 +246,7 @@ export const Table = (props: TableProps) => {
                       <tr style={{ height: 2 }} key={`filler-02-${rIdx}`} />
                     </>
                   ) : null} */}
-                  </React.Fragment>
+                  </Fragment>
                 )
               })
             ) : !disableNoResults ? (

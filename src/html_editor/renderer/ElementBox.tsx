@@ -1,34 +1,29 @@
-import { useMemo, useEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef, FC } from 'react'
 import { CSSProperties, PropsWithChildren, MouseEvent } from 'react'
-import {
-  EditorStateType,
-  ElementType,
-} from '../editorRendererController/editorState'
+import { EditorStateType, Element } from '../editorRendererController/types'
 import { Box } from '@mui/material'
-import { getStylesFromClasses } from './getStylesFromClasses'
-import { EditorRendererControllerType } from '../editorRendererController/editorRendererControllerTypes'
+import { getStylesFromClasses } from './classes/getStylesFromClasses'
+import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
 import { queryAction } from './queryAction'
-import { ComponentElementBox } from './ComponentElementBox'
+import { ComponentBox } from './ComponentBox'
 
 export type ElementBoxProps<
   ControllreActionsType extends { [key: string]: any },
 > = {
-  element: ElementType
-
-  //
+  element: Element
   editorState: EditorStateType
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
-  currentViewportElements: ElementType[]
-  selectedPageElements: ElementType[]
+  currentViewportElements: Element[]
+  selectedPageElements: Element[]
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
-  selectedElement: ElementType | null
+  selectedElement: Element | null
   actions?: ControllreActionsType
   //
-  onSelectElement: (element: ElementType, isHovering: boolean) => void
+  onSelectElement: (element: Element, isHovering: boolean) => void
   isProduction?: boolean
   isPointerProduction?: boolean
-  OverlayComponent?: React.FC<{
-    element: ElementType
+  OverlayComponent?: FC<{
+    element: Element
     isProduction?: boolean
     editorState: EditorStateType
     actions?: ControllreActionsType
@@ -61,23 +56,26 @@ export const ElementBox = <
     navigate,
   } = props
 
-  const elementAttributs = editorState.attributes.filter(
-    (attr) => attr.element_id === element._id
-  )
-  const elementAttributsDict = elementAttributs.reduce<Record<string, any>>(
-    (acc, attr) => {
-      return {
-        ...acc,
-        [attr.attr_name]: attr.attr_value,
-      }
-    },
-    {}
-  )
+  const isOverheadHtmlElement = ['html', 'head', 'body'].includes(element._type)
+  const elementRef = useRef<HTMLDivElement>(null)
 
-  const className = elementAttributsDict?.className
-  const stylesFromClasses = getStylesFromClasses(
-    className ?? '',
-    editorState?.cssSelectors
+  const elementAttributsDict = useMemo(
+    () =>
+      editorState.attributes
+        .filter((attr) => attr.element_id === element._id)
+        .reduce<Record<string, any>>((acc, attr) => {
+          return {
+            ...acc,
+            [attr.attr_name]: attr.attr_value,
+          }
+        }, {}),
+    [editorState.attributes, element._id]
+  )
+  const className = elementAttributsDict?.className as string
+
+  const stylesFromClasses = useMemo(
+    () => getStylesFromClasses(className ?? '', editorState?.cssSelectors),
+    [className, editorState?.cssSelectors]
   )
 
   const styles = useMemo(() => {
@@ -85,9 +83,8 @@ export const ElementBox = <
       element._type === 'a' && elementAttributsDict?.href
         ? { cursor: 'pointer' }
         : {}
-
     const styleAttributes =
-      'style' in elementAttributsDict ? elementAttributsDict?.style ?? {} : {}
+      'style' in elementAttributsDict ? (elementAttributsDict?.style ?? {}) : {}
 
     const aggregatedUserStyles = {
       ...stylesFromClasses,
@@ -111,6 +108,7 @@ export const ElementBox = <
         aggregatedUserStyles.borderRadius + ' !important'
     }
 
+    // compensate fixed styles in editor
     // interesting: top=0 -> not default -> inject only if top:0, left:0 is set !! Otherwise the position is as static
     const isPositionFixed =
       !isProduction && aggregatedUserStyles?.position === 'fixed'
@@ -125,23 +123,17 @@ export const ElementBox = <
           ? 364
           : 0
     const compensateY = isPositionFixed && aggregatedUserStyles.top ? 42 : 0
-
-    //isPositionFixed && editorState.ui.previewMode && aggregatedUserStyles.top ? -42 : 0
     const compensateFixedStylesInEditor = isPositionFixed
       ? { transform: `translate(${compensateX}px, ${compensateY}px)` }
       : {}
-
     return {
       ...sx,
       ...linkHoverStyles,
       ...stylesFromClasses,
       ...styleAttributes,
-
       // ...additionalHoverStyles,
       ...userOverridesEditorHoverStyles,
       ...compensateFixedStylesInEditor,
-
-      //   backgroundColor: "rgba(0,150,136,0.1)",
     } as CSSProperties
   }, [
     stylesFromClasses,
@@ -151,48 +143,15 @@ export const ElementBox = <
     elementAttributsDict,
   ])
 
-  // useEffect(() => {
-  //   onSelectElement(element, isHovering);
-  // }, [isHovering, element, onSelectElement]);
-
-  const isOverheadHtmlElement = ['html', 'head', 'body'].includes(element._type)
-  // const elementAttributs =
-  //   'attributes' in element
-  //     ? (element?.attributes as HTMLProps<HTMLLinkElement> & {
-  //         href: string
-  //       })
-  //     : ({} as HTMLProps<HTMLLinkElement>)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { style, href, ...styleLessAttributes } = elementAttributsDict ?? {}
-
-  const boxProps = useMemo(
-    () => ({
-      // id: isOverheadHtmlElement ? element.type + "_" + element?.id : element.id,
-      component: isOverheadHtmlElement
-        ? ('div' as const)
-        : (element._type as any),
-      key: element._id,
-      ...(styleLessAttributes ?? {}),
-      sx: styles,
-    }),
-    [element, isOverheadHtmlElement, styles, styleLessAttributes]
-  )
-
   const linkProps = useMemo(() => {
     if (element._type === 'a') {
       return {
         onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
           e.preventDefault()
-          // const attributes = (element as any)
-          //   .attributes as HTMLProps<HTMLLinkElement> & {
-          //   href: string
-          // }
-
           const isExternalLink = !elementAttributsDict?.href?.startsWith('/')
           if (isExternalLink) {
             window.open(elementAttributsDict?.href, '_blank')
           } else {
-            // const
             const href =
               elementAttributsDict?.href === '/index'
                 ? '/'
@@ -205,7 +164,23 @@ export const ElementBox = <
     return {}
   }, [element, navigate, elementAttributsDict])
 
-  const elementRef = useRef<HTMLDivElement>(null)
+  const boxProps = useMemo(() => {
+    const {
+      style: _s,
+      href: _h,
+      ...styleLessAttributes
+    } = elementAttributsDict ?? {}
+    return {
+      component: isOverheadHtmlElement
+        ? ('div' as const)
+        : (element._type as any),
+      key: element._id,
+      ...(styleLessAttributes ?? {}),
+      sx: styles,
+      ...linkProps,
+    }
+  }, [element, isOverheadHtmlElement, styles, elementAttributsDict, linkProps])
+
   useEffect(() => {
     const elementEvents = editorState?.events?.filter(
       (event) => event.element_id === element._id
@@ -334,11 +309,14 @@ export const ElementBox = <
         : undefined,
     [element, elementAttributsDict, editorState.assets.images]
   )
-  const prodImageAsset = editorState.assets.images.find(
-    (img) => img._id === elementAttributsDict?.src
+  const prodImageAsset = useMemo(
+    () =>
+      editorState.assets.images.find(
+        (img) => img._id === elementAttributsDict?.src
+      ),
+    [elementAttributsDict, editorState.assets.images]
   )
   const prodFilenameExtension = prodImageAsset?.fileName?.split('.')?.pop()
-
   const imageSrc =
     isProduction && !isPointerProduction && elementAttributsDict?.src
       ? // this will only work for gh pages with project in subfolder (rel. to root)!!!
@@ -348,7 +326,7 @@ export const ElementBox = <
         : undefined
 
   return element?._type === 'composite' ? (
-    <ComponentElementBox
+    <ComponentBox
       element={element}
       editorState={editorState}
       appController={appController}
@@ -362,16 +340,12 @@ export const ElementBox = <
       navigate={navigate}
     />
   ) : ['br', 'hr', 'img'].includes(element?._type) ? ( // null
-    <Box {...boxProps} {...linkProps} src={imageSrc} ref={elementRef} />
+    <Box {...boxProps} src={imageSrc} ref={elementRef} />
   ) : (
-    <Box
-      {...linkProps}
-      {...boxProps}
-      ref={elementRef}
-      // {...uiEditorHandlers}
-    >
-      {/* label */}
-      {!(isProduction || isPointerProduction) &&
+    <Box {...boxProps} ref={elementRef}>
+      {/* label / flag */}
+      {!isProduction &&
+        !isPointerProduction &&
         ((
           <Box
             sx={{

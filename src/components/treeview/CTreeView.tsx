@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as React from 'react'
 import { TreeView } from '@mui/x-tree-view/TreeView'
 import Icon from '@mdi/react'
 import { StyledTreeItem, StyledTreeItemProps } from './CTreeItem'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import { useState, useRef, useCallback, useEffect } from 'react'
 
 declare module 'react' {
   interface CSSProperties {
@@ -120,15 +120,15 @@ export const CTreeView = (props: CTreeViewProps) => {
     defaultExpanded,
   } = props
 
-  const [ui, setUi] = React.useState<{
+  const [ui, setUi] = useState<{
     dragging: { ctrKeyDown: boolean; active: boolean }
   }>({
     dragging: { ctrKeyDown: false, active: false },
   })
-  const [overlay, setOverlay] = React.useState<any>(null)
-  const treeViewRef = React.useRef<any>(null)
+  const [overlay, setOverlay] = useState<any>(null)
+  const treeViewRef = useRef<any>(null)
 
-  const handleDragStart = React.useCallback((event: any) => {
+  const handleDragStart = useCallback((event: any) => {
     const treeItemProps = event?.active?.data?.current
 
     setOverlay(treeItemProps)
@@ -137,7 +137,7 @@ export const CTreeView = (props: CTreeViewProps) => {
       dragging: { ...current?.dragging, active: true },
     }))
   }, [])
-  const handleDragEnd = React.useCallback(
+  const handleDragEnd = useCallback(
     (event: any) => {
       const overItem = event?.over?.data?.current
       const overNodeId = overItem?.nodeId
@@ -156,8 +156,8 @@ export const CTreeView = (props: CTreeViewProps) => {
     [onDragDrop, overlay, onDragging]
   )
 
-  const lastMouseMoveEvent = React.useRef<any>(null)
-  React.useEffect(() => {
+  const lastMouseMoveEvent = useRef<any>(null)
+  useEffect(() => {
     const mouseMoveListener = (e: any) => {
       lastMouseMoveEvent.current = e
       const isCtrlPressed = e?.ctrlKey
@@ -215,7 +215,7 @@ export const CTreeView = (props: CTreeViewProps) => {
     }
   }, [onDragging, overlay, ui?.dragging?.active])
 
-  const handleExpandNode = React.useCallback(
+  const handleExpandNode = useCallback(
     (id: string) => {
       if (!onToggleExpand) return
       onToggleExpand(id, null)
@@ -224,7 +224,7 @@ export const CTreeView = (props: CTreeViewProps) => {
   )
 
   const selected = selectedItems?.[0]
-  React.useEffect(() => {
+  useEffect(() => {
     if (!enableNullSelection) {
       return
     }

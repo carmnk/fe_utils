@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { Fragment, KeyboardEvent, ReactNode } from 'react'
 import { Box, BoxProps, Grid, GridProps, Stack } from '@mui/material'
 import { getDynamicFields } from './utils'
 import { Button, CButtonProps } from '../buttons/Button/Button'
@@ -96,7 +96,7 @@ export type GenericFormProps<
   disableInitialArrayDivider?: boolean
 }
 
-const preventDefault = (e: React.KeyboardEvent) => {
+const preventDefault = (e: KeyboardEvent) => {
   if (e.keyCode === 13) return false
 }
 
@@ -185,7 +185,7 @@ export const GenericForm = (props: GenericFormProps) => {
             return !['array', 'object', 'string-array']?.includes(
               field.type
             ) ? (
-              <React.Fragment key={fIdx}>
+              <Fragment key={fIdx}>
                 <Grid
                   item
                   {...width12}
@@ -214,7 +214,7 @@ export const GenericForm = (props: GenericFormProps) => {
                 {field?.width12 && field?.fillWidth && (
                   <Grid item {...fillWidth12} />
                 )}
-              </React.Fragment>
+              </Fragment>
             ) : (
               <Grid
                 item

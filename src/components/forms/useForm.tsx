@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import { GenericFormParams, GenericFormProps } from './GenericForm'
 
 export type UseFormParams<F extends { [key: string]: any }> =
@@ -14,9 +14,9 @@ export const useForm = <F extends { [key: string]: any }>(
   params: UseFormParams<F>
 ): GenericFormProps<F> => {
   // const { fields, subforms, injections } = params
-  const [formData, setFormData] = React.useState<F>({} as F)
+  const [formData, setFormData] = useState<F>({} as F)
 
-  const onChangeFormData = React.useCallback(
+  const onChangeFormData = useCallback(
     (
       newFormData: F,
       changedPropertyName: keyof F,
@@ -28,7 +28,7 @@ export const useForm = <F extends { [key: string]: any }>(
     []
   )
   // const subformFields = fields?.filter((field) => ['array', 'object', 'string-array'].includes(field.type)) // "array", "object", "string-array"
-  // const [formData, setFormData] = React.useState<F>({} as F)
+  // const [formData, setFormData] = useState<F>({} as F)
 
   return {
     ...params,

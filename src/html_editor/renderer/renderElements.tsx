@@ -1,34 +1,27 @@
-import {
-  EditorStateType,
-  ElementType,
-} from '../editorRendererController/editorState'
+import { EditorStateType, Element } from '../editorRendererController/types'
 import { ElementBox } from './ElementBox'
-import { AppBar, Box, Paper, Theme } from '@mui/material'
-import { EditorRendererControllerType } from '../editorRendererController/editorRendererControllerTypes'
-import React from 'react'
+import { AppBar, Box, Theme } from '@mui/material'
+import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
 import { PropertyType } from '../editorComponents/schemaTypes'
-import { isComponentType } from './utils'
+import { isComponentType, isStringLowerCase } from './utils'
 import { queryAction } from './queryAction'
-import { replaceTemplateInString } from './templates'
-
-export const isStringLowerCase = (str: string): boolean => {
-  return str === str.toLowerCase()
-}
+import { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
+import { FC, ReactNode, ComponentType } from 'react'
 
 export const renderElements = <
   ControllreActionsType extends { [key: string]: any },
 >(params: {
-  elements: ElementType[]
+  elements: Element[]
   //
   editorState: EditorStateType
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
-  currentViewportElements: ElementType[]
-  selectedPageElements: ElementType[]
+  currentViewportElements: Element[]
+  selectedPageElements: Element[]
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
-  selectedElement: ElementType | null
+  selectedElement: Element | null
   actions?: ControllreActionsType
   //
-  onSelectElement: (element: ElementType, isHovering: boolean) => void
+  onSelectElement: (element: Element, isHovering: boolean) => void
   theme: Theme
   isProduction?: boolean
   icons?: { [key: string]: string }
@@ -37,14 +30,14 @@ export const renderElements = <
   baseComponentId?: string
   disableOverlay?: boolean
   rootCompositeElementId?: string
-  OverlayComponent?: React.FC<{
-    element: ElementType
+  OverlayComponent?: FC<{
+    element: Element
     isProduction?: boolean
     editorState: EditorStateType
     actions?: ControllreActionsType
   }>
   navigate: any
-}): React.ReactNode => {
+}): ReactNode => {
   const {
     elements,
     editorState,
@@ -69,7 +62,7 @@ export const renderElements = <
 
   const tableUis = editorState.ui.tableUis
 
-  const elementsAdj = (
+  const relevantElements = (
     !parentId
       ? elements?.filter((el) => !el._parentId)
       : elements?.filter((el) => el._parentId === parentId)
@@ -79,14 +72,13 @@ export const renderElements = <
       (!baseComponentId && el._page === editorState.ui.selected.page)
   )
 
-  const rawElements = elementsAdj.map((element) => {
+  const renderedElements = relevantElements.map((element) => {
     const rootElementOverlayProps = {
       element: element,
       isProduction,
       editorState,
       actions,
     }
-
     const typeFirstLetter = element._type.slice(0, 1)
     const isHtmlElement = isStringLowerCase(typeFirstLetter)
     const elementProps = editorState.properties?.filter(
@@ -97,18 +89,28 @@ export const renderElements = <
         prop.template_id === element.template_id &&
         !elementProps.find((elprop) => elprop.prop_name === prop.prop_name)
     )
-    const allElementProps = [...(elementProps ?? []), ...(templateProps ?? [])]
 
+    const allElementProps = [...(elementProps ?? []), ...(templateProps ?? [])]
     const getPropByName = (key: string) =>
       allElementProps?.find((prop) => prop.prop_name === key)?.prop_value
 
     const schemaProps = (element as any)?.schema?.properties ?? {}
+    // icon injections
     const elementIconKeys = isHtmlElement
       ? []
       : Object.keys(schemaProps)?.filter(
           (key) => schemaProps[key]?.type === PropertyType.icon
         )
-    const elementArrayKeys = isHtmlElement
+    // e.g. {...., icon: mdiPencil, ... }
+    const injectedIconsDict = elementIconKeys?.reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: icons?.[getPropByName(key)],
+      }),
+      {}
+    )
+    // icon injections for array elements
+    const elementArrayIconKeys = isHtmlElement
       ? []
       : Object.keys(schemaProps)?.filter((key) => {
           const itemsProps = (schemaProps?.[key] as any)?.items?.[0]?.properties
@@ -119,7 +121,7 @@ export const renderElements = <
             )
           )
         })
-    const elementArrayIconInjectionDict = elementArrayKeys
+    const elementArrayIconInjectionDict = elementArrayIconKeys
       .map((key) => {
         const itemsProps = (schemaProps?.[key] as any)?.items?.[0]?.properties
         return Object.keys(itemsProps)
@@ -137,31 +139,21 @@ export const renderElements = <
         }
       }, {})
 
-    // e.g. {...., icon: mdiPencil, ... }
-    const injectedIconsDict = elementIconKeys?.reduce(
-      (acc, key) => ({
-        ...acc,
-        [key]: icons?.[getPropByName(key)],
-      }),
-      {}
-    )
-
     const baseComponent = COMPONENT_MODELS?.find(
       (com) => com.type === element?._type
     )
     const CurrentComponent =
       baseComponent &&
       'component' in baseComponent &&
-      (baseComponent.component as React.ComponentType<any>)
+      (baseComponent.component as ComponentType<any>)
 
+    // props
     const elementPropsObject = allElementProps.reduce((acc, cur) => {
       const key = cur.prop_name
       const keyValue = getPropByName(key)
-      // currently only data
-
       const matches = keyValue?.match?.(/{(_data|form|props)\.[^}]*}/g)
       const keyValueAdj = matches
-        ? replaceTemplateInString(
+        ? replacePlaceholdersInString(
             keyValue,
             appController.state,
             editorState.compositeComponentProps,
@@ -174,7 +166,7 @@ export const renderElements = <
         (tr) => tr.prop_id === cur.prop_id && tr.element_id === element._id
       )?.transformer_string
       const transformerFn = transformerStr
-        ? replaceTemplateInString(
+        ? replacePlaceholdersInString(
             transformerStr,
             appController.state,
             editorState.compositeComponentProps,
@@ -185,22 +177,6 @@ export const renderElements = <
           )
         : null
 
-      if (element._type.toLowerCase().includes('treeview')) {
-        console.debug(
-          baseComponent,
-          key,
-          cur,
-          'fn',
-          transformerFn,
-          typeof transformerFn,
-          keyValueAdj,
-          typeof transformerFn === 'function'
-            ? transformerFn?.(keyValueAdj)
-            : 'no function',
-          transformerStr,
-          editorState.transformers
-        )
-      }
       const keyValueAdj2 =
         typeof transformerFn === 'function' && Array.isArray(keyValueAdj)
           ? transformerFn?.(keyValueAdj)
@@ -214,7 +190,7 @@ export const renderElements = <
     const regex = /{(_data|form|props)\.[^}]*}/g
     const matches = element._content?.match?.(regex)
     const content = matches
-      ? replaceTemplateInString(
+      ? replacePlaceholdersInString(
           element._content ?? '',
           appController.state,
           editorState.compositeComponentProps,
@@ -223,15 +199,13 @@ export const renderElements = <
           rootCompositeElementId
         )
       : element._content
+
     const elementAdj = {
       ...element,
       content,
       props: {
         ...(elementPropsObject ?? {}),
-        // ...iconInjection,
-        // ...endIconInjection,
         ...injectedIconsDict,
-
         ...elementArrayIconInjectionDict,
       },
     }
@@ -479,33 +453,6 @@ export const renderElements = <
       )
     }
 
-    if (element._type === 'Form') {
-      const formProps = {
-        ...(elementPropsObject ?? {}),
-        ...injectedIconsDict,
-        ...elementArrayIconInjectionDict,
-        formData: appController.actions.getFormData(elementAdj._id),
-        onChangeFormData: (
-          newFormData: any,
-          propertyKey: string,
-          propertyValue: any,
-          prevFormData: any
-        ) => {
-          appController.actions.changeFormData(elementAdj._id, newFormData)
-        },
-        sx: !isProduction
-          ? {
-              ...((elementPropsObject as any)?.sx ?? {}),
-              position: 'relative',
-            }
-          : (elementPropsObject as any)?.sx,
-        rootInjection: !disableOverlay && OverlayComponent && (
-          <OverlayComponent {...rootElementOverlayProps} />
-        ),
-        ...eventHandlerProps,
-      }
-    }
-
     const elementAdj2 = {
       ...elementAdj,
       _content: content,
@@ -555,42 +502,6 @@ export const renderElements = <
                 }
               : (elementPropsObject as any)?.sx
           }
-          // onClick={
-          //   'onClick' in elementAdj.props
-          //     ? () => {
-          //         const clickActionIds: string[] = elementAdj.props.onClick
-          //         const clickActions = editorState.actions.filter((act) =>
-          //           clickActionIds.includes(act.action_id)
-          //         )
-          //         for (let c = 0; c < clickActions.length; c++) {
-          //           const clickAction = clickActions[c]
-          //           const endpointId = clickAction.endpoint_id
-          //           const endpoint = editorState.externalApis
-          //             .map((api) =>
-          //               api.endpoints.map((ep) => ({
-          //                 ...ep,
-          //                 api_id: api.external_api_id,
-          //               }))
-          //             )
-          //             .flat()
-          //             .find((ep) => ep.endpoint_id === endpointId)
-          //           const api = editorState.externalApis.find(
-          //             (api) => api.external_api_id === endpoint?.api_id
-          //           )
-          //           const url = (api?.baseUrl ?? '') + (endpoint?.url ?? '')
-          //           queryAction(
-          //             endpoint?.method,
-          //             url,
-          //             !!endpoint?.useCookies,
-          //             {},
-          //             endpoint?.headers,
-          //             endpoint?.params,
-          //             endpoint?.responseType
-          //           )
-          //         }
-          //       }
-          //     : undefined
-          // }
           {...eventHandlerProps}
         />
       ) : ['Table'].includes(element?._type) && CurrentComponent ? (
@@ -765,5 +676,5 @@ export const renderElements = <
       )
     ) : null
   })
-  return rawElements
+  return renderedElements
 }

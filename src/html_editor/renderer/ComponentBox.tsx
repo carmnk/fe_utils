@@ -1,27 +1,25 @@
 import { Box } from '@mui/material'
-import { EditorRendererControllerType } from '../editorRendererController/editorRendererControllerTypes'
-import {
-  EditorStateType,
-  ElementType,
-} from '../editorRendererController/editorState'
+import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
+import { EditorStateType, Element } from '../editorRendererController/types'
 import { renderElements } from './renderElements'
+import { FC, useMemo } from 'react'
 
 export type ComponentElementBoxProps<
   ControllreActionsType extends { [key: string]: any },
 > = {
-  element: ElementType
+  element: Element
   //
   editorState: EditorStateType
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
-  currentViewportElements: ElementType[]
-  selectedPageElements: ElementType[]
+  currentViewportElements: Element[]
+  selectedPageElements: Element[]
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
-  selectedElement: ElementType | null
+  selectedElement: Element | null
   actions?: ControllreActionsType
   //
   isProduction: boolean
-  OverlayComponent?: React.FC<{
-    element: ElementType
+  OverlayComponent?: FC<{
+    element: Element
     isProduction?: boolean
     editorState: EditorStateType
     actions?: ControllreActionsType
@@ -29,7 +27,7 @@ export type ComponentElementBoxProps<
   navigate: any
 }
 
-export const ComponentElementBox = <
+export const ComponentBox = <
   ControllreActionsType extends { [key: string]: any },
 >(
   props: ComponentElementBoxProps<ControllreActionsType>
@@ -48,16 +46,19 @@ export const ComponentElementBox = <
     navigate,
   } = props
 
-  const rootElementOverlayProps = {
-    element,
-    isProduction,
-    editorState,
-    actions,
-  }
+  const rootElementOverlayProps = useMemo(
+    () => ({
+      element,
+      isProduction,
+      editorState,
+      actions,
+    }),
+    [element, isProduction, editorState, actions]
+  )
 
-  return (
-    <Box position="relative">
-      {renderElements({
+  const renderedComponentElements = useMemo(
+    () =>
+      renderElements({
         elements: editorState.elements.filter(
           (el) =>
             el.component_id === element.ref_component_id &&
@@ -87,7 +88,25 @@ export const ComponentElementBox = <
         rootCompositeElementId: element._id,
         OverlayComponent: OverlayComponent,
         navigate,
-      })}
+      }),
+    [
+      editorState,
+      appController,
+      currentViewportElements,
+      selectedPageElements,
+      COMPONENT_MODELS,
+      selectedElement,
+      actions,
+      isProduction,
+      OverlayComponent,
+      navigate,
+      element,
+    ]
+  )
+
+  return (
+    <Box position="relative">
+      {renderedComponentElements}
       {OverlayComponent && <OverlayComponent {...rootElementOverlayProps} />}
     </Box>
   )

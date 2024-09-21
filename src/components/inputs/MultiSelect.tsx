@@ -33,7 +33,7 @@ export type MultiSelectProps = CommonInputFieldProps &
     value?: (string | number | boolean)[]
     options?: {
       value: string | number | boolean
-      label: React.ReactNode
+      label: ReactNode
       textLabel: string
     }[]
     disableHelperText?: boolean

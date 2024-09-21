@@ -67,3 +67,7 @@ export {
 export { MuiSize } from './muiSizeDict'
 export { MuiButtonVariant } from './muiVariantDict'
 export { UI_POINTER_MODE, UI_POINTER_MODE_OPTIONS } from './uiPointerMode'
+
+export { LeftMenuBackendTabs } from './LeftMenuBackendTabs'
+export { LeftMenuGlobalTabs } from './LeftMenuGlobalTabs'
+export { LeftMenuTabs } from './LeftMenuTabs'

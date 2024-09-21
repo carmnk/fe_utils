@@ -17,10 +17,10 @@ export interface UnfilteredHeaderCellProps<
   sortKey?: string
   renderCell:
     | string
-    | ((item: TableDataType, cIdx: number, rIdx: number) => React.ReactNode)
+    | ((item: TableDataType, cIdx: number, rIdx: number) => ReactNode)
   renderFooterCell?:
     | string
-    | ((footerData: FooterDataType, idx: number) => React.ReactNode)
+    | ((footerData: FooterDataType, idx: number) => ReactNode)
 }
 
 export interface FilteredTableHeaderCellProps<

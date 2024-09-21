@@ -1,12 +1,12 @@
 import { mdiDeleteOutline } from '@mdi/js'
 import { Box, Stack } from '@mui/material'
-import { Fragment } from 'react'
+import { Fragment, ReactNode } from 'react'
 import { Button } from '../buttons/Button/Button'
 import { CTextField } from './TextField'
 
 export type StringArrayFieldProps = {
   value?: string[] | null
-  label?: React.ReactNode
+  label?: ReactNode
   name?: string
   required?: any
   error?: boolean

@@ -1,17 +1,18 @@
 import { Box } from '@mui/material'
 import { Button } from '../../buttons/Button/Button'
+import { ReactNode } from 'react'
 
 export type NoResultsProps =
   | {
       clearFilters: () => void
       label?: string
-      content?: React.ReactNode
+      content?: ReactNode
       clearFilersLabel?: string
       disableClearFilters?: boolean
     }
   | {
       label?: string
-      content?: React.ReactNode
+      content?: ReactNode
       disableClearFilters?: boolean
     }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+export const a = 1
 // import { FileUploader } from '../inputs/FileUploader'
 
 // export type FileFieldProps<F> = {
@@ -20,7 +20,7 @@ import React from 'react'
 
 // export const FileField = <F extends { [key: string]: any } = { [key: string]: any }>(props: FileFieldProps<F>) => {
 //   const { formData, onChangeFormData, onBeforeChange, accept } = props
-//   const [loading, setLoading] = React.useState(false)
+//   const [loading, setLoading] = useState(false)
 //   return (
 //     <FileUploader
 //       accept={accept ?? '*'}

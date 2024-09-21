@@ -1,11 +1,9 @@
-import { EditorStateType } from '../editorState'
+import { EditorStateType } from '../types'
 import { v4 as uuid } from 'uuid'
 import { transformEditorStateTheme } from './transformEditorStateTheme'
-import {
-  EditorStateDbDataType,
-  EndpointDb,
-  ExternalApiDb,
-} from './editorDbStateType'
+import { EditorStateDbDataType } from './editorDbStateType'
+import { ExternalApiDb } from '../types/externalApi'
+import { EndpointDb } from '../types/endpoint'
 
 export const transformEditorStateToPayload = (
   payload: EditorStateType

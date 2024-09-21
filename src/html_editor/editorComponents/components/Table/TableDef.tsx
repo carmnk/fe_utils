@@ -5,11 +5,11 @@ import { ComponentDefType } from '../../componentDefType'
 import { Table } from '../../../../components/table/Table'
 import { uniq } from 'lodash'
 
-export const tableEditorComponentDef: ComponentDefType = {
+export const tableEditorComponentDef = {
   type: 'Table' as const,
 
   component: Table,
-  formGen: ({ editorState }) =>
+  formGen: ({ editorState }: any) =>
     propertyFormFactory(tablePropsSchema, editorState, {
       // dynamicOptionsDict: {
       //   component: [

@@ -1,6 +1,7 @@
+import { FC } from 'react'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
-export const CopyClipboardContext: React.FC<
+export const CopyClipboardContext: FC<
   CopyToClipboard.Props & { disableCopy?: boolean }
 > = (props: CopyToClipboard.Props & { disableCopy?: boolean }) =>
   props?.disableCopy ? (

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { ReactNode, useCallback, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import Dialog, { DialogProps } from '@mui/material/Dialog'
 import DialogActions, { DialogActionsProps } from '@mui/material/DialogActions'
@@ -25,20 +25,20 @@ export type CModalBaseProps = Omit<
   buttonBorderRadiuses?: number
   borderRadius?: number
   open: boolean
-  header: React.ReactNode
+  header: ReactNode
   isConfirmation?: boolean
   onConfirm?: (data?: any) => void
-  confirmationIcon?: React.ReactNode
+  confirmationIcon?: ReactNode
   confirmationDisabled?: boolean
   confirmationLabel?: string
   cancelConfirmationLabel?: string
-  cancelConfirmationIcon?: React.ReactNode
+  cancelConfirmationIcon?: ReactNode
   onClose?: () => void
   maxWidth?: number
   width?: number
   onSecondaryAction?: () => void
   secondaryActionLabel?: string
-  secondaryActionIcon?: React.ReactNode
+  secondaryActionIcon?: ReactNode
   placeNonConfirmationButtonOnLeft?: boolean
   nonConfirmationLabel?: string
   minHeight?: string | number
@@ -47,7 +47,7 @@ export type CModalBaseProps = Omit<
   minWidth?: string | number
   height?: string | number
   loading?: boolean
-  subheader?: React.ReactNode
+  subheader?: ReactNode
   confirmationTooltip?: string
   disableTopRightCloseButton?: boolean
   slotProps?: DialogProps['slotProps'] & {
@@ -77,10 +77,10 @@ export type CModalBaseProps = Omit<
 
 export type CModalProps =
   | (CModalBaseProps & {
-      content: React.ReactNode
+      content: ReactNode
     })
   | (CModalBaseProps & {
-      children: React.ReactNode
+      children: ReactNode
     })
 
 export const Modal = (props: CModalProps) => {

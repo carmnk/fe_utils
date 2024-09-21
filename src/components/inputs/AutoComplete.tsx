@@ -6,7 +6,7 @@ import { Autocomplete, InputAdornment, TextFieldProps } from '@mui/material'
 import { AutocompleteProps, Box, useTheme } from '@mui/material'
 import { GenericInputFieldProps } from './types'
 import { CTextFieldProps, CTextField } from './TextField'
-import Icon from '@mdi/react'
+import { Icon } from '@mdi/react'
 import { defaultInputContainerTextFieldStyles } from './defaultTextFieldStyles'
 import { ListboxComponent } from './AutoCompleteVirtualization'
 
@@ -227,7 +227,7 @@ export const CAutoComplete = forwardRef(
           size: 'small',
           renderOption: enableVirtualization
             ? (props, option, state) =>
-                [props, option, state.index] as React.ReactNode
+                [props, option, state.index] as ReactNode
             : (props: any, option: any) => (
                 <Box fontSize={14} component="li" {...props}>
                   {option?.label}

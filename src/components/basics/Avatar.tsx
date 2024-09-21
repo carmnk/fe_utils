@@ -1,4 +1,4 @@
-import { CSSProperties, PropsWithChildren, useMemo } from 'react'
+import { CSSProperties, PropsWithChildren, ReactNode, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import {
   AvatarProps as MAvatarProps,
@@ -13,7 +13,7 @@ export type AvatarProps = Omit<MAvatarProps, 'title' | 'slotProps'> & {
   fullName?: string
   fontSize?: CSSProperties['fontSize']
   disableInitials?: boolean
-  customTooltip?: React.ReactNode
+  customTooltip?: ReactNode
   bgColor?: string
   slotProps?: MAvatarProps['slotProps'] & {
     typography?: TypographyProps

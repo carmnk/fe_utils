@@ -2,9 +2,8 @@ import { mdiDockBottom } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { BottomNavPropsSchema } from './bottomNavPropsRawSchema'
 import { BottomNavigation } from '../../../../components/navigation/BottomNavigation'
-import { ComponentDefType } from '../../componentDefType'
 
-export const BottomNavComponentDef: ComponentDefType = {
+export const BottomNavComponentDef = {
   type: 'BottomNavigation' as const,
   props: {
     // children: "test",
@@ -17,7 +16,7 @@ export const BottomNavComponentDef: ComponentDefType = {
     },
   },
   state: 'test',
-  formGen: ({ editorState }) =>
+  formGen: ({ editorState }: any) =>
     propertyFormFactory(BottomNavPropsSchema, editorState),
   icon: mdiDockBottom,
   category: 'navigation',

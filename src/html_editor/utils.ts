@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react'
+
 export const getSizeMode = (
   value: string | number | undefined,
   defaultValue = 'auto'
@@ -5,17 +7,17 @@ export const getSizeMode = (
   return typeof value === 'number'
     ? 'px'
     : typeof value === 'string'
-    ? value.includes('%')
-      ? '%'
-      : value.includes('vh')
-      ? 'vh'
-      : value.includes('vw')
-      ? 'vw'
-      : 'px'
-    : defaultValue
+      ? value.includes('%')
+        ? '%'
+        : value.includes('vh')
+          ? 'vh'
+          : value.includes('vw')
+            ? 'vw'
+            : 'px'
+      : defaultValue
 }
 
-export const getInitialStyles = (): React.CSSProperties => {
+export const getInitialStyles = (): CSSProperties => {
   return {
     display: 'block',
     position: 'static',

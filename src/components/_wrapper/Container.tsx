@@ -1,15 +1,15 @@
-import React from 'react'
 import {
   // eslint-disable-next-line no-restricted-imports
   Container as MuiContainer,
   ContainerProps,
   styled,
 } from '@mui/material'
+import { CSSProperties } from 'react'
 
 export type CContainerProps = ContainerProps &
   Partial<
     Pick<
-      React.CSSProperties,
+      CSSProperties,
       | 'paddingTop'
       | 'paddingBottom'
       | 'marginTop'

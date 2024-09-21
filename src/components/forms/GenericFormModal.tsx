@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 import {
   GenericForm,
   GenericFormParams,
@@ -20,7 +20,7 @@ export type GenericFormModalProps<
   onClose: () => void
   onConfirm: (newFormdata: F) => void
   formProps: GenericFormParams<F>
-  subheader?: React.ReactNode
+  subheader?: ReactNode
   // gridWidth?: number | string
   formData?: F
   setFormData?: (newFormData: F) => void

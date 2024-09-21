@@ -1,5 +1,5 @@
-import { EditorRendererControllerType } from '../../../editorRendererController/editorRendererControllerTypes'
-import { EditorStateType } from '../../../editorRendererController/editorState'
+import { EditorRendererControllerType } from '../../../editorRendererController/types/editorRendererController'
+import { EditorStateType } from '../../../editorRendererController/types'
 import type { GenericFormProps } from '../../../../components/forms/GenericForm'
 
 const optionsDict = {

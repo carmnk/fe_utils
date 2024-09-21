@@ -18,7 +18,7 @@ export type InputFieldType = InputTextFieldType | 'bool' | 'switch'
 
 /**  Def of common props for all boolean input fields (less than textfield) */
 export type CommonBooleanInputFieldProps = {
-  label?: React.ReactNode
+  label?: ReactNode
   name?: string
   required?: boolean
   sx?: any
@@ -83,8 +83,8 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
               e?: ChangeEvent<HTMLInputElement>,
               name?: string
             ) => void
-            injectLabelComponent?: React.ReactNode
-            labelSubtext?: React.ReactNode
+            injectLabelComponent?: ReactNode
+            labelSubtext?: ReactNode
             useNotchedLabel?: boolean
             notchedLabelBgColor?: string
             notchedLabelMarginLeft?: number
@@ -103,8 +103,8 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
                 e?: ChangeEvent<HTMLInputElement>,
                 name?: string
               ) => void
-              injectLabelComponent?: React.ReactNode
-              labelSubtext?: React.ReactNode
+              injectLabelComponent?: ReactNode
+              labelSubtext?: ReactNode
               useNotchedLabel?: boolean
               notchedLabelBgColor?: string
               notchedLabelMarginLeft?: number
@@ -123,8 +123,8 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
                   e?: ChangeEvent<HTMLInputElement>,
                   name?: string
                 ) => void
-                // injectLabelComponent?: React.ReactNode
-                // labelSubtext?: React.ReactNode
+                // injectLabelComponent?: ReactNode
+                // labelSubtext?: ReactNode
                 useNotchedLabel?: boolean
                 notchedLabelBgColor?: string
                 notchedLabelMarginLeft?: number

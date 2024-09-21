@@ -1,4 +1,5 @@
-import React, { CSSProperties, useMemo } from 'react'
+import { CSSProperties, ForwardedRef, ReactNode } from 'react'
+import { forwardRef, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import {
   useTheme,
@@ -19,11 +20,11 @@ export type CButtonProps = Omit<
   ButtonProps,
   'label' | 'loading' | 'icon' | 'color' | 'slotProps' | 'endIcon'
 > & {
-  label?: React.ReactNode // label for the button - precedence over children!
-  children?: React.ReactNode // label for the button - if label is not provided
+  label?: ReactNode // label for the button - precedence over children!
+  children?: ReactNode // label for the button - if label is not provided
   loading?: boolean // loading state (show spinner instead of icon)
-  icon?: React.ReactNode
-  endIcon?: React.ReactNode
+  icon?: ReactNode
+  endIcon?: ReactNode
   dropdown?: ButtonDropdown
   iconButton?: boolean
   disableHover?: boolean
@@ -48,11 +49,11 @@ export type CButtonProps = Omit<
     loadingProgress?: CircularProgressProps
   }
   borderRadius?: CSSProperties['borderRadius']
-  rootInjection?: React.ReactNode
+  rootInjection?: ReactNode
 }
 
-export const Button = React.forwardRef(
-  (props: CButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
+export const Button = forwardRef(
+  (props: CButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
     const {
       icon,
       variant,
@@ -180,7 +181,7 @@ export const Button = React.forwardRef(
               <Typography
                 variant="body2"
                 color={
-                  disabled ? 'action.disabled' : fontColor ?? 'text.primary'
+                  disabled ? 'action.disabled' : (fontColor ?? 'text.primary')
                 }
                 fontWeight={700}
                 {...typography}
@@ -207,7 +208,7 @@ export const Button = React.forwardRef(
               <Typography
                 variant="body2"
                 color={
-                  disabled ? 'action.disabled' : fontColor ?? 'text.primary'
+                  disabled ? 'action.disabled' : (fontColor ?? 'text.primary')
                 }
                 fontWeight={700}
                 {...typography}
@@ -236,7 +237,7 @@ export const Button = React.forwardRef(
                 color={
                   disabled
                     ? 'action.disabled'
-                    : fontColor ?? 'primary.contrastText'
+                    : (fontColor ?? 'primary.contrastText')
                 }
                 fontWeight={700}
                 {...typography}

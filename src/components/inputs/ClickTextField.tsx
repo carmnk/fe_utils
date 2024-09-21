@@ -7,7 +7,7 @@ import {
   TypographyProps,
   Chip,
 } from '@mui/material'
-import React, { ChangeEvent, memo, useCallback, useState } from 'react'
+import { ChangeEvent, ReactNode, memo, useCallback, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
 import { CAutoComplete } from './AutoComplete'
 import {
@@ -19,7 +19,7 @@ import { InputFieldType } from './types'
 type CommonClickTextFieldProps = {
   value: string
   typographyProps?: TypographyProps
-  additionalLabelComponent?: React.ReactNode
+  additionalLabelComponent?: ReactNode
   onChange?: (newValue: string) => void
   validateInput?: (newValue: string) => boolean
   onClickAway?: () => void

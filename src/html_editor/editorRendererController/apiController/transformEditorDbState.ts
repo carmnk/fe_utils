@@ -1,9 +1,6 @@
 import { ExtendedTheme } from '../../theme/muiTheme'
-import {
-  EditorStateType,
-  ElementKeyType,
-  defaultEditorState,
-} from '../editorState'
+import { defaultEditorState } from '../defaultEditorState'
+import { EditorStateType } from '../types'
 import { isComponentType } from '../../renderer/utils'
 import { reloadSerializedThemes } from './transformEditorStateTheme'
 import { EditorStateDbDataType } from './editorDbStateType'
@@ -69,7 +66,7 @@ export const transformEditorStateFromPayload = (
   }
   const allElements =
     data?.elements?.map?.((el) => ({
-      ...(isComponentType(el.element_type as ElementKeyType)
+      ...(isComponentType(el.element_type)
         ? componentsIn.find((bc) => bc.type === el.element_type)
         : {}),
       _id: el.element_id,

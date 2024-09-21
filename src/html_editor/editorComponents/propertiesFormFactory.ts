@@ -1,5 +1,5 @@
 import { HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS } from '../defs/HTMLTagNamesDict'
-import { EditorStateType } from '../editorRendererController/editorState'
+import { EditorStateType } from '../editorRendererController/types'
 import {
   ExtendedArraySchemaType,
   ExtendedObjectSchemaType,

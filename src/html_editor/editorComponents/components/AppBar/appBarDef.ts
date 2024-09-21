@@ -2,9 +2,8 @@ import { mdiDockTop } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { appBarPropsSchema } from './appBarPropsRawSchema'
 import { AppBarWrapper } from './AppBarWrapper'
-import { ComponentDefType } from '../../componentDefType'
 
-export const appBarDef: ComponentDefType = {
+export const appBarDef = {
   //   ...paperDef,
   type: 'AppBar' as const,
   props: {
@@ -15,7 +14,7 @@ export const appBarDef: ComponentDefType = {
     children: [],
   },
 
-  formGen: ({ editorState }) =>
+  formGen: ({ editorState }: any) =>
     propertyFormFactory(appBarPropsSchema, editorState),
   icon: mdiDockTop,
   category: 'surface',

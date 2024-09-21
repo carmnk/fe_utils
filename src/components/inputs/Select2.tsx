@@ -1,6 +1,6 @@
 import { ListSubheader, MenuItem, MenuItemProps } from '@mui/material'
 import { CTextField, CTextFieldProps } from './TextField'
-import { Fragment, useMemo } from 'react'
+import { useMemo } from 'react'
 import { uniq } from 'lodash'
 
 type SelectOption = { value: string | number | boolean; label: string }
@@ -8,7 +8,7 @@ type SelectOption = { value: string | number | boolean; label: string }
 export type CSelect2Props = CTextFieldProps & {
   options: SelectOption[]
   groupBy?: (item: SelectOption) => string
-  // onChange?: (newValue: string, e: React.ChangeEvent<HTMLInputElement>) => void
+  // onChange?: (newValue: string, e: ChangeEvent<HTMLInputElement>) => void
   slotProps?: CTextFieldProps['slotProps'] & {
     menuItem?: MenuItemProps
   }

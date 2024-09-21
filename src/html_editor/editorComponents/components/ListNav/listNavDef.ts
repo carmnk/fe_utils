@@ -2,9 +2,8 @@ import { mdiFormatListNumbered } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ListNavPropsSchema } from './listNavPropsRawSchema'
 import { ListNavigation } from '../../../../components/navigation/CListNavigation'
-import { ComponentDefType } from '../../componentDefType'
 
-export const listNavEditorComponentDef: ComponentDefType = {
+export const listNavEditorComponentDef = {
   type: 'ListNavigation' as const,
   props: {
     // children: "test",
@@ -21,7 +20,7 @@ export const listNavEditorComponentDef: ComponentDefType = {
     },
   },
   state: 'test',
-  formGen: ({ editorState }) =>
+  formGen: ({ editorState }: any) =>
     propertyFormFactory(ListNavPropsSchema, editorState),
 
   icon: mdiFormatListNumbered,

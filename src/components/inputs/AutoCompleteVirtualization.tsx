@@ -1,14 +1,7 @@
 import { ListSubheader, Typography, useTheme } from '@mui/material'
 import { useMediaQuery } from '@mui/material'
-import React, {
-  HTMLAttributes,
-  ReactElement,
-  createContext,
-  forwardRef,
-  useContext,
-  useEffect,
-  useRef,
-} from 'react'
+import { HTMLAttributes, ReactElement, createContext } from 'react'
+import { forwardRef, useContext, useEffect, useRef } from 'react'
 import { VariableSizeList, ListChildComponentProps } from 'react-window'
 
 const LISTBOX_PADDING = 8 // px

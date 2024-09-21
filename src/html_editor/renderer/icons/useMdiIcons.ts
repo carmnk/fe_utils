@@ -1,7 +1,4 @@
-import {
-  EditorStateType,
-  ElementType,
-} from '../../editorRendererController/editorState'
+import { EditorStateType, Element } from '../../editorRendererController/types'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { importIconByName } from './asyncImportMdiIcon'
 
@@ -39,7 +36,7 @@ export const getIconKeys = (elementType: any, components: any[]) => {
 type Icons = { [key: string]: string }
 
 export const useMdiIcons = (
-  selectedPageElements: ElementType[],
+  selectedPageElements: Element[],
   components: any[],
   properties: EditorStateType['properties']
 ): [{ [key: string]: string }, Dispatch<SetStateAction<Icons>>] => {

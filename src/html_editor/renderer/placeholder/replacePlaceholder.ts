@@ -1,11 +1,11 @@
-import { getDeepPropertyByPath } from '../../utils/object'
-import { EditorRendererControllerType } from '../editorRendererController/editorRendererControllerTypes'
-import { EditorStateType } from '../editorRendererController/editorState'
+import { getDeepPropertyByPath } from '../../../utils/object'
+import { EditorRendererControllerType } from '../../editorRendererController/types/editorRendererController'
+import { EditorStateType } from '../../editorRendererController/types'
 
 /**  replaces the placeholders AND EVALs the string if it contains any placeholders, static calculations are skipped!
     @returns the evaluated string -> can be any type !!!
 */
-export const replaceTemplateInString = (
+export const replacePlaceholdersInString = (
   text: string,
   appState: EditorRendererControllerType<any>['appController']['state'],
   componentPropertyDefinitions: EditorStateType['compositeComponentProps'],

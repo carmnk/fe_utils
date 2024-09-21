@@ -1,4 +1,3 @@
-import React from 'react'
 import { render, fireEvent, act } from '@testing-library/react'
 import { BottomPagination } from '../BottomPagination'
 import { Box, ThemeProvider, createTheme, useMediaQuery } from '@mui/material'
