@@ -10,7 +10,7 @@ import {
 import { Tabs as MTabs } from '@mui/material'
 import Icon from '@mdi/react'
 
-export type CTabsProps = TabsProps & {
+export type CTabsProps = Omit<TabsProps, 'onChange' | 'value'> & {
   value: string
   onChange: (value: string) => void
   items: {
