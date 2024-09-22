@@ -2,7 +2,7 @@ import {
   LeftMenuGlobalTabs,
   LeftMenuTabs,
   LeftMenuBackendTabs,
-} from './../../defs/index'
+} from '../../defs/index'
 import { UI_POINTER_MODE } from '../../defs'
 
 export type Ui = {

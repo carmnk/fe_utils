@@ -10,7 +10,7 @@ import {
 import { Tabs as MTabs } from '@mui/material'
 import Icon from '@mdi/react'
 
-export type CTabsProps = {
+export type CTabsProps = TabsProps & {
   value: string
   onChange: (value: string) => void
   items: {
@@ -50,6 +50,7 @@ export const Tabs = forwardRef(
       useTabBorders,
       sx,
       rootInjection,
+      ...rest
     } = props
     const theme = useTheme()
 
@@ -109,6 +110,7 @@ export const Tabs = forwardRef(
         scrollButtons={scrollButtons}
         textColor={textColor}
         visibleScrollbar={visibleScrollbar}
+        {...rest}
       >
         {items?.map?.((item, iIdx) => (
           <Tab

@@ -3,7 +3,7 @@ import { BoxProps, Box, Tooltip, Stack, useTheme } from '@mui/material'
 import { Flex } from '../../_wrapper/Flex'
 import { EllipsisTextWithTooltip } from '../../basics/EllipsisTooltip'
 import { Button } from '../../buttons/Button'
-import { FilteredTableHeaderCell } from './../subComponents/FilteredColumns'
+import { FilteredTableHeaderCell } from './FilteredColumns'
 import { FilterType, TableProps } from '../types'
 
 const Thead = (props: BoxProps) => <Box component="thead" {...props} />

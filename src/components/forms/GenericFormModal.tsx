@@ -2,7 +2,7 @@ import { ReactNode, useCallback, useState } from 'react'
 import {
   GenericForm,
   GenericFormParams,
-} from '../../components/forms/GenericForm'
+} from './GenericForm'
 import { Modal, CModalProps } from '../surfaces/Modal'
 
 export type GenericFormModalProps<
