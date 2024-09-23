@@ -1,5 +1,5 @@
 import { Fragment, KeyboardEvent, ReactNode } from 'react'
-import { Box, BoxProps, Grid, GridProps, Stack } from '@mui/material'
+import { Box, BoxProps, Grid2, Grid2Props, Stack } from '@mui/material'
 import { getDynamicFields } from './utils'
 import { Button, CButtonProps } from '../buttons/Button/Button'
 import { mdiDeleteOutline } from '@mdi/js'
@@ -77,8 +77,8 @@ export type GenericFormProps<
   slotProps?: {
     formContainer?: BoxProps
     subformContainer?: BoxProps
-    fieldsContainer?: GridProps
-    fieldContainer?: GridProps
+    fieldsContainer?: Grid2Props
+    fieldContainer?: Grid2Props
     subFormRemoveItemButton?: CButtonProps
     commonFieldProps?: GenericInputFieldProps
   }
@@ -146,10 +146,10 @@ export const GenericForm = (props: GenericFormProps) => {
   return (
     <Box
       position="relative"
-      component={!_path && !disableUseFormElement ? 'form' : undefined}
+      component={!_path && !disableUseFormElement ? 'form' : (undefined as any)}
       {...(!_path ? formContainer : subformContainer)}
     >
-      <Grid
+      <Grid2
         container
         spacing={settings?.gap ?? (disableTopSpacing ? '0 16px' : '16px')}
         pr={settings?.gap ?? '16px'}
@@ -186,9 +186,8 @@ export const GenericForm = (props: GenericFormProps) => {
               field.type
             ) ? (
               <Fragment key={fIdx}>
-                <Grid
-                  item
-                  {...width12}
+                <Grid2
+                size={width12}
                   alignSelf={field.type === 'bool' ? 'flex-end' : undefined}
                   display={field?.hidden ? 'none' : undefined}
                   {...fieldContainer}
@@ -210,16 +209,14 @@ export const GenericForm = (props: GenericFormProps) => {
                     fields={fields}
                     subforms={subforms}
                   />
-                </Grid>
+                </Grid2>
                 {field?.width12 && field?.fillWidth && (
-                  <Grid item {...fillWidth12} />
+                  <Grid2 size={fillWidth12} />
                 )}
               </Fragment>
             ) : (
-              <Grid
-                item
-                // xs={field.width12 ?? 12}
-                {...width12}
+              <Grid2
+                size={width12}
                 // alignSelf={field.type === 'bool' ? 'flex-end' : undefined}
                 display={field?.hidden ? 'none' : undefined}
                 {...fieldContainer}
@@ -241,7 +238,7 @@ export const GenericForm = (props: GenericFormProps) => {
                   key={field.name}
                   disableInitialDivider={disableInitialArrayDivider}
                 />
-              </Grid>
+              </Grid2>
             )
           })}
         {!isFirstArrayElement && _removeFormFromArray && (
@@ -269,7 +266,7 @@ export const GenericForm = (props: GenericFormProps) => {
             </Box>
           </Stack>
         )}
-      </Grid>
+      </Grid2>
 
       {/* <StringArrayFormField
         formData={formData}

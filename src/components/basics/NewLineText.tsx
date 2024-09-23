@@ -1,3 +1,4 @@
+import { BoxProps } from '@mui/material'
 import { EllipsisTextWithTooltip } from './EllipsisTooltip'
 
 export type NewLineTextProps = {

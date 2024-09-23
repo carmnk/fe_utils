@@ -4,7 +4,7 @@ import {
   ContainerProps,
   styled,
 } from '@mui/material'
-import { CSSProperties } from 'react'
+import { CSSProperties, FC } from 'react'
 
 export type CContainerProps = ContainerProps &
   Partial<
@@ -21,23 +21,25 @@ export type CContainerProps = ContainerProps &
     >
   >
 
-export const Container = styled((props: CContainerProps) => {
-  const {
-    /*  eslint-disable @typescript-eslint/no-unused-vars */
-    paddingTop,
-    paddingBottom,
-    marginBottom,
-    marginTop,
-    paddingLeft,
-    paddingRight,
-    position,
-    zIndex,
-    /* eslint-enable @typescript-eslint/no-unused-vars */
-    children,
-    ...restProps
-  } = props
-  return <MuiContainer {...restProps}>{children}</MuiContainer>
-})<CContainerProps>(
+export const Container: FC<CContainerProps> = styled(
+  (props: CContainerProps) => {
+    const {
+      /*  eslint-disable @typescript-eslint/no-unused-vars */
+      paddingTop,
+      paddingBottom,
+      marginBottom,
+      marginTop,
+      paddingLeft,
+      paddingRight,
+      position,
+      zIndex,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      children,
+      ...restProps
+    } = props
+    return <MuiContainer {...restProps}>{children}</MuiContainer>
+  }
+)<CContainerProps>(
   ({
     paddingTop,
     paddingBottom,

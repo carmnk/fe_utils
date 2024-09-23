@@ -226,14 +226,14 @@ export const CAutoComplete = forwardRef(
           },
           size: 'small',
           renderOption: enableVirtualization
-            ? (props, option, state) =>
+            ? (props: any, option: any, state: any) =>
                 [props, option, state.index] as ReactNode
             : (props: any, option: any) => (
                 <Box fontSize={14} component="li" {...props}>
                   {option?.label}
                 </Box>
               ),
-          ...restProps,
+          ...(restProps as any),
           ListboxComponent: enableVirtualization ? ListboxComponent : undefined,
           slotProps: {
             ...muiAutoSelectSlotProps,
@@ -241,7 +241,7 @@ export const CAutoComplete = forwardRef(
               ...(muiAutoSelectSlotProps.popper ?? {}),
               sx: {
                 zIndex: 999999,
-                ...(muiAutoSelectSlotProps?.popper?.sx ?? {}),
+                ...((muiAutoSelectSlotProps?.popper as any)?.sx ?? {}),
               },
             },
           },
