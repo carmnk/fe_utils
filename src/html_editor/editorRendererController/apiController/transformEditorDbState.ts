@@ -173,6 +173,16 @@ export const transformEditorStateFromPayload = (
       }
     }) ?? []
 
+  console.log(
+    'THEMES BACK IN ',
+    themes,
+    currentEditorState?.theme.name,
+    'theme',
+    themes?.find?.(
+      (theme: ExtendedTheme) =>
+        theme.name === currentEditorState.theme.name
+    )
+  )
   return {
     ...currentEditorState,
     transformers: data?.transformers ?? [],
@@ -299,7 +309,8 @@ export const transformEditorStateFromPayload = (
     assets: newImageAssets,
     themes,
     theme: themes?.find?.(
-      (theme: ExtendedTheme) => theme.palette.mode === defaultTheme
+      (theme: ExtendedTheme) =>
+        theme.palette.mode === currentEditorState.theme.name
     ),
     externalApis,
     events:
