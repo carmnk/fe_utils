@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import moment, { Moment } from 'moment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import {
-  DatePicker as MDatePicker,
-  DatePickerProps as MDatePickerProps,
-} from '@mui/x-date-pickers'
+  DesktopDatePicker,
+  DesktopDatePickerProps,
+} from '@mui/x-date-pickers/DesktopDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
 import { GenericInputFieldProps } from './types'
@@ -13,19 +13,17 @@ import { mdiCalendar } from '@mdi/js'
 import { CTextField, CTextFieldProps } from './TextField'
 import { isEqual } from 'lodash'
 
-const MomentDatePicker = MDatePicker<Moment>
-
 type MDatePickerExTextfieldProps = Omit<
-  MDatePickerProps<Moment>,
+  DesktopDatePickerProps<Moment>,
   keyof CTextFieldProps
-> & { slots: MDatePickerProps<Moment>['slots'] }
+> & { slots: DesktopDatePickerProps<Moment>['slots'] }
 
 export type DatePickerProps = GenericInputFieldProps<'date'> & {
   datePickerProps?: MDatePickerExTextfieldProps
 } & CTextFieldProps & {
     // onChange?: (newValue: Moment | null, name?: string) => void
     value?: string | null
-    slotProps?: MDatePickerProps<Moment>['slotProps'] &
+    slotProps?: DesktopDatePickerProps<Moment>['slotProps'] &
       CTextFieldProps['slotProps']
     outputFormat?: 'ISO_UTC'
   }
@@ -99,7 +97,7 @@ export const DatePicker = (props: DatePickerProps) => {
     [name, onChange, outputFormat]
   )
 
-  const datePickerSlots: MDatePickerProps<Moment>['slots'] = useMemo(
+  const datePickerSlots: DesktopDatePickerProps<Moment>['slots'] = useMemo(
     () => ({
       ...datePickerProps?.slots,
       openPickerButton: (props) => (
@@ -221,7 +219,7 @@ export const DatePicker = (props: DatePickerProps) => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
-      <MomentDatePicker
+      <DesktopDatePicker<Moment>
         value={valueMoment}
         onChange={handleChange}
         disabled={disabled}
