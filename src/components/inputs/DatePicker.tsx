@@ -16,7 +16,7 @@ import { isEqual } from 'lodash'
 type MDatePickerExTextfieldProps = Omit<
   DesktopDatePickerProps<Moment>,
   keyof CTextFieldProps
-> & { slots: DesktopDatePickerProps<Moment>['slots'] }
+>
 
 export type DatePickerProps = GenericInputFieldProps<'date'> & {
   datePickerProps?: MDatePickerExTextfieldProps

@@ -66,7 +66,7 @@ export type CModalBaseProps = Omit<
     closeIcon?: IconProps
     dialogTitleTypography?: TypographyProps
     dialogContent?: DialogContentProps
-    dialogContentText?: TypographyProps
+    dialogContentText?: BoxProps
     dialogActionsRoot?: DialogActionsProps
     dialogActionsContainer?: StackProps
     dialogLeftActionsContainer?: StackProps
@@ -240,9 +240,9 @@ export const Modal = (props: CModalProps) => {
       </Flex>
       <DialogContent {...dialogContent}>
         {typeof contentComponent === 'string' ? (
-          <Typography component="div" {...dialogContentText}>
+          <DialogContentText component="div" {...dialogContentText}>
             {contentComponent}
-          </Typography>
+          </DialogContentText>
         ) : (
           contentComponent
         )}

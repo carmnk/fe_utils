@@ -1,10 +1,16 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import Tooltip from '@mui/material/Tooltip'
-import { Box, BoxProps, Typography, TypographyProps } from '@mui/material'
+import {
+  Box,
+  BoxProps,
+  // Link as MuiLink,
+  Typography,
+  TypographyProps,
+} from '@mui/material'
 import { CopyClipboardContext } from '../utils/CopyClipboardContext'
 import { CopiedIconOnCopy } from '../utils/CopyClipboardCopyIcon'
 
-export type EllipsisTextWithTooltipProps = BoxProps<any>['component'] & {
+export type EllipsisTextWithTooltipProps = BoxProps & {
   label?: string
   title?: string
   spanSx?: any
