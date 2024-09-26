@@ -44,6 +44,7 @@ export const useAppController = (): AppController => {
     }
 
     const updateData = (key: string, value: any) => {
+      console.log('updateData', key, value)
       setAppState((current) => {
         return {
           ...current,

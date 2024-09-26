@@ -223,6 +223,7 @@ export const ElementBox = <
                   [cur.param_name]: cur.param_value,
                 }
               }, {})
+            console.log('QUERY ACTION ', action?.action_id, action)
             return await queryAction(
               appController,
               action?.action_id ?? '', // should never happen -> should always have action

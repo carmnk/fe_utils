@@ -401,6 +401,7 @@ export const renderElements = <
                       }
                     }, {})
                   : elementTemplateValuesDict
+              console.log('QUERY ACTION Component', action?.action_id, action)
               queryAction(
                 appController,
                 action?.action_id ?? '', // should never happen -> should always have action
