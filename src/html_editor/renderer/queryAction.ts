@@ -5,7 +5,7 @@ const replacePlaceholders = (
   text: string,
   placeholders: { [key: string]: string }
 ) => {
-  if (typeof text !== 'string') return text
+  if (typeof text !== 'string' || !placeholders) return text
   let result = text
   for (const key in placeholders) {
     result = result?.replaceAll?.('{' + key + '}', placeholders[key])
