@@ -408,7 +408,7 @@ export const renderElements = <
                 endpoint?.method,
                 url,
                 !!endpoint?.useCookies,
-                {},
+                endpoint?.body,
                 endpoint?.headers,
                 endpoint?.params,
                 endpoint?.responseType,
