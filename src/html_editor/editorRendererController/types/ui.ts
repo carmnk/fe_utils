@@ -49,24 +49,6 @@ export type Ui = {
     entity: string | null
     entityElement: 'fields' | 'lists' | 'values' | 'joinings'
     //
-    activeElementBoundingRect: {
-      top: number
-      left: number
-      width: number
-      height: number
-      p: {
-        paddingTop: number
-        paddingRight: number
-        paddingBottom: number
-        paddingLeft: number
-      }
-      m: {
-        marginTop: number
-        marginRight: number
-        marginBottom: number
-        marginLeft: number
-      }
-    } | null
     template: string | null
     component: string | null
   }

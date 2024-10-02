@@ -91,7 +91,6 @@ export const defaultEditorState = (): EditorStateType => {
         serverSetting: 'ssl',
         entity: null,
         entityElement: 'fields',
-        activeElementBoundingRect: null,
         externalApi: null,
         template: null,
         component: null,

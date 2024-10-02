@@ -34,4 +34,5 @@ export type ProjectDb = Project & {
   selected_entity_element?: 'fields' | 'lists' | 'values' | 'joinings'
   github_updated_datetime?: string
   github_updated_version_edited_datetime?: string
+  active_menu: string | null
 }

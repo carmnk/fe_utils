@@ -32,7 +32,22 @@ export const formEditorComponentDef = {
       },
     }),
   props: {
-    fields: [],
+    fields: [
+      {
+        name: 'test',
+        label: 'Test',
+        type: 'text',
+        sx: {},
+        width12: 12,
+        fillWidth: true,
+        required: false,
+        disabled: false,
+        disableHelperText: false,
+        disableLabel: false,
+        tooltip: 'TEST Tooltip',
+        placeholder: 'place me here',
+      },
+    ],
   },
 
   icon: mdiListBoxOutline,

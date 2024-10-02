@@ -135,6 +135,7 @@ export const FileUploader = (props: FileUploaderProps) => {
     } else {
       handleUpload(userFiles.files, null, uploadFileIdx.current)
     }
+    // eslint-disable-next-line
   }, [userFiles])
 
   const hiddenInputProps = useMemo(() => {

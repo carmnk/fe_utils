@@ -11,13 +11,25 @@ export const useAppController = (): AppController => {
   const [appState, setAppState] = useState<AppState>({
     forms: {},
     _data: {},
+    treeviews: {
+      selectedId: {},
+      selectedItem: {},
+    },
   })
 
   const actions = useMemo(() => {
-    // key is the element id
+    /** update/add navstates - TODO still flat in appstate
+     * @param key - key = elementId of navElement
+     * @param value - value = value of navElement
+     * */
     const updateProperty = (key: string, value: any) => {
+      console.log('updateProperty inner', key, value)
       setAppState((current) => ({ ...current, [key]: value }))
     }
+
+    /** remove navstates - TODO still flat in appstate
+     * @param key - key = elementId of navElement
+     * */
     const removeProperty = (key: string) => {
       setAppState((current) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,6 +37,11 @@ export const useAppController = (): AppController => {
         return rest as any
       })
     }
+
+    /** change/add formData for specifc form-element with elementId
+     * @param elementId - elementId of form-element
+     * @param newFormData - newFormData = new formdata for form-element
+     * */
     const changeFormData = (
       elementId: string,
       newFormData: Record<string, any>
@@ -39,10 +56,17 @@ export const useAppController = (): AppController => {
       })
     }
 
+    /** get formData for specific form-element with element
+     * @param elementId - elementId of form-element
+     *  */
     const getFormData = (elementId: string) => {
       return appState.forms?.[elementId] ?? {}
     }
 
+    /** update/add data from API/EPs
+     * @param key - key = currently actionId TODO
+     * @param value - value = querried data (axios response)
+     */
     const updateData = (key: string, value: any) => {
       console.log('updateData', key, value)
       setAppState((current) => {
@@ -52,11 +76,38 @@ export const useAppController = (): AppController => {
         }
       })
     }
+
+    /** remove data from API/EPs (is this function used?)
+     * @param key - key = see above
+     */
     const removeData = (key: string) => {
       setAppState((current) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [key]: _, ...rest } = current
         return rest as any
+      })
+    }
+
+    const changeTreeviewSelectedItem = (
+      treeViewElementId: string,
+      selectedId: string,
+      selectedItem: any
+    ) => {
+      setAppState((current) => {
+        return {
+          ...current,
+          treeviews: {
+            ...current.treeviews,
+            selectedItem: {
+              ...(current.treeviews.selectedItem ?? {}),
+              [treeViewElementId]: selectedItem,
+            },
+            selectedId: {
+              ...(current.treeviews.selectedId ?? {}),
+              [treeViewElementId]: [selectedId] as any,
+            },
+          },
+        }
       })
     }
 
@@ -68,6 +119,7 @@ export const useAppController = (): AppController => {
       updateProperty,
       updateData,
       removeData,
+      changeTreeviewSelectedItem,
     }
   }, [setAppState, appState?.forms])
 

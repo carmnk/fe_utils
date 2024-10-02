@@ -62,19 +62,21 @@ export const useMdiIcons = (
             return getPropByName(iconKey, el._id)
           })
           // UNCLEAR ???
-          const arrayItemIconNames = arrayOfObjectProperties
-            ?.map((props) => {
-              return getPropByName(props.key, el._id)?.map((it: any) => {
-                return props.propertyKeys.map((key) => it?.[key])
+          const arrayItemIconNames =
+            arrayOfObjectProperties
+              ?.map?.((props) => {
+                return getPropByName(props.key, el._id)?.map?.((it: any) => {
+                  return props?.propertyKeys?.map?.((key) => it?.[key])
+                })
               })
-            })
-            .flat()
+              ?.flat() ?? []
+
           const allIconNames = [...directIconNames, ...arrayItemIconNames]
-          // return directIconNames
           return allIconNames
         })
         .flat()
         .filter((el) => el && !Object.keys(icons).includes(el))
+
       if (!iconsNames.length) return
       const iconsNew: any = {}
 
@@ -95,7 +97,7 @@ export const useMdiIcons = (
     }
     updateIcons()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPageElements])
+  }, [selectedPageElements, properties, components])
 
   return [icons, setIcons]
 }

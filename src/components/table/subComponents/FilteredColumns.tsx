@@ -116,6 +116,7 @@ export const FilteredTableHeaderCell = forwardRef(
       }
       initialFilters.current = selectedFilter
       initialAllFilters.current = filters
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]) // only when open changes!
 
     const anchor = useRef(null)

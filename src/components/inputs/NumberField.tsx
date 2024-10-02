@@ -91,6 +91,7 @@ export const NumberField = forwardRef(
             : ''
         )
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value])
 
     const handleChangeCompleted = useCallback(
@@ -211,7 +212,14 @@ export const NumberField = forwardRef(
           )
         }
       },
-      [onChange, maxLength, isInt, maxDecimalDigits, name]
+      [
+        onChange,
+        maxLength,
+        isInt,
+        maxDecimalDigits,
+        name,
+        disableNumberSeparator,
+      ]
     )
 
     const muiTextfieldProps: CTextFieldProps = useMemo(() => {

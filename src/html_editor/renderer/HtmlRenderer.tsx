@@ -1,5 +1,5 @@
 import { Box, Theme, ThemeProvider } from '@mui/material'
-import { SetStateAction, Dispatch, FC } from 'react'
+import { SetStateAction, Dispatch, FC, memo } from 'react'
 import { useEffect, useMemo, useCallback } from 'react'
 import { renderElements } from './renderElements'
 import { useMdiIcons } from './icons/useMdiIcons'
@@ -12,17 +12,12 @@ export type HtmlRendererProps<
 > = {
   isProduction?: boolean
   theme: Theme
-  OverlayComponent?: FC<{
-    element: Element
-    isProduction?: boolean
-    editorState: EditorStateType
-    actions?: ControllreActionsType
-  }>
+  OverlayComponent?: FC<{ element: Element }>
   editorState: EditorStateType
   setEditorState: Dispatch<SetStateAction<EditorStateType>>
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  actions?: ControllreActionsType
+  uiActions: ControllreActionsType
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
   selectedElement: Element | null
   appController: EditorRendererControllerType<ControllreActionsType>['appController']
@@ -30,9 +25,10 @@ export type HtmlRendererProps<
   navigate: any
   isInHelpMode?: boolean
   isInHelpModeSelected?: boolean
+  id?: string
 }
 
-export const HtmlRenderer = <
+export const HtmlRendererComponent = <
   ControllreActionsType extends { [key: string]: any },
 >(
   props: HtmlRendererProps<ControllreActionsType>
@@ -45,7 +41,7 @@ export const HtmlRenderer = <
     setEditorState,
     currentViewportElements,
     selectedPageElements,
-    actions,
+    uiActions,
     COMPONENT_MODELS,
     selectedElement,
     appController,
@@ -53,9 +49,10 @@ export const HtmlRenderer = <
     navigate,
     isInHelpMode,
     isInHelpModeSelected,
+    id,
   } = props
 
-  const selectElement = actions?.ui.selectElement
+  const selectElement = uiActions?.selectElement
   const themeAdj = theme ?? editorState.theme
 
   const [icons, setIcons] = useMdiIcons(
@@ -80,7 +77,6 @@ export const HtmlRenderer = <
       const pageElements = currentViewportElements.filter(
         (el) => el._page === page
       )
-
       return renderElements({
         elements: pageElements,
         editorState,
@@ -89,7 +85,7 @@ export const HtmlRenderer = <
         selectedPageElements,
         COMPONENT_MODELS,
         selectedElement,
-        actions,
+        uiActions: uiActions,
         onSelectElement: handleSelectElement,
         theme: themeAdj,
         isProduction,
@@ -102,13 +98,13 @@ export const HtmlRenderer = <
       })
     },
     [
+      uiActions,
       editorState,
       appController,
       currentViewportElements,
       selectedPageElements,
       COMPONENT_MODELS,
       selectedElement,
-      actions,
       handleSelectElement,
       icons,
       themeAdj,
@@ -208,12 +204,13 @@ export const HtmlRenderer = <
           bgcolor="background.default"
           color={'text.primary'}
           sx={containerStyles}
-          id="editorRenderer"
+          id={id}
         >
           {renderPage(pageName)}
         </Box>
       ) : (
         <Box
+          id={id}
           zIndex={10} // for preview mode -> must be on top of the right menu
           flexGrow={1}
           bgcolor={isInHelpModeSelected ? '#32CD3233' : 'background.default'}
@@ -230,3 +227,5 @@ export const HtmlRenderer = <
     </ThemeProvider>
   )
 }
+export const HtmlRenderer = memo(HtmlRendererComponent)
+HtmlRenderer.displayName = 'HtmlRenderer'

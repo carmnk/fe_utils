@@ -175,7 +175,7 @@ export const Table = (props: TableProps) => {
         ) : (
           <>
             {draggedRows?.length ? (
-              draggedRows.map((row, rIdx) => {
+              draggedRows?.map((row, rIdx) => {
                 const selectedItemId =
                   typeof getSelectedRow === 'function'
                     ? getSelectedRow(row, rIdx)

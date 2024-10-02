@@ -18,29 +18,33 @@ export const tableEditorComponentDef = {
       //   ],
       // },
       onBeforeChange: (newFormData, prevFormData, changedKey, changedValue) => {
+        console.debug('BEFORE CHANGE', newFormData, prevFormData, changedKey)
         const adjFormData = Object.keys(newFormData).includes('columns')
           ? {
               ...newFormData,
-              columns: newFormData?.columns?.map((col: any) => {
-                return {
-                  ...col,
-                  renderCell: col?.header,
-                  renderFooterCell: col?.header,
-                  //  (item: any) => (
-                  //   <td>{item?.[col?.header ?? '_test_']}</td>
-                  // ),
-                  sortKey: col?.header,
-                  filterKey: col?.header,
-                  filterOptions: uniq(
+              columns:
+                newFormData?.columns?.map?.((col: any) => {
+                  const filterOptions = uniq(
                     newFormData?.data
-                      ?.map((item: any) => item?.[col?.header])
-                      .filter((val: any) => val)
-                  ).sort((a: any, b: any) => (a > b ? 1 : b > a ? -1 : 0)),
-                  // getFilterValue: (opt: any) => opt,
-                  // getItemLabel: (opt: any) => opt,
-                  // getIcon: (row) => <Icon path={mdiPencil} size={1} />,
-                }
-              }),
+                      ?.map?.((item: any) => item?.[col?.header])
+                      ?.filter((val: any) => val)
+                  )?.sort((a: any, b: any) => (a > b ? 1 : b > a ? -1 : 0))
+
+                  return {
+                    ...col,
+                    renderCell: col?.header,
+                    renderFooterCell: col?.header,
+                    //  (item: any) => (
+                    //   <td>{item?.[col?.header ?? '_test_']}</td>
+                    // ),
+                    sortKey: col?.header,
+                    filterKey: col?.header,
+                    filterOptions,
+                    // getFilterValue: (opt: any) => opt,
+                    // getItemLabel: (opt: any) => opt,
+                    // getIcon: (row) => <Icon path={mdiPencil} size={1} />,
+                  }
+                }) ?? [],
             }
           : newFormData
         return adjFormData
@@ -56,20 +60,33 @@ export const tableEditorComponentDef = {
 
           const columnHeaderDict = columnHeaders.reduce(
             (acc: any, header: any) => {
-              acc[header] = 'test'
+              acc[header] = ''
               return acc
             },
             {}
           )
           return [columnHeaderDict]
         },
+        footerData: (f: any, g: any) => {
+          console.debug('DATA dynamicKeysDict', f, g)
+          if (!f?.columns) return []
+          const columnHeaders = f?.columns?.map?.(
+            (column: any) => column.header
+          )
+
+          const columnHeaderDict = columnHeaders.reduce(
+            (acc: any, header: any) => {
+              acc[header] = ''
+              return acc
+            },
+            {}
+          )
+          return columnHeaderDict
+        },
       },
     }),
   props: {
-    data: [
-      { name: 'test', age: 30 },
-      { name: 'test2', age: 20 },
-    ],
+    data: [],
     columns: [
       // {
       //   header: 'name',
@@ -86,7 +103,7 @@ export const tableEditorComponentDef = {
       //   sortKey: 'age',
       // },
     ],
-    footerData: { name: '-', age: 'avg 25' },
+    footerData: {},
     filters: [],
   },
 

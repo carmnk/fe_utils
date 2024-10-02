@@ -269,7 +269,7 @@ export const propertyFormFactory = (
       //   field.type !== 'object' &&
       // currently allow only selected arrays
       (field.type !== 'array' ||
-        ['items', 'columns'].includes(field?.name ?? '')) &&
+        ['items', 'columns', 'data'].includes(field?.name ?? '')) &&
       (field.name !== 'children' ||
         field?._prop_type !== PropertyType.children) &&
       field._prop_type !== PropertyType.Function

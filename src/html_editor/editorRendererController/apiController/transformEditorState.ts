@@ -42,6 +42,7 @@ export const transformEditorStateToPayload = (
     selected_state: state,
     selected_element: element,
     selected_font: font,
+    active_menu: uiIn?.navigationMenu?.activeMenu ?? null,
     active_tab: uiIn?.navigationMenu?.activeTab ?? null,
     active_backend_tab: uiIn?.navigationMenu?.activeBackendTab ?? null,
     pointer_mode: uiIn?.pointerMode ?? null,
@@ -193,9 +194,10 @@ export const transformEditorStateToPayload = (
       const apiHeaders = api?.headers?.map?.((header) => {
         const newHeaderId = uuid()
         return {
+          ...header,
           project_id,
           header_id: header?.header_id ?? newHeaderId,
-          key: header.name,
+          key: header.key,
           value: header.value,
           api_id: api.external_api_id,
           endpoint_id: null,
@@ -207,9 +209,10 @@ export const transformEditorStateToPayload = (
             ep?.headers?.map?.((header) => {
               const newHeaderId = uuid()
               return {
+                ...header,
                 project_id,
                 header_id: header?.header_id ?? newHeaderId,
-                key: header.name,
+                key: header.key,
                 value: header.value,
                 api_id: api.external_api_id,
                 endpoint_id: ep.endpoint_id,

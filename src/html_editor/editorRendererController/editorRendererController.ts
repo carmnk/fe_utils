@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { defaultEditorState } from './defaultEditorState'
 import { useAppController } from './appController'
 import { useShortcuts } from './useShortcuts'
@@ -45,7 +45,21 @@ export const useEditorRendererController = (
 
   const appController = useAppController()
 
-  return {
+  const rendererController = useMemo(() => {
+    return {
+      selectedElement,
+      selectedPageElements,
+      selectedElementStyleAttributes,
+      currentViewportElements,
+      COMPONENT_MODELS,
+      editorState,
+      appController,
+      setEditorState,
+      getSelectedImage,
+      getRecursiveChildren,
+      getStyleAttributesDictByElementId,
+    }
+  }, [
     selectedElement,
     selectedPageElements,
     selectedElementStyleAttributes,
@@ -57,5 +71,6 @@ export const useEditorRendererController = (
     getSelectedImage,
     getRecursiveChildren,
     getStyleAttributesDictByElementId,
-  }
+  ])
+  return rendererController
 }

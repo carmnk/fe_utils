@@ -156,10 +156,6 @@ export const Field = (props: FieldProps) => {
       : field?.required
   const fieldValue = formData?.[field?.name ?? '']
 
-  // useEffect(() => {
-  //   console.log('FORM FIELD RENDERS', field?.name, field?.type, fieldValue)
-  // }, [])
-
   return field.type === 'inject' ? (
     <CustomField
       formData={formData}
@@ -198,7 +194,11 @@ export const Field = (props: FieldProps) => {
         display: field?.hidden ? 'none' : undefined,
       }}
       {...(injectIsInt as any)}
-      value={formData?.[field?.name ?? ''] ?? ''}
+      value={
+        formData?.[field?.name ?? ''] ??
+        (field as any)?.form?.defaultValue ??
+        ''
+      }
       onChange={
         useChangeCompleted &&
         [
@@ -234,7 +234,6 @@ export const Field = (props: FieldProps) => {
       onKeyDown={
         useChangeCompleted
           ? (e: any) => {
-              // console.log('KEYDOWN', e.key)
               if (e.key === 'Enter') {
                 handleChange(e.target.value, e)
               }

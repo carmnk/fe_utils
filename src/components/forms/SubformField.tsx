@@ -1,4 +1,4 @@
-import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+import { mdiDelete, mdiInformation, mdiPencil, mdiPlus } from '@mdi/js'
 import { Box, Divider, Grid, Typography, useTheme } from '@mui/material'
 import { GenericForm, GenericFormProps } from './GenericForm'
 import { Button } from '../buttons'
@@ -6,6 +6,7 @@ import { DynamicFieldDefinition } from './fields'
 import { Fragment } from 'react/jsx-runtime'
 import { Table } from '../table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import Icon from '@mdi/react'
 
 export type SubformFieldProps = {
   field: DynamicFieldDefinition
@@ -66,7 +67,6 @@ export const SubformField = (props: SubformFieldProps) => {
     [sub?.fields]
   )
 
-  // console.log('LIST ARRAY', subFieldsForList, sub)
   // const makeOnChangeArraySub = useCallback(
   //   (arrayIndex: number) => {
   //     return (
@@ -400,12 +400,12 @@ export const SubformField = (props: SubformFieldProps) => {
                   ui?.open === 'new'
                     ? () => addnewItemArraySub(field.name ?? '', formData)
                     : () => {
-                        console.log(
-                          'SubFormField.tsx',
-                          formData,
-                          fieldName,
-                          ui?.open
-                        )
+                        // console.debug(
+                        //   'SubFormField.tsx',
+                        //   formData,
+                        //   fieldName,
+                        //   ui?.open
+                        // )
                         if (
                           (!ui?.open && typeof ui?.open !== 'number') ||
                           ui?.open === 'new'

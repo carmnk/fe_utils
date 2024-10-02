@@ -2,6 +2,23 @@ import { getDeepPropertyByPath } from '../../../utils/object'
 import { EditorRendererControllerType } from '../../editorRendererController/types/editorRendererController'
 import { EditorStateType } from '../../editorRendererController/types'
 
+export const REGEX_DATA_PLACEHOLDER = /{_data\.[^}]*}/g
+export const REGEX_TREEVIEW_PLACEHOLDER = /{treeviews\.[^}]*}/g
+export const REGEX_PROPS_PLACEHOLDER = /{props\.[^}]*}/g
+export const REGEX_MDIICON_PLACEHOLDER = /{mdi\w*}/g
+
+export const REGEX_PLACEHOLDERS = [
+  REGEX_DATA_PLACEHOLDER,
+  REGEX_TREEVIEW_PLACEHOLDER,
+  REGEX_PROPS_PLACEHOLDER,
+]
+
+export const checkForPlaceholders = (text: string) => {
+  return !!REGEX_PLACEHOLDERS.map((regex) => text.match(regex)).filter(
+    (match) => match
+  )?.length
+}
+
 /**  replaces the placeholders AND EVALs the string if it contains any placeholders, static calculations are skipped!
     @returns the evaluated string -> can be any type !!!
 */
@@ -12,7 +29,9 @@ export const replacePlaceholdersInString = (
   properties: EditorStateType['properties'],
   selectedElement: EditorRendererControllerType<any>['selectedElement'],
   rootCompositeElementId?: string,
-  forceEval?: boolean
+  forceEval?: boolean,
+  icons?: Record<string, string>,
+  isTransformer?: boolean
 ) => {
   const getTemplates = (text: string) => {
     let templatesOut: {
@@ -22,7 +41,7 @@ export const replacePlaceholdersInString = (
       placeholderRaw: string
       placeholderCutted: string
     }[] = []
-    const regex = /{_data\.[^}]*}/g
+    const regex = REGEX_DATA_PLACEHOLDER
     const dataMatches = text.match(regex)
     // if (!matches) {
     //   return []
@@ -42,7 +61,24 @@ export const replacePlaceholdersInString = (
         }
       }) || []
 
-    const propsMatches = text.match(/{props\.[^}]*}/g)
+    const regexTreeViews = REGEX_TREEVIEW_PLACEHOLDER
+    const treeViewMatches = text.match(regexTreeViews)
+    const treeViewTemplates =
+      treeViewMatches?.map((match) => {
+        const keyRaw = match.replace('{treeviews.', '').replace('}', '')
+        const key = keyRaw.replace(/\..*$/gm, '')
+
+        return {
+          type: 'treeviews',
+          placeholder: key,
+          placeholderRaw: keyRaw,
+          placeholderCutted: keyRaw.replace(key, ''),
+          value: (appState?.treeviews as any)?.[key] ?? '',
+          isValueUndefined: (appState?.treeviews as any)?.[key] === undefined,
+        }
+      }) || []
+
+    const propsMatches = text.match(REGEX_PROPS_PLACEHOLDER)
     const propsTemplates =
       propsMatches?.map((match) => {
         const keyRaw = match.replace('{props.', '').replace('}', '')
@@ -79,7 +115,34 @@ export const replacePlaceholdersInString = (
         }
       }) || []
 
-    templatesOut = [...templatesOut, ...dataTemplates, ...propsTemplates]
+    const regexMdiIcon = REGEX_MDIICON_PLACEHOLDER
+    const mdiIconMatches = text.match(regexMdiIcon)
+    const mdiIconTemplates =
+      !icons || !Object.keys(icons)?.length
+        ? []
+        : mdiIconMatches
+            ?.map((match) => {
+              const cuttedPlaceholderName = match
+                .replaceAll('{', '')
+                .replaceAll('}', '')
+              return {
+                type: 'mdi',
+                placeholder: match,
+                placeholderRaw: match,
+                placeholderCutted: cuttedPlaceholderName,
+                value: icons?.[cuttedPlaceholderName] ?? '<ICON%/>',
+                isValueUndefined: false,
+              }
+            })
+            .filter((match) => !!match.value) || []
+
+    templatesOut = [
+      ...templatesOut,
+      ...dataTemplates,
+      ...propsTemplates,
+      ...treeViewTemplates,
+      ...mdiIconTemplates,
+    ]
     return templatesOut
   }
 
@@ -89,10 +152,12 @@ export const replacePlaceholdersInString = (
   const undefinedPlaceholders = []
   for (const template of templates) {
     if (['string', 'number', 'boolean'].includes(typeof template.value)) {
-      newText = newText.replaceAll(
-        template.placeholder,
-        "'" + template.value.toString() + "'"
-      )
+      newText = isTransformer
+        ? newText.replaceAll(template.placeholder, template.value.toString())
+        : newText.replaceAll(
+            template.placeholder,
+            "'" + template.value.toString() + "'"
+          )
     } else {
       if ((template as any).isValueUndefined) {
         undefinedPlaceholders.push(template.placeholder)
@@ -104,17 +169,6 @@ export const replacePlaceholdersInString = (
       ) {
         const path = template.placeholderCutted?.slice(1).split('.')
         const value = getDeepPropertyByPath(template.value, path)
-        console.debug(
-          'BEFORE EVAL VALUE',
-          value,
-          newText,
-          '-',
-          typeof newText,
-          newText === text,
-          text,
-          'templ',
-          templates
-        )
         if (typeof value === 'object') {
           newText = value
           break
@@ -122,6 +176,7 @@ export const replacePlaceholdersInString = (
         newText = newText
           .replaceAll(template.placeholderRaw, value ? '"' + value + '"' : '')
           .replaceAll('{_data.', '')
+          .replaceAll('{treeviews.', '')
 
           .replaceAll('}', '')
         continue
@@ -130,7 +185,9 @@ export const replacePlaceholdersInString = (
       console.warn('Template value is not a string', template)
     }
   }
-  if (typeof newText === 'string' && templates.length) {
+
+  if (typeof newText === 'string' && templates.length && !isTransformer) {
+    const nt = newText
     newText = newText.replaceAll('{props.', '').replaceAll('}', '')
   }
   // if (typeof newText === 'object') {

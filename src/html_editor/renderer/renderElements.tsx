@@ -4,22 +4,26 @@ import { AppBar, Box, Theme } from '@mui/material'
 import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
 import { PropertyType } from '../editorComponents/schemaTypes'
 import { isComponentType, isStringLowerCase } from './utils'
-import { queryAction } from './queryAction'
-import { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
+import {
+  checkForPlaceholders,
+  replacePlaceholdersInString,
+} from './placeholder/replacePlaceholder'
 import { FC, ReactNode, ComponentType } from 'react'
+import { createAppAction } from './createAppAction'
 
 export const renderElements = <
-  ControllreActionsType extends { [key: string]: any },
+  ControllreUiActionsType extends { [key: string]: any },
+  FastState,
 >(params: {
   elements: Element[]
   //
   editorState: EditorStateType
-  appController: EditorRendererControllerType<ControllreActionsType>['appController']
+  appController: EditorRendererControllerType<ControllreUiActionsType>['appController']
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
+  COMPONENT_MODELS: EditorRendererControllerType<ControllreUiActionsType>['COMPONENT_MODELS']
   selectedElement: Element | null
-  actions?: ControllreActionsType
+  uiActions?: ControllreUiActionsType
   //
   onSelectElement: (element: Element, isHovering: boolean) => void
   theme: Theme
@@ -30,12 +34,7 @@ export const renderElements = <
   baseComponentId?: string
   disableOverlay?: boolean
   rootCompositeElementId?: string
-  OverlayComponent?: FC<{
-    element: Element
-    isProduction?: boolean
-    editorState: EditorStateType
-    actions?: ControllreActionsType
-  }>
+  OverlayComponent?: FC<{ element: Element }>
   navigate: any
 }): ReactNode => {
   const {
@@ -46,7 +45,7 @@ export const renderElements = <
     selectedPageElements,
     COMPONENT_MODELS,
     selectedElement,
-    actions,
+    uiActions,
     onSelectElement,
     theme,
     isProduction,
@@ -73,12 +72,6 @@ export const renderElements = <
   )
 
   const renderedElements = relevantElements.map((element) => {
-    const rootElementOverlayProps = {
-      element: element,
-      isProduction,
-      editorState,
-      actions,
-    }
     const typeFirstLetter = element._type.slice(0, 1)
     const isHtmlElement = isStringLowerCase(typeFirstLetter)
     const elementProps = editorState.properties?.filter(
@@ -116,28 +109,33 @@ export const renderElements = <
           const itemsProps = (schemaProps?.[key] as any)?.items?.[0]?.properties
           return (
             schemaProps[key]?.type === PropertyType.Array &&
-            Object.keys(itemsProps)?.filter?.(
+            Object.keys(itemsProps || {})?.filter?.(
               (key) => itemsProps[key]?.type === PropertyType.icon
             )
           )
         })
-    const elementArrayIconInjectionDict = elementArrayIconKeys
-      .map((key) => {
-        const itemsProps = (schemaProps?.[key] as any)?.items?.[0]?.properties
-        return Object.keys(itemsProps)
-          ?.filter((key) => itemsProps[key]?.type === PropertyType.icon)
-          ?.map((itemKey) => ({ key, itemKey }))
-      })
-      .flat()
-      ?.reduce((acc, it) => {
-        return {
-          ...acc,
-          [it.key]: getPropByName(it.key)?.map?.((item: any) => ({
-            ...item,
-            [it.itemKey]: icons?.[item[it.itemKey]],
-          })),
-        }
-      }, {})
+    const elementArrayIconInjectionDict = element?._type
+      ?.toLowerCase()
+      .includes('treeview')
+      ? {}
+      : elementArrayIconKeys
+          .map((key) => {
+            const itemsProps = (schemaProps?.[key] as any)?.items?.[0]
+              ?.properties
+            return Object.keys(itemsProps || {})
+              ?.filter((key) => itemsProps[key]?.type === PropertyType.icon)
+              ?.map((itemKey) => ({ key, itemKey }))
+          })
+          .flat()
+          ?.reduce((acc, it) => {
+            return {
+              ...acc,
+              [it.key]: getPropByName(it.key)?.map?.((item: any) => ({
+                ...item,
+                [it.itemKey]: icons?.[item[it.itemKey]],
+              })),
+            }
+          }, {})
 
     const baseComponent = COMPONENT_MODELS?.find(
       (com) => com.type === element?._type
@@ -148,47 +146,67 @@ export const renderElements = <
       (baseComponent.component as ComponentType<any>)
 
     // props
-    const elementPropsObject = allElementProps.reduce((acc, cur) => {
-      const key = cur.prop_name
-      const keyValue = getPropByName(key)
-      const matches = keyValue?.match?.(/{(_data|form|props)\.[^}]*}/g)
-      const keyValueAdj = matches
-        ? replacePlaceholdersInString(
-            keyValue,
-            appController.state,
-            editorState.compositeComponentProps,
-            editorState.properties,
-            element as any,
-            rootCompositeElementId
-          )
-        : keyValue
-      const transformerStr = editorState.transformers.find(
-        (tr) => tr.prop_id === cur.prop_id && tr.element_id === element._id
-      )?.transformer_string
-      const transformerFn = transformerStr
-        ? replacePlaceholdersInString(
-            transformerStr,
-            appController.state,
-            editorState.compositeComponentProps,
-            editorState.properties,
-            selectedElement,
-            undefined,
-            true
-          )
-        : null
+    const elementPropsObject = allElementProps.reduce<Record<string, any>>(
+      (acc, cur) => {
+        const key = cur.prop_name
+        const keyValue = getPropByName(key)
+        const matches = keyValue?.match?.(
+          /{(_data|form|props|treeviews)\.[^}]*}/g
+        )
+        const keyValueAdj = matches
+          ? replacePlaceholdersInString(
+              keyValue,
+              appController.state,
+              editorState.compositeComponentProps,
+              editorState.properties,
+              element as any,
+              rootCompositeElementId,
+              undefined,
+              icons
+            )
+          : keyValue
 
-      const keyValueAdj2 =
-        typeof transformerFn === 'function' && Array.isArray(keyValueAdj)
-          ? transformerFn?.(keyValueAdj)
-          : keyValueAdj
-      return {
-        ...acc,
-        [key]: keyValueAdj2,
-      }
-    }, {})
+        const isFormularInput = keyValue !== keyValueAdj
+        const transformerStr = editorState.transformers.find(
+          (tr) => tr.prop_id === cur.prop_id && tr.element_id === element._id
+        )?.transformer_string
+        const transformerFn =
+          isFormularInput && transformerStr
+            ? replacePlaceholdersInString(
+                transformerStr,
+                appController.state,
+                editorState.compositeComponentProps,
+                editorState.properties,
+                selectedElement,
+                undefined,
+                true,
+                icons,
+                true
+              )
+            : null
 
-    const regex = /{(_data|form|props)\.[^}]*}/g
-    const matches = element._content?.match?.(regex)
+        // if (
+        //   transformerFn &&
+        //   element?._type?.toLowerCase().includes('treeview')
+        // ) {
+        //   console.log('transformerFn', transformerFn, transformerStr, icons)
+        // }
+        const keyValueAdj2 =
+          typeof transformerFn === 'function' && Array.isArray(keyValueAdj)
+            ? transformerFn?.(keyValueAdj)
+            : keyValueAdj
+        return {
+          ...acc,
+          [key]: keyValueAdj2,
+        }
+      },
+      {}
+    )
+
+    // const regex = /{(_data|form|props)\.[^}]*}/g
+    // const matches = element._content?.match?.(regex)
+    const matches =
+      !!element?._content && checkForPlaceholders(element?._content)
     const content = matches
       ? replacePlaceholdersInString(
           element._content ?? '',
@@ -196,7 +214,9 @@ export const renderElements = <
           editorState.compositeComponentProps,
           editorState.properties,
           selectedElement,
-          rootCompositeElementId
+          rootCompositeElementId,
+          undefined,
+          icons
         )
       : element._content
 
@@ -210,10 +230,27 @@ export const renderElements = <
       },
     }
 
-    const navValueState = (appController as any)?.state?.[element?._id] ?? {}
+    const navValueState = (appController as any)?.state?.[element?._id] ?? []
     const onTabChange = (tabValue: string) => {
       appController.actions.updateProperty(element?._id, tabValue)
     }
+    const open = (appController as any)?.state?.[element?._id]
+    const handleToggleOpen = () => {
+      appController.actions.updateProperty(element?._id, !open)
+    }
+    const treeViewSelectedState =
+      appController?.state?.treeviews?.selectedId[element?._id] ?? {}
+    const onTreeViewSelectionChange = (e: any, itemId: string) => {
+      const item = elementPropsObject?.items?.find(
+        (item: any) => item.nodeId === itemId
+      )
+      appController.actions.changeTreeviewSelectedItem(
+        element?._id,
+        itemId,
+        item
+      )
+    }
+
     const elementChildren =
       (baseComponentId
         ? editorState.elements
@@ -248,7 +285,7 @@ export const renderElements = <
         selectedPageElements,
         COMPONENT_MODELS,
         selectedElement,
-        actions,
+        uiActions,
         onSelectElement,
         theme,
         isProduction,
@@ -272,7 +309,7 @@ export const renderElements = <
         selectedPageElements,
         COMPONENT_MODELS,
         selectedElement,
-        actions,
+        uiActions,
         onSelectElement,
         theme,
         isProduction,
@@ -286,36 +323,85 @@ export const renderElements = <
         navigate,
       })
 
-    const clientFilters = tableUis?.[element._id]?.filters ?? []
-    const clientFiltersExSorting = clientFilters?.filter(
-      (f: any) => f.filterKey !== 'sorting'
-    )
-    const clientFilterSorting = clientFilters?.filter(
-      (f: any) => f.filterKey === 'sorting'
-    )?.[0]?.value
-    const [clientFilterKey, clientFilterDirection] =
-      clientFilterSorting?.split?.(',') ?? []
+    const tableProps =
+      ['Table'].includes(element?._type) && CurrentComponent
+        ? (() => {
+            const clientFilters = tableUis?.[element._id]?.filters ?? []
+            const clientFiltersExSorting = clientFilters?.filter(
+              (f: any) => f.filterKey !== 'sorting'
+            )
+            const clientFilterSorting = clientFilters?.filter(
+              (f: any) => f.filterKey === 'sorting'
+            )?.[0]?.value
+            const [clientFilterKey, clientFilterDirection] =
+              clientFilterSorting?.split?.(',') ?? []
 
-    const clientFilteredTableData =
-      getPropByName('data')?.filter?.((d: any) =>
-        clientFiltersExSorting?.length
-          ? clientFilters.some((f: any) => f.value === d[f.filterKey])
-          : true
-      ) ?? []
-    const clientSortedFilteredTableData = clientFilterKey
-      ? clientFilteredTableData?.sort?.((a: any, b: any) => {
-          const sortKey = clientFilterKey
-          return a?.[sortKey] > b?.[sortKey]
-            ? clientFilterDirection === 'asc'
-              ? 1
-              : -1
-            : b?.[sortKey] > a?.[sortKey]
-              ? clientFilterDirection === 'asc'
-                ? -1
-                : 1
-              : 0
-        })
-      : clientFilteredTableData
+            const dataProp = getPropByName('data')
+            const isPlaceholderProp = typeof dataProp === 'string'
+            const tableData =
+              (isPlaceholderProp ? elementPropsObject?.data : dataProp) || []
+            const clientFilteredTableData =
+              tableData?.filter?.((d: any) =>
+                clientFiltersExSorting?.length
+                  ? clientFilters.some((f: any) => f.value === d[f.filterKey])
+                  : true
+              ) ?? []
+            const clientSortedFilteredTableData = clientFilterKey
+              ? clientFilteredTableData?.sort?.((a: any, b: any) => {
+                  const sortKey = clientFilterKey
+                  return a?.[sortKey] > b?.[sortKey]
+                    ? clientFilterDirection === 'asc'
+                      ? 1
+                      : -1
+                    : b?.[sortKey] > a?.[sortKey]
+                      ? clientFilterDirection === 'asc'
+                        ? -1
+                        : 1
+                      : 0
+                })
+              : clientFilteredTableData
+            return {
+              data: clientSortedFilteredTableData || [],
+              onSetFilters: (newFilters: any) => {
+                uiActions?.setTableFilters?.(elementAdj._id, newFilters)
+              },
+              filters: clientFilters,
+            }
+          })()
+        : {}
+
+    const formProps =
+      ['Form'].includes(element?._type) && CurrentComponent
+        ? (() => {
+            return {
+              formData: appController.actions.getFormData(elementAdj._id),
+              onChangeFormData:
+                /* eslint-disable @typescript-eslint/no-unused-vars */
+                (
+                  newFormData: any,
+                  propertyKey: string,
+                  propertyValue: any,
+                  prevFormData: any
+                  /* eslint-enable @typescript-eslint/no-explicit-any */
+                ) => {
+                  appController.actions.changeFormData(
+                    elementAdj._id,
+                    newFormData
+                  )
+                },
+            }
+          })()
+        : {}
+
+    const treeViewProps =
+      element?._type?.toLowerCase().includes('treeview') && CurrentComponent
+        ? (() => {
+            return {
+              selectedItems: treeViewSelectedState,
+              onNodeSelect: onTreeViewSelectionChange,
+            }
+          })()
+        : {}
 
     const componentEvents = (elementAdj as any)
       ?.formGen?.({
@@ -332,138 +418,70 @@ export const renderElements = <
         if (!eventProps) return acc
         return {
           ...acc,
-          [currentEventName]: (...fnParams: unknown[]) => {
-            // click actions are currently assosiacted with endpoint events only!
-            const clickActionIds: string[] = eventProps
-            const clickActions = editorState.actions.filter((act) =>
-              clickActionIds.includes(act.action_id)
-            )
-            const navigationActionElements = clickActionIds
-              .map(
-                (actId) =>
-                  currentViewportElements.find((el) => el._id === actId) ?? null
-              )
-              .filter((el) => el)
-            const navigationActionElementIds = navigationActionElements.map(
-              (el) => el?._id
-            ) as string[]
-
-            // only endpoint actions
-            for (let c = 0; c < clickActions.length; c++) {
-              const clickAction = clickActions[c]
-              const endpointId = clickAction.endpoint_id
-              const endpoint = editorState.externalApis
-                .map((api) =>
-                  api.endpoints.map((ep) => ({
-                    ...ep,
-                    api_id: api.external_api_id,
-                  }))
-                )
-                .flat()
-                .find((ep) => ep.endpoint_id === endpointId)
-              const api = editorState.externalApis.find(
-                (api) => api.external_api_id === endpoint?.api_id
-              )
-              const url = (api?.baseUrl || '') + (endpoint?.url || '')
-              const action = editorState.actions.find(
-                (act) => act.endpoint_id === endpoint?.endpoint_id
-              )
-              const elementTemplateValuesDict = editorState.actionParams
-                .filter((ap) => ap.element_id === element._id)
-                .reduce<Record<string, any>>((acc, cur) => {
-                  return {
-                    ...acc,
-                    [cur.param_name]: cur.param_value,
-                  }
-                }, {})
-              const isItemEvent = COMPONENT_MODELS.find(
-                (mod) => mod.type === element._type
-              )?.schema?.properties[currentEventName]?.eventType
-
-              const elementTemplateValuesDictAdj =
-                isItemEvent && typeof fnParams?.[1] === 'string'
-                  ? Object.keys(elementTemplateValuesDict).reduce<
-                      Record<string, any>
-                    >((acc, cur) => {
-                      const value =
-                        elementTemplateValuesDict?.[
-                          cur as keyof typeof elementTemplateValuesDict
-                        ]
-                      const replaceValue = fnParams?.[1] as string
-                      const newValue = value?.replaceAll?.(
-                        '{itemId}',
-                        replaceValue
-                      )
-
-                      return {
-                        ...acc,
-                        [cur]: newValue,
-                      }
-                    }, {})
-                  : elementTemplateValuesDict
-              console.log('QUERY ACTION Component', action?.action_id, action)
-              queryAction(
-                appController,
-                action?.action_id ?? '', // should never happen -> should always have action
-                endpoint?.method,
-                url,
-                !!endpoint?.useCookies,
-                endpoint?.body,
-                endpoint?.headers,
-                endpoint?.params,
-                endpoint?.responseType,
-                undefined,
-                elementTemplateValuesDictAdj
-              )
-            }
-
-            // only navigation actions
-            for (let n = 0; n < navigationActionElementIds.length; n++) {
-              const navElementId = navigationActionElementIds[n]
-              const actionParam = editorState.actionParams.find(
-                (ap) => ap.param_name === navElementId
-              )
-              const elementWithEvent = actionParam?.element_id
-              if (!elementWithEvent) return
-
-              appController.actions.updateProperty(
-                navElementId,
-                actionParam.param_value
-              )
-            }
-          },
+          [currentEventName]: createAppAction({
+            element,
+            eventName: currentEventName,
+            editorState,
+            currentViewportElements,
+            COMPONENT_MODELS,
+            appController,
+          }),
         }
       },
       {}
     )
 
-    if (element._type.toLowerCase().includes('treeview')) {
-      console.debug(element._type, elementPropsObject, element)
-      console.debug(
-        'ABBCC',
-        {
-          ...(elementPropsObject ?? {}),
-          ...injectedIconsDict,
-          ...elementArrayIconInjectionDict,
-          rootInjection: !disableOverlay && OverlayComponent,
-          ...eventHandlerProps,
-        },
-        injectedIconsDict,
-        elementArrayIconInjectionDict,
-        eventHandlerProps
-      )
-    }
-
     const elementAdj2 = {
       ...elementAdj,
       _content: content,
     }
+
+    if (element?._type?.toLowerCase().includes('treeview'))
+      console.log(
+        'elementAdj2  ',
+        elementAdj2,
+        getPropByName('data'),
+        {
+          ...(elementPropsObject ?? {}),
+          ...injectedIconsDict,
+          ...elementArrayIconInjectionDict,
+          sx: !isProduction
+            ? {
+                ...((elementPropsObject as any)?.sx ?? {}),
+                position: 'relative',
+              }
+            : (elementPropsObject as any)?.sx,
+          ...eventHandlerProps,
+          ...tableProps,
+          ...formProps,
+          ...treeViewProps,
+        },
+        elementPropsObject,
+        'NOT?',
+        treeViewProps,
+        formProps,
+        tableProps,
+        'maybe?',
+        eventHandlerProps,
+        injectedIconsDict,
+        'elementIconKeys',
+        elementIconKeys,
+        elementArrayIconInjectionDict,
+        'allElementProps',
+        allElementProps,
+        'icons',
+        icons
+      )
+
+    const rootInjectionOverlayComponent = !disableOverlay &&
+      OverlayComponent && <OverlayComponent element={elementAdj2} />
+
     return isHtmlElement ? (
       <ElementBox
         element={elementAdj2}
         onSelectElement={onSelectElement}
         editorState={editorState}
-        actions={actions}
+        uiActions={uiActions}
         appController={appController}
         currentViewportElements={currentViewportElements}
         selectedPageElements={selectedPageElements}
@@ -475,26 +493,23 @@ export const renderElements = <
         OverlayComponent={OverlayComponent}
         navigate={navigate}
       >
-        {!disableOverlay && OverlayComponent && (
-          <OverlayComponent {...rootElementOverlayProps} />
-        )}
+        {rootInjectionOverlayComponent}
         {renderedElementChildren}
       </ElementBox>
     ) : // components
+
     isComponentType(element._type) ? (
-      ['Button', 'Chip', 'Typography'].includes(element?._type) &&
+      (['Button', 'Chip', 'Typography', 'Table', 'Form'].includes(
+        element?._type
+      ) ||
+        element?._type?.toLowerCase().includes('treeview')) &&
       CurrentComponent ? (
         <CurrentComponent
           key={element._id}
           {...(elementPropsObject ?? {})}
           {...injectedIconsDict}
           {...elementArrayIconInjectionDict}
-          rootInjection={
-            !disableOverlay &&
-            OverlayComponent && (
-              <OverlayComponent {...rootElementOverlayProps} />
-            )
-          }
+          rootInjection={rootInjectionOverlayComponent}
           sx={
             !isProduction
               ? {
@@ -504,66 +519,9 @@ export const renderElements = <
               : (elementPropsObject as any)?.sx
           }
           {...eventHandlerProps}
-        />
-      ) : ['Table'].includes(element?._type) && CurrentComponent ? (
-        <CurrentComponent
-          {...(elementPropsObject ?? {})}
-          {...injectedIconsDict}
-          {...elementArrayIconInjectionDict}
-          data={clientSortedFilteredTableData}
-          onSetFilters={(newFilters: any) => {
-            actions?.ui?.setTableFilters?.(elementAdj._id, newFilters)
-          }}
-          filters={tableUis?.[element._id]?.filters ?? []}
-          sx={
-            !isProduction
-              ? {
-                  ...((elementPropsObject as any)?.sx ?? {}),
-                  position: 'relative',
-                }
-              : (elementPropsObject as any)?.sx
-          }
-          rootInjection={
-            !disableOverlay &&
-            OverlayComponent && (
-              <OverlayComponent {...rootElementOverlayProps} />
-            )
-          }
-          {...eventHandlerProps}
-        />
-      ) : ['Form'].includes(element?._type) && CurrentComponent ? (
-        <CurrentComponent
-          {...(elementPropsObject ?? {})}
-          {...injectedIconsDict}
-          {...elementArrayIconInjectionDict}
-          formData={appController.actions.getFormData(elementAdj._id)}
-          onChangeFormData={
-            /* eslint-disable @typescript-eslint/no-unused-vars */
-            (
-              newFormData: any,
-              propertyKey: string,
-              propertyValue: any,
-              prevFormData: any
-              /* eslint-enable @typescript-eslint/no-explicit-any */
-            ) => {
-              appController.actions.changeFormData(elementAdj._id, newFormData)
-            }
-          }
-          sx={
-            !isProduction
-              ? {
-                  ...((elementPropsObject as any)?.sx ?? {}),
-                  position: 'relative',
-                }
-              : (elementPropsObject as any)?.sx
-          }
-          rootInjection={
-            !disableOverlay &&
-            OverlayComponent && (
-              <OverlayComponent {...rootElementOverlayProps} />
-            )
-          }
-          {...eventHandlerProps}
+          {...tableProps}
+          {...formProps}
+          {...treeViewProps}
         />
       ) : //  NAVIGATION ELEMENTS (slightly different interface)
       ['Tabs', 'BottomNavigation', 'ListNavigation', 'ButtonGroup'].includes(
@@ -583,12 +541,7 @@ export const renderElements = <
                 }
               : (elementPropsObject as any)?.sx
           }
-          rootInjection={
-            !disableOverlay &&
-            OverlayComponent && (
-              <OverlayComponent {...rootElementOverlayProps} />
-            )
-          }
+          rootInjection={rootInjectionOverlayComponent}
           {...eventHandlerProps}
         >
           {renderedElementChildren}
@@ -617,9 +570,7 @@ export const renderElements = <
           {...eventHandlerProps}
         >
           {renderedElementChildren}
-          {!disableOverlay && OverlayComponent && (
-            <OverlayComponent {...rootElementOverlayProps} />
-          )}
+          {rootInjectionOverlayComponent}
         </AppBar>
       ) : ['Paper', 'Dialog'].includes(element?._type) ? (
         <CurrentComponent
@@ -634,14 +585,15 @@ export const renderElements = <
                 }
               : (elementPropsObject as any)?.sx
           }
+          {...(!isProduction && { disablePortal: true })}
           onChange={onTabChange}
           value={navValueState}
+          open={open}
+          onClose={handleToggleOpen}
           {...eventHandlerProps}
         >
           {renderedElementChildren}
-          {!disableOverlay && OverlayComponent && (
-            <OverlayComponent {...rootElementOverlayProps} />
-          )}
+          {rootInjectionOverlayComponent}
         </CurrentComponent>
       ) : // Navigation Container -> specific render case (but could be component, too)
       element?._type === 'NavContainer' ? (
@@ -666,12 +618,7 @@ export const renderElements = <
           {...elementArrayIconInjectionDict}
           //  array icons and elementprops collide but elementprops is used when querriying
           {...(elementPropsObject ?? {})}
-          rootInjection={
-            !disableOverlay &&
-            OverlayComponent && (
-              <OverlayComponent {...rootElementOverlayProps} />
-            )
-          }
+          rootInjection={rootInjectionOverlayComponent}
           {...eventHandlerProps}
         />
       )

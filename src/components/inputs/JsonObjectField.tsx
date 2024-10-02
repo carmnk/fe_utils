@@ -227,7 +227,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       //   delete newValue[previousName]
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
     },
-    [onChange, valueIn, nameIn, keysDict]
+    [onChange, valueIn, nameIn]
   )
 
   const handleRemoveProperty = useCallback(
@@ -274,7 +274,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         ? current.filter((path) => path !== _path.join('.'))
         : [...current, _path.join('.')]
     })
-  }, [_collapsedPaths, _path, _setCollapsedPaths])
+  }, [_path, _setCollapsedPaths])
 
   const expandedItems = useMemo(
     () => (startCollapsedAdj && _collapsedPaths ? _collapsedPaths : []),

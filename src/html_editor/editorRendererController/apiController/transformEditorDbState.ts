@@ -5,6 +5,10 @@ import { isComponentType } from '../../renderer/utils'
 import { reloadSerializedThemes } from './transformEditorStateTheme'
 import { EditorStateDbDataType } from './editorDbStateType'
 import { PropertyType } from '../../editorComponents/schemaTypes'
+import {
+  checkForPlaceholders,
+  REGEX_PLACEHOLDERS,
+} from '../../renderer/placeholder/replacePlaceholder'
 
 export const transformEditorStateFromPayload = (
   data: EditorStateDbDataType,
@@ -25,6 +29,7 @@ export const transformEditorStateFromPayload = (
     active_tab,
     active_backend_tab,
     pointer_mode,
+    active_menu,
     default_theme: defaultTheme,
     ...project
   } = data?.project ?? {}
@@ -47,6 +52,9 @@ export const transformEditorStateFromPayload = (
       ...(currentEditorState?.ui?.navigationMenu ?? {}),
       activeTab: active_tab as any,
       activeBackendTab: active_backend_tab as any,
+      activeMenu:
+        (active_menu as any) ??
+        currentEditorState?.ui?.navigationMenu?.activeMenu,
     },
     pointerMode: pointer_mode as any,
   }
@@ -96,9 +104,10 @@ export const transformEditorStateFromPayload = (
     xl: alternativeElements.filter((el) => el?.viewport === 'xl'),
   }
 
-  const themes = disableThemeReload
-    ? (data.themes as any)
-    : reloadSerializedThemes(data.themes as any, currentEditorState?.themes)
+  const themes =
+    disableThemeReload || !data.themes?.length
+      ? (data.themes as any)
+      : reloadSerializedThemes(data.themes as any, currentEditorState?.themes)
 
   const externalApis: EditorStateType['externalApis'] =
     data?.externalApis?.map((api) => {
@@ -173,16 +182,6 @@ export const transformEditorStateFromPayload = (
       }
     }) ?? []
 
-  console.log(
-    'THEMES BACK IN ',
-    themes,
-    currentEditorState?.theme.name,
-    'theme',
-    themes?.find?.(
-      (theme: ExtendedTheme) =>
-        theme.name === currentEditorState.theme.name
-    )
-  )
   return {
     ...currentEditorState,
     transformers: data?.transformers ?? [],
@@ -206,24 +205,6 @@ export const transformEditorStateFromPayload = (
         const isSchemaPropEventHandler =
           baseComponentSchemaPropType === PropertyType.eventHandler
 
-        // CHECK PROBLEM HERE
-        // if (
-        //   !Array.isArray(prop.prop_value) &&
-        //   baseComponentSchemaPropType === PropertyType.eventHandler &&
-        //   !(
-        //     isSchemaPropJson ||
-        //     isSchemaPropEventHandler ||
-        //     [
-        //       'items',
-        //       'slotProps',
-        //       'columns',
-        //       'filters',
-        //     ].includes(prop.prop_name) ||
-        //     (['children'].includes(prop.prop_name) &&
-        //       element?.element_type !== 'Typography')
-        //   )
-        // ) {
-        // }
         const value =
           isSchemaPropJson ||
           isSchemaPropEventHandler ||
@@ -233,10 +214,11 @@ export const transformEditorStateFromPayload = (
             'columns',
             'fields',
             'filters',
+            'buttonProps',
 
             // 'sx',
             // 'data',
-            // 'footerData',
+            'footerData',
             // 'fields',
             // 'onClick',
           ].includes(prop.prop_name) ||
@@ -247,8 +229,14 @@ export const transformEditorStateFromPayload = (
                   const propValue = prop.prop_value
                   // check if propValue is a placeholder
                   if (typeof propValue === 'string') {
-                    const regexPlaceholder = /{(_data|form|props)\.[^}]*}/g
-                    const matches = propValue?.match?.(regexPlaceholder)
+                    // const regexPlaceholder = /{(_data|form|props)\.[^}]*}/g
+                    // const regexPlaceholders = REGEX_PLACEHOLDERS
+                    const matches = checkForPlaceholders(propValue)
+                    // !!regexPlaceholders
+                    //   .map((regex) => propValue?.match?.(regex))
+                    //   .filter((match) => match)?.length
+
+                    // const matches = propValue?.match?.(regexPlaceholder)
                     if (matches) {
                       return propValue
                     }
@@ -308,10 +296,11 @@ export const transformEditorStateFromPayload = (
     ui,
     assets: newImageAssets,
     themes,
-    theme: themes?.find?.(
-      (theme: ExtendedTheme) =>
-        theme.palette.mode === currentEditorState.theme.name
-    ),
+    theme:
+      themes?.find?.(
+        (theme: ExtendedTheme) =>
+          theme.palette.mode === currentEditorState.theme.name
+      ) || currentEditorState?.theme,
     externalApis,
     events:
       data?.events?.sort((a, b) => (a.event_name > b.event_name ? 1 : -1)) ??

@@ -9,6 +9,7 @@ import { ComponentBox } from './ComponentBox'
 
 export type ElementBoxProps<
   ControllreActionsType extends { [key: string]: any },
+  FastState,
 > = {
   element: Element
   editorState: EditorStateType
@@ -17,17 +18,12 @@ export type ElementBoxProps<
   selectedPageElements: Element[]
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
   selectedElement: Element | null
-  actions?: ControllreActionsType
+  uiActions?: any
   //
   onSelectElement: (element: Element, isHovering: boolean) => void
   isProduction?: boolean
   isPointerProduction?: boolean
-  OverlayComponent?: FC<{
-    element: Element
-    isProduction?: boolean
-    editorState: EditorStateType
-    actions?: ControllreActionsType
-  }>
+  OverlayComponent?: FC<{ element: Element }>
   navigate: any
 }
 
@@ -37,8 +33,9 @@ const sx = {
 
 export const ElementBox = <
   ControllreActionsType extends { [key: string]: any },
+  FastState,
 >(
-  props: PropsWithChildren<ElementBoxProps<ControllreActionsType>>
+  props: PropsWithChildren<ElementBoxProps<ControllreActionsType, FastState>>
 ) => {
   const {
     element,
@@ -51,7 +48,7 @@ export const ElementBox = <
     selectedPageElements,
     COMPONENT_MODELS,
     selectedElement,
-    actions,
+    uiActions,
     OverlayComponent,
     navigate,
   } = props
@@ -223,7 +220,7 @@ export const ElementBox = <
                   [cur.param_name]: cur.param_value,
                 }
               }, {})
-            console.log('QUERY ACTION ', action?.action_id, action)
+            console.log('QUERY ACTION HTML Element', action?.action_id, action)
             return await queryAction(
               appController,
               action?.action_id ?? '', // should never happen -> should always have action
@@ -265,7 +262,6 @@ export const ElementBox = <
           )
           const elementWithEvent = actionParam?.element_id
           if (!elementWithEvent) return
-
           appController.actions.updateProperty(
             navElementId,
             actionParam.param_value
@@ -335,7 +331,7 @@ export const ElementBox = <
       selectedPageElements={selectedPageElements}
       COMPONENT_MODELS={COMPONENT_MODELS}
       selectedElement={selectedElement}
-      actions={actions}
+      uiActions={uiActions}
       isProduction={!!isProduction}
       OverlayComponent={OverlayComponent}
       navigate={navigate}

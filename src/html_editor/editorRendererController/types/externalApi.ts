@@ -1,4 +1,5 @@
 import { Endpoint } from './endpoint'
+import { Header } from './Header'
 
 export type ExternalApi = {
   external_api_id: string
@@ -8,7 +9,7 @@ export type ExternalApi = {
     | { type: 'basic'; username: string; password: string }
     | { type: 'bearer'; token: string }
     | { type: 'none' }
-  headers: { name: string; value: string; header_id?: string }[] // -> subtable
+  headers: Header[] // -> subtable
   useCookies: boolean
   endpoints: Endpoint[]
 }

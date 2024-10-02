@@ -50,6 +50,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
     _index,
   } = props
 
+  console.log('VALUE: ', value, 'Path: ', _path, 'Editing', editing, keysDict)
   const startCollapsedAdj = startCollapsed
 
   const expandedItems =
@@ -174,7 +175,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
                       itemsWindowStartIndex={itemsWindowStartIndex}
                       itemsWindowEndIndex={itemsWindowEndIndex}
                     />
-                    {!useModal && !disabled && (
+                    {!disabled && (
                       <Button
                         icon={mdiDelete}
                         variant="text"
@@ -187,7 +188,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
                   </Box>
                 )
               })}
-            {!useModal && !disabled && (
+            {!disabled && (
               <Button
                 icon={mdiPlus}
                 variant="text"
@@ -210,7 +211,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
         ) : (
           <Flex>
             <Typography>{`[`}</Typography>
-            {!useModal && !disabled && (
+            {!disabled && (
               <Button
                 icon={mdiPlus}
                 variant="text"
@@ -226,7 +227,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
         )
       ) : (
         <JsonObjectField
-          disabled={useModal || disabled}
+          disabled={disabled}
           name={name}
           value={value}
           _path={newPath}
@@ -275,21 +276,23 @@ export const JsonField = (props: JsonFieldProps) => {
       document.body.style.overflow = 'auto'
       window.scrollTo(0, scrollPosition)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   useEffect(() => {
+    const rootContainer = rootContainerRef.current
     if (isChildComponent) {
       return
     }
     const handleScroll = () => {
-      if (rootContainerRef.current) {
-        setScrollPosition(rootContainerRef.current.scrollTop)
-        const scrollPos = rootContainerRef.current.scrollTop
+      if (rootContainer) {
+        setScrollPosition(rootContainer.scrollTop)
+        const scrollPos = rootContainer.scrollTop
       }
     }
-    rootContainerRef.current?.addEventListener('scroll', handleScroll)
+    rootContainer?.addEventListener('scroll', handleScroll)
     return () => {
-      rootContainerRef.current?.removeEventListener?.('scroll', handleScroll)
+      rootContainer?.removeEventListener?.('scroll', handleScroll)
     }
   }, [isChildComponent])
 

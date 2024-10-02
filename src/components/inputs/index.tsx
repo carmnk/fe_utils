@@ -33,6 +33,9 @@ export type { CSwitchProps } from './Switch'
 export { MultiSelect } from './MultiSelect'
 export type { MultiSelectProps } from './MultiSelect'
 
+export { MultiAutocomplete } from './MultiAutocomplete'
+export type { MultiAutocompleteProps } from './MultiAutocomplete'
+
 export { CAutoComplete } from './AutoComplete'
 export type { CAutoCompleteProps } from './AutoComplete'
 

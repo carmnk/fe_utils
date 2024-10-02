@@ -7,12 +7,31 @@ export const formPropsSchema: ExtendedObjectSchemaType = {
   properties: {
     fields: {
       type: PropertyType.json,
-      label: 'field',
+      label: 'fields',
       // keysDict: {
       //   name: '',
       //   label: '',
       //   type: 'text',
       // },
+      items: [
+        {
+          type: PropertyType.Object,
+          properties: {
+            label: {
+              type: PropertyType.String,
+              required: true,
+              form: {
+                showInArrayList: true,
+                defaultValue: '',
+              },
+            },
+          },
+        },
+      ],
+      category: 'data',
+      form: {
+        defaultValue: [],
+      },
     } as any,
   },
 }

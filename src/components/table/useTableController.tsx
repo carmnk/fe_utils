@@ -185,6 +185,7 @@ export const useTableUi = (props: TableHookProps) => {
       })
       return { ...current, pageNumber: 1, searchParam: searchValue }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue])
 
   // const lastItems = useRef<any[]>([null, null, null, null])

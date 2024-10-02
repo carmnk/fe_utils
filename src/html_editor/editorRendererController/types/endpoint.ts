@@ -1,3 +1,7 @@
+import { BodyParam } from './bodyParam'
+import { Header } from './Header'
+import { Param } from './param'
+
 export type Endpoint = {
   endpoint_id: string
   name: string
@@ -5,9 +9,9 @@ export type Endpoint = {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
   responseType: 'json' | 'text' | 'blob'
   useCookies: boolean
-  headers: { name: string; value: string; header_id?: string }[] // -> subtable
-  params: { key: string; value: string; param_id?: string }[] // -> subtable
-  body: { key: string; value: any; body_param_id?: string }[] // -> subtable
+  headers: Header[] // -> subtable
+  params: Param[] // -> subtable
+  body: BodyParam[] // -> subtable
   auth:
     | { type: 'basic'; username: string; password: string }
     | { type: 'bearer'; token: string }

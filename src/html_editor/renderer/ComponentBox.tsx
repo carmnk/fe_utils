@@ -15,15 +15,10 @@ export type ComponentElementBoxProps<
   selectedPageElements: Element[]
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
   selectedElement: Element | null
-  actions?: ControllreActionsType
+  uiActions?: ControllreActionsType
   //
   isProduction: boolean
-  OverlayComponent?: FC<{
-    element: Element
-    isProduction?: boolean
-    editorState: EditorStateType
-    actions?: ControllreActionsType
-  }>
+  OverlayComponent?: FC<{ element: Element }>
   navigate: any
 }
 
@@ -37,7 +32,7 @@ export const ComponentBox = <
     editorState,
     appController,
     currentViewportElements,
-    actions,
+    uiActions,
     selectedPageElements,
     COMPONENT_MODELS,
     selectedElement,
@@ -45,16 +40,6 @@ export const ComponentBox = <
     OverlayComponent,
     navigate,
   } = props
-
-  const rootElementOverlayProps = useMemo(
-    () => ({
-      element,
-      isProduction,
-      editorState,
-      actions,
-    }),
-    [element, isProduction, editorState, actions]
-  )
 
   const renderedComponentElements = useMemo(
     () =>
@@ -75,7 +60,7 @@ export const ComponentBox = <
         selectedPageElements,
         COMPONENT_MODELS,
         selectedElement,
-        actions,
+        uiActions,
         onSelectElement: () => {},
         theme: editorState.theme,
         isProduction,
@@ -96,18 +81,17 @@ export const ComponentBox = <
       selectedPageElements,
       COMPONENT_MODELS,
       selectedElement,
-      actions,
+      uiActions,
       isProduction,
       OverlayComponent,
       navigate,
       element,
     ]
   )
-
   return (
     <Box position="relative">
       {renderedComponentElements}
-      {OverlayComponent && <OverlayComponent {...rootElementOverlayProps} />}
+      {OverlayComponent && <OverlayComponent element={element} />}
     </Box>
   )
 }

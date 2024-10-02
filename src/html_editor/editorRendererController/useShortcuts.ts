@@ -116,14 +116,27 @@ export const useShortcuts = (params: {
     () => [...baseComponents, ...(customComponents ?? [])],
     [customComponents]
   )
-  return {
+
+  const shortcuts = useMemo(() => {
+    return {
+      currentViewportElements,
+      selectedElement,
+      selectedPageElements,
+      selectedElementStyleAttributes,
+      getSelectedImage,
+      COMPONENT_MODELS,
+      getRecursiveChildren,
+      getStyleAttributesDictByElementId,
+    }
+  }, [
     currentViewportElements,
     selectedElement,
     selectedPageElements,
     selectedElementStyleAttributes,
     getSelectedImage,
     COMPONENT_MODELS,
-    getRecursiveChildren,
     getStyleAttributesDictByElementId,
-  }
+  ])
+
+  return shortcuts
 }

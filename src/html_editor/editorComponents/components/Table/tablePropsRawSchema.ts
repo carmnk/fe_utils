@@ -6,17 +6,35 @@ export const tablePropsSchema: ExtendedObjectSchemaType = {
   required: true,
   properties: {
     data: {
-      type: PropertyType.json,
+      type: PropertyType.Array,
       required: false,
       form: {
         defaultValue: [],
       },
-      // items: [
-      //   {
-      //     type: PropertyType.Object,
-      //     properties: {},
-      //   },
-      // ],
+      items: [
+        {
+          type: PropertyType.Object,
+          properties: {
+            // nodeId: {
+            //   type: PropertyType.String,
+            //   required: true,
+            // },
+            label: {
+              type: PropertyType.String,
+              required: true,
+              form: {
+                showInArrayList: true,
+                defaultValue: '',
+              },
+            },
+
+            // children: {
+            //   type: PropertyType.Array,
+            //   required: false,
+            // },
+          },
+        },
+      ],
       label: 'Data',
       category: 'data',
     } as any,
@@ -47,7 +65,7 @@ export const tablePropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.json,
       required: false,
       form: {
-        defaultValue: [],
+        defaultValue: {},
       },
       label: 'Footer-Data',
       category: 'data',
