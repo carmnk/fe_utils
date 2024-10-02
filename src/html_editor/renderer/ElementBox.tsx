@@ -77,19 +77,37 @@ export const ElementBox = <
 
   const bgImageFile = useMemo(
     () =>
-      elementAttributsDict?.backgroundImage
+      elementAttributsDict?.style?.backgroundImage
         ? (editorState.assets.images.find(
             (img) =>
-              img._id === elementAttributsDict?.backgroundImage && img.image
+              img._id === elementAttributsDict?.style?.backgroundImage &&
+              img.image
           )?.image as unknown as File)
         : undefined,
-    [elementAttributsDict?.backgroundImage, editorState.assets.images]
+    [elementAttributsDict?.style?.backgroundImage, editorState.assets.images]
   )
 
   const bgImgSrcValue = useMemo(() => {
-    const source = bgImageFile ? URL.createObjectURL(bgImageFile) : undefined
+    const source = bgImageFile
+      ? URL.createObjectURL(bgImageFile)
+      : undefined
     return source ? `url('${source}')` : undefined
   }, [bgImageFile])
+
+  console.log(
+    'ElementBox',
+    element._id,
+    element._type,
+    elementAttributsDict,
+    bgImgSrcValue,
+    bgImageFile,
+    editorState.assets.images,
+    'HÄ?',
+    elementAttributsDict?.backgroundImage,
+    editorState.assets.images.find(
+      (img) => img._id === elementAttributsDict?.backgroundImage
+    )
+  )
 
   const styles = useMemo(() => {
     const linkHoverStyles =
