@@ -117,6 +117,26 @@ export const useShortcuts = (params: {
     [customComponents]
   )
 
+  const imageSrcOptions = useMemo(() => {
+    return editorState.assets.images?.map((image) => ({
+      ...image,
+      value: image._id,
+      label: image?.fileName ?? '',
+      src: image?.src,
+    }))
+  }, [editorState?.assets?.images])
+
+  const faviconSrcOptions = useMemo(() => {
+    return editorState.assets.images
+      ?.filter((img) => img.type === 'favicons')
+      ?.map?.((image) => ({
+        ...image,
+        value: image._id,
+        label: image?.fileName ?? '',
+        src: image?.src,
+      }))
+  }, [editorState?.assets?.images])
+
   const shortcuts = useMemo(() => {
     return {
       currentViewportElements,
@@ -127,6 +147,8 @@ export const useShortcuts = (params: {
       COMPONENT_MODELS,
       getRecursiveChildren,
       getStyleAttributesDictByElementId,
+      imageSrcOptions,
+      faviconSrcOptions,
     }
   }, [
     currentViewportElements,
@@ -136,6 +158,8 @@ export const useShortcuts = (params: {
     getSelectedImage,
     COMPONENT_MODELS,
     getStyleAttributesDictByElementId,
+    imageSrcOptions,
+    faviconSrcOptions,
   ])
 
   return shortcuts

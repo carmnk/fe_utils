@@ -75,11 +75,30 @@ export const ElementBox = <
     [className, editorState?.cssSelectors]
   )
 
+  const bgImageFile = useMemo(
+    () =>
+      elementAttributsDict?.backgroundImage
+        ? (editorState.assets.images.find(
+            (img) =>
+              img._id === elementAttributsDict?.backgroundImage && img.image
+          )?.image as unknown as File)
+        : undefined,
+    [elementAttributsDict?.backgroundImage, editorState.assets.images]
+  )
+
+  const bgImgSrcValue = useMemo(() => {
+    const source = bgImageFile ? URL.createObjectURL(bgImageFile) : undefined
+    return source ? `url('${source}')` : undefined
+  }, [bgImageFile])
+
   const styles = useMemo(() => {
     const linkHoverStyles =
       element._type === 'a' && elementAttributsDict?.href
         ? { cursor: 'pointer' }
         : {}
+    const bgImageStyles = bgImgSrcValue
+      ? { backgroundImage: bgImgSrcValue }
+      : {}
     const styleAttributes =
       'style' in elementAttributsDict ? (elementAttributsDict?.style ?? {}) : {}
 
@@ -128,6 +147,7 @@ export const ElementBox = <
       ...linkHoverStyles,
       ...stylesFromClasses,
       ...styleAttributes,
+      ...bgImageStyles,
       // ...additionalHoverStyles,
       ...userOverridesEditorHoverStyles,
       ...compensateFixedStylesInEditor,
@@ -138,6 +158,7 @@ export const ElementBox = <
     element,
     editorState.ui.previewMode,
     elementAttributsDict,
+    bgImgSrcValue,
   ])
 
   const linkProps = useMemo(() => {
