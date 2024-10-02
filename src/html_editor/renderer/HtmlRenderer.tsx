@@ -17,7 +17,7 @@ export type HtmlRendererProps<
   setEditorState: Dispatch<SetStateAction<EditorStateType>>
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  uiActions: ControllreActionsType
+  uiActions?: ControllreActionsType
   COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
   selectedElement: Element | null
   appController: EditorRendererControllerType<ControllreActionsType>['appController']

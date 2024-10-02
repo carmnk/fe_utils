@@ -1,10 +1,21 @@
 import { mdiNoteOutline } from '@mdi/js'
 import { appBarDef } from '../AppBar/appBarDef'
-import { ComponentDefType } from '../../componentDefType'
+import { paperPropsSchema } from './paperPropsRawSchema'
+import { propertyFormFactory } from '../../propertiesFormFactory'
+import { Paper } from '@mui/material'
 
 export const paperDef = {
-  // to be seperated!
   ...appBarDef,
   type: 'Paper' as const,
   icon: mdiNoteOutline,
+  props: {
+    sx: {},
+    children: [],
+  },
+
+  formGen: ({ editorState }: any) =>
+    propertyFormFactory(paperPropsSchema, editorState),
+  category: 'surface',
+  schema: paperPropsSchema,
+  component: Paper,
 }
