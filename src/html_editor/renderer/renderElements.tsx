@@ -499,7 +499,7 @@ export const renderElements = <
     ) : // components
 
     isComponentType(element._type) ? (
-      (['Button', 'Chip', 'Typography', 'Table', 'Form'].includes(
+      (['Button', 'Chip', 'Typography', 'Table', 'Form', "Icon"].includes(
         element?._type
       ) ||
         element?._type?.toLowerCase().includes('treeview')) &&
