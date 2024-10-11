@@ -4,7 +4,7 @@ import { CircularProgress, MenuItemProps } from '@mui/material'
 import { useTheme, Divider, Typography } from '@mui/material'
 import Icon from '@mdi/react'
 
-export type DropDownMenuItemProps = {
+export type DropDownMenuItemProps = MenuItemProps & {
   onClick: (e: MouseEvent) => void
   tooltip?: ReactNode
   icon?: ReactNode

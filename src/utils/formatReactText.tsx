@@ -77,11 +77,11 @@ const inlineFormat = (lineText: string, icons?: Record<string, string>) => {
         )
         return [
           ...acc,
-          <>
+          <Fragment key={idx}>
             {prevText}
             {boldComponent}
             {idx === arr.length - 1 ? lineText.slice(end) : ''}
-          </>,
+          </Fragment>,
         ]
       }, [])
 }
@@ -100,6 +100,7 @@ export const parseSimpleFormating = (
       <Fragment key={tIdx}>
         {isListItem ? (
           <Box
+            key={'li_' + tIdx}
             component="li"
             sx={{
               ml: 2,

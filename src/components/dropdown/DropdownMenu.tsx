@@ -77,6 +77,7 @@ export const DropdownMenu = (props: PropsWithChildren<DropdownMenuProps>) => {
       >
         {items?.map?.((item, iIdx) => (
           <DropdownMenuItem
+            component={typeof item?.label !== 'string' ? 'div' : undefined}
             key={iIdx}
             {...(slotPropsIn?.dropDownMenuItem ?? {})}
             {...item}

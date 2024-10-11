@@ -38,4 +38,5 @@ export type EditorStateDbDataType = {
   events: EditorStateType['events']
   actions: EditorStateType['actions']
   templates: Template[]
+  data_changes?: any[]
 }

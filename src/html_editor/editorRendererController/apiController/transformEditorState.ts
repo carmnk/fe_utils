@@ -131,6 +131,8 @@ export const transformEditorStateToPayload = (
       project_id,
       asset_filename: image.fileName,
       type: image.type,
+      edited_datetime: image.edited_datetime,
+      created_datetime: image.created_datetime,
     }
   })
   const imageFiles = payload.assets.images

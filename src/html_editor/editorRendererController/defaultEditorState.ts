@@ -76,6 +76,8 @@ export const defaultEditorState = (): EditorStateType => {
       pointerMode: UI_POINTER_MODE.mixed,
       dragMode: 'reorder',
       editDragMode: null,
+      rulerMode: false,
+      viewportLimitsMode: false,
       editorDragStartState: null,
       dragging: null,
       selected: {

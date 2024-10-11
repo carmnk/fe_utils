@@ -6,27 +6,27 @@ export type SerializedThemeType = {
     primary_main: string
     primary_light: string
     primary_dark: string
-    primary_contrastText: string
+    primary_contrasttext: string
     secondary_main: string
     secondary_light: string
     secondary_dark: string
-    secondary_contrastText: string
+    secondary_contrasttext: string
     error_main: string
     error_light: string
     error_dark: string
-    error_contrastText: string
+    error_contrasttext: string
     warning_main: string
     warning_light: string
     warning_dark: string
-    warning_contrastText: string
+    warning_contrasttext: string
     info_main: string
     info_light: string
     info_dark: string
-    info_contrastText: string
+    info_contrasttext: string
     success_main: string
     success_light: string
     success_dark: string
-    success_contrastText: string
+    success_contrasttext: string
     text_primary: string
     text_secondary: string
     text_disabled: string

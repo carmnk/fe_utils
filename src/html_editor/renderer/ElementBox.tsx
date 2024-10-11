@@ -88,26 +88,9 @@ export const ElementBox = <
   )
 
   const bgImgSrcValue = useMemo(() => {
-    const source = bgImageFile
-      ? URL.createObjectURL(bgImageFile)
-      : undefined
+    const source = bgImageFile ? URL.createObjectURL(bgImageFile) : undefined
     return source ? `url('${source}')` : undefined
   }, [bgImageFile])
-
-  console.log(
-    'ElementBox',
-    element._id,
-    element._type,
-    elementAttributsDict,
-    bgImgSrcValue,
-    bgImageFile,
-    editorState.assets.images,
-    'HÄ?',
-    elementAttributsDict?.backgroundImage,
-    editorState.assets.images.find(
-      (img) => img._id === elementAttributsDict?.backgroundImage
-    )
-  )
 
   const styles = useMemo(() => {
     const linkHoverStyles =
@@ -376,9 +359,9 @@ export const ElementBox = <
       navigate={navigate}
     />
   ) : ['br', 'hr', 'img'].includes(element?._type) ? ( // null
-    <Box {...boxProps} src={imageSrc} ref={elementRef} />
+    <Box {...boxProps} src={imageSrc} ref={elementRef} key={element._id} />
   ) : (
-    <Box {...boxProps} ref={elementRef}>
+    <Box {...boxProps} ref={elementRef} key={element._id}>
       {/* label / flag */}
       {!isProduction &&
         !isPointerProduction &&

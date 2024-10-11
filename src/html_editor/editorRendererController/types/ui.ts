@@ -17,6 +17,8 @@ export type Ui = {
   isAutoSaveReady: boolean
   pointerMode: UI_POINTER_MODE.mixed | UI_POINTER_MODE.production
   previewMode: boolean
+  rulerMode: boolean
+  viewportLimitsMode: boolean
   editDragMode: null | 'leftMenu' | 'rightMenu'
   editorDragStartState: { mouseDownX: number; width: number } | null
   dragMode: 'reorder' | 'margin' | 'padding'

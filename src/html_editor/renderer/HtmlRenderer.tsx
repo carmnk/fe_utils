@@ -26,6 +26,7 @@ export type HtmlRendererProps<
   isInHelpMode?: boolean
   isInHelpModeSelected?: boolean
   id?: string
+  injectElementAtEnd?: React.ReactNode
 }
 
 export const HtmlRendererComponent = <
@@ -50,6 +51,7 @@ export const HtmlRendererComponent = <
     isInHelpMode,
     isInHelpModeSelected,
     id,
+    injectElementAtEnd,
   } = props
 
   const selectElement = uiActions?.selectElement
@@ -138,6 +140,7 @@ export const HtmlRendererComponent = <
   const containerStyles = useMemo(() => {
     return {
       overflowY: 'auto',
+      overflowX: editorState.ui.viewportLimitsMode ? 'hidden' : 'auto',
       cursor:
         editorState?.ui?.dragging && editorState.ui.dragMode === 'reorder'
           ? 'grabbing'
@@ -153,12 +156,24 @@ export const HtmlRendererComponent = <
               ? 'ew-resize'
               : 'default',
       border: isInHelpMode ? '3px solid limegreen' : (undefined as any),
+
+      backgroundSize: editorState.ui.rulerMode
+        ? '50px 50px'
+        : (undefined as any),
+      backgroundImage: editorState.ui.rulerMode
+        ? 'linear-gradient(to right, grey 1px, transparent 1px), linear-gradient(to bottom, grey 1px, transparent 1px)'
+        : (undefined as any),
+      // background: editorState.ui.rulerMode
+      //   ? undefined
+      //   : (containerStyles.background as any),
     }
   }, [
     editorState?.ui?.dragging,
     editorState.ui?.dragMode,
     editorState.ui?.selected?.hoveredElementSide,
     isInHelpMode,
+    editorState.ui.rulerMode,
+    editorState.ui.viewportLimitsMode,
   ])
 
   const windowSize = useWindowSize()
@@ -196,6 +211,29 @@ export const HtmlRendererComponent = <
     setEditorState,
   ])
 
+  const selectedViewport = editorState.ui.selected.viewport
+  const viewportLowerWidthLimit =
+    selectedViewport === 'xl'
+      ? theme.breakpoints.values.xl
+      : selectedViewport === 'lg'
+        ? theme.breakpoints.values.lg
+        : selectedViewport === 'md'
+          ? theme.breakpoints.values.md
+          : selectedViewport === 'sm'
+            ? theme.breakpoints.values.sm
+            : theme.breakpoints.values.xs
+
+  const viewportUpperWidthLimit =
+    selectedViewport === 'xl'
+      ? null
+      : selectedViewport === 'lg'
+        ? theme.breakpoints.values.xl
+        : selectedViewport === 'md'
+          ? theme.breakpoints.values.lg
+          : selectedViewport === 'sm'
+            ? theme.breakpoints.values.md
+            : theme.breakpoints.values.sm
+
   return (
     <ThemeProvider theme={themeAdj}>
       {isProduction ? (
@@ -206,6 +244,28 @@ export const HtmlRendererComponent = <
           sx={containerStyles}
           id={id}
         >
+          {editorState.ui.viewportLimitsMode &&
+            typeof viewportLowerWidthLimit === 'number' && (
+              <Box
+                width={'6px'}
+                bgcolor={'primary.main'}
+                height="100%"
+                position="absolute"
+                left={viewportLowerWidthLimit - 3}
+                top={0}
+              />
+            )}
+          {editorState.ui.viewportLimitsMode &&
+            typeof viewportUpperWidthLimit === 'number' && (
+              <Box
+                width={'6px'}
+                bgcolor={'secondary.main'}
+                height="100%"
+                position="absolute"
+                left={viewportUpperWidthLimit - 3}
+                top={0}
+              />
+            )}
           {renderPage(pageName)}
         </Box>
       ) : (
@@ -221,9 +281,32 @@ export const HtmlRendererComponent = <
           height={editorState.ui.previewMode ? '100%' : undefined}
           sx={containerStyles}
         >
+          {editorState.ui.viewportLimitsMode &&
+            typeof viewportLowerWidthLimit === 'number' && (
+              <Box
+                width={'6px'}
+                bgcolor={'primary.main'}
+                height="100%"
+                position="absolute"
+                left={viewportLowerWidthLimit - 3}
+                top={0}
+              />
+            )}
+          {editorState.ui.viewportLimitsMode &&
+            typeof viewportUpperWidthLimit === 'number' && (
+              <Box
+                width={'6px'}
+                bgcolor={'secondary.main'}
+                height="100%"
+                position="absolute"
+                left={viewportUpperWidthLimit - 3}
+                top={0}
+              />
+            )}
           {renderedCurrentPageElements}
         </Box>
       )}
+      {injectElementAtEnd}
     </ThemeProvider>
   )
 }

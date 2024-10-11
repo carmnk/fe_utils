@@ -478,6 +478,7 @@ export const renderElements = <
 
     return isHtmlElement ? (
       <ElementBox
+        key={element._id}
         element={elementAdj2}
         onSelectElement={onSelectElement}
         editorState={editorState}
@@ -487,7 +488,6 @@ export const renderElements = <
         selectedPageElements={selectedPageElements}
         selectedElement={selectedElement}
         COMPONENT_MODELS={COMPONENT_MODELS}
-        key={element._id}
         isProduction={isProduction || isPointerProduction}
         isPointerProduction={isPointerProduction}
         OverlayComponent={OverlayComponent}
@@ -528,6 +528,7 @@ export const renderElements = <
           element?._type
         ) && CurrentComponent ? (
         <CurrentComponent
+          key={element._id}
           {...((elementPropsObject as any) ?? {})} // icon injections needed ? -> more generic approach
           {...injectedIconsDict}
           {...elementArrayIconInjectionDict}
@@ -548,6 +549,7 @@ export const renderElements = <
         </CurrentComponent>
       ) : element?._type === 'AppBar' ? (
         <AppBar
+          key={element._id}
           {...((elementPropsObject as any) ?? {})}
           {...injectedIconsDict}
           {...elementArrayIconInjectionDict}
@@ -574,6 +576,7 @@ export const renderElements = <
         </AppBar>
       ) : ['Paper', 'Dialog'].includes(element?._type) ? (
         <CurrentComponent
+          key={element._id}
           {...((elementPropsObject as any) ?? {})}
           {...injectedIconsDict}
           {...elementArrayIconInjectionDict}
@@ -603,6 +606,7 @@ export const renderElements = <
 
           return (
             <Box
+              key={element._id}
               {...(childLessProps ?? {})}
               {...eventHandlerProps}
               {...injectedIconsDict}
@@ -614,6 +618,7 @@ export const renderElements = <
         })()
       ) : (
         <CurrentComponent
+          key={element._id}
           {...injectedIconsDict}
           {...elementArrayIconInjectionDict}
           //  array icons and elementprops collide but elementprops is used when querriying

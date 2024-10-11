@@ -4,6 +4,8 @@ export type Image = {
   src: string
   fileName: string
   type: string
+  edited_datetime: string
+  created_datetime: string
 }
 
 export type ImageDb = {
