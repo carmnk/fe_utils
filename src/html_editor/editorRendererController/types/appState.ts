@@ -10,6 +10,7 @@ export type AppState = {
       [elementId: string]: any
     }
   }
+  buttonStates: { [key: string]: boolean }
   // tables: { [key: string]: Record<string, any> }
 }
 
@@ -31,5 +32,6 @@ export type AppController = {
       selectedId: string,
       selectedItem: any
     ) => void
+    changeButtonState: (buttonElementId: string) => void
   }
 }

@@ -179,7 +179,13 @@ export const ItemPropsFormFactory = (
               [prop.prop_name]: prop.prop_value,
             }
           }, {})
-          const navItemOptions = controlElementPropsObject?.items
+          const navItemOptions =
+            controlElement?._type === 'Button'
+              ? [
+                  { value: true, label: 'true' },
+                  { value: false, label: 'false' },
+                ]
+              : controlElementPropsObject?.items
           return navItemOptions ?? []
         },
         childId: (formData: any, rootFormData: any) => {

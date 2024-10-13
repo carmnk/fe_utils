@@ -5,12 +5,14 @@ import { EditorStateType } from '../../editorRendererController/types'
 export const REGEX_DATA_PLACEHOLDER = /{_data\.[^}]*}/g
 export const REGEX_TREEVIEW_PLACEHOLDER = /{treeviews\.[^}]*}/g
 export const REGEX_PROPS_PLACEHOLDER = /{props\.[^}]*}/g
+export const REGEX_BUTTON_STATES_PLACEHOLDER = /{buttonStates\.[^}]*}/g
 export const REGEX_MDIICON_PLACEHOLDER = /{mdi\w*}/g
 
 export const REGEX_PLACEHOLDERS = [
   REGEX_DATA_PLACEHOLDER,
   REGEX_TREEVIEW_PLACEHOLDER,
   REGEX_PROPS_PLACEHOLDER,
+  REGEX_BUTTON_STATES_PLACEHOLDER,
 ]
 
 export const checkForPlaceholders = (text: string) => {
@@ -41,11 +43,25 @@ export const replacePlaceholdersInString = (
       placeholderRaw: string
       placeholderCutted: string
     }[] = []
+
+    const buttonStatesMatches = text.match(REGEX_BUTTON_STATES_PLACEHOLDER)
+    const buttonStatesTemplates =
+      buttonStatesMatches?.map((match) => {
+        const keyRaw = match //.replace('{buttonStates.', '').replace('}', '')
+        const key = keyRaw.split('.').slice(1).join('.')?.replaceAll('}', '')
+
+        return {
+          type: 'buttonStates',
+          placeholder: match,
+          placeholderRaw: match,
+          placeholderCutted: match.split('.').slice(1).join('.'),
+          value: appState?.buttonStates?.[key] ?? '',
+          isValueUndefined: appState?.buttonStates?.[key] === undefined,
+        }
+      }) || []
+
     const regex = REGEX_DATA_PLACEHOLDER
     const dataMatches = text.match(regex)
-    // if (!matches) {
-    //   return []
-    // }
     const dataTemplates =
       dataMatches?.map((match) => {
         const keyRaw = match.replace('{_data.', '').replace('}', '')
@@ -142,6 +158,7 @@ export const replacePlaceholdersInString = (
       ...propsTemplates,
       ...treeViewTemplates,
       ...mdiIconTemplates,
+      ...buttonStatesTemplates,
     ]
     return templatesOut
   }

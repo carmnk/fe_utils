@@ -151,7 +151,7 @@ export const renderElements = <
         const key = cur.prop_name
         const keyValue = getPropByName(key)
         const matches = keyValue?.match?.(
-          /{(_data|form|props|treeviews)\.[^}]*}/g
+          /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
         )
         const keyValueAdj = matches
           ? replacePlaceholdersInString(
@@ -263,7 +263,13 @@ export const renderElements = <
             // ?.navigationElementId
 
             if (!sourceControlElementId) return []
-            const activeTab = appController?.state?.[sourceControlElementId]
+            const sourceControlElement = currentViewportElements?.find(
+              (el) => el._id === sourceControlElementId
+            )
+            const activeTab =
+              sourceControlElement?._type === 'Button'
+                ? appController?.state?.buttonStates?.[sourceControlElementId]
+                : appController?.state?.[sourceControlElementId]
             const activeId = getPropByName('items')?.find(
               (item: any) => item.value === activeTab
             )?.childId
@@ -271,6 +277,16 @@ export const renderElements = <
               (child) => child._id === activeId
             )
             const children = activeChild ? [activeChild] : []
+            console.log(
+              'TAB CHILDREN SRC',
+              sourceControlElementId,
+              activeTab,
+              activeId,
+              activeChild,
+              children,
+              'appcontroller',
+              appController
+            )
             return children
           })()
         : []
@@ -322,6 +338,8 @@ export const renderElements = <
         OverlayComponent,
         navigate,
       })
+
+    console.log('TAB CILDREN', TabChildren)
 
     const tableProps =
       ['Table'].includes(element?._type) && CurrentComponent
@@ -473,6 +491,23 @@ export const renderElements = <
         icons
       )
 
+    const buttonOnClickProps =
+      element._type === 'Button'
+        ? {
+            onClick: (e: any) => {
+              if (element?._type === 'Button') {
+                appController.actions.changeButtonState(element._id)
+              }
+              if (
+                eventHandlerProps?.onClick &&
+                typeof eventHandlerProps?.onClick === 'function'
+              ) {
+                eventHandlerProps.onClick(e)
+              }
+            },
+          }
+        : {}
+
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />
 
@@ -499,7 +534,7 @@ export const renderElements = <
     ) : // components
 
     isComponentType(element._type) ? (
-      (['Button', 'Chip', 'Typography', 'Table', 'Form', "Icon"].includes(
+      (['Button', 'Chip', 'Typography', 'Table', 'Form', 'Icon'].includes(
         element?._type
       ) ||
         element?._type?.toLowerCase().includes('treeview')) &&
@@ -522,6 +557,7 @@ export const renderElements = <
           {...tableProps}
           {...formProps}
           {...treeViewProps}
+          {...buttonOnClickProps}
         />
       ) : //  NAVIGATION ELEMENTS (slightly different interface)
       ['Tabs', 'BottomNavigation', 'ListNavigation', 'ButtonGroup'].includes(

@@ -24,7 +24,7 @@ export const buttonEditorComponentDef = {
       tooltip: {},
     },
   },
-
+  state: false as any,
   icon: mdiButtonCursor,
   category: 'basic',
   schema: ButtonPropsSchema,

@@ -15,6 +15,7 @@ export const useAppController = (): AppController => {
       selectedId: {},
       selectedItem: {},
     },
+    buttonStates: {},
   })
 
   const actions = useMemo(() => {
@@ -88,6 +89,18 @@ export const useAppController = (): AppController => {
       })
     }
 
+    const changeButtonState = (buttonElementId: string) => {
+      setAppState((current) => {
+        return {
+          ...current,
+          buttonStates: {
+            ...current.buttonStates,
+            [buttonElementId]: !current?.buttonStates?.[buttonElementId],
+          },
+        }
+      })
+    }
+
     const changeTreeviewSelectedItem = (
       treeViewElementId: string,
       selectedId: string,
@@ -120,6 +133,7 @@ export const useAppController = (): AppController => {
       updateData,
       removeData,
       changeTreeviewSelectedItem,
+      changeButtonState,
     }
   }, [setAppState, appState?.forms])
 

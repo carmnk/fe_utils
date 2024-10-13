@@ -98,6 +98,11 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       required: false,
       category: 'shortcut',
     },
+    id: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
     iconButton: {
       type: PropertyType.Boolean,
       required: false,
