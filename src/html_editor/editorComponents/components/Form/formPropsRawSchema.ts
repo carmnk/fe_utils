@@ -33,5 +33,59 @@ export const formPropsSchema: ExtendedObjectSchemaType = {
         defaultValue: [],
       },
     } as any,
+    showError: {
+      type: PropertyType.Boolean,
+      required: false,
+      form: {
+        defaultValue: false,
+      },
+      category: 'shortcut',
+    },
+    disableTopSpacing: {
+      type: PropertyType.Boolean,
+      required: false,
+      form: {
+        defaultValue: false,
+      },
+      category: 'shortcut',
+    },
+    disableUseFormElement: {
+      type: PropertyType.Boolean,
+      required: false,
+      form: {
+        defaultValue: false,
+      },
+      category: 'shortcut',
+    },
+    useChangeCompleted: {
+      type: PropertyType.Boolean,
+      required: false,
+      form: {
+        defaultValue: false,
+      },
+      category: 'shortcut',
+    },
+    disableInitialArrayDivider: {
+      type: PropertyType.Boolean,
+      required: false,
+      form: {
+        defaultValue: false,
+      },
+      category: 'shortcut',
+    },
+    onChangeFormData: {
+      type: PropertyType.eventHandler,
+      required: false,
+      category: 'events',
+      eventType: 'form',
+    },
+    formData: {
+      type: PropertyType.json,
+      required: false,
+      category: 'data',
+      form: {
+        defaultValue: {},
+      },
+    },
   },
 }

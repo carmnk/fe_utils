@@ -392,7 +392,9 @@ export const renderElements = <
       ['Form'].includes(element?._type) && CurrentComponent
         ? (() => {
             return {
-              formData: appController.actions.getFormData(elementAdj._id),
+              formData:
+                elementPropsObject?.formData ??
+                appController.actions.getFormData(elementAdj._id),
               onChangeFormData:
                 /* eslint-disable @typescript-eslint/no-unused-vars */
                 (
@@ -443,6 +445,7 @@ export const renderElements = <
             currentViewportElements,
             COMPONENT_MODELS,
             appController,
+            icons,
           }),
         }
       },
@@ -454,26 +457,11 @@ export const renderElements = <
       _content: content,
     }
 
-    if (element?._type?.toLowerCase().includes('treeview'))
+    if (element?._type?.toLowerCase().includes('form'))
       console.log(
         'elementAdj2  ',
         elementAdj2,
-        getPropByName('data'),
-        {
-          ...(elementPropsObject ?? {}),
-          ...injectedIconsDict,
-          ...elementArrayIconInjectionDict,
-          sx: !isProduction
-            ? {
-                ...((elementPropsObject as any)?.sx ?? {}),
-                position: 'relative',
-              }
-            : (elementPropsObject as any)?.sx,
-          ...eventHandlerProps,
-          ...tableProps,
-          ...formProps,
-          ...treeViewProps,
-        },
+
         elementPropsObject,
         'NOT?',
         treeViewProps,
@@ -487,8 +475,8 @@ export const renderElements = <
         elementArrayIconInjectionDict,
         'allElementProps',
         allElementProps,
-        'icons',
-        icons
+        'formProps',
+        formProps
       )
 
     const buttonOnClickProps =
@@ -553,9 +541,9 @@ export const renderElements = <
                 }
               : (elementPropsObject as any)?.sx
           }
+          {...formProps}
           {...eventHandlerProps}
           {...tableProps}
-          {...formProps}
           {...treeViewProps}
           {...buttonOnClickProps}
         />

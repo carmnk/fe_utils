@@ -320,8 +320,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         <Fragment>
           <Flex>
             <Typography color="lightseagreen">{`${
-              !hideLineNumbers && startLineIndex
-            }:{`}</Typography>
+              !hideLineNumbers ? startLineIndex.toString() + ':' : ''
+            }{`}</Typography>
             <Button
               icon={isCurrentFieldExpanded ? mdiMinus : mdiPlus}
               iconButton

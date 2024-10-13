@@ -205,6 +205,16 @@ export const transformEditorStateFromPayload = (
         const isSchemaPropEventHandler =
           baseComponentSchemaPropType === PropertyType.eventHandler
 
+        console.log(
+          'prop.prop_value',
+          element?._type,
+          prop,
+          baseComponentSchemaPropType,
+          isSchemaPropInt,
+          isSchemaPropNumeric,
+          isSchemaPropJson,
+          isSchemaPropEventHandler
+        )
         const value =
           isSchemaPropJson ||
           isSchemaPropEventHandler ||
@@ -229,14 +239,8 @@ export const transformEditorStateFromPayload = (
                   const propValue = prop.prop_value
                   // check if propValue is a placeholder
                   if (typeof propValue === 'string') {
-                    // const regexPlaceholder = /{(_data|form|props)\.[^}]*}/g
-                    // const regexPlaceholders = REGEX_PLACEHOLDERS
                     const matches = checkForPlaceholders(propValue)
-                    // !!regexPlaceholders
-                    //   .map((regex) => propValue?.match?.(regex))
-                    //   .filter((match) => match)?.length
-
-                    // const matches = propValue?.match?.(regexPlaceholder)
+                    // console.log('matches', matches, element._type, prop.prop_name)
                     if (matches) {
                       return propValue
                     }

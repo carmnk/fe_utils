@@ -243,8 +243,8 @@ export const propertyFormFactory = (
       if (!['sx'].includes(changedKey)) {
         return newFormData
       }
-      const oldProps = Object.keys(prevFormData[changedKey])
-      const newProps = Object.keys(changedValue)
+      const oldProps = Object.keys(prevFormData[changedKey] ?? {})
+      const newProps = Object.keys(changedValue ?? {})
       const isPropAdded = newProps.find((prop) => !oldProps.includes(prop))
 
       if (!isPropAdded) {

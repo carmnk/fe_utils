@@ -3,6 +3,7 @@ import {
   EditorStateType,
   Element,
 } from '../editorRendererController'
+import { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
 import { queryAction } from './queryAction'
 
 type EditorRendererController = EditorRendererControllerType<{
@@ -16,6 +17,7 @@ export const createAppAction = (params: {
   currentViewportElements: EditorRendererController['currentViewportElements']
   COMPONENT_MODELS: EditorRendererController['COMPONENT_MODELS']
   appController: EditorRendererController['appController']
+  icons: any
 }) => {
   const {
     element,
@@ -24,6 +26,7 @@ export const createAppAction = (params: {
     COMPONENT_MODELS,
     appController,
     eventName,
+    icons,
   } = params
 
   const elementProps = editorState.properties?.filter(
@@ -105,18 +108,38 @@ export const createAppAction = (params: {
                   ]
                 const replaceValue = fnParams?.[1] as string
                 const newValue = value?.replaceAll?.('{itemId}', replaceValue)
+                const matches = newValue?.match?.(
+                  /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
+                )
+                const newValueReplaced = matches
+                  ? replacePlaceholdersInString(
+                      newValue,
+                      appController.state,
+                      editorState.compositeComponentProps,
+                      editorState.properties,
+                      element as any,
+                      undefined,
+                      icons
+                    )
+                  : newValue
                 const regexOnlyNumbersOrDecimal = /^[0-9]+(\.[0-9]+)?$/
                 const isNumberOrDecimal =
-                  regexOnlyNumbersOrDecimal.test(newValue)
+                  regexOnlyNumbersOrDecimal.test(newValueReplaced)
                 const newValueAdj = isNumberOrDecimal
-                  ? parseFloat(newValue)
-                  : newValue
+                  ? parseFloat(newValueReplaced)
+                  : newValueReplaced
                 return {
                   ...acc,
                   [cur]: newValueAdj,
                 }
               }, {})
             : elementTemplateValuesDict
+        console.log(
+          'elementTemplateValuesDictAdj',
+          elementTemplateValuesDictAdj,
+          isItemEvent && ['string', 'number'].includes(typeof fnParams?.[1]),
+          elementTemplateValuesDict
+        )
 
         await queryAction(
           appController,

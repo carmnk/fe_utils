@@ -44,7 +44,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
     _collapsedPaths,
     _setCollapsedPaths,
     startCollapsed,
-    hideLineNumbers,
+    hideLineNumbers = true,
     itemsWindowStartIndex,
     itemsWindowEndIndex,
     _index,
@@ -200,12 +200,15 @@ export const RawJsonField = (props: JsonFieldProps) => {
               </Button>
             )}
             <Typography color="gold">
-              {!hideLineNumbers &&
-                (_index ?? 0) +
-                  1 +
-                  newIndexesArray.reduce((acc, item) => acc + item, 0) +
-                  1}
-              :{`]`}
+              {!hideLineNumbers
+                ? (
+                    (_index ?? 0) +
+                    1 +
+                    newIndexesArray.reduce((acc, item) => acc + item, 0) +
+                    1
+                  ).toString() + ':'
+                : ''}
+              {`]`}
             </Typography>
           </Box>
         ) : (
