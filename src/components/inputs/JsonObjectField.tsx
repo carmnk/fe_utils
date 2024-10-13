@@ -474,6 +474,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                   if (disabled) {
                     return
                   }
+                  console.log('TOGGLE BOOLEAN', propertyValue, !propertyValue)
                   handleChangePropertyValue(
                     [..._path, key],
                     !propertyValue as any
@@ -607,7 +608,11 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                         whiteSpace="nowrap"
                         overflow="hidden"
                         textOverflow="ellipsis"
-                        onClick={handleToggleChangePropValue}
+                        onClick={
+                          typeof propertyValue === 'boolean'
+                            ? undefined
+                            : handleToggleChangePropValue
+                        }
                       >
                         {Array.isArray(propertyValue) ? (
                           <JsonField
@@ -654,6 +659,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               size="small"
                               sx={{ p: 0, pl: 1 }}
                               onChange={handleChangeBooleanValue}
+                              onClick={stopPropagation}
                             />
                           </Flex>
                         ) : typeof propertyValue === 'string' ? (
