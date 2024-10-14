@@ -250,7 +250,7 @@ export const Field = (props: FieldProps) => {
           'number',
           'int',
         ].includes(field.type)
-          ? handleChange
+          ? (e: any) => handleChange(e.target.value, e)
           : undefined
       }
       onKeyDown={
