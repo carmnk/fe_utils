@@ -99,17 +99,19 @@ export const createAppAction = (params: {
           (mod) => mod.type === element._type
         )?.schema?.properties[eventName]?.eventType
 
-        const elementTemplateValuesDictAdj =
-          isItemEvent && ['string', 'number'].includes(typeof fnParams?.[1])
-            ? Object.keys(elementTemplateValuesDict).reduce<
-                Record<string, any>
-              >((acc, cur) => {
+        const elementTemplateValuesDictAdj = isItemEvent
+          ? Object.keys(elementTemplateValuesDict).reduce<Record<string, any>>(
+              (acc, cur) => {
                 const value =
                   elementTemplateValuesDict?.[
                     cur as keyof typeof elementTemplateValuesDict
                   ]
                 const replaceValue = fnParams?.[1] as string
-                const newValue = value?.replaceAll?.('{itemId}', replaceValue)
+                const newValue = ['string', 'number'].includes(
+                  typeof replaceValue
+                )
+                  ? value?.replaceAll?.('{itemId}', replaceValue)
+                  : value
                 const matches = newValue?.match?.(
                   /{(_data|form|formData|props|treeviews|buttonStates)\.[^}]*}/g
                 )
@@ -135,8 +137,10 @@ export const createAppAction = (params: {
                   ...acc,
                   [cur]: newValueAdj,
                 }
-              }, {})
-            : elementTemplateValuesDict
+              },
+              {}
+            )
+          : elementTemplateValuesDict
         console.log(
           'elementTemplateValuesDictAdj',
           elementTemplateValuesDictAdj,
