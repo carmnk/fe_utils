@@ -9,6 +9,9 @@ export const REGEX_PROPS_PLACEHOLDER = /{props\.[^}]*}/g
 export const REGEX_BUTTON_STATES_PLACEHOLDER = /{buttonStates\.[^}]*}/g
 export const REGEX_MDIICON_PLACEHOLDER = /{mdi\w*}/g
 
+export const REGEX_RESOLUTION_FAILED =
+  /(({_data)|({formData)|({treeviews)|({props)|({buttonStates))\.[^}]*'[^}]*'[^}]*}/g
+
 export const REGEX_PLACEHOLDERS = [
   REGEX_DATA_PLACEHOLDER,
   REGEX_TREEVIEW_PLACEHOLDER,
@@ -249,6 +252,10 @@ export const replacePlaceholdersInString = (
       'formData',
       formData
     )
+    if (newText.match(REGEX_RESOLUTION_FAILED)) {
+      console.warn('Resolution failed', newText, text, templates)
+      return newText
+    }
     // this will though prevent calculations without placeholders
     const evalText =
       (newText === text || typeof newText !== 'string') && !forceEval
