@@ -135,6 +135,7 @@ export const createAppAction = (params: {
                       editorState.properties,
                       element as any,
                       undefined,
+                      undefined,
                       icons,
                       element?._type === 'Form'
                         ? (fnParams?.[1] as any)
