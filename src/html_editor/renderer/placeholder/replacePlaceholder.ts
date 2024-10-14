@@ -192,10 +192,12 @@ export const replacePlaceholdersInString = (
     if (['string', 'number', 'boolean'].includes(typeof template.value)) {
       newText = isTransformer
         ? newText.replaceAll(template.placeholder, template.value.toString())
-        : newText.replaceAll(
-            template.placeholder,
-            "'" + template.value.toString() + "'"
-          )
+        : newText
+            .replaceAll(
+              template.placeholder,
+              "'" + template.value.toString() + "'"
+            )
+            ?.replaceAll?.('{formData.', '')
     } else {
       if ((template as any).isValueUndefined) {
         undefinedPlaceholders.push(template.placeholder)
