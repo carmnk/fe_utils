@@ -140,7 +140,9 @@ export const createAppAction = (params: {
         console.log(
           'elementTemplateValuesDictAdj',
           elementTemplateValuesDictAdj,
-          isItemEvent && ['string', 'number'].includes(typeof fnParams?.[1]),
+          isItemEvent,
+          ['string', 'number'].includes(typeof fnParams?.[1]),
+          fnParams,
           elementTemplateValuesDict
         )
 
