@@ -137,6 +137,7 @@ export const createAppAction = (params: {
                       undefined,
                       undefined,
                       icons,
+                      undefined,
                       element?._type === 'Form'
                         ? (fnParams?.[1] as any)
                         : undefined
