@@ -146,13 +146,14 @@ export const useAppController = (
       treeViewElementId: string,
       itemId: string
     ) => {
-      const treeviewItemsPropertyValue = properties?.find(
+      const treeviewItemsPropertyValue = properties?.find?.(
         (prop) =>
           prop.element_id === treeViewElementId && prop.prop_name === 'items'
       )?.prop_value
 
       if (!treeviewItemsPropertyValue) return
-      const item = treeviewItemsPropertyValue?.find(
+      console.log('treeviewItemsPropertyValue', treeviewItemsPropertyValue) 
+      const item = treeviewItemsPropertyValue?.find?.(
         (item: any) => item.nodeId === itemId
       )
       if (!item) return
@@ -166,7 +167,7 @@ export const useAppController = (
         onTreeViewSelectionChange(elementId, selectedId)
       }
     })
-  }, [appState._data])
+  }, [appState?._data])
 
   const controller = useMemo(() => {
     return {
