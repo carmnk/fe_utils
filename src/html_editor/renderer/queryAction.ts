@@ -7,7 +7,7 @@ import { Param } from '../editorRendererController/types/param'
 const replacePlaceholders = (
   text: string,
   placeholders: { [key: string]: string },
-  debug = false
+  debug: any = false
 ) => {
   if (!['string', 'number'].includes(typeof text) || !placeholders) {
     console.debug('replacePlaceholders out1', text, placeholders)
@@ -25,11 +25,16 @@ const replacePlaceholders = (
       break
     }
     if (debug) {
-      console.debug('replacePlaceholders', key, placeholders[key], result)
+      console.debug(
+        'replacePlaceholders' + debug,
+        key,
+        placeholders[key],
+        result
+      )
     }
   }
   if (debug) {
-    console.debug('replacePlaceholders out', result, placeholders)
+    console.debug('replacePlaceholders out' + debug, result, placeholders)
   }
   return result
 }
@@ -95,11 +100,22 @@ export const queryAction = async (
     'queryAction inner ',
     adjMethod,
     adjParams,
+    'payload',
     payload,
     payload?.reduce((acc, param) => {
       return {
         ...acc,
-        [param.key]: replacePlaceholders(param.value, placeholders),
+        [param.key]: param.value,
+      }
+    }, {}) ?? {},
+    payload?.reduce((acc, param) => {
+      return {
+        ...acc,
+        [param.key]: replacePlaceholders(
+          param.value,
+          placeholders,
+          'innerQueryAction'
+        ),
       }
     }, {}) ?? {},
     'PL END',

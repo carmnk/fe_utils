@@ -140,7 +140,7 @@ export const createAppAction = (params: {
           'elementTemplateValuesDictAdj',
           elementTemplateValuesDictAdj,
           isItemEvent && ['string', 'number'].includes(typeof fnParams?.[1]),
-          elementTemplateValuesDict
+          elementTemplateValuesDict,
         )
 
         await queryAction(
