@@ -1,13 +1,17 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AppState, EditorStateType } from './types'
 import { AppController } from './types'
 
 export type EditorControllerAppStateParams = {
-  editorState: EditorStateType
-  setEditorState: Dispatch<SetStateAction<EditorStateType>>
+  // editorState: EditorStateType
+  // setEditorState: Dispatch<SetStateAction<EditorStateType>>
+  properties: EditorStateType['properties']
 }
 
-export const useAppController = (): AppController => {
+export const useAppController = (
+  params: EditorControllerAppStateParams
+): AppController => {
+  const { properties } = params
   const [appState, setAppState] = useState<AppState>({
     forms: {},
     _data: {},
@@ -136,6 +140,33 @@ export const useAppController = (): AppController => {
       changeButtonState,
     }
   }, [setAppState, appState?.forms])
+
+  useEffect(() => {
+    const onTreeViewSelectionChange = (
+      treeViewElementId: string,
+      itemId: string
+    ) => {
+      const treeviewItemsPropertyValue = properties?.find(
+        (prop) =>
+          prop.element_id === treeViewElementId && prop.prop_name === 'items'
+      )?.prop_value
+
+      if (!treeviewItemsPropertyValue) return
+      const item = treeviewItemsPropertyValue?.find(
+        (item: any) => item.nodeId === itemId
+      )
+      if (!item) return
+      actions.changeTreeviewSelectedItem(treeViewElementId, itemId, item)
+    }
+
+    const treeviewElementIds = Object.keys(appState.treeviews.selectedId)
+    treeviewElementIds.forEach((elementId) => {
+      const selectedId = appState.treeviews.selectedId[elementId]
+      if (selectedId) {
+        onTreeViewSelectionChange(elementId, selectedId)
+      }
+    })
+  }, [appState._data])
 
   const controller = useMemo(() => {
     return {
