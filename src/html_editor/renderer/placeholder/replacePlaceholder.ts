@@ -185,8 +185,9 @@ export const replacePlaceholdersInString = (
         template.placeholderCutted.startsWith('.')
       ) {
         const path = template.placeholderCutted?.slice(1).split('.')
-        console.log("PATH", template, path)
+
         const value = getDeepPropertyByPath(template.value, path)
+        console.log('PATH', template, path, value)
         if (typeof value === 'object') {
           newText = value
           break
