@@ -181,7 +181,7 @@ export const useAppController = (
       )
 
       const item = treeviewItemsPropertyValueResolved?.find?.(
-        (item: any) => item.nodeId === itemId?.[0]
+        (item: any) => item.product_id === itemId?.[0]
       )
       console.log(
         'treeviewItemsPropertyValue',
