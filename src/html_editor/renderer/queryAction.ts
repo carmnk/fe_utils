@@ -15,6 +15,9 @@ const replacePlaceholders = (
   }
   let result = text
   for (const key in placeholders) {
+    if (!result.includes('{' + key + '}')) {
+      continue
+    }
     result = result?.replaceAll?.('{' + key + '}', placeholders[key])
     const regexOnlyNumbersOrDecimal = /^[0-9]+(\.[0-9]+)?$/
     const isNumberOrDecimal = regexOnlyNumbersOrDecimal.test(placeholders[key])
