@@ -45,6 +45,7 @@ export const useEditorRendererController = (
 
   const appController = useAppController({
     properties: editorState.properties,
+    currentViewportElements,
   })
 
   const rendererController = useMemo(() => {

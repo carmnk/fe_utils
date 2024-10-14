@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AppState, EditorStateType } from './types'
 import { AppController } from './types'
+import { replacePlaceholdersInString } from '../renderer'
+import { EditorRendererControllerType } from './types/editorRendererController'
 
 export type EditorControllerAppStateParams = {
   // editorState: EditorStateType
   // setEditorState: Dispatch<SetStateAction<EditorStateType>>
   properties: EditorStateType['properties']
+  currentViewportElements: EditorRendererControllerType<any>['currentViewportElements']
 }
 
 export const useAppController = (
   params: EditorControllerAppStateParams
 ): AppController => {
-  const { properties } = params
+  const { properties, currentViewportElements } = params
   const [appState, setAppState] = useState<AppState>({
     forms: {},
     _data: {},
@@ -148,11 +151,39 @@ export const useAppController = (
     ) => {
       const treeviewItemsPropertyValue = properties?.find?.(
         (prop) =>
-          prop.element_id === treeViewElementId && prop.prop_name === 'items'
+          prop.element_id === treeViewElementId &&
+          prop.prop_name === 'items' &&
+          typeof prop.prop_value === 'string' &&
+          prop.prop_value.includes('{_data.')
       )?.prop_value
 
-      if (!treeviewItemsPropertyValue) return
-      console.log('treeviewItemsPropertyValue', treeviewItemsPropertyValue) 
+      const treeViewElement = currentViewportElements?.find?.(
+        (element) => element._id === treeViewElementId
+      )
+      console.log(
+        'treeviewItemsPropertyValue 0',
+        treeViewElement,
+        treeviewItemsPropertyValue
+      )
+      if (!treeviewItemsPropertyValue || !treeViewElement) return
+
+      const treeviewItemsPropertyValueResolved = replacePlaceholdersInString(
+        treeviewItemsPropertyValue,
+        appState,
+        [],
+        properties,
+        treeViewElement,
+        undefined,
+        undefined,
+        undefined, // icons
+        undefined,
+        undefined
+      )
+      console.log(
+        'treeviewItemsPropertyValue',
+        treeviewItemsPropertyValue,
+        treeviewItemsPropertyValueResolved
+      )
       const item = treeviewItemsPropertyValue?.find?.(
         (item: any) => item.nodeId === itemId
       )
