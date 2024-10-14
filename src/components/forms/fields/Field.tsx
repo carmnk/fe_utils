@@ -115,18 +115,24 @@ export const Field = (props: FieldProps) => {
   >(formData?.[field?.name ?? ''] ?? (field as any)?.form?.defaultValue ?? '')
   const handleChangeInnerValue = useCallback(
     (newValue: string | number | boolean | null) => {
+      console.debug('handleChangeInnerValue innnerValue', newValue)
       setInnerValue(newValue)
     },
     []
   )
   useEffect(() => {
+    console.debug(
+      'useEffect runs innnerValue',
+      field.name,
+      formData?.[field?.name ?? '']
+    )
     setInnerValue(formData?.[field?.name ?? ''] ?? '')
   }, [formData?.[field?.name ?? '']])
 
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
       const { name } = e?.target ?? {}
-      console.debug('handleChange', name, newValue)
+      console.debug('handleChange innnerValue---', name, newValue)
       const newValueWithInjections = onBeforeChange?.(
         { ...formData, [name]: newValue },
         formData,
