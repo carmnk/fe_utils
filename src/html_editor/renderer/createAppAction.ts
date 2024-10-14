@@ -18,7 +18,7 @@ export const createAppAction = (params: {
   COMPONENT_MODELS: EditorRendererController['COMPONENT_MODELS']
   appController: EditorRendererController['appController']
   icons: any
-  formData?: Record<string, any>
+  // formData?: Record<string, any>
 }) => {
   const {
     element,
@@ -28,7 +28,7 @@ export const createAppAction = (params: {
     appController,
     eventName,
     icons,
-    formData,
+    // formData,
   } = params
 
   const elementProps = editorState.properties?.filter(
@@ -124,7 +124,9 @@ export const createAppAction = (params: {
                       element as any,
                       undefined,
                       icons,
-                      formData
+                      element?._type === 'Form'
+                        ? (fnParams?.[1] as any)
+                        : undefined
                     )
                   : newValue
                 const regexOnlyNumbersOrDecimal = /^[0-9]+(\.[0-9]+)?$/
