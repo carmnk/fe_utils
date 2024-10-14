@@ -132,31 +132,32 @@ export const Field = (props: FieldProps) => {
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
       const { name } = e?.target ?? {}
-      console.debug('handleChange innnerValue---', name, newValue)
+      const newValueAdj = useChangeCompleted ? innerValue : newValue
+      console.debug('handleChange innnerValue---', name, newValueAdj, newValue)
       const newValueWithInjections = onBeforeChange?.(
-        { ...formData, [name]: newValue },
+        { ...formData, [name]: newValueAdj },
         formData,
         name,
-        newValue
+        newValueAdj
       ) ?? {
         ...formData,
-        [name]: newValue,
+        [name]: newValueAdj,
       }
       console.debug(
         'handleChange Adj OnBeforeChange',
         newValueWithInjections,
         name,
-        newValueWithInjections?.[name] ?? newValue,
+        newValueWithInjections?.[name] ?? newValueAdj,
         formData
       )
       onChangeFormData(
         newValueWithInjections,
         name,
-        newValueWithInjections?.[name] ?? newValue,
+        newValueWithInjections?.[name] ?? newValueAdj,
         formData
       )
     },
-    [onBeforeChange, formData, onChangeFormData]
+    [onBeforeChange, formData, onChangeFormData, innerValue, useChangeCompleted]
   )
   const injectIsInt = field.type === 'int' ? { isInt: true } : {}
 
