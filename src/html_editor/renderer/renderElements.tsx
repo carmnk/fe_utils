@@ -268,7 +268,9 @@ export const renderElements = <
             )
             const activeTab =
               sourceControlElement?._type === 'Button'
-                ? appController?.state?.buttonStates?.[sourceControlElementId]
+                ? (appController?.state?.buttonStates?.[
+                    sourceControlElementId
+                  ] ?? false)
                 : appController?.state?.[sourceControlElementId]
             const activeId = getPropByName('items')?.find(
               (item: any) => item.value === activeTab
