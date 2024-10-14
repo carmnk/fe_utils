@@ -216,6 +216,7 @@ export const replacePlaceholdersInString = (
         newText = newText
           .replaceAll(template.placeholderRaw, value ? '"' + value + '"' : '')
           .replaceAll('{_data.', '')
+          .replaceAll('{formData.', '')
           .replaceAll('{treeviews.', '')
 
           .replaceAll('}', '')
