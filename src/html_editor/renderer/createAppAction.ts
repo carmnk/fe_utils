@@ -111,17 +111,19 @@ export const createAppAction = (params: {
                 const matches = newValue?.match?.(
                   /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
                 )
-                const newValueReplaced = matches
-                  ? replacePlaceholdersInString(
-                      newValue,
-                      appController.state,
-                      editorState.compositeComponentProps,
-                      editorState.properties,
-                      element as any,
-                      undefined,
-                      icons
-                    )
-                  : newValue
+                const newValueReplaced =
+                  matches
+                    ? replacePlaceholdersInString(
+                        newValue,
+                        appController.state,
+                        editorState.compositeComponentProps,
+                        editorState.properties,
+                        element as any,
+                        undefined,
+                        icons
+                      )
+                    :
+                  newValue
                 const regexOnlyNumbersOrDecimal = /^[0-9]+(\.[0-9]+)?$/
                 const isNumberOrDecimal =
                   regexOnlyNumbersOrDecimal.test(newValueReplaced)
