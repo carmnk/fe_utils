@@ -187,6 +187,8 @@ export const useAppController = (
         'treeviewItemsPropertyValue',
         treeviewItemsPropertyValue,
         treeviewItemsPropertyValueResolved,
+        'ITEMID',
+        itemId,
         itemId?.[0],
         item
       )
