@@ -45,6 +45,7 @@ export const useEditorRendererController = (
 
   const appController = useAppController({
     properties: editorState.properties,
+    transformers: editorState.transformers,
     currentViewportElements,
   })
 

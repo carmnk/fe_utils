@@ -8,13 +8,14 @@ export type EditorControllerAppStateParams = {
   // editorState: EditorStateType
   // setEditorState: Dispatch<SetStateAction<EditorStateType>>
   properties: EditorStateType['properties']
+  transformers: EditorStateType['transformers']
   currentViewportElements: EditorRendererControllerType<any>['currentViewportElements']
 }
 
 export const useAppController = (
   params: EditorControllerAppStateParams
 ): AppController => {
-  const { properties, currentViewportElements } = params
+  const { properties, currentViewportElements, transformers } = params
   const [appState, setAppState] = useState<AppState>({
     forms: {},
     _data: {},
@@ -167,7 +168,7 @@ export const useAppController = (
       )
       if (!treeviewItemsPropertyValue || !treeViewElement) return
 
-      const treeviewItemsPropertyValueResolved = replacePlaceholdersInString(
+      const treeviewItemsPropertyValueResolved0 = replacePlaceholdersInString(
         treeviewItemsPropertyValue,
         appState,
         [],
@@ -179,6 +180,15 @@ export const useAppController = (
         undefined,
         undefined
       )
+      const transformer = transformers.find(
+        (trans) => trans.element_id === treeViewElementId
+      )
+      const transformerFunction = transformer?.transformer_string
+        ? eval(transformer?.transformer_string)
+        : null
+      const treeviewItemsPropertyValueResolved = transformerFunction
+        ? (transformerFunction(treeviewItemsPropertyValueResolved0) as any)
+        : treeviewItemsPropertyValueResolved0
 
       const id = itemId?.[0] ?? itemId?.[0]?.[0]
       const item = treeviewItemsPropertyValueResolved?.find?.(
