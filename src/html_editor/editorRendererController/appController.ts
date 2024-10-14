@@ -180,10 +180,9 @@ export const useAppController = (
         undefined
       )
 
+      const id = itemId?.[0] ?? itemId?.[0]?.[0]
       const item = treeviewItemsPropertyValueResolved?.find?.(
-        (item: any) =>
-          item.product_id === itemId?.[0] ||
-          item.product_id === itemId?.[0]?.[0]
+        (item: any) => item.product_id === id
       )
       console.log(
         'treeviewItemsPropertyValue',
@@ -196,7 +195,8 @@ export const useAppController = (
       )
       if (!item) return
       console.log('treeviewItemsPropertyValue item', item)
-      actions.changeTreeviewSelectedItem(treeViewElementId, itemId, item)
+
+      actions.changeTreeviewSelectedItem(treeViewElementId, id, item)
     }
 
     const treeviewElementIds = Object.keys(appState.treeviews.selectedId)
