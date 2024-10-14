@@ -445,7 +445,7 @@ export const renderElements = <
                       appController,
                       icons,
                       formData: newFormData,
-                    })()
+                    })(newFormData)
                 : /* eslint-disable @typescript-eslint/no-unused-vars */
                   (
                     newFormData: any,
