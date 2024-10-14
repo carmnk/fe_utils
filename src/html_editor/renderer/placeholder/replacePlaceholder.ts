@@ -81,20 +81,21 @@ export const replacePlaceholdersInString = (
 
     const regexFormData = REGEX_FORMDATA_PLACEHOLDER
     const formDataMatches = text.match(regexFormData)
-    const formDataTemplates =
-      formDataMatches?.map((match) => {
-        const keyRaw = match.replace('{formData.', '').replace('}', '')
-        const key = keyRaw.replace(/\..*$/gm, '')
+    const formDataTemplates = !formData
+      ? []
+      : formDataMatches?.map((match) => {
+          const keyRaw = match.replace('{formData.', '').replace('}', '')
+          const key = keyRaw.replace(/\..*$/gm, '')
 
-        return {
-          type: 'formData',
-          placeholder: key,
-          placeholderRaw: keyRaw,
-          placeholderCutted: keyRaw.replace(key, ''),
-          value: formData?.[key] ?? '',
-          isValueUndefined: formData?.[key] === undefined,
-        }
-      }) || []
+          return {
+            type: 'formData',
+            placeholder: key,
+            placeholderRaw: keyRaw,
+            placeholderCutted: keyRaw.replace(key, ''),
+            value: formData?.[key] ?? '',
+            isValueUndefined: formData?.[key] === undefined,
+          }
+        }) || []
 
     const regexTreeViews = REGEX_TREEVIEW_PLACEHOLDER
     const treeViewMatches = text.match(regexTreeViews)
@@ -240,8 +241,10 @@ export const replacePlaceholdersInString = (
       typeof newText,
       newText === text,
       text,
-      'templ',
-      templates
+      'templates',
+      templates,
+      'formData',
+      formData
     )
     // this will though prevent calculations without placeholders
     const evalText =
