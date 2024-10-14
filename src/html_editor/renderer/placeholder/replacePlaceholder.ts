@@ -252,7 +252,7 @@ export const replacePlaceholdersInString = (
       'formData',
       formData
     )
-    if (newText.match(REGEX_RESOLUTION_FAILED)) {
+    if (newText?.match?.(REGEX_RESOLUTION_FAILED)) {
       console.warn('Resolution failed', newText, text, templates)
       return newText
     }
