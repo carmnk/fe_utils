@@ -184,10 +184,11 @@ export const useAppController = (
         treeviewItemsPropertyValue,
         treeviewItemsPropertyValueResolved
       )
-      const item = treeviewItemsPropertyValue?.find?.(
+      const item = treeviewItemsPropertyValueResolved?.find?.(
         (item: any) => item.nodeId === itemId
       )
       if (!item) return
+      console.log('treeviewItemsPropertyValue item', item)
       actions.changeTreeviewSelectedItem(treeViewElementId, itemId, item)
     }
 
