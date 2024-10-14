@@ -18,6 +18,7 @@ export const createAppAction = (params: {
   COMPONENT_MODELS: EditorRendererController['COMPONENT_MODELS']
   appController: EditorRendererController['appController']
   icons: any
+  formData?: Record<string, any>
 }) => {
   const {
     element,
@@ -27,6 +28,7 @@ export const createAppAction = (params: {
     appController,
     eventName,
     icons,
+    formData,
   } = params
 
   const elementProps = editorState.properties?.filter(
@@ -109,21 +111,20 @@ export const createAppAction = (params: {
                 const replaceValue = fnParams?.[1] as string
                 const newValue = value?.replaceAll?.('{itemId}', replaceValue)
                 const matches = newValue?.match?.(
-                  /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
+                  /{(_data|form|formData|props|treeviews|buttonStates)\.[^}]*}/g
                 )
-                const newValueReplaced =
-                  matches
-                    ? replacePlaceholdersInString(
-                        newValue,
-                        appController.state,
-                        editorState.compositeComponentProps,
-                        editorState.properties,
-                        element as any,
-                        undefined,
-                        icons
-                      )
-                    :
-                  newValue
+                const newValueReplaced = matches
+                  ? replacePlaceholdersInString(
+                      newValue,
+                      appController.state,
+                      editorState.compositeComponentProps,
+                      editorState.properties,
+                      element as any,
+                      undefined,
+                      icons,
+                      formData
+                    )
+                  : newValue
                 const regexOnlyNumbersOrDecimal = /^[0-9]+(\.[0-9]+)?$/
                 const isNumberOrDecimal =
                   regexOnlyNumbersOrDecimal.test(newValueReplaced)
@@ -140,7 +141,7 @@ export const createAppAction = (params: {
           'elementTemplateValuesDictAdj',
           elementTemplateValuesDictAdj,
           isItemEvent && ['string', 'number'].includes(typeof fnParams?.[1]),
-          elementTemplateValuesDict,
+          elementTemplateValuesDict
         )
 
         await queryAction(

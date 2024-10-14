@@ -446,6 +446,11 @@ export const renderElements = <
             COMPONENT_MODELS,
             appController,
             icons,
+            formData:
+              element?._type === 'Form'
+                ? (elementPropsObject?.formData ??
+                  appController.actions.getFormData(elementAdj._id))
+                : undefined,
           }),
         }
       },
@@ -541,8 +546,8 @@ export const renderElements = <
                 }
               : (elementPropsObject as any)?.sx
           }
-          {...formProps}
           {...eventHandlerProps}
+          {...formProps}
           {...tableProps}
           {...treeViewProps}
           {...buttonOnClickProps}

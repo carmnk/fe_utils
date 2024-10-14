@@ -3,6 +3,7 @@ import { EditorRendererControllerType } from '../../editorRendererController/typ
 import { EditorStateType } from '../../editorRendererController/types'
 
 export const REGEX_DATA_PLACEHOLDER = /{_data\.[^}]*}/g
+export const REGEX_FORMDATA_PLACEHOLDER = /{formData\.[^}]*}/g
 export const REGEX_TREEVIEW_PLACEHOLDER = /{treeviews\.[^}]*}/g
 export const REGEX_PROPS_PLACEHOLDER = /{props\.[^}]*}/g
 export const REGEX_BUTTON_STATES_PLACEHOLDER = /{buttonStates\.[^}]*}/g
@@ -33,7 +34,8 @@ export const replacePlaceholdersInString = (
   rootCompositeElementId?: string,
   forceEval?: boolean,
   icons?: Record<string, string>,
-  isTransformer?: boolean
+  isTransformer?: boolean,
+  formData?: Record<string, any>
 ) => {
   const getTemplates = (text: string) => {
     let templatesOut: {
@@ -69,6 +71,23 @@ export const replacePlaceholdersInString = (
 
         return {
           type: 'data',
+          placeholder: key,
+          placeholderRaw: keyRaw,
+          placeholderCutted: keyRaw.replace(key, ''),
+          value: appState?._data?.[key] ?? '',
+          isValueUndefined: appState?._data?.[key] === undefined,
+        }
+      }) || []
+
+    const regexFormData = REGEX_FORMDATA_PLACEHOLDER
+    const formDataMatches = text.match(regexFormData)
+    const formDataTemplates =
+      formDataMatches?.map((match) => {
+        const keyRaw = match.replace('{formData.', '').replace('}', '')
+        const key = keyRaw.replace(/\..*$/gm, '')
+
+        return {
+          type: 'formData',
           placeholder: key,
           placeholderRaw: keyRaw,
           placeholderCutted: keyRaw.replace(key, ''),
@@ -159,6 +178,7 @@ export const replacePlaceholdersInString = (
       ...treeViewTemplates,
       ...mdiIconTemplates,
       ...buttonStatesTemplates,
+      ...formDataTemplates,
     ]
     return templatesOut
   }
