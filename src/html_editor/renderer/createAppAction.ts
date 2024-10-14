@@ -115,6 +115,18 @@ export const createAppAction = (params: {
                 const matches = newValue?.match?.(
                   /{(_data|form|formData|props|treeviews|buttonStates)\.[^}]*}/g
                 )
+                if (element._type === 'Form') {
+                  console.log(
+                    'Before Replace Placeholders with Form element',
+                    newValue,
+                    element,
+                    fnParams,
+                    'form passed',
+                    element?._type === 'Form'
+                      ? (fnParams?.[1] as any)
+                      : undefined
+                  )
+                }
                 const newValueReplaced = matches
                   ? replacePlaceholdersInString(
                       newValue,
