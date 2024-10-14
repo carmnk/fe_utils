@@ -91,8 +91,8 @@ export const replacePlaceholdersInString = (
           placeholder: key,
           placeholderRaw: keyRaw,
           placeholderCutted: keyRaw.replace(key, ''),
-          value: appState?._data?.[key] ?? '',
-          isValueUndefined: appState?._data?.[key] === undefined,
+          value: formData?.[key] ?? '',
+          isValueUndefined: formData?.[key] === undefined,
         }
       }) || []
 
