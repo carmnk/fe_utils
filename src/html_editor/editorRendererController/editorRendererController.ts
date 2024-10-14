@@ -43,7 +43,9 @@ export const useEditorRendererController = (
     getRecursiveChildren,
   } = useShortcuts({ editorState, customComponents: injections?.components })
 
-  const appController = useAppController()
+  const appController = useAppController({
+    properties: editorState.properties,
+  })
 
   const rendererController = useMemo(() => {
     return {
