@@ -388,30 +388,7 @@ export const renderElements = <
           })()
         : {}
 
-    const formProps =
-      ['Form'].includes(element?._type) && CurrentComponent
-        ? (() => {
-            return {
-              formData:
-                elementPropsObject?.formData ??
-                appController.actions.getFormData(elementAdj._id),
-              onChangeFormData:
-                /* eslint-disable @typescript-eslint/no-unused-vars */
-                (
-                  newFormData: any,
-                  propertyKey: string,
-                  propertyValue: any,
-                  prevFormData: any
-                  /* eslint-enable @typescript-eslint/no-explicit-any */
-                ) => {
-                  appController.actions.changeFormData(
-                    elementAdj._id,
-                    newFormData
-                  )
-                },
-            }
-          })()
-        : {}
+
 
     const treeViewProps =
       element?._type?.toLowerCase().includes('treeview') && CurrentComponent
@@ -446,16 +423,48 @@ export const renderElements = <
             COMPONENT_MODELS,
             appController,
             icons,
-            formData:
-              element?._type === 'Form'
-                ? (elementPropsObject?.formData ??
-                  appController.actions.getFormData(elementAdj._id))
-                : undefined,
           }),
         }
       },
       {}
     )
+
+
+    const formProps =
+    ['Form'].includes(element?._type) && CurrentComponent
+      ? (() => {
+          return {
+            formData:
+              elementPropsObject?.formData ??
+              appController.actions.getFormData(elementAdj._id),
+            onChangeFormData: eventHandlerProps?.onChangeFormData
+              ? (newFormData: any) =>
+                  createAppAction({
+                    element,
+                    eventName: 'onChangeFormData',
+                    editorState,
+                    currentViewportElements,
+                    COMPONENT_MODELS,
+                    appController,
+                    icons,
+                    formData: newFormData,
+                  })
+              : /* eslint-disable @typescript-eslint/no-unused-vars */
+                (
+                  newFormData: any,
+                  propertyKey: string,
+                  propertyValue: any,
+                  prevFormData: any
+                  /* eslint-enable @typescript-eslint/no-explicit-any */
+                ) => {
+                  appController.actions.changeFormData(
+                    elementAdj._id,
+                    newFormData
+                  )
+                },
+          }
+        })()
+      : {}
 
     const elementAdj2 = {
       ...elementAdj,
