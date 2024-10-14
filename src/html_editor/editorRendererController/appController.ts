@@ -186,13 +186,14 @@ export const useAppController = (
       const transformerFunction = transformer?.transformer_string
         ? eval(transformer?.transformer_string)
         : null
+      // need to transform if transformer is present to get the name of the id column -> nodeId
       const treeviewItemsPropertyValueResolved = transformerFunction
         ? (transformerFunction(treeviewItemsPropertyValueResolved0) as any)
         : treeviewItemsPropertyValueResolved0
 
       const id = itemId?.[0] ?? itemId?.[0]?.[0]
       const item = treeviewItemsPropertyValueResolved?.find?.(
-        (item: any) => item.product_id === id
+        (item: any) => item.nodeId === id
       )
       console.log(
         'treeviewItemsPropertyValue',
