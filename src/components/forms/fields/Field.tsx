@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { GenericInputField } from '../../inputs/GenericInputField'
 import { CustomField, CustomFieldDefinition } from './CustomField'
 import { GenericInputFieldProps, InputFieldType } from '../../inputs/types'
@@ -110,6 +110,19 @@ export const Field = (props: FieldProps) => {
     subforms,
   } = props as FieldProps
 
+  const [innerValue, setInnerValue] = useState<
+    string | number | boolean | null
+  >(formData?.[field?.name ?? ''] ?? (field as any)?.form?.defaultValue ?? '')
+  const handleChangeInnerValue = useCallback(
+    (newValue: string | number | boolean | null) => {
+      setInnerValue(newValue)
+    },
+    []
+  )
+  useEffect(() => {
+    setInnerValue(formData?.[field?.name ?? ''] ?? '')
+  }, [formData?.[field?.name ?? '']])
+
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
       const { name } = e?.target ?? {}
@@ -195,9 +208,11 @@ export const Field = (props: FieldProps) => {
       }}
       {...(injectIsInt as any)}
       value={
-        formData?.[field?.name ?? ''] ??
-        (field as any)?.form?.defaultValue ??
-        ''
+        useChangeCompleted
+          ? innerValue
+          : (formData?.[field?.name ?? ''] ??
+            (field as any)?.form?.defaultValue ??
+            '')
       }
       onChange={
         useChangeCompleted &&
@@ -212,7 +227,7 @@ export const Field = (props: FieldProps) => {
           'number',
           'int',
         ].includes(field.type)
-          ? undefined
+          ? handleChangeInnerValue
           : handleChange
       }
       onChangeCompleted={
