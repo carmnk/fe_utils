@@ -1,8 +1,8 @@
-import { query } from '../../api/utils/httpQuerys'
-import { AppController } from '../editorRendererController/types'
-import { BodyParam } from '../editorRendererController/types/bodyParam'
-import { Header } from '../editorRendererController/types/Header'
-import { Param } from '../editorRendererController/types/param'
+import { query } from '../../../api/utils/httpQuerys'
+import { AppController } from '../../editorRendererController/types'
+import { BodyParam } from '../../editorRendererController/types/bodyParam'
+import { Header } from '../../editorRendererController/types/Header'
+import { Param } from '../../editorRendererController/types/param'
 
 const replacePlaceholders = (
   text: string,
@@ -22,7 +22,6 @@ const replacePlaceholders = (
     const regexOnlyNumbersOrDecimal = /^[0-9]+(\.[0-9]+)?$/
     const isNumberOrDecimal = regexOnlyNumbersOrDecimal.test(placeholders[key])
     if (isNumberOrDecimal && result !== text) {
-      console.debug('isNumberOrDecimal', placeholders[key])
       result = placeholders[key]
       // currently a number placeholder can only be replaced alone
       break

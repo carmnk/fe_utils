@@ -33,7 +33,6 @@ export const StringArrayField = (props: StringArrayFieldProps) => {
   } = props
   const valueAdjusted = value?.length ? value : ['']
 
-  console.error('valueAdjusted', valueAdjusted)
   return (
     <Fragment>
       {valueAdjusted?.map((item, index) => (

@@ -32,7 +32,6 @@ const parseIcon = (lineText: string, icons?: Record<string, string>) => {
   if (!icons) return lineText
   const regex = /\{mdi[A-z]+\}/g
   const matches = lineText.match(regex)
-  // console.log(' Icon matches: ', matches)
   return (
     matches?.map((match, idx) => {
       const start = lineText.indexOf(match)
@@ -90,7 +89,6 @@ export const parseSimpleFormating = (
   text: string,
   icons?: Record<string, string>
 ) => {
-  // console.log('Text: ', text)
   return text.split('\n').map((txt, tIdx, arr) => {
     const isListItem =
       txt?.trim().startsWith('•') || txt?.trim().startsWith('-')

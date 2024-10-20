@@ -89,7 +89,7 @@ export const ComponentBox = <
     ]
   )
   return (
-    <Box position="relative">
+    <Box position="relative" onLoadStart={() => {}}>
       {renderedComponentElements}
       {OverlayComponent && <OverlayComponent element={element} />}
     </Box>

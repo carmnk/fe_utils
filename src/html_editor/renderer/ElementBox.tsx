@@ -1,10 +1,9 @@
-import { useMemo, useEffect, useRef, FC } from 'react'
+import { useMemo, useRef, FC } from 'react'
 import { CSSProperties, PropsWithChildren, MouseEvent } from 'react'
 import { EditorStateType, Element } from '../editorRendererController/types'
 import { Box } from '@mui/material'
 import { getStylesFromClasses } from './classes/getStylesFromClasses'
 import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
-import { queryAction } from './queryAction'
 import { ComponentBox } from './ComponentBox'
 
 export type ElementBoxProps<
@@ -25,6 +24,7 @@ export type ElementBoxProps<
   isPointerProduction?: boolean
   OverlayComponent?: FC<{ element: Element }>
   navigate: any
+  events: { [key: string]: any }
 }
 
 const sx = {
@@ -51,6 +51,7 @@ export const ElementBox = <
     uiActions,
     OverlayComponent,
     navigate,
+    events,
   } = props
 
   const isOverheadHtmlElement = ['html', 'head', 'body'].includes(element._type)
@@ -200,125 +201,6 @@ export const ElementBox = <
     }
   }, [element, isOverheadHtmlElement, styles, elementAttributsDict, linkProps])
 
-  useEffect(() => {
-    const elementEvents = editorState?.events?.filter(
-      (event) => event.element_id === element._id
-    )
-    if (!elementEvents?.length) {
-      return
-    }
-    const eventHandlers = elementEvents.map((event) => {
-      const eventName = event.event_name.slice(2)
-      const endpointActions = editorState?.actions?.filter((act) =>
-        event?.action_ids?.includes(act.action_id)
-      )
-      const apiEndpoints = editorState?.externalApis
-        ?.map((api) =>
-          api.endpoints?.map((ep) => ({ ...ep, api_id: api.external_api_id }))
-        )
-        .flat()
-      const endpoints2 = apiEndpoints.filter((ep) =>
-        endpointActions.map((a) => a?.endpoint_id).includes(ep.endpoint_id)
-      )
-
-      // only navigation actions
-      const eventHandler = async (e: any) => {
-        const responses = []
-        for (let e = 0; e < endpoints2?.length; e++) {
-          const endpoint = endpoints2[e]
-          const api = editorState?.externalApis?.find(
-            (api) => api.external_api_id === endpoint.api_id
-          )
-          const url = (api?.baseUrl ?? '') + (endpoint?.url ?? '')
-          const doQueryAction = async () => {
-            const action = editorState.actions.find(
-              (act) => act.endpoint_id === endpoint.endpoint_id
-            )
-            const elementTemplateValuesDict = editorState.actionParams
-              .filter((ap) => ap.element_id === element._id)
-              .reduce((acc, cur) => {
-                return {
-                  ...acc,
-                  [cur.param_name]: cur.param_value,
-                }
-              }, {})
-            console.log('QUERY ACTION HTML Element', action?.action_id, action)
-            return await queryAction(
-              appController,
-              action?.action_id ?? '', // should never happen -> should always have action
-              endpoint?.method,
-              url,
-              !!endpoint?.useCookies,
-              endpoint?.body,
-              endpoint?.headers,
-              endpoint?.params,
-              endpoint?.responseType,
-              endpoint?.auth.type === 'basic'
-                ? {
-                    username: endpoint.auth.username,
-                    password: endpoint.auth.password,
-                  }
-                : undefined,
-              elementTemplateValuesDict
-            )
-          }
-
-          const response = await doQueryAction()
-          responses.push(response)
-        }
-        // only navigation actions
-        const navigationActionElementIds = editorState.properties
-          .filter((prop) => prop.element_id === element._id)
-          .map((prop) =>
-            prop?.prop_value && typeof prop.prop_value === 'string'
-              ? JSON.parse(prop?.prop_value)
-              : prop?.prop_value || []
-          )
-          .flat()
-          .filter((el) => el) as string[]
-
-        for (let n = 0; n < navigationActionElementIds.length; n++) {
-          const navElementId = navigationActionElementIds[n]
-          const actionParam = editorState.actionParams.find(
-            (ap) => ap.param_name === navElementId
-          )
-          const elementWithEvent = actionParam?.element_id
-          if (!elementWithEvent) return
-          appController.actions.updateProperty(
-            navElementId,
-            actionParam.param_value
-          )
-        }
-
-        return responses
-      }
-      if (!['Unmounted', 'Mounted'].includes(eventName)) {
-        elementRef.current?.addEventListener(eventName, eventHandler)
-      }
-      if (eventName === 'Mounted') {
-        eventHandler({ element_id: element._id })
-      }
-      return eventHandler
-    })
-
-    return () => {
-      elementEvents.forEach((event, eIdx) => {
-        const eventName = event.event_name.slice(2)
-        if (!['Unmounted', 'Mounted'].includes(eventName)) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          elementRef.current?.removeEventListener(
-            eventName,
-            eventHandlers[eIdx]
-          )
-        }
-        if (eventName === 'Unmounted') {
-          eventHandlers[eIdx]({ element_id: element._id })
-        }
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorState?.events])
-
   const imageFile = useMemo(
     () =>
       element?._type === 'img' && elementAttributsDict?.src
@@ -359,9 +241,15 @@ export const ElementBox = <
       navigate={navigate}
     />
   ) : ['br', 'hr', 'img'].includes(element?._type) ? ( // null
-    <Box {...boxProps} src={imageSrc} ref={elementRef} key={element._id} />
+    <Box
+      {...boxProps}
+      src={imageSrc}
+      ref={elementRef}
+      key={element._id}
+      {...events}
+    />
   ) : (
-    <Box {...boxProps} ref={elementRef} key={element._id}>
+    <Box {...boxProps} ref={elementRef} key={element._id} {...events}>
       {/* label / flag */}
       {!isProduction &&
         !isPointerProduction &&

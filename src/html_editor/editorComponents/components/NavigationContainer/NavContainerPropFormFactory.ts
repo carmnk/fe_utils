@@ -77,9 +77,12 @@ export const NavContainerComponentPropsFormFactory = (prarams: {
     value: el._id,
     label:
       el._type +
+      ' - ' +
       (editorState.properties.find(
         (prop) => prop.element_id === el._id && prop.prop_name === 'id'
-      )?.prop_value ?? ''),
+      )?.prop_value ??
+        el?._userID ??
+        ''),
   }))
 
   return generateFormProps({

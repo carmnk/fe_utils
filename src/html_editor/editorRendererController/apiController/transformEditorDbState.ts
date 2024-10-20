@@ -205,17 +205,11 @@ export const transformEditorStateFromPayload = (
         const isSchemaPropEventHandler =
           baseComponentSchemaPropType === PropertyType.eventHandler
 
-        console.log(
-          'prop.prop_value',
-          element?._type,
-          prop,
-          baseComponentSchemaPropType,
-          isSchemaPropInt,
-          isSchemaPropNumeric,
-          isSchemaPropJson,
-          isSchemaPropEventHandler
-        )
+        const isHtmlEvent =
+          prop.prop_name?.startsWith('on') && !isComponentType(element?._type)
+
         const value =
+          isHtmlEvent ||
           isSchemaPropJson ||
           isSchemaPropEventHandler ||
           [
@@ -240,16 +234,14 @@ export const transformEditorStateFromPayload = (
                   // check if propValue is a placeholder
                   if (typeof propValue === 'string') {
                     const matches = checkForPlaceholders(propValue)
-                    // console.log('matches', matches, element._type, prop.prop_name)
                     if (matches) {
                       return propValue
                     }
                   }
 
-                  // const isPlaceholder =
                   return JSON.parse(propValue)
                 } catch (e) {
-                  // console.error(e, prop)
+                  // console.error(e, prop) 
                   return prop.prop_value
                 }
               })()
@@ -306,9 +298,9 @@ export const transformEditorStateFromPayload = (
           theme.palette.mode === currentEditorState.theme.name
       ) || currentEditorState?.theme,
     externalApis,
-    events:
-      data?.events?.sort((a, b) => (a.event_name > b.event_name ? 1 : -1)) ??
-      [],
+    // events:
+    //   data?.events?.sort((a, b) => (a.event_name > b.event_name ? 1 : -1)) ??
+    //   [],
     actions:
       data?.actions?.sort((a, b) => (a.action_id > b.action_id ? 1 : -1)) ?? [],
     templateComponents: data?.templates ?? [],

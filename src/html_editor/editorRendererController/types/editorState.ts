@@ -49,6 +49,6 @@ export type EditorStateType = {
   }
   externalApis: ExternalApi[]
   endpoints: Endpoint[]
-  events: ElementEvent[]
+  // events: ElementEvent[]
   actions: Action[]
 }

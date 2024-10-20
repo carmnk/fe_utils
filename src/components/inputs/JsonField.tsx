@@ -50,7 +50,6 @@ export const RawJsonField = (props: JsonFieldProps) => {
     _index,
   } = props
 
-  console.log('VALUE: ', value, 'Path: ', _path, 'Editing', editing, keysDict)
   const startCollapsedAdj = startCollapsed
 
   const expandedItems =
@@ -66,15 +65,6 @@ export const RawJsonField = (props: JsonFieldProps) => {
         target: { name: name ?? '' },
       })
     }
-    // console.debug(
-    //   'VALUE: ',
-    //   value,
-    //   'Path: ',
-    //   _path,
-    //   'Editing',
-    //   editing,
-    //   keysDict
-    // )
   }, [value, keysDict, onChange, name])
 
   const newPath = useMemo(() => [..._path], [_path])
@@ -304,17 +294,6 @@ export const JsonField = (props: JsonFieldProps) => {
       return
     }
   }, [isChildComponent])
-
-  // if (!isChildComponent) {
-  //   console.log(
-  //     'CURRENT WINDOW IS ',
-  //     rootContainerRef.current?.clientHeight,
-  //     'indexes',
-  //     scrollPosition / lineHeight,
-  //     scrollPosition / lineHeight +
-  //       (rootContainerRef.current?.clientHeight ?? 0) / lineHeight
-  //   )
-  // }
 
   const collapsedPathsAdj = isChildComponent ? _collapsedPaths : collapsedPaths
   const setCollapsedPathsAdj = isChildComponent

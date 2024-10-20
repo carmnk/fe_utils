@@ -18,7 +18,6 @@ export const tableEditorComponentDef = {
       //   ],
       // },
       onBeforeChange: (newFormData, prevFormData, changedKey, changedValue) => {
-        console.debug('BEFORE CHANGE', newFormData, prevFormData, changedKey)
         const adjFormData = Object.keys(newFormData).includes('columns')
           ? {
               ...newFormData,
@@ -68,7 +67,6 @@ export const tableEditorComponentDef = {
           return [columnHeaderDict]
         },
         footerData: (f: any, g: any) => {
-          console.debug('DATA dynamicKeysDict', f, g)
           if (!f?.columns) return []
           const columnHeaders = f?.columns?.map?.(
             (column: any) => column.header

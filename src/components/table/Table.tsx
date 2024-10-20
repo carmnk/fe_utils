@@ -209,7 +209,15 @@ export const Table = (props: TableProps) => {
                           typeof col?.renderCell === 'function' ? (
                             col?.renderCell(row, cIdx, rIdx)
                           ) : typeof col?.renderCell === 'string' ? (
-                            <td>{row[col?.renderCell]}</td>
+                            <td>
+                              {(row[col?.renderCell] ||
+                                row[col?.renderCell] === false) &&
+                              ['object', 'boolean'].includes(
+                                typeof row[col?.renderCell]
+                              )
+                                ? row[col?.renderCell]?.toString()
+                                : row[col?.renderCell]}
+                            </td>
                           ) : null
                         return col?.isRowSelect ? (
                           <td key={cIdx}>

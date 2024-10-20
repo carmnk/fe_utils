@@ -32,7 +32,6 @@ export const useAppController = (
      * @param value - value = value of navElement
      * */
     const updateProperty = (key: string, value: any) => {
-      console.log('updateProperty inner', key, value)
       setAppState((current) => ({ ...current, [key]: value }))
     }
 
@@ -77,7 +76,6 @@ export const useAppController = (
      * @param value - value = querried data (axios response)
      */
     const updateData = (key: string, value: any) => {
-      console.log('updateData', key, value)
       setAppState((current) => {
         return {
           ...current,
@@ -161,11 +159,6 @@ export const useAppController = (
       const treeViewElement = currentViewportElements?.find?.(
         (element) => element._id === treeViewElementId
       )
-      console.log(
-        'treeviewItemsPropertyValue 0',
-        treeViewElement,
-        treeviewItemsPropertyValue
-      )
       if (!treeviewItemsPropertyValue || !treeViewElement) return
 
       const treeviewItemsPropertyValueResolved0 = replacePlaceholdersInString(
@@ -195,18 +188,7 @@ export const useAppController = (
       const item = treeviewItemsPropertyValueResolved?.find?.(
         (item: any) => item.nodeId === id
       )
-      console.log(
-        'treeviewItemsPropertyValue',
-        treeviewItemsPropertyValue,
-        treeviewItemsPropertyValueResolved,
-        'ITEMID',
-        itemId,
-        itemId?.[0],
-        item
-      )
       if (!item) return
-      console.log('treeviewItemsPropertyValue item', item)
-
       actions.changeTreeviewSelectedItem(treeViewElementId, id, item)
     }
 

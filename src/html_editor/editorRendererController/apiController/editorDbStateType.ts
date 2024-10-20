@@ -35,7 +35,6 @@ export type EditorStateDbDataType = {
   headers: Header[]
   params: Param[]
   bodyParams: BodyParam[]
-  events: EditorStateType['events']
   actions: EditorStateType['actions']
   templates: Template[]
   data_changes?: any[]

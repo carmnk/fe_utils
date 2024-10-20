@@ -280,9 +280,9 @@ export const transformEditorStateToPayload = (
     headers,
     params,
     bodyParams,
-    events:
-      payload.events?.sort((a, b) => (a.event_name > b.event_name ? 1 : -1)) ??
-      [],
+    // events:
+    //   payload.events?.sort((a, b) => (a.event_name > b.event_name ? 1 : -1)) ??
+    //   [],
     actions:
       payload.actions?.sort((a, b) => (a.action_id > b.action_id ? 1 : -1)) ??
       [],

@@ -41,10 +41,6 @@ export const useDraggableRows = (
           }))
         }
       },
-      // onDrag: (state) => {
-      //   console.log('GENERIC DRAGGING!', state)
-      //   // if /
-      // },
       onDragStart: (state) => {
         const item = state?.args?.[0]
         const _idx = state?.args?.[1]

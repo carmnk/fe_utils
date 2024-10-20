@@ -90,9 +90,6 @@ export const CTextField = forwardRef(
       select,
     } = slotProps ?? {}
 
-    // console.warn('PROPS TEXTFIELD', props)
-
-    // const theme = useTheme()
     const [valueStarted, setValueStarted] = useState('')
 
     const handleChangeCompleted = useCallback(() => {

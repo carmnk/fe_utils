@@ -4,7 +4,6 @@ import { appBarPropsSchema } from './appBarPropsRawSchema'
 import { AppBarWrapper } from './AppBarWrapper'
 
 export const appBarDef = {
-  //   ...paperDef,
   type: 'AppBar' as const,
   props: {
     // children: "test",

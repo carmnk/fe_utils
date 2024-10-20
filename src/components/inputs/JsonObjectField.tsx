@@ -419,7 +419,6 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                 const handleDeleteProperty = (e: any) => {
                   e.stopPropagation()
                   const path = [..._path, key]
-                  // console.debug('PATH', path)
                   handleRemoveProperty(path)
                 }
 
@@ -474,7 +473,6 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                   if (disabled) {
                     return
                   }
-                  console.log('TOGGLE BOOLEAN', propertyValue, !propertyValue)
                   handleChangePropertyValue(
                     [..._path, key],
                     !propertyValue as any

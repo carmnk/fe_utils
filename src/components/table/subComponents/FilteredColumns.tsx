@@ -102,7 +102,6 @@ export const FilteredTableHeaderCell = forwardRef(
     const handleSearchValueChange = useCallback(
       (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value as any
-        // console.debug('value', value)
         if (!value && value !== '' && value !== 0) return
         setSearchValue(value)
       },

@@ -6,10 +6,13 @@ import { useMdiIcons } from './icons/useMdiIcons'
 import { EditorStateType, Element } from '../editorRendererController/types'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import { EditorRendererControllerType } from '../editorRendererController'
+import { NavigateFunction } from 'react-router-dom'
 
-export type HtmlRendererProps<
-  ControllreActionsType extends { [key: string]: any },
-> = {
+type RendererUiActionsType = {
+  selectElement?: (elementId: string, boundingRect: unknown) => void
+}
+
+export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   isProduction?: boolean
   theme: Theme
   OverlayComponent?: FC<{ element: Element }>
@@ -17,12 +20,12 @@ export type HtmlRendererProps<
   setEditorState: Dispatch<SetStateAction<EditorStateType>>
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  uiActions?: ControllreActionsType
-  COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
+  uiActions?: UiActionsType
+  COMPONENT_MODELS: EditorRendererControllerType<UiActionsType>['COMPONENT_MODELS']
   selectedElement: Element | null
-  appController: EditorRendererControllerType<ControllreActionsType>['appController']
+  appController: EditorRendererControllerType<UiActionsType>['appController']
   pageName: string //const pageName = location.pathname.slice(1) || 'index'
-  navigate: any
+  navigate: NavigateFunction
   isInHelpMode?: boolean
   isInHelpModeSelected?: boolean
   id?: string
@@ -30,9 +33,9 @@ export type HtmlRendererProps<
 }
 
 export const HtmlRendererComponent = <
-  ControllreActionsType extends { [key: string]: any },
+  UiActionsType extends RendererUiActionsType,
 >(
-  props: HtmlRendererProps<ControllreActionsType>
+  props: HtmlRendererProps<UiActionsType>
 ) => {
   const {
     isProduction,
@@ -57,14 +60,14 @@ export const HtmlRendererComponent = <
   const selectElement = uiActions?.selectElement
   const themeAdj = theme ?? editorState.theme
 
-  const [icons, setIcons] = useMdiIcons(
+  const [icons] = useMdiIcons(
     selectedPageElements,
     COMPONENT_MODELS,
     editorState.properties
   )
 
   const handleSelectElement = useCallback(
-    (element: Element, boundingRect: any) => {
+    (element: Element, boundingRect: unknown) => {
       if (isProduction) {
         return
       }
@@ -155,14 +158,16 @@ export const HtmlRendererComponent = <
                 )
               ? 'ew-resize'
               : 'default',
-      border: isInHelpMode ? '3px solid limegreen' : (undefined as any),
+      border: isInHelpMode
+        ? '3px solid limegreen'
+        : (undefined as unknown as string),
 
       backgroundSize: editorState.ui.rulerMode
         ? '50px 50px'
-        : (undefined as any),
+        : (undefined as unknown as string),
       backgroundImage: editorState.ui.rulerMode
         ? 'linear-gradient(to right, grey 1px, transparent 1px), linear-gradient(to bottom, grey 1px, transparent 1px)'
-        : (undefined as any),
+        : (undefined as unknown as string),
       // background: editorState.ui.rulerMode
       //   ? undefined
       //   : (containerStyles.background as any),

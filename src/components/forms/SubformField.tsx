@@ -63,7 +63,13 @@ export const SubformField = (props: SubformFieldProps) => {
 
   const sub = subforms?.[field?.name ?? '']
   const subFieldsForList = useMemo(
-    () => sub?.fields?.filter((f: any) => f?.form?.showInArrayList) || [],
+    () =>
+      sub?.fields
+        ?.filter((f: any) => f?.form?.showInArrayList)
+        ?.map((f: any) => ({
+          header: f.label,
+          renderCell: f.name,
+        })) || [],
     [sub?.fields]
   )
 
@@ -119,20 +125,6 @@ export const SubformField = (props: SubformFieldProps) => {
         fieldName,
         formData?.[fieldName]
       )
-      console.debug(
-        'SubFormField.tsx',
-        newFormData,
-        fieldName,
-        formData,
-        injections?.onBeforeChange,
-        injections?.onBeforeChange?.(
-          newFormData,
-          formData,
-          fieldName,
-          formData?.[fieldName]
-        ),
-        AdjNewFormData
-      )
       onChangeFormData?.(
         AdjNewFormData ?? newFormData,
         fieldName,
@@ -155,10 +147,7 @@ export const SubformField = (props: SubformFieldProps) => {
             : undefined,
         data: formData?.[fieldName ?? ''] || [],
         columns: [
-          ...subFieldsForList.map((f: any) => ({
-            header: f.label,
-            renderCell: f.name,
-          })),
+          ...subFieldsForList,
           {
             header: (
               <Button
@@ -224,13 +213,6 @@ export const SubformField = (props: SubformFieldProps) => {
           {}
       )
     } else if (typeof ui?.open === 'number') {
-      console.debug(
-        'FORMDATA',
-        formData,
-        fieldName,
-        ui?.open,
-        formData?.[fieldName ?? '']?.[ui?.open]
-      )
       setTempFormData(formData?.[fieldName ?? '']?.[ui?.open] ?? {})
     }
   }, [ui?.open])
@@ -251,21 +233,6 @@ export const SubformField = (props: SubformFieldProps) => {
       formData,
       changedPropertyName,
       changedPropertyValue
-    )
-    console.debug(
-      'SubFormField.tsx',
-      transformedNewFormData,
-      changedPropertyName,
-      changedPropertyValue,
-      formData,
-      injections?.onBeforeChange,
-      injections?.onBeforeChange?.(
-        transformedNewFormData,
-        formData,
-        changedPropertyName,
-        changedPropertyValue
-      ),
-      AdjNewFormData
     )
     onChangeFormData?.(
       AdjNewFormData ?? transformedNewFormData,
@@ -302,21 +269,6 @@ export const SubformField = (props: SubformFieldProps) => {
       formData,
       changedPropertyName,
       newValue
-    )
-    console.debug(
-      'SubFormField.tsx',
-      transformedNewFormData,
-      changedPropertyName,
-      newValue,
-      formData,
-      injections?.onBeforeChange,
-      injections?.onBeforeChange?.(
-        transformedNewFormData,
-        formData,
-        changedPropertyName,
-        newValue
-      ),
-      AdjNewFormData
     )
     onChangeFormData?.(
       AdjNewFormData ?? transformedNewFormData,
@@ -400,12 +352,6 @@ export const SubformField = (props: SubformFieldProps) => {
                   ui?.open === 'new'
                     ? () => addnewItemArraySub(field.name ?? '', formData)
                     : () => {
-                        // console.debug(
-                        //   'SubFormField.tsx',
-                        //   formData,
-                        //   fieldName,
-                        //   ui?.open
-                        // )
                         if (
                           (!ui?.open && typeof ui?.open !== 'number') ||
                           ui?.open === 'new'

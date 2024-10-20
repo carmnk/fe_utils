@@ -157,7 +157,6 @@ export const defaultEditorState = (): EditorStateType => {
       },
     },
     externalApis: [],
-    events: [],
     actions: [],
   }
 }

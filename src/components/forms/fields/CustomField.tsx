@@ -58,14 +58,6 @@ export const CustomField = <
 
   const FieldComponent = useMemo(() => field.component, [field])
 
-  // useEffect(() => {
-  //   console.debug(
-  //     'FORM CUSTOM FIELD RENDERS',
-  //     field?.name,
-  //     field?.type,
-  //     formData?.[field?.name ?? '']
-  //   )
-  // }, [])
   return (
     <Box>
       <FieldComponent

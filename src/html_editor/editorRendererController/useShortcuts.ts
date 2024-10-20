@@ -100,6 +100,23 @@ export const useShortcuts = (params: {
     editorState.attributes,
   ])
 
+  const selectedElementAttributes = useMemo(() => {
+    const elementAttributes = editorState.attributes.filter(
+      (attr) => attr.element_id === editorState.ui.selected.element
+    )
+    const elementAttributesDict = elementAttributes.reduce<Record<string, any>>(
+      (acc, attr) => {
+        return {
+          ...acc,
+          [attr.attr_name]: attr.attr_value,
+        }
+      },
+      {}
+    )
+
+    return elementAttributesDict
+  }, [editorState.ui.selected.element, editorState.attributes])
+
   const getSelectedImage = useCallback(
     (imageId?: string) => {
       const selectedImageId = imageId ?? editorState.ui.selected.image
@@ -149,8 +166,10 @@ export const useShortcuts = (params: {
       getStyleAttributesDictByElementId,
       imageSrcOptions,
       faviconSrcOptions,
+      selectedElementAttributes,
     }
   }, [
+    selectedElementAttributes,
     currentViewportElements,
     selectedElement,
     selectedPageElements,
