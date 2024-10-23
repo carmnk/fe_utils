@@ -29,7 +29,7 @@ export const getStructuredEntityJoinings = (
     linkedBaseEntityFieldIds.includes(joining?.base_entity_field_id)
   )
   if (!srcEntityJoinings?.length) {
-    // console.log(
+    // console.debug(
     //   'No Joining found with base_entity_field_ids ',
     //   linkedBaseEntityFieldIds
     // )

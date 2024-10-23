@@ -191,20 +191,20 @@ export const renderElements = <
       _content: content,
     }
 
-    if (element?._type?.toLowerCase().includes('form'))
-      console.log(
-        'elementAdj2  ',
-        elementAdj2,
-        elementPropsObject,
-        'Specific React Element Props?',
-        specificReactElementProps,
-        'maybe?',
-        eventHandlerProps,
-        'injectedIconProps',
-        injectedIconProps,
-        'allElementProps',
-        allElementProps
-      )
+    // if (element?._type?.toLowerCase().includes('form'))
+    //   console.debug(
+    //     'elementAdj2  ',
+    //     elementAdj2,
+    //     elementPropsObject,
+    //     'Specific React Element Props?',
+    //     specificReactElementProps,
+    //     'maybe?',
+    //     eventHandlerProps,
+    //     'injectedIconProps',
+    //     injectedIconProps,
+    //     'allElementProps',
+    //     allElementProps
+    //   )
 
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />

@@ -45,11 +45,10 @@ export const createAppAction = (params: {
     allElementProps?.find((prop) => prop.prop_name === key)?.prop_value
 
   const eventProps = getPropByName(eventName)
-  // console.log('app action created - actionIds', eventProps)
   return !eventProps?.length
     ? undefined
     : async (...fnParams: unknown[]) => {
-        console.log('app action called', eventName, fnParams)
+        console.debug('app action called', eventName, fnParams)
         // click actions are currently assosiacted with endpoint events only!
         const actionIds: string[] = eventProps
 
@@ -124,7 +123,7 @@ export const createAppAction = (params: {
                     /{(_data|form|formData|props|treeviews|buttonStates)\.[^}]*}/g
                   )
                   if (element._type === 'Form') {
-                    console.log(
+                    console.debug(
                       'Before Replace Placeholders with Form element',
                       newValue,
                       element,
@@ -163,7 +162,7 @@ export const createAppAction = (params: {
                   }
                 }, {})
               : elementTemplateValuesDict
-            console.log(
+            console.debug(
               'elementTemplateValuesDictAdj',
               elementTemplateValuesDictAdj,
               isItemEvent,

@@ -48,6 +48,8 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     value: '#20b2aa',
-    onChange: (color: string) => console.debug('ColorPicker onChange', color),
+    onChange: (color: any) => {
+      console.debug('ColorPicker onChange', color)
+    },
   },
 }

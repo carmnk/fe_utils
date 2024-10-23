@@ -5,22 +5,35 @@ import {
   useState,
   useRef,
   useMemo,
+  MouseEvent,
 } from 'react'
 import {
   Box,
   BoxProps,
+  Divider,
   Popover,
   PopoverProps,
+  Typography,
   hexToRgb,
   useTheme,
 } from '@mui/material'
 import { SketchPicker } from 'react-color'
 import { Button } from '../buttons/Button/Button'
 import { mdiCheck } from '@mdi/js'
+import { Flex } from '../_wrapper'
+import { ThemeColors } from './ThemeColors'
+import {
+  ThemeActionColorsEnum,
+  ThemeBackgroundColorsEnum,
+  ThemeColorsEnum,
+  ThemeTextColorsEnum,
+} from '../../utils/types'
+import { ThemeSingleColor } from './ThemeSingleColor'
 
 type GenericColorPickerProps = {
   value: CSSProperties['color']
   selectorSize?: string | number
+  disableThemeColors?: boolean
 }
 type DisabledColorPickerProps = GenericColorPickerProps & {
   disabled: true
@@ -79,9 +92,18 @@ const popoverOrigins: Pick<PopoverProps, 'anchorOrigin' | 'transformOrigin'> = {
  */
 
 export const ColorPicker = (props: ColorPickerProps) => {
-  const { value, onChange, disabled, selectorSize = 28, ...rest } = props
+  const {
+    value,
+    onChange,
+    disabled,
+    selectorSize = 28,
+    disableThemeColors,
+    ...rest
+  } = props
   const theme = useTheme()
   const [color, setColor] = useState(rgbaToObj(value))
+  const [unchangedColor, setUnchangedColor] = useState(value)
+  const [isThemeColor, setIsThemeColor] = useState(false)
   const [displayColorPicker, setDisplayColorPicker] = useState(false)
 
   const handleToggleColorPicker = useCallback(() => {
@@ -90,10 +112,17 @@ export const ColorPicker = (props: ColorPickerProps) => {
   }, [disabled])
 
   const handleChangeColor = useCallback((color: any) => {
+    console.log('handleChangeColor, ', color)
     setColor(color.rgb)
+    setIsThemeColor(false)
+    // setUnchangedColor(color.rgb)
   }, [])
 
   const handleTakeover = useCallback(() => {
+    if (isThemeColor) {
+      onChange?.(unchangedColor as any)
+      return
+    }
     const defaultObjectColor =
       'r' in color
         ? `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
@@ -112,7 +141,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
     // }, ${color?.a ?? 1})`;
     onChange?.(colorAdj)
     setDisplayColorPicker(false)
-  }, [onChange, color])
+  }, [onChange, color, isThemeColor, unchangedColor])
 
   const indicatorRef = useRef<HTMLDivElement>(null)
 
@@ -128,6 +157,24 @@ export const ColorPicker = (props: ColorPickerProps) => {
 
     const colorObj = rgbaToObj(colorAdj)
     setColor(colorObj)
+    setUnchangedColor(value)
+    if (
+      [
+        'primary.',
+        'secondary.',
+        'warning.',
+        'error.',
+        'success.',
+        'info.',
+        'text.',
+        'background.',
+        'action.',
+      ].includes(value?.split?.('.')[0] ?? '')
+    ) {
+      setIsThemeColor(true)
+    } else {
+      setIsThemeColor(false)
+    }
   }, [value])
 
   const inputContainerStyles: BoxProps['sx'] = useMemo(
@@ -158,6 +205,32 @@ export const ColorPicker = (props: ColorPickerProps) => {
     [selectorSize, theme, color]
   )
 
+  const handleChangeThemeColor = useCallback(
+    (e: MouseEvent<HTMLDivElement>, colorName: string) => {
+      const colorPath = colorName.split('.')
+      const themeColorNameMain = colorPath?.[0]
+      const themeColorNameVariant = colorPath?.[1]
+      const colorGroup =
+        theme.palette[themeColorNameMain as keyof typeof theme.palette]
+      const colorRaw =
+        colorGroup?.[themeColorNameVariant as keyof typeof colorGroup]
+      const colorRgba =
+        typeof colorRaw === 'string'
+          ? simplifiedRgbaRegex.test(colorRaw)
+            ? colorRaw
+            : simplifiedHexRegex.test(colorRaw)
+              ? hexToRgb(colorRaw)
+              : null
+          : null
+      if (!colorRgba) return
+
+      setColor?.(rgbaToObj(colorRgba))
+      setUnchangedColor(colorName)
+      setIsThemeColor(true)
+    },
+    [theme]
+  )
+
   return (
     <div style={{ height: selectorSize, width: selectorSize }}>
       <Box
@@ -177,6 +250,101 @@ export const ColorPicker = (props: ColorPickerProps) => {
         >
           <div onClick={handleToggleColorPicker} />
           <SketchPicker color={color as any} onChange={handleChangeColor} />
+
+          {!disableThemeColors && (
+            <Box bgcolor="#fff" position="relative" top={-6}>
+              <Divider sx={{ borderColor: 'rgb(238, 238, 238)' }} />
+
+              <Box ml="10px" mt="10px">
+                <Typography variant="caption">Theme Colors</Typography>
+                <Flex gap={'10px'} mt="10px">
+                  <ThemeColors
+                    themeColorName={ThemeColorsEnum.primary}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeColors
+                    themeColorName={ThemeColorsEnum.secondary}
+                    onChange={handleChangeThemeColor}
+                  />
+                </Flex>
+                <Flex gap={'10px'} mt="10px">
+                  <ThemeColors
+                    themeColorName={ThemeColorsEnum.success}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeColors
+                    themeColorName={ThemeColorsEnum.warning}
+                    onChange={handleChangeThemeColor}
+                  />
+                </Flex>
+                <Flex gap={'10px'} mt="10px">
+                  <ThemeColors
+                    themeColorName={ThemeColorsEnum.error}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeColors
+                    themeColorName={ThemeColorsEnum.info}
+                    onChange={handleChangeThemeColor}
+                  />
+                </Flex>
+                {/* single colors */}
+
+                <Flex gap={'10px'} mt="10px">
+                  <ThemeSingleColor
+                    color={ThemeActionColorsEnum.active}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeActionColorsEnum.disabled}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeActionColorsEnum.disabledBackground}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeActionColorsEnum.focus}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeActionColorsEnum.hover}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeActionColorsEnum.selected}
+                    onChange={handleChangeThemeColor}
+                  />
+                </Flex>
+                <Flex gap={'10px'} mt="10px">
+                  <ThemeSingleColor
+                    color={ThemeTextColorsEnum.disabled}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeTextColorsEnum.primary}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeTextColorsEnum.secondary}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeBackgroundColorsEnum.default}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeBackgroundColorsEnum.paper}
+                    onChange={handleChangeThemeColor}
+                  />
+                  <ThemeSingleColor
+                    color={ThemeBackgroundColorsEnum.paper}
+                    hidden={true}
+                    onChange={handleChangeThemeColor}
+                  />
+                </Flex>
+              </Box>
+            </Box>
+          )}
           <Box position="absolute" bottom={4} right={4}>
             <Button
               iconButton={true}
