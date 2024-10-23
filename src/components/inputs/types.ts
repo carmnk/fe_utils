@@ -14,7 +14,7 @@ export type InputTextFieldType =
   | 'json'
 
 /** Def of all input field types */
-export type InputFieldType = InputTextFieldType | 'bool' | 'switch'
+export type InputFieldType = InputTextFieldType | 'bool' | 'switch' | 'quill'
 
 /**  Def of common props for all boolean input fields (less than textfield) */
 export type CommonBooleanInputFieldProps = {

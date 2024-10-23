@@ -43,7 +43,7 @@ export const replacePlaceholdersInString = (
   const getTemplates = (text: string) => {
     let templatesOut: {
       placeholder: string
-      value: string
+      value: string | number | boolean | object
       type: string
       placeholderRaw: string
       placeholderCutted: string
@@ -198,7 +198,9 @@ export const replacePlaceholdersInString = (
         : newText
             .replaceAll(
               template.placeholder,
-              "'" + template.value.toString() + "'"
+              typeof template.value === 'string'
+                ? "'" + template.value.toString() + "'"
+                : template.value.toString()
             )
             ?.replaceAll?.('{formData.', '')
     } else {
@@ -219,7 +221,10 @@ export const replacePlaceholdersInString = (
           break
         }
         newText = newText
-          .replaceAll(template.placeholderRaw, value ? '"' + value + '"' : '')
+          .replaceAll(
+            template.placeholderRaw,
+            value ? (typeof value === 'string' ? '"' + value + '"' : value) : ''
+          )
           .replaceAll('{_data.', '')
           .replaceAll('{formData.', '')
           .replaceAll('{treeviews.', '')

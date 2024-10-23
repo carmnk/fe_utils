@@ -159,6 +159,28 @@ export enum HTML_TAG_NAMES_BASIC {
   Img = 'img',
 }
 
+export enum HTML_TAG_NAMES_SVG_ELEMENTS {
+  Circle = 'circle',
+  ClipPath = 'clipPath',
+  Defs = 'defs',
+  Ellipse = 'ellipse',
+  G = 'g',
+  Image = 'image',
+  Line = 'line',
+  LinearGradient = 'linearGradient',
+  Mask = 'mask',
+  Path = 'path',
+  Pattern = 'pattern',
+  Polygon = 'polygon',
+  Polyline = 'polyline',
+  RadialGradient = 'radialGradient',
+  Rect = 'rect',
+  Stop = 'stop',
+  Svg = 'svg',
+  Text = 'text',
+  Tspan = 'tspan',
+}
+
 export const HTML_TAG_NAMES = {
   ...HTML_TAG_NAMES_TABLE_CONTENT,
   ...HTML_TAG_NAMES_INTERACTIVE_CONTENT,
@@ -214,6 +236,10 @@ export const HTML_TAG_NAMES_STRUCTURED_OPTIONS = [
   ...makeOptionsFromEnum(HTML_TAG_NAMES_METADATA_ELEMENTS).map((item) => ({
     ...item,
     category: 'Meta Data',
+  })),
+  ...makeOptionsFromEnum(HTML_TAG_NAMES_SVG_ELEMENTS).map((item) => ({
+    ...item,
+    category: 'SVG Elements',
   })),
   ...makeOptionsFromEnum(HTML_TAG_NAMES_DOCUMENT_ELEMENTS).map((item) => ({
     ...item,

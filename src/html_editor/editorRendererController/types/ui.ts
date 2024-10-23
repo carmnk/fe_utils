@@ -71,13 +71,8 @@ export type Ui = {
       editCssRuleName: string | null
       editCssRuleValue: string | null
       cssRulesFilter: 'all' | 'classes' | 'styles'
-      activeStylesTab:
-        | 'layout'
-        | 'shape'
-        | 'typography'
-        | 'content'
-        | 'events'
-        | 'css_rules'
+      activeStylesTab: 'content' | 'events' | 'css_rules' | 'attributes'
+      activeCssStyleTab: 'layout' | 'shape' | 'typography' | 'css_rules'
       classEditMode: boolean
     }
   }

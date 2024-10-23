@@ -3,6 +3,7 @@ import { defaultEditorState } from './defaultEditorState'
 import { useAppController } from './appController'
 import { useShortcuts } from './useShortcuts'
 import { EditorStateType } from './types'
+import { replacePlaceholdersInString } from '../renderer'
 
 export type EditorRendererControllerParams = {
   initialEditorState?: Pick<
@@ -41,6 +42,7 @@ export const useEditorRendererController = (
     getSelectedImage,
     COMPONENT_MODELS,
     getRecursiveChildren,
+    selectedElementAttributes,
   } = useShortcuts({ editorState, customComponents: injections?.components })
 
   const appController = useAppController({
@@ -48,6 +50,44 @@ export const useEditorRendererController = (
     transformers: editorState.transformers,
     currentViewportElements,
   })
+
+  // needs appcontroller for placeholders
+  const selectedElementAttributesResolved = useMemo(() => {
+    const elementAttributes = editorState.attributes.filter(
+      (attr) => attr.element_id === editorState.ui.selected.element
+    )
+    const elementAttributesDict =
+      elementAttributes.reduce<Record<string, any>>((acc, attr) => {
+        const key = attr.attr_name
+        if (key === 'style') {
+          return acc
+        }
+        const valueRaw = attr.attr_value
+        const regex = /{(.*?)}/
+        const value = valueRaw.match(regex)
+          ? replacePlaceholdersInString(
+              valueRaw,
+              appController.state,
+              editorState.compositeComponentProps,
+              editorState.properties,
+              selectedElement,
+              undefined,
+              undefined,
+              undefined // icons
+            )
+          : valueRaw
+        const valueAdj = typeof value === 'string' ? value : value?.toString?.()
+        return { ...acc, [key]: valueAdj }
+      }, {}) ?? {}
+    return elementAttributesDict
+  }, [
+    editorState.ui.selected.element,
+    editorState.attributes,
+    appController.state,
+    editorState.compositeComponentProps,
+    editorState.properties,
+    selectedElement,
+  ])
 
   const rendererController = useMemo(() => {
     return {
@@ -62,6 +102,8 @@ export const useEditorRendererController = (
       getSelectedImage,
       getRecursiveChildren,
       getStyleAttributesDictByElementId,
+      selectedElementAttributes,
+      selectedElementAttributesResolved,
     }
   }, [
     selectedElement,
@@ -75,6 +117,8 @@ export const useEditorRendererController = (
     getSelectedImage,
     getRecursiveChildren,
     getStyleAttributesDictByElementId,
+    selectedElementAttributes,
+    selectedElementAttributesResolved,
   ])
   return rendererController
 }

@@ -2,6 +2,7 @@ import { ForwardedRef, ReactNode, forwardRef, useMemo } from 'react'
 import {
   Stack,
   Tab,
+  TabProps,
   TabsProps,
   Tooltip,
   Typography,
@@ -19,6 +20,7 @@ export type CTabsProps = Omit<TabsProps, 'onChange' | 'value'> & {
     tooltip?: string
     disabled?: boolean
     icon?: string
+    sx?: any
   }[]
 
   disableIndicator?: boolean
@@ -32,6 +34,7 @@ export type CTabsProps = Omit<TabsProps, 'onChange' | 'value'> & {
   useTabBorders?: boolean
   sx?: TabsProps['sx']
   rootInjection?: ReactNode
+  activeTabStylesIn?: TabProps['sx']
 }
 
 export const Tabs = forwardRef(
@@ -49,6 +52,7 @@ export const Tabs = forwardRef(
       disableBorderBottom,
       useTabBorders,
       sx,
+      activeTabStylesIn,
       rootInjection,
       ...rest
     } = props
@@ -63,8 +67,9 @@ export const Tabs = forwardRef(
         borderTopRightRadius: 4,
         background: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
+        ...activeTabStylesIn,
       }),
-      [theme]
+      [theme, activeTabStylesIn]
     )
 
     const handleChangeTab = useMemo(() => {
@@ -122,6 +127,7 @@ export const Tabs = forwardRef(
               transition: 'background 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
               opacity: 1,
               ...injectTabBorders,
+              ...(item?.sx ?? {}),
               ...(item.value === value ? activeTabStyles : {}),
             }}
             disabled={item?.disabled}

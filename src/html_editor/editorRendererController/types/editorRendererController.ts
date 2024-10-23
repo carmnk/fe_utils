@@ -22,6 +22,8 @@ export type EditorRendererControllerType<
   currentViewportElements: Element[]
   COMPONENT_MODELS: any[]
   actions?: ControllreActionsType
+  selectedElementAttributes: Record<string, string>
+  selectedElementAttributesResolved: Record<string, unknown>
 
   // actions: ReturnType<typeof useEditorActions>
 }

@@ -5,10 +5,11 @@ import { Box } from '@mui/material'
 import { getStylesFromClasses } from './classes/getStylesFromClasses'
 import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
 import { ComponentBox } from './ComponentBox'
+import { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
+const regexAnyPlaceholder = /{(.*?)}/
 
 export type ElementBoxProps<
   ControllreActionsType extends { [key: string]: any },
-  FastState,
 > = {
   element: Element
   editorState: EditorStateType
@@ -33,9 +34,8 @@ const sx = {
 
 export const ElementBox = <
   ControllreActionsType extends { [key: string]: any },
-  FastState,
 >(
-  props: PropsWithChildren<ElementBoxProps<ControllreActionsType, FastState>>
+  props: PropsWithChildren<ElementBoxProps<ControllreActionsType>>
 ) => {
   const {
     element,
@@ -62,12 +62,38 @@ export const ElementBox = <
       editorState.attributes
         .filter((attr) => attr.element_id === element._id)
         .reduce<Record<string, any>>((acc, attr) => {
+          const key = attr.attr_name
+          // if (key === 'style') {
+          //   return acc
+          // }
+          const valueRaw = attr.attr_value
+          const value =
+            typeof valueRaw === 'string' && valueRaw.match(regexAnyPlaceholder)
+              ? replacePlaceholdersInString(
+                  valueRaw,
+                  appController.state,
+                  editorState.compositeComponentProps,
+                  editorState.properties,
+                  selectedElement,
+                  undefined,
+                  undefined,
+                  undefined // icons
+                )
+              : valueRaw
+
           return {
             ...acc,
-            [attr.attr_name]: attr.attr_value,
+            [key]: key !== 'style' ? value.toString() : value, // react-html attributes must be strings (in contrast to react 'elements')
           }
         }, {}),
-    [editorState.attributes, element._id]
+    [
+      editorState.attributes,
+      element._id,
+      appController.state,
+      selectedElement,
+      editorState.compositeComponentProps,
+      editorState.properties,
+    ]
   )
   const className = elementAttributsDict?.className as string
 
@@ -102,12 +128,36 @@ export const ElementBox = <
       ? { backgroundImage: bgImgSrcValue }
       : {}
     const styleAttributes =
-      'style' in elementAttributsDict ? (elementAttributsDict?.style ?? {}) : {}
+      'style' in elementAttributsDict
+        ? ((elementAttributsDict?.style as CSSProperties) ?? {})
+        : {}
 
-    const aggregatedUserStyles = {
+    const aggregatedUserStylesRaw: CSSProperties = {
       ...stylesFromClasses,
       ...styleAttributes,
     }
+    const aggregatedUserStyles: CSSProperties = Object.keys(
+      aggregatedUserStylesRaw
+    ).reduce((acc, key) => {
+      const valueRaw = aggregatedUserStylesRaw[key as keyof CSSProperties]
+      const value =
+        typeof valueRaw === 'string' && valueRaw.match(regexAnyPlaceholder)
+          ? (replacePlaceholdersInString(
+              valueRaw,
+              appController.state,
+              editorState.compositeComponentProps,
+              editorState.properties,
+              selectedElement,
+              undefined,
+              undefined,
+              undefined // icons
+            ) as string)
+          : valueRaw
+      if (value) {
+        return { ...acc, [key]: value }
+      }
+      return acc
+    }, {})
     const userOverridesEditorHoverStyles: CSSProperties = {}
     if ('borderWidth' in aggregatedUserStyles) {
       userOverridesEditorHoverStyles.borderWidth =
@@ -147,8 +197,7 @@ export const ElementBox = <
     return {
       ...sx,
       ...linkHoverStyles,
-      ...stylesFromClasses,
-      ...styleAttributes,
+      ...aggregatedUserStyles,
       ...bgImageStyles,
       // ...additionalHoverStyles,
       ...userOverridesEditorHoverStyles,
@@ -161,6 +210,10 @@ export const ElementBox = <
     editorState.ui.previewMode,
     elementAttributsDict,
     bgImgSrcValue,
+    appController.state,
+    editorState.compositeComponentProps,
+    editorState.properties,
+    selectedElement,
   ])
 
   const linkProps = useMemo(() => {
