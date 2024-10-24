@@ -113,8 +113,24 @@ export const renderElementChildren = (params: RenderElementChildrenParams) => {
         rootCompositeElementId,
         OverlayComponent,
         navigate,
+        debug: element?._id === "e9780d0e-c07b-4b1b-90ba-5562f7915e65" ? true : undefined
       })
     : []
+
+    if (
+      // ['composite', 'svg', 'polygon'].includes(element._type) ||
+      element?._id === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65'
+    ) {
+      console.log(
+        'ELEMENT ELEMENT children',
+        element._type,
+        baseComponentId,
+        elementProps,
+        elementChildren,
+        children,
+        renderedElementChildren
+      )
+    }
 
   return renderedElementChildren
 }

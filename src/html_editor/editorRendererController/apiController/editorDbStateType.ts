@@ -13,6 +13,7 @@ import { Component } from '../types/component'
 import { EditorStateType } from '../types/editorState'
 import { Property } from '../types/property'
 import { Template } from '../types/template'
+import { ThemeTypography } from '../types/themeTypographys'
 
 export type EditorStateDbDataType = {
   components: Component[]
@@ -38,4 +39,5 @@ export type EditorStateDbDataType = {
   actions: EditorStateType['actions']
   templates: Template[]
   data_changes?: any[]
+  theme_typographys: ThemeTypography[]
 }

@@ -60,7 +60,10 @@ export const ElementBox = <
   const elementAttributsDict = useMemo(
     () =>
       editorState.attributes
-        .filter((attr) => attr.element_id === element._id)
+        .filter((attr) => {
+          // while (element?._type !== 'composite') {
+          return attr.element_id === element._id && element?._id
+        })
         .reduce<Record<string, any>>((acc, attr) => {
           const key = attr.attr_name
           // if (key === 'style') {
@@ -89,12 +92,33 @@ export const ElementBox = <
     [
       editorState.attributes,
       element._id,
+
       appController.state,
       selectedElement,
       editorState.compositeComponentProps,
       editorState.properties,
     ]
   )
+  if (
+    element?._type === 'composite' ||
+    element?._type === 'svg' ||
+    element?._type === 'polygon' ||
+    element?.component_id
+  ) {
+    console.log(
+      'elementAttributsDict',
+      element?._type,
+      element?.component_id,
+      elementAttributsDict,
+      editorState.attributes.filter(
+        (attr) =>
+          (attr.element_id === element._id && element?._id) ||
+          (attr.component_id === element.component_id && element.component_id)
+      ),
+      'children',
+      children
+    )
+  }
   const className = elementAttributsDict?.className as string
 
   const stylesFromClasses = useMemo(

@@ -107,7 +107,11 @@ export const transformEditorStateFromPayload = (
   const themes =
     disableThemeReload || !data.themes?.length
       ? (data.themes as any)
-      : reloadSerializedThemes(data.themes as any, currentEditorState?.themes)
+      : reloadSerializedThemes(
+          data.themes as any,
+          currentEditorState?.themes,
+          data.theme_typographys
+        )
 
   const externalApis: EditorStateType['externalApis'] =
     data?.externalApis?.map((api) => {
@@ -241,7 +245,7 @@ export const transformEditorStateFromPayload = (
 
                   return JSON.parse(propValue)
                 } catch (e) {
-                  // console.error(e, prop) 
+                  // console.error(e, prop)
                   return prop.prop_value
                 }
               })()
@@ -306,5 +310,6 @@ export const transformEditorStateFromPayload = (
     templateComponents: data?.templates ?? [],
     compositeComponentProps: data?.composite_component_props ?? [],
     actionParams: data?.action_params ?? [],
+    theme_typographys: data?.theme_typographys ?? [],
   }
 }

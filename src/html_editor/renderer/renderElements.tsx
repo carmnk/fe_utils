@@ -41,6 +41,7 @@ export const renderElements = <
   disableOverlay?: boolean
   rootCompositeElementId?: string
   OverlayComponent?: FC<{ element: Element }>
+  debug?: any
   navigate: NavigateFunction
 }): ReactNode => {
   const {
@@ -63,6 +64,7 @@ export const renderElements = <
     rootCompositeElementId,
     OverlayComponent,
     navigate,
+    debug,
   } = params
 
   const tableUis = editorState.ui.tableUis
@@ -76,6 +78,9 @@ export const renderElements = <
       (baseComponentId && el.component_id === baseComponentId) ||
       (!baseComponentId && el._page === editorState.ui.selected.page)
   )
+  if (debug) {
+    console.debug('relevant elements  ', elements, relevantElements)
+  }
 
   const renderedElements = relevantElements.map((element) => {
     const typeFirstLetter = element._type.slice(0, 1)
@@ -152,6 +157,7 @@ export const renderElements = <
       rootCompositeElementId,
       OverlayComponent,
       navigate,
+      
     })
 
     const eventHandlerProps = getElementEventHandlerProps({
@@ -191,20 +197,24 @@ export const renderElements = <
       _content: content,
     }
 
-    // if (element?._type?.toLowerCase().includes('form'))
-    //   console.debug(
-    //     'elementAdj2  ',
-    //     elementAdj2,
-    //     elementPropsObject,
-    //     'Specific React Element Props?',
-    //     specificReactElementProps,
-    //     'maybe?',
-    //     eventHandlerProps,
-    //     'injectedIconProps',
-    //     injectedIconProps,
-    //     'allElementProps',
-    //     allElementProps
-    //   )
+    if (
+      element?._id === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65' ||
+      ['svg', 'polygon'].includes(element._type)
+    ) {
+      console.debug('elementAdj2  ', elementAdj2, renderedElementChildren)
+      alert('TEST')
+    }
+    if (
+      element?._parentId === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65' ||
+      debug
+    ) {
+      console.debug(
+        'elementAdj  43333   ',
+        debug,
+        elementAdj2,
+        renderedElementChildren
+      )
+    }
 
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />

@@ -2,59 +2,66 @@ import { v4 as uuid } from 'uuid'
 import { ExtendedTheme } from '../../theme/muiTheme'
 import { createMuiTheme } from '../../theme/createTheme'
 import { SerializedThemeType } from '../types/serializedTheme'
+import { ThemeTypography } from '../types/themeTypographys'
+import { CSSProperties } from 'react'
 
 export const transformEditorStateTheme = (
   themes: ExtendedTheme[],
   project_id: string
-): SerializedThemeType[] =>
-  themes?.map?.((theme) => ({
-    id: theme?.id ?? uuid(),
-    project_id,
-    name: theme.name,
-    // palette
-    mode: theme.palette.mode,
-    primary_main: theme.palette.primary.main,
-    primary_light: theme.palette.primary.light,
-    primary_dark: theme.palette.primary.dark,
-    primary_contrasttext: theme.palette.primary.contrastText,
-    secondary_main: theme.palette.secondary.main,
-    secondary_light: theme.palette.secondary.light,
-    secondary_dark: theme.palette.secondary.dark,
-    secondary_contrasttext: theme.palette.secondary.contrastText,
-    error_main: theme.palette.error.main,
-    error_light: theme.palette.error.light,
-    error_dark: theme.palette.error.dark,
-    error_contrasttext: theme.palette.error.contrastText,
-    warning_main: theme.palette.warning.main,
-    warning_light: theme.palette.warning.light,
-    warning_dark: theme.palette.warning.dark,
-    warning_contrasttext: theme.palette.warning.contrastText,
-    info_main: theme.palette.info.main,
-    info_light: theme.palette.info.light,
-    info_dark: theme.palette.info.dark,
-    info_contrasttext: theme.palette.info.contrastText,
-    success_main: theme.palette.success.main,
-    success_light: theme.palette.success.light,
-    success_dark: theme.palette.success.dark,
-    success_contrasttext: theme.palette.success.contrastText,
+): SerializedThemeType[] => {
+  return (
+    themes?.map?.((theme) => ({
+      id: theme?.id ?? uuid(),
+      project_id,
+      name: theme.name,
+      // palette
+      mode: theme.palette.mode,
+      primary_main: theme.palette.primary.main,
+      primary_light: theme.palette.primary.light,
+      primary_dark: theme.palette.primary.dark,
+      primary_contrasttext: theme.palette.primary.contrastText,
+      secondary_main: theme.palette.secondary.main,
+      secondary_light: theme.palette.secondary.light,
+      secondary_dark: theme.palette.secondary.dark,
+      secondary_contrasttext: theme.palette.secondary.contrastText,
+      error_main: theme.palette.error.main,
+      error_light: theme.palette.error.light,
+      error_dark: theme.palette.error.dark,
+      error_contrasttext: theme.palette.error.contrastText,
+      warning_main: theme.palette.warning.main,
+      warning_light: theme.palette.warning.light,
+      warning_dark: theme.palette.warning.dark,
+      warning_contrasttext: theme.palette.warning.contrastText,
+      info_main: theme.palette.info.main,
+      info_light: theme.palette.info.light,
+      info_dark: theme.palette.info.dark,
+      info_contrasttext: theme.palette.info.contrastText,
+      success_main: theme.palette.success.main,
+      success_light: theme.palette.success.light,
+      success_dark: theme.palette.success.dark,
+      success_contrasttext: theme.palette.success.contrastText,
 
-    text_primary: theme.palette.text.primary,
-    text_secondary: theme.palette.text.secondary,
-    text_disabled: theme.palette.text.disabled,
-    background_default: theme.palette.background.paper,
-    background_paper: theme.palette.background.paper,
-    action_active: theme.palette.action.active,
-    action_hover: theme.palette.action.hover,
-    action_selected: theme.palette.action.selected,
-    action_disabled: theme.palette.action.disabled,
-    action_disabled_background: theme.palette.action.disabledBackground,
-    action_focus: theme.palette.action.focus,
-  }))
+      text_primary: theme.palette.text.primary,
+      text_secondary: theme.palette.text.secondary,
+      text_disabled: theme.palette.text.disabled,
+      background_default: theme.palette.background.paper,
+      background_paper: theme.palette.background.paper,
+      action_active: theme.palette.action.active,
+      action_hover: theme.palette.action.hover,
+      action_selected: theme.palette.action.selected,
+      action_disabled: theme.palette.action.disabled,
+      action_disabled_background: theme.palette.action.disabledBackground,
+      action_focus: theme.palette.action.focus,
+    })) ?? []
+  )
+}
 
 export const reloadSerializedThemes = (
   themesIn: SerializedThemeType[],
-  themes: ExtendedTheme[]
+  themes: ExtendedTheme[],
+  theme_typographys: ThemeTypography[]
 ): ExtendedTheme[] => {
+  console.log('RELOAD WITH THEMES', themesIn, themes, theme_typographys)
   const loadedThemes = themesIn?.map((themeIn) => {
     const currentThemeProps = themes.find(
       (t) => t.palette.mode === themeIn.mode
@@ -62,6 +69,9 @@ export const reloadSerializedThemes = (
     const injectCurrentThemeTypographyProps = {
       typography: currentThemeProps?.typography,
     }
+    const themeTypographys = theme_typographys.filter(
+      (tt) => tt.theme_id === themeIn.id
+    )
     const newThemeStatic = {
       ...injectCurrentThemeTypographyProps,
       palette: {
@@ -121,6 +131,40 @@ export const reloadSerializedThemes = (
         mode: themeIn?.mode ?? 'light',
       },
     }
+
+    if (themeTypographys.length > 0) {
+      newThemeStatic.typography = {
+        ...currentThemeProps?.typography,
+        ...(themeTypographys.reduce((acc, tt) => {
+          const name = tt.name
+          const fontSize = tt.font_size
+          const fontWeight = tt.font_weight
+          const fontStyle = tt.font_style
+          const fontFamily = tt.font_family
+          const color = tt.font_color
+          const subTypography: CSSProperties & { name: string } = {
+            name,
+          }
+          if (fontSize) {
+            subTypography.fontSize = fontSize
+          }
+          if (fontWeight) {
+            subTypography.fontWeight = fontWeight
+          }
+          if (fontStyle) {
+            subTypography.fontStyle = fontStyle
+          }
+          if (fontFamily) {
+            subTypography.fontFamily = fontFamily
+          }
+          if (color) {
+            subTypography.color = color
+          }
+          return { ...acc, [name]: subTypography }
+        }, {}) ?? {}),
+      } as any
+    }
+
     // // undefined values have to be removed
     // const paletteRaw = newThemeStatic.palette
     // const paletteObjectKeys = Object.keys(paletteRaw).filter((key) => {

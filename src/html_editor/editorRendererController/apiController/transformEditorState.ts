@@ -280,6 +280,7 @@ export const transformEditorStateToPayload = (
     headers,
     params,
     bodyParams,
+    theme_typographys: payload.theme_typographys,
     // events:
     //   payload.events?.sort((a, b) => (a.event_name > b.event_name ? 1 : -1)) ??
     //   [],

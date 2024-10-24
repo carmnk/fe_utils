@@ -13,6 +13,7 @@ import {
   Divider,
   Popover,
   PopoverProps,
+  Theme,
   Typography,
   hexToRgb,
   useTheme,
@@ -34,6 +35,8 @@ type GenericColorPickerProps = {
   value: CSSProperties['color']
   selectorSize?: string | number
   disableThemeColors?: boolean
+  resolveThemeColors?: boolean
+  themeIn: Theme
 }
 type DisabledColorPickerProps = GenericColorPickerProps & {
   disabled: true
@@ -98,9 +101,12 @@ export const ColorPicker = (props: ColorPickerProps) => {
     disabled,
     selectorSize = 28,
     disableThemeColors,
+    resolveThemeColors,
+    themeIn,
     ...rest
   } = props
   const theme = useTheme()
+  const themeAdj = themeIn ?? theme
   const [color, setColor] = useState(rgbaToObj(value))
   const [unchangedColor, setUnchangedColor] = useState(value)
   const [isThemeColor, setIsThemeColor] = useState(false)
@@ -119,7 +125,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
   }, [])
 
   const handleTakeover = useCallback(() => {
-    if (isThemeColor) {
+    if (isThemeColor && !resolveThemeColors) {
       onChange?.(unchangedColor as any)
       return
     }
@@ -211,7 +217,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
       const themeColorNameMain = colorPath?.[0]
       const themeColorNameVariant = colorPath?.[1]
       const colorGroup =
-        theme.palette[themeColorNameMain as keyof typeof theme.palette]
+        themeAdj.palette[themeColorNameMain as keyof typeof themeAdj.palette]
       const colorRaw =
         colorGroup?.[themeColorNameVariant as keyof typeof colorGroup]
       const colorRgba =
@@ -228,7 +234,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
       setUnchangedColor(colorName)
       setIsThemeColor(true)
     },
-    [theme]
+    [themeAdj]
   )
 
   return (
@@ -261,30 +267,36 @@ export const ColorPicker = (props: ColorPickerProps) => {
                   <ThemeColors
                     themeColorName={ThemeColorsEnum.primary}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeColors
                     themeColorName={ThemeColorsEnum.secondary}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                 </Flex>
                 <Flex gap={'10px'} mt="10px">
                   <ThemeColors
                     themeColorName={ThemeColorsEnum.success}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeColors
                     themeColorName={ThemeColorsEnum.warning}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                 </Flex>
                 <Flex gap={'10px'} mt="10px">
                   <ThemeColors
                     themeColorName={ThemeColorsEnum.error}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeColors
                     themeColorName={ThemeColorsEnum.info}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                 </Flex>
                 {/* single colors */}
@@ -293,53 +305,65 @@ export const ColorPicker = (props: ColorPickerProps) => {
                   <ThemeSingleColor
                     color={ThemeActionColorsEnum.active}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeActionColorsEnum.disabled}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeActionColorsEnum.disabledBackground}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeActionColorsEnum.focus}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeActionColorsEnum.hover}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeActionColorsEnum.selected}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                 </Flex>
                 <Flex gap={'10px'} mt="10px">
                   <ThemeSingleColor
                     color={ThemeTextColorsEnum.disabled}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeTextColorsEnum.primary}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeTextColorsEnum.secondary}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeBackgroundColorsEnum.default}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeBackgroundColorsEnum.paper}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                   <ThemeSingleColor
                     color={ThemeBackgroundColorsEnum.paper}
                     hidden={true}
                     onChange={handleChangeThemeColor}
+                    themeIn={themeIn}
                   />
                 </Flex>
               </Box>

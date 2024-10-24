@@ -67,6 +67,7 @@ export const defaultEditorState = (): EditorStateType => {
     },
     theme: muiLightSiteTheme,
     themes: [muiLightSiteTheme, muiDarkSiteTheme],
+    theme_typographys: [],
     ui: {
       isAutoSaveReady: false,
       initializeProjectModal: true,

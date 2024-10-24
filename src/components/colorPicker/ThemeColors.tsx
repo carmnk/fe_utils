@@ -1,3 +1,4 @@
+import { Theme } from '@mui/material'
 import { ThemeColorsEnum } from '../../utils/types'
 import { ThemeSingleColor } from './ThemeSingleColor'
 import { MouseEvent, useCallback } from 'react'
@@ -5,10 +6,11 @@ import { MouseEvent, useCallback } from 'react'
 export type ThemeColorsProps = {
   themeColorName: ThemeColorsEnum
   onChange?: (e: MouseEvent<HTMLDivElement>, color: string) => void
+  themeIn?: Theme
 }
 
 export const ThemeColors = (props: ThemeColorsProps) => {
-  const { themeColorName, onChange } = props
+  const { themeColorName, onChange, themeIn } = props
 
   const handleChangeThemeColor = useCallback(
     (e: MouseEvent<HTMLDivElement>, colorIn: string) => {
@@ -26,14 +28,17 @@ export const ThemeColors = (props: ThemeColorsProps) => {
       <ThemeSingleColor
         color={`${themeColorName}.main`}
         onChange={handleChangeThemeColor}
+        themeIn={themeIn}
       />
       <ThemeSingleColor
         color={`${themeColorName}.light`}
         onChange={handleChangeThemeColor}
+        themeIn={themeIn}
       />
       <ThemeSingleColor
         color={`${themeColorName}.dark`}
         onChange={handleChangeThemeColor}
+        themeIn={themeIn}
       />
     </>
   )

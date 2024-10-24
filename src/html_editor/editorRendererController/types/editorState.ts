@@ -5,7 +5,6 @@ import { Attribute } from './attribute'
 import { Component } from './component'
 import { ComponentPropertyDefinition } from './componentPropertyDefinition'
 import { CssSelector } from './css'
-import { ElementEvent } from './elementEvent'
 import { Endpoint } from './endpoint'
 import { EntityDataModel } from './entityDataModel'
 import { ExternalApi } from './externalApi'
@@ -17,6 +16,7 @@ import { Template } from './template'
 import { Ui } from './ui'
 import { Element } from './element'
 import { Transformer } from './transformer'
+import { ThemeTypography } from './themeTypographys'
 
 export type EditorStateType = {
   components: Component[]
@@ -51,4 +51,5 @@ export type EditorStateType = {
   endpoints: Endpoint[]
   // events: ElementEvent[]
   actions: Action[]
+  theme_typographys: ThemeTypography[]
 }
