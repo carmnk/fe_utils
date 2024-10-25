@@ -75,11 +75,23 @@ export const renderElements = <
       : elements?.filter((el) => el._parentId === parentId)
   )?.filter(
     (el) =>
+      !(baseComponentId && el.component_id) || //
       (baseComponentId && el.component_id === baseComponentId) ||
       (!baseComponentId && el._page === editorState.ui.selected.page)
   )
   if (debug) {
-    console.debug('relevant elements  ', elements, relevantElements)
+    console.debug(
+      'relevant elements  ',
+      elements,
+      relevantElements,
+      parentId,
+      baseComponentId,
+      editorState.ui.selected.page,
+      'PT1',
+      !parentId
+        ? elements?.filter((el) => !el._parentId)
+        : elements?.filter((el) => el._parentId === parentId)
+    )
   }
 
   const renderedElements = relevantElements.map((element) => {
@@ -157,7 +169,6 @@ export const renderElements = <
       rootCompositeElementId,
       OverlayComponent,
       navigate,
-      
     })
 
     const eventHandlerProps = getElementEventHandlerProps({
@@ -202,7 +213,6 @@ export const renderElements = <
       ['svg', 'polygon'].includes(element._type)
     ) {
       console.debug('elementAdj2  ', elementAdj2, renderedElementChildren)
-      alert('TEST')
     }
     if (
       element?._parentId === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65' ||
