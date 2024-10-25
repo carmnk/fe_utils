@@ -98,7 +98,7 @@ export const queryAction = async (
   // IMPLEMENTATION -> replace all relevantProps with placeholders if any
   // -> url, payload per key, headers per key, params per key, responseType, method,
 
-  console.log(
+  console.debug(
     'queryAction inner ',
     adjMethod,
     adjParams,

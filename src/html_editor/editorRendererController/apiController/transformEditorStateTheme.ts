@@ -61,7 +61,6 @@ export const reloadSerializedThemes = (
   themes: ExtendedTheme[],
   theme_typographys: ThemeTypography[]
 ): ExtendedTheme[] => {
-  console.log('RELOAD WITH THEMES', themesIn, themes, theme_typographys)
   const loadedThemes = themesIn?.map((themeIn) => {
     const currentThemeProps = themes.find(
       (t) => t.palette.mode === themeIn.mode

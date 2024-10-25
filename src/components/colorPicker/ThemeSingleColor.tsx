@@ -27,8 +27,6 @@ export const ThemeSingleColor = (props: ThemeSingleColorProps) => {
       : //   : themeIn && colorCategory
         //     ? themeIn?.palette?.[colorCategory]
         undefined
-
-  console.log('COLOR PROB', themeIn, colorCategory, colorVariant, colorAdj)
   return (
     <Tooltip title={hidden ? undefined : color} placement="top" arrow>
       <Box

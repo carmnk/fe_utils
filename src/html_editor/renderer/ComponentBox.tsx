@@ -41,8 +41,8 @@ export const ComponentBox = <
     navigate,
   } = props
 
-  console.log(
-    'COMMpONENT ELEMENTS',
+  console.debug(
+    'COMPONENT ELEMENTS',
     editorState.elements.filter(
       (el) =>
         (el._type !== 'composite' &&

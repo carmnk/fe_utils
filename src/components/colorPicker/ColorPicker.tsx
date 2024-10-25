@@ -118,7 +118,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
   }, [disabled])
 
   const handleChangeColor = useCallback((color: any) => {
-    console.log('handleChangeColor, ', color)
+    console.debug('handleChangeColor, ', color)
     setColor(color.rgb)
     setIsThemeColor(false)
     // setUnchangedColor(color.rgb)

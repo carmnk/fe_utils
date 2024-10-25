@@ -105,7 +105,7 @@ export const ElementBox = <
     element?._type === 'polygon' ||
     element?.component_id
   ) {
-    console.log(
+    console.debug(
       'elementAttributsDict',
       element?._type,
       element?.component_id,
