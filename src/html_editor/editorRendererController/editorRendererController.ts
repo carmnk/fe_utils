@@ -49,6 +49,7 @@ export const useEditorRendererController = (
     properties: editorState.properties,
     transformers: editorState.transformers,
     currentViewportElements,
+    attributes: editorState.attributes,
   })
 
   // needs appcontroller for placeholders
@@ -70,7 +71,9 @@ export const useEditorRendererController = (
               appController.state,
               editorState.compositeComponentProps,
               editorState.properties,
+              editorState.attributes,
               selectedElement,
+              selectedElement?._id ?? null,
               undefined,
               undefined,
               undefined // icons

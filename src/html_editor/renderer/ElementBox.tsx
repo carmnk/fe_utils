@@ -26,6 +26,7 @@ export type ElementBoxProps<
   OverlayComponent?: FC<{ element: Element }>
   navigate: any
   events: { [key: string]: any }
+  rootCompositeElementId?: string
 }
 
 const sx = {
@@ -52,6 +53,7 @@ export const ElementBox = <
     OverlayComponent,
     navigate,
     events,
+    rootCompositeElementId,
   } = props
 
   const isOverheadHtmlElement = ['html', 'head', 'body'].includes(element._type)
@@ -77,8 +79,10 @@ export const ElementBox = <
                   appController.state,
                   editorState.compositeComponentProps,
                   editorState.properties,
-                  selectedElement,
-                  undefined,
+                  editorState.attributes,
+                  element,
+                  element?._id,
+                  rootCompositeElementId,
                   undefined,
                   undefined // icons
                 )
@@ -91,12 +95,11 @@ export const ElementBox = <
         }, {}),
     [
       editorState.attributes,
-      element._id,
-
+      element,
       appController.state,
-      selectedElement,
       editorState.compositeComponentProps,
       editorState.properties,
+      rootCompositeElementId,
     ]
   )
   if (
@@ -171,8 +174,10 @@ export const ElementBox = <
               appController.state,
               editorState.compositeComponentProps,
               editorState.properties,
-              selectedElement,
-              undefined,
+              editorState.attributes,
+              element,
+              element?._id,
+              rootCompositeElementId,
               undefined,
               undefined // icons
             ) as string)
@@ -237,7 +242,9 @@ export const ElementBox = <
     appController.state,
     editorState.compositeComponentProps,
     editorState.properties,
-    selectedElement,
+    // selectedElement,
+    editorState.attributes,
+    rootCompositeElementId,
   ])
 
   const linkProps = useMemo(() => {
@@ -316,6 +323,7 @@ export const ElementBox = <
       isProduction={!!isProduction}
       OverlayComponent={OverlayComponent}
       navigate={navigate}
+      rootCompositeElementId={rootCompositeElementId}
     />
   ) : ['br', 'hr', 'img'].includes(element?._type) ? ( // null
     <Box

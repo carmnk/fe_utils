@@ -33,7 +33,9 @@ export const replacePlaceholdersInString = (
   appState: EditorRendererControllerType<any>['appController']['state'],
   componentPropertyDefinitions: EditorStateType['compositeComponentProps'],
   properties: EditorStateType['properties'],
-  selectedElement: EditorRendererControllerType<any>['selectedElement'],
+  attributes: EditorStateType['attributes'],
+  currentElement: EditorRendererControllerType<any>['selectedElement'],
+  elementId: string | null,
   rootCompositeElementId?: string,
   forceEval?: boolean,
   icons?: Record<string, string>,
@@ -126,14 +128,29 @@ export const replacePlaceholdersInString = (
         const propDef = componentPropertyDefinitions.find(
           (def) => def.property_name === key
         )
-
-        // selectedElement is the element in the component that actually uses the template
-        const instanceValue = properties?.find(
+        // currentElement is the element in the component that actually uses the template
+        const instanceValueProp = properties?.find(
           (prop) =>
             prop.component_id === propDef?.component_id &&
             prop.prop_name === key &&
-            prop.element_id === selectedElement?._id // HERE IS THE BUG SOMEWHERE
+            (prop.element_id === currentElement?._id ||
+              prop.element_id === elementId) // HERE IS THE BUG SOMEWHERE
         )
+        
+        const instanceValueAttribute = attributes.find(
+          (attr) =>
+            attr.component_id === propDef?.component_id &&
+            attr.attr_name === key &&
+            (attr.element_id === currentElement?._id ||
+              attr.element_id === elementId)
+        )
+        // const styleAttributeInstanceValue = attributes.find(
+        //   (attr) =>
+        //     (attr.element_id === currentElement?._id ||
+        //       attr.element_id === elementId) &&
+        //     attr.attr_name === 'style'
+        // )?.attr_value?.[key]
+
         const rootCompositeElementPropValue = properties?.find(
           (prop) =>
             prop.component_id === propDef?.component_id &&
@@ -141,16 +158,44 @@ export const replacePlaceholdersInString = (
             prop.element_id === rootCompositeElementId
         )?.prop_value
 
+        console.log(
+          'PROPS render',
+          key,
+          keyRaw,
+          propDef,
+          'instance prop value',
+          instanceValueProp,
+          'instanceValueAttribute',
+          instanceValueAttribute,
+          '////',
+          '---------',
+          rootCompositeElementPropValue,
+          properties?.filter(
+            (prop) =>
+              prop.component_id === propDef?.component_id &&
+              prop.prop_name === key
+          ),
+          'elements?',
+          elementId,
+          currentElement,
+          'ROOT',
+          rootCompositeElementId
+        )
         return {
           type: 'props',
           placeholder: key,
           placeholderRaw: keyRaw,
           placeholderCutted: keyRaw.replace(key, ''),
           value:
+            instanceValueProp?.prop_value ??
+            // styleAttributeInstanceValue ??
             rootCompositeElementPropValue ??
             propDef?.property_default_value ??
             '',
           isValueUndefined: !propDef?.property_default_value,
+          debugInstanceValueProp: instanceValueProp,
+          debugRootCompositeElementPropValue: rootCompositeElementPropValue,
+          debugPropDef: propDef,
         }
       }) || []
 
@@ -189,6 +234,14 @@ export const replacePlaceholdersInString = (
 
   let newText = text
   const templates = typeof text === 'string' ? getTemplates(text) : []
+
+  console.log(
+    'TEMPLATes',
+    templates,
+    componentPropertyDefinitions,
+    properties,
+    rootCompositeElementId
+  )
 
   const undefinedPlaceholders = []
   for (const template of templates) {
@@ -255,7 +308,10 @@ export const replacePlaceholdersInString = (
       'templates',
       templates,
       'formData',
-      formData
+      formData,
+      'if true no eval',
+      (newText === text || typeof newText !== 'string') && !forceEval,
+      forceEval
     )
     if (newText?.match?.(REGEX_RESOLUTION_FAILED)) {
       console.warn('Resolution failed', newText, text, templates)

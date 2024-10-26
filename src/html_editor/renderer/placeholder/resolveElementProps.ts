@@ -43,7 +43,9 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
             appController.state,
             editorState.compositeComponentProps,
             editorState.properties,
+            editorState.attributes,
             element as any,
+            element._id,
             rootCompositeElementId,
             undefined,
             icons
@@ -61,8 +63,10 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
               appController.state,
               editorState.compositeComponentProps,
               editorState.properties,
-              selectedElement,
-              undefined,
+              editorState.attributes,
+              element,
+              element._id,
+              rootCompositeElementId,
               true,
               icons,
               true

@@ -131,7 +131,7 @@ export const renderElements = <
       editorState,
       appController,
       elementProps: allElementProps,
-      selectedElement,
+      selectedElement: element,
       icons,
     })
 
@@ -143,7 +143,9 @@ export const renderElements = <
           appController.state,
           editorState.compositeComponentProps,
           editorState.properties,
-          selectedElement,
+          editorState.attributes,
+          element,
+          element._id,
           rootCompositeElementId,
           undefined,
           icons
@@ -160,7 +162,7 @@ export const renderElements = <
       selectedPageElements,
       COMPONENT_MODELS,
       uiActions,
-      selectedElement,
+      selectedElement: element,
       onSelectElement,
       isProduction,
       icons,
@@ -239,13 +241,14 @@ export const renderElements = <
         appController={appController}
         currentViewportElements={currentViewportElements}
         selectedPageElements={selectedPageElements}
-        selectedElement={selectedElement}
+        selectedElement={element}
         COMPONENT_MODELS={COMPONENT_MODELS}
         isProduction={isProduction || isPointerProduction}
         isPointerProduction={isPointerProduction}
         OverlayComponent={OverlayComponent}
         navigate={navigate}
         events={eventHandlerProps}
+        rootCompositeElementId={rootCompositeElementId}
       >
         {rootInjectionOverlayComponent}
         {renderedElementChildren}

@@ -20,6 +20,7 @@ export type ComponentElementBoxProps<
   isProduction: boolean
   OverlayComponent?: FC<{ element: Element }>
   navigate: any
+  rootCompositeElementId?: string
 }
 
 export const ComponentBox = <
@@ -39,6 +40,7 @@ export const ComponentBox = <
     isProduction,
     OverlayComponent,
     navigate,
+    rootCompositeElementId,
   } = props
 
   console.debug(
@@ -54,7 +56,9 @@ export const ComponentBox = <
             (el._type === 'composite' &&
               el.component_id !== el.ref_component_id)) &&
           !el?._parentId)
-    )
+    ),
+    'component_id',
+    element?.ref_component_id ?? element?.component_id ?? undefined
   )
   const renderedComponentElements = useMemo(
     () =>

@@ -8,6 +8,7 @@ export type EditorControllerAppStateParams = {
   // editorState: EditorStateType
   // setEditorState: Dispatch<SetStateAction<EditorStateType>>
   properties: EditorStateType['properties']
+  attributes: EditorStateType['attributes']
   transformers: EditorStateType['transformers']
   currentViewportElements: EditorRendererControllerType<any>['currentViewportElements']
 }
@@ -15,7 +16,8 @@ export type EditorControllerAppStateParams = {
 export const useAppController = (
   params: EditorControllerAppStateParams
 ): AppController => {
-  const { properties, currentViewportElements, transformers } = params
+  const { properties, attributes, currentViewportElements, transformers } =
+    params
   const [appState, setAppState] = useState<AppState>({
     forms: {},
     _data: {},
@@ -166,7 +168,9 @@ export const useAppController = (
         appState,
         [],
         properties,
+        attributes,
         treeViewElement,
+        treeViewElementId,
         undefined,
         undefined,
         undefined, // icons
