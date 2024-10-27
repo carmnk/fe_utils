@@ -139,7 +139,7 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
                         appController,
                         icons,
                         navigate,
-                        isDev: !isProduction,
+                        isProduction,
                       })?.(null, newFormData)
                   : /* eslint-disable @typescript-eslint/no-unused-vars */
                     (

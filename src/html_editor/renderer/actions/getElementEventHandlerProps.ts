@@ -76,7 +76,7 @@ export const getElementEventHandlerProps = (
               appController,
               icons,
               navigate,
-              isDev: !isProduction,
+              isProduction,
             })
           : () => {
               return createAppAction({
@@ -88,7 +88,7 @@ export const getElementEventHandlerProps = (
                 appController,
                 icons,
                 navigate,
-                isDev: !isProduction,
+                isProduction,
               })
             },
       }

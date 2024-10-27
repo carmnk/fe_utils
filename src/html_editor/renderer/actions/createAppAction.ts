@@ -20,7 +20,7 @@ export const createAppAction = (params: {
   appController: EditorRendererController['appController']
   icons: any
   navigate: NavigateFunction
-  isDev: boolean
+  isProduction?: boolean
   // formData?: Record<string, any>
 }) => {
   const {
@@ -32,7 +32,7 @@ export const createAppAction = (params: {
     eventName,
     icons,
     navigate,
-    isDev,
+    isProduction,
     // formData,
   } = params
 
@@ -88,13 +88,13 @@ export const createAppAction = (params: {
                 ap.element_id === element._id &&
                 ap.event_name === eventName
             )?.param_value
-            if (isDev) {
+            if (isProduction) {
+              navigate('/' + actionsParmValue)
+            } else {
               console.warn(
                 'Navigate to page not implemented in dev mode, will navigate to ' +
                   actionsParmValue
               )
-            } else {
-              navigate('/' + actionsParmValue)
             }
             continue
           } else if (endpointAction) {
