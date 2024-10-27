@@ -89,6 +89,7 @@ export const createAppAction = (params: {
                 ap.event_name === eventName
             )?.param_value
             if (isProduction) {
+              console.debug('Navigate to page', isProduction)
               navigate('/' + actionsParmValue)
             } else {
               console.warn(
