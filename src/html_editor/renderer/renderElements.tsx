@@ -213,7 +213,14 @@ export const renderElements = <
       _content: content,
     }
 
-    console.log('IS PRODUCTION', isProduction)
+    console.log(
+      'IS PRODUCTION',
+      isProduction,
+      isPointerProduction,
+      'ELEMENT',
+      element?._type,
+      element?._id
+    )
     // if (
     //   element?._parentId === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65' ||
     //   debug
