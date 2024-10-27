@@ -126,7 +126,9 @@ export const replacePlaceholdersInString = (
         const key = keyRaw.replace(/\..*$/gm, '')
 
         const propDef = componentPropertyDefinitions.find(
-          (def) => def.property_name === key
+          (def) =>
+            def.property_name === key &&
+            def.component_id === currentElement?.component_id
         )
         // currentElement is the element in the component that actually uses the template
         const instanceValueProp = properties?.find(
@@ -136,7 +138,7 @@ export const replacePlaceholdersInString = (
             (prop.element_id === currentElement?._id ||
               prop.element_id === elementId) // HERE IS THE BUG SOMEWHERE
         )
-        
+
         const instanceValueAttribute = attributes.find(
           (attr) =>
             attr.component_id === propDef?.component_id &&
