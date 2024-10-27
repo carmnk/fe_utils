@@ -73,7 +73,7 @@ export const createAppAction = (params: {
             (act) => act.action_id === actionId
           )
           const navigationAction = navigationActionElementIds.includes(actionId)
-          const isPageNavigation = actionId === 'navigateToPage'
+          const isPageNavigation = actionId === 'navigatePage'
           if (!endpointAction && !navigationAction && !isPageNavigation) {
             console.warn(
               'No ep and no nav -action found for actionId',
