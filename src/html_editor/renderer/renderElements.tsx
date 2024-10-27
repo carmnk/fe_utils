@@ -182,6 +182,7 @@ export const renderElements = <
       COMPONENT_MODELS,
       icons,
       elementProps: allElementProps,
+      navigate,
     })
 
     const specificReactElementProps = getReactElementProps({
@@ -198,6 +199,7 @@ export const renderElements = <
       currentViewportElements,
       COMPONENT_MODELS,
       isProduction,
+      navigate,
     })
 
     const elementAdj2 = {

@@ -7,6 +7,7 @@ import {
 import { isComponentType } from '../utils'
 import { createAppAction } from './createAppAction'
 import { htmlEventCategories } from './htmlElementEvents'
+import { NavigateFunction } from 'react-router-dom'
 
 export type GetElementEventHandlersParams = {
   element: Element
@@ -17,6 +18,7 @@ export type GetElementEventHandlersParams = {
   COMPONENT_MODELS: any
   icons: any
   elementProps: Property[]
+  navigate: NavigateFunction
 }
 export const getElementEventHandlerProps = (
   params: GetElementEventHandlersParams
@@ -30,6 +32,7 @@ export const getElementEventHandlerProps = (
     COMPONENT_MODELS,
     icons,
     elementProps,
+    navigate,
   } = params
 
   const isReactElement = isComponentType(element._type)
@@ -70,6 +73,7 @@ export const getElementEventHandlerProps = (
               COMPONENT_MODELS,
               appController,
               icons,
+              navigate,
             })
           : () => {
               return createAppAction({
@@ -80,6 +84,7 @@ export const getElementEventHandlerProps = (
                 COMPONENT_MODELS,
                 appController,
                 icons,
+                navigate,
               })
             },
       }

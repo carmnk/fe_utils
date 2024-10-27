@@ -5,6 +5,7 @@ import {
   Property,
 } from '../editorRendererController'
 import { createAppAction } from './actions/createAppAction'
+import { NavigateFunction } from 'react-router-dom'
 
 export type GetReactElementPropsParams = {
   element: Element
@@ -20,6 +21,7 @@ export type GetReactElementPropsParams = {
   currentViewportElements: Element[]
   COMPONENT_MODELS: any
   isProduction?: boolean
+  navigate: NavigateFunction
 }
 export const getReactElementProps = (params: GetReactElementPropsParams) => {
   const {
@@ -36,6 +38,7 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
     currentViewportElements,
     COMPONENT_MODELS,
     isProduction,
+    navigate,
   } = params
 
   const getPropByName = (key: string) =>
@@ -135,6 +138,7 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
                         COMPONENT_MODELS,
                         appController,
                         icons,
+                        navigate,
                       })?.(null, newFormData)
                   : /* eslint-disable @typescript-eslint/no-unused-vars */
                     (
