@@ -118,6 +118,14 @@ export const ElementBox = <
           (attr.element_id === element._id && element?._id) ||
           (attr.component_id === element.component_id && element.component_id)
       ),
+      'attrsRaw',
+      editorState.attributes.filter((attr) => {
+        return (
+          attr.element_id === element._id &&
+          element?._id &&
+          attr.attr_name === 'style'
+        )
+      }),
       'children',
       children
     )
