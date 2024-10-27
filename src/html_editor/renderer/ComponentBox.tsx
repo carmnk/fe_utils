@@ -58,7 +58,8 @@ export const ComponentBox = <
           !el?._parentId)
     ),
     'component_id',
-    element?.ref_component_id ?? element?.component_id ?? undefined
+    element?.ref_component_id ?? element?.component_id ?? undefined,
+    isProduction
   )
   const renderedComponentElements = useMemo(
     () =>
