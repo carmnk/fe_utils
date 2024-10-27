@@ -5,6 +5,7 @@ import {
 } from '../../editorRendererController'
 import { replacePlaceholdersInString } from '../placeholder/replacePlaceholder'
 import { queryAction } from './queryAction'
+import { NavigateFunction } from 'react-router-dom'
 
 type EditorRendererController = EditorRendererControllerType<{
   actions: undefined
@@ -18,6 +19,7 @@ export const createAppAction = (params: {
   COMPONENT_MODELS: EditorRendererController['COMPONENT_MODELS']
   appController: EditorRendererController['appController']
   icons: any
+  navigate: NavigateFunction
   // formData?: Record<string, any>
 }) => {
   const {
@@ -28,6 +30,7 @@ export const createAppAction = (params: {
     appController,
     eventName,
     icons,
+    navigate,
     // formData,
   } = params
 
@@ -68,11 +71,17 @@ export const createAppAction = (params: {
             (act) => act.action_id === actionId
           )
           const navigationAction = navigationActionElementIds.includes(actionId)
+          const isPageNavigation = actionId === 'navigateToPage'
           if (!endpointAction && !navigationAction) {
             console.warn(
               'No ep and no nav÷ action found for actionId',
               actionId
             )
+            continue
+          }
+          if (isPageNavigation) {
+            // const pageId = fnParams?.[0] as string
+            navigate('index')
             continue
           }
           if (endpointAction) {

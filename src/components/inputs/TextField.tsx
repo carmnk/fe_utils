@@ -232,6 +232,10 @@ export const CTextField = forwardRef(
       select,
     ])
 
+    const labelRightInfoTooltip = useMemo(() => {
+      return labelRightInfo && (parseSimpleFormating(labelRightInfo) as any)
+    }, [labelRightInfo])
+
     return (
       <Box
         position="relative"
@@ -259,10 +263,7 @@ export const CTextField = forwardRef(
                 variant="outlined"
                 iconButton
                 icon={mdiInformation}
-                tooltip={
-                  labelRightInfo &&
-                  (parseSimpleFormating(labelRightInfo) as any)
-                }
+                tooltip={labelRightInfoTooltip}
               />
             )}
           </Flex>

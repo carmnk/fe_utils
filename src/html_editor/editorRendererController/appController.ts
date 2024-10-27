@@ -18,6 +18,7 @@ export const useAppController = (
 ): AppController => {
   const { properties, attributes, currentViewportElements, transformers } =
     params
+
   const [appState, setAppState] = useState<AppState>({
     forms: {},
     _data: {},
@@ -131,6 +132,8 @@ export const useAppController = (
         }
       })
     }
+
+
 
     return {
       getFormData,

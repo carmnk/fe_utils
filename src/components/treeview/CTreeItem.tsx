@@ -237,7 +237,11 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
           >
             <Stack
               direction="row"
-              maxWidth={'calc(100% - 64px)'}
+              maxWidth={`calc(100% - ${
+                ((actionsInt?.length ?? 0) +
+                  (additionalActions?.length ? 1 : 0)) *
+                39
+              }px)`}
               alignItems="center"
             >
               <Box

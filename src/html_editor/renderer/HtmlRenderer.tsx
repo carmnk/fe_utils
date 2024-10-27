@@ -30,6 +30,7 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   isInHelpModeSelected?: boolean
   id?: string
   injectElementAtEnd?: React.ReactNode
+  injectElementInContainerStart?: React.ReactNode
 }
 
 export const HtmlRendererComponent = <
@@ -55,6 +56,7 @@ export const HtmlRendererComponent = <
     isInHelpModeSelected,
     id,
     injectElementAtEnd,
+    injectElementInContainerStart,
   } = props
 
   const selectElement = uiActions?.selectElement
@@ -249,28 +251,6 @@ export const HtmlRendererComponent = <
           sx={containerStyles}
           id={id}
         >
-          {editorState.ui.viewportLimitsMode &&
-            typeof viewportLowerWidthLimit === 'number' && (
-              <Box
-                width={'6px'}
-                bgcolor={'primary.main'}
-                height="100%"
-                position="absolute"
-                left={viewportLowerWidthLimit - 3}
-                top={0}
-              />
-            )}
-          {editorState.ui.viewportLimitsMode &&
-            typeof viewportUpperWidthLimit === 'number' && (
-              <Box
-                width={'6px'}
-                bgcolor={'secondary.main'}
-                height="100%"
-                position="absolute"
-                left={viewportUpperWidthLimit - 3}
-                top={0}
-              />
-            )}
           {renderPage(pageName)}
         </Box>
       ) : (
@@ -286,7 +266,7 @@ export const HtmlRendererComponent = <
           height={editorState.ui.previewMode ? '100%' : undefined}
           sx={containerStyles}
         >
-          {editorState.ui.viewportLimitsMode &&
+          {/* {editorState.ui.viewportLimitsMode &&
             typeof viewportLowerWidthLimit === 'number' && (
               <Box
                 width={'6px'}
@@ -307,7 +287,8 @@ export const HtmlRendererComponent = <
                 left={viewportUpperWidthLimit - 3}
                 top={0}
               />
-            )}
+            )} */}
+          {injectElementInContainerStart}
           {renderedCurrentPageElements}
         </Box>
       )}
