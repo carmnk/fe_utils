@@ -86,7 +86,39 @@ export const ElementBox = <
                   undefined,
                   undefined // icons
                 )
-              : valueRaw
+              : valueRaw &&
+                  typeof valueRaw === 'object' &&
+                  !Array.isArray(valueRaw) &&
+                  Object.keys(valueRaw).length > 0
+                ? Object.keys(valueRaw).reduce((acc, key) => {
+                    const valueRawSingle =
+                      valueRaw[key as keyof typeof valueRaw]
+                    const valueSingle =
+                      typeof valueRawSingle === 'string' &&
+                      valueRawSingle.match(regexAnyPlaceholder)
+                        ? replacePlaceholdersInString(
+                            valueRawSingle,
+                            appController.state,
+                            editorState.compositeComponentProps,
+                            editorState.properties,
+                            editorState.attributes,
+                            element,
+                            element?._id,
+                            rootCompositeElementId,
+                            undefined,
+                            undefined // icons
+                          )
+                        : valueRawSingle
+
+                    return {
+                      ...acc,
+                      [key]:
+                        typeof valueSingle === 'string'
+                          ? valueSingle
+                          : valueSingle?.toString(),
+                    }
+                  }, {})
+                : valueRaw
 
           return {
             ...acc,
@@ -110,6 +142,7 @@ export const ElementBox = <
   ) {
     console.debug(
       'elementAttributsDict',
+      element._id,
       element?._type,
       element?.component_id,
       elementAttributsDict,
