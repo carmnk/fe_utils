@@ -183,6 +183,7 @@ export const renderElements = <
       icons,
       elementProps: allElementProps,
       navigate,
+      isProduction,
     })
 
     const specificReactElementProps = getReactElementProps({

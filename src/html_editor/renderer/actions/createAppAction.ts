@@ -20,6 +20,7 @@ export const createAppAction = (params: {
   appController: EditorRendererController['appController']
   icons: any
   navigate: NavigateFunction
+  isDev: boolean
   // formData?: Record<string, any>
 }) => {
   const {
@@ -72,16 +73,20 @@ export const createAppAction = (params: {
           )
           const navigationAction = navigationActionElementIds.includes(actionId)
           const isPageNavigation = actionId === 'navigateToPage'
-          if (!endpointAction && !navigationAction) {
+          if (!endpointAction && !navigationAction && !isPageNavigation) {
             console.warn(
-              'No ep and no nav÷ action found for actionId',
+              'No ep and no nav -action found for actionId',
               actionId
             )
             continue
           }
           if (isPageNavigation) {
             // const pageId = fnParams?.[0] as string
-            navigate('index')
+            if (isDev) {
+              console.warn('Navigate to page not implemented in dev mode')
+            } else {
+              navigate('index')
+            }
             continue
           }
           if (endpointAction) {

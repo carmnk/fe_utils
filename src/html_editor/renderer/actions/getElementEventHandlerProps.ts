@@ -19,6 +19,7 @@ export type GetElementEventHandlersParams = {
   icons: any
   elementProps: Property[]
   navigate: NavigateFunction
+  isProduction?: boolean
 }
 export const getElementEventHandlerProps = (
   params: GetElementEventHandlersParams
@@ -33,6 +34,7 @@ export const getElementEventHandlerProps = (
     icons,
     elementProps,
     navigate,
+    isProduction,
   } = params
 
   const isReactElement = isComponentType(element._type)
@@ -74,6 +76,7 @@ export const getElementEventHandlerProps = (
               appController,
               icons,
               navigate,
+              isDev: !isProduction,
             })
           : () => {
               return createAppAction({
@@ -85,6 +88,7 @@ export const getElementEventHandlerProps = (
                 appController,
                 icons,
                 navigate,
+                isDev: !isProduction,
               })
             },
       }
