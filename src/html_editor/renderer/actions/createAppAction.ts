@@ -32,6 +32,7 @@ export const createAppAction = (params: {
     eventName,
     icons,
     navigate,
+    isDev,
     // formData,
   } = params
 
