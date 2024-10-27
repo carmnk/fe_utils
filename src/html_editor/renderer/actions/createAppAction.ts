@@ -82,15 +82,22 @@ export const createAppAction = (params: {
             continue
           }
           if (isPageNavigation) {
-            // const pageId = fnParams?.[0] as string
+            const actionsParmValue = editorState.actionParams.find(
+              (ap) =>
+                ap.param_name === 'navigatePage' &&
+                ap.element_id === element._id &&
+                ap.event_name === eventName
+            )?.param_value
             if (isDev) {
-              console.warn('Navigate to page not implemented in dev mode')
+              console.warn(
+                'Navigate to page not implemented in dev mode, will navigate to ' +
+                  actionsParmValue
+              )
             } else {
-              navigate('index')
+              navigate('/' + actionsParmValue)
             }
             continue
-          }
-          if (endpointAction) {
+          } else if (endpointAction) {
             const endpointId = endpointAction.endpoint_id
             const endpoint = editorState.externalApis
               .map((api) =>
