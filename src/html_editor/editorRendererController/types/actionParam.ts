@@ -6,4 +6,5 @@ export type ActionsParams = {
   element_id: string | null
   template_id: string | null
   component_id: string | null
+  event_name: string | null
 }
