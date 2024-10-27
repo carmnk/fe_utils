@@ -213,23 +213,18 @@ export const renderElements = <
       _content: content,
     }
 
-    if (
-      element?._id === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65' ||
-      ['svg', 'polygon'].includes(element._type)
-    ) {
-      console.debug('elementAdj2  ', elementAdj2, renderedElementChildren)
-    }
-    if (
-      element?._parentId === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65' ||
-      debug
-    ) {
-      console.debug(
-        'elementAdj  43333   ',
-        debug,
-        elementAdj2,
-        renderedElementChildren
-      )
-    }
+    console.log('IS PRODUCTION', isProduction)
+    // if (
+    //   element?._parentId === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65' ||
+    //   debug
+    // ) {
+    //   console.debug(
+    //     'elementAdj  43333   ',
+    //     debug,
+    //     elementAdj2,
+    //     renderedElementChildren
+    //   )
+    // }
 
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />
