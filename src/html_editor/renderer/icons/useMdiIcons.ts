@@ -1,6 +1,5 @@
 import { EditorStateType, Element } from '../../editorRendererController/types'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { importIconByName } from './asyncImportMdiIcon'
 import { ArraySchemaType, ComponentDefType } from '../../editorComponents'
 
 /** extracts a component's icon keys (properties of type 'icon') */
@@ -48,7 +47,8 @@ type Icons = { [key: string]: string }
 export const useMdiIcons = (
   selectedPageElements: Element[],
   components: ComponentDefType[],
-  properties: EditorStateType['properties']
+  properties: EditorStateType['properties'],
+  importIconByName: (name: string) => Promise<string>
 ): [{ [key: string]: string }, Dispatch<SetStateAction<Icons>>] => {
   const [icons, setIcons] = useState<Icons>({})
 
