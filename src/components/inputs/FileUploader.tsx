@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { Button } from '../buttons/Button/Button'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
-import { useDropzone } from 'react-dropzone'
+import { DropzoneInputProps, useDropzone } from 'react-dropzone'
 import { mdiDeleteOutline, mdiTrayArrowDown, mdiTrayArrowUp } from '@mdi/js'
 import {
   ReactNode,
@@ -30,7 +30,7 @@ const downloadFile = (file: File & { filename?: string }) => {
 export type FileUploaderSyncedFileType = {
   file?: File
   filename: string
-  upload_date: any
+  upload_date: string
   document_id: number
 }
 
@@ -39,7 +39,7 @@ export type FileUploaderNewFileType = { file: File; filename: string }
 export type FileUploaderProps = {
   inputId: string
   isLoading: boolean
-  handleUpload: (file: any, e: any, idx?: number) => void
+  handleUpload: (file: File[], e: unknown, idx?: number) => void
   accept: string
   label: ReactNode
   error?: boolean
@@ -49,7 +49,7 @@ export type FileUploaderProps = {
   disableDelete?: boolean
   files?: (FileUploaderNewFileType | FileUploaderSyncedFileType)[]
   enableMultipleFiles?: boolean
-  handleReplaceFile?: (file: any, e: any, idx?: number) => void
+  handleReplaceFile?: (file: File[], e: unknown, idx?: number) => void
 }
 
 export const FileUploader = (props: FileUploaderProps) => {
@@ -71,7 +71,7 @@ export const FileUploader = (props: FileUploaderProps) => {
   const theme = useTheme()
 
   const [userFiles, setUserFiles] = useState<{
-    files: any[]
+    files: File[]
     fileIdx?: number
   }>({ files: [] })
 
@@ -87,7 +87,9 @@ export const FileUploader = (props: FileUploaderProps) => {
     accept: { [accept]: [] },
     noClick: true,
   })
-  const { ref: HiddenInputRef } = getInputProps() as any
+  const { ref: HiddenInputRef } = getInputProps<
+    DropzoneInputProps & { ref: { current: HTMLInputElement } }
+  >()
   const uploadFileIdx = useRef<undefined | number>()
 
   const errorBorderStyle = {
@@ -119,8 +121,10 @@ export const FileUploader = (props: FileUploaderProps) => {
         // downloadDocument({ document_id: file.document_id }, [file.document_id])
         alert('not yet implemented')
       } else if ('file' in file) {
-        const downloadedFile: any = file.file
-        downloadedFile.filename = file.filename
+        // es
+        const downloadedFile: File = file.file
+        ;(downloadedFile as File & { filename: string }).filename =
+          file.filename
         downloadFile(downloadedFile)
       }
     },
@@ -140,9 +144,13 @@ export const FileUploader = (props: FileUploaderProps) => {
 
   const hiddenInputProps = useMemo(() => {
     const allProps = getInputProps()
-    const { mutliple, ...restProps } = allProps as any
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { mutliple, ...restProps } = allProps as DropzoneInputProps & {
+      mutliple: boolean
+    }
     return restProps
   }, [getInputProps])
+
   return (
     <Box position="relative" width="100%">
       <Box mb="8px">
@@ -199,7 +207,9 @@ export const FileUploader = (props: FileUploaderProps) => {
               id={inputId}
               accept={accept}
               onChange={(e) => {
-                setUserFiles({ files: e.target.files as unknown as any[] })
+                const fileList = e.target.files
+                if (!fileList) return
+                setUserFiles({ files: fileList as unknown as File[] })
               }}
               style={{ visibility: 'hidden', height: 0, position: 'absolute' }}
               {...hiddenInputProps}

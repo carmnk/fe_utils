@@ -7,9 +7,7 @@ import { replacePlaceholdersInString } from '../placeholder/replacePlaceholder'
 import { queryAction } from './queryAction'
 import { NavigateFunction } from 'react-router-dom'
 
-type EditorRendererController = EditorRendererControllerType<{
-  actions: undefined
-}>
+type EditorRendererController = EditorRendererControllerType
 
 export const createAppAction = (params: {
   element: Element
@@ -18,11 +16,11 @@ export const createAppAction = (params: {
   currentViewportElements: EditorRendererController['currentViewportElements']
   COMPONENT_MODELS: EditorRendererController['COMPONENT_MODELS']
   appController: EditorRendererController['appController']
-  icons: any
+  icons?: Record<string, string>
   navigate: NavigateFunction
   isProduction?: boolean
   // formData?: Record<string, any>
-}) => {
+}): ((...fnParams: unknown[]) => Promise<void>) | undefined => {
   const {
     element,
     editorState,
@@ -49,7 +47,7 @@ export const createAppAction = (params: {
   const getPropByName = (key: string) =>
     allElementProps?.find((prop) => prop.prop_name === key)?.prop_value
 
-  const eventProps = getPropByName(eventName)
+  const eventProps = getPropByName(eventName) as string[]
   return !eventProps?.length
     ? undefined
     : async (...fnParams: unknown[]) => {
@@ -118,7 +116,7 @@ export const createAppAction = (params: {
             )
             const elementTemplateValuesDict = editorState.actionParams
               .filter((ap) => ap.element_id === element._id)
-              .reduce<Record<string, any>>((acc, cur) => {
+              .reduce<Record<string, string>>((acc, cur) => {
                 return {
                   ...acc,
                   [cur.param_name]: cur.param_value,
@@ -130,21 +128,23 @@ export const createAppAction = (params: {
 
             const elementTemplateValuesDictAdj = isItemEvent
               ? Object.keys(elementTemplateValuesDict).reduce<
-                  Record<string, any>
+                  Record<string, string>
                 >((acc, cur) => {
                   const value =
                     elementTemplateValuesDict?.[
                       cur as keyof typeof elementTemplateValuesDict
                     ]
                   const replaceValue = fnParams?.[1] as string
-                  const newValue = ['string', 'number'].includes(
-                    typeof replaceValue
-                  )
-                    ? value?.replaceAll?.('{itemId}', replaceValue)
-                    : value
-                  const matches = newValue?.match?.(
-                    /{(_data|form|formData|props|treeviews|buttonStates)\.[^}]*}/g
-                  )
+                  const newValue =
+                    typeof value === 'string' &&
+                    ['string', 'number'].includes(typeof replaceValue)
+                      ? value?.replaceAll?.('{itemId}', replaceValue)
+                      : value
+                  const matches =
+                    typeof newValue === 'string' &&
+                    newValue?.match?.(
+                      /{(_data|form|formData|props|treeviews|buttonStates)\.[^}]*}/g
+                    )
                   if (element._type === 'Form') {
                     console.debug(
                       'Before Replace Placeholders with Form element',
@@ -153,7 +153,7 @@ export const createAppAction = (params: {
                       fnParams,
                       'form passed',
                       element?._type === 'Form'
-                        ? (fnParams?.[1] as any)
+                        ? (fnParams?.[1] as Record<string, unknown>)
                         : undefined
                     )
                   }
@@ -164,14 +164,14 @@ export const createAppAction = (params: {
                         editorState.compositeComponentProps,
                         editorState.properties,
                         editorState.attributes,
-                        element as any,
+                        element,
                         element._id,
                         undefined,
                         undefined,
                         icons,
                         undefined,
                         element?._type === 'Form'
-                          ? (fnParams?.[1] as any)
+                          ? (fnParams?.[1] as Record<string, unknown>)
                           : undefined
                       )
                     : newValue
@@ -199,7 +199,7 @@ export const createAppAction = (params: {
             await queryAction(
               appController,
               action?.action_id ?? '', // should never happen -> should always have action
-              endpoint?.method,
+              endpoint?.method as string,
               url,
               !!endpoint?.useCookies,
               endpoint?.body,

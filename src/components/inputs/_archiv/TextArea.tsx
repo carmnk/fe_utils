@@ -1,17 +1,23 @@
-import { ReactNode, TextareaHTMLAttributes, useCallback, useState } from 'react'
+import {
+  ChangeEventHandler,
+  ReactNode,
+  TextareaHTMLAttributes,
+  useCallback,
+  useState,
+} from 'react'
 import { Box, Typography, useTheme } from '@mui/material'
 import { CommonInputFieldProps } from '../types'
 
 const requiredFieldText = 'This field is required'
 
 export type TextAreaProps = CommonInputFieldProps &
-  Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> & {
+  Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange' | 'value'> & {
     value: string | undefined
-    onChange?: any
+    onChange?: ChangeEventHandler<HTMLTextAreaElement>
     rows?: number
     helperTextHeight?: number
     labelSx?: { [key: string]: string }
-    onChangeCompleted?: any
+    onChangeCompleted?: (value: string | undefined) => void
     injectLabelComponent?: ReactNode
     labelSubtext?: ReactNode
     disableLabel?: boolean

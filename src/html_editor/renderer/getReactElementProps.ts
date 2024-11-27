@@ -1,3 +1,5 @@
+import { FC, MouseEvent } from 'react'
+import { ComponentDefType } from '../editorComponents'
 import {
   AppController,
   EditorStateType,
@@ -12,14 +14,14 @@ export type GetReactElementPropsParams = {
   elementPropsObject: Record<string, unknown>
   elementProps: Property[]
   appController: AppController
-  CurrentComponent: any
-  tableUis: any
-  uiActions: any
-  icons: any
-  eventHandlerProps: any
+  CurrentComponent?: FC<object>
+  tableUis: EditorStateType['ui']['tableUis']
+  uiActions: unknown
+  icons: Record<string, string>
+  eventHandlerProps: Record<string, unknown>
   editorState: EditorStateType
   currentViewportElements: Element[]
-  COMPONENT_MODELS: any
+  COMPONENT_MODELS: ComponentDefType[]
   isProduction?: boolean
   navigate: NavigateFunction
 }
@@ -44,13 +46,13 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
   const getPropByName = (key: string) =>
     elementProps?.find((prop) => prop.prop_name === key)?.prop_value
 
-  const navValueState = (appController as any)?.state?.[element?._id] ?? []
+  const navValueState = appController?.state?.[element?._id] ?? []
   const onTabChange = (tabValue: string) => {
     appController.actions.updateProperty(element?._id, tabValue)
   }
 
-  const openModal = (appController as any)?.state?.[element?._id]
-  const handleToggleOpen = () => {
+  const openModal = appController?.state?.[element?._id]
+  const handleToggleOpen = (open: boolean) => {
     appController.actions.updateProperty(element?._id, !open)
   }
 
@@ -59,10 +61,10 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
       ? (() => {
           const treeViewSelectedState =
             appController?.state?.treeviews?.selectedId[element?._id] ?? {}
-          const onTreeViewSelectionChange = (e: any, itemId: string) => {
+          const onTreeViewSelectionChange = (e: unknown, itemId: string) => {
             const item = Array.isArray(elementPropsObject?.items)
               ? elementPropsObject?.items?.find(
-                  (item: any) => item.nodeId === itemId
+                  (item) => item.nodeId === itemId
                 )
               : []
             appController.actions.changeTreeviewSelectedItem(
@@ -81,10 +83,10 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
         ? (() => {
             const clientFilters = tableUis?.[element._id]?.filters ?? []
             const clientFiltersExSorting = clientFilters?.filter(
-              (f: any) => f.filterKey !== 'sorting'
+              (f) => f.filterKey !== 'sorting'
             )
             const clientFilterSorting = clientFilters?.filter(
-              (f: any) => f.filterKey === 'sorting'
+              (f) => f.filterKey === 'sorting'
             )?.[0]?.value
             const [clientFilterKey, clientFilterDirection] =
               clientFilterSorting?.split?.(',') ?? []
@@ -92,15 +94,17 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
             const dataProp = getPropByName('data')
             const isPlaceholderProp = typeof dataProp === 'string'
             const tableData =
-              (isPlaceholderProp ? elementPropsObject?.data : dataProp) || []
+              ((isPlaceholderProp
+                ? elementPropsObject?.data
+                : dataProp) as Record<string, string>[]) || []
             const clientFilteredTableData =
-              tableData?.filter?.((d: any) =>
+              tableData?.filter?.((d) =>
                 clientFiltersExSorting?.length
-                  ? clientFilters.some((f: any) => f.value === d[f.filterKey])
+                  ? clientFilters.some((f) => f.value === d[f.filterKey])
                   : true
               ) ?? []
             const clientSortedFilteredTableData = clientFilterKey
-              ? clientFilteredTableData?.sort?.((a: any, b: any) => {
+              ? clientFilteredTableData?.sort?.((a, b) => {
                   const sortKey = clientFilterKey
                   return a?.[sortKey] > b?.[sortKey]
                     ? clientFilterDirection === 'asc'
@@ -115,9 +119,17 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
               : clientFilteredTableData
             return {
               data: clientSortedFilteredTableData || [],
-              onSetFilters: (newFilters: any) => {
-                typeof uiActions?.setTableFilters === 'function' &&
-                  uiActions?.setTableFilters?.(element._id, newFilters)
+              onSetFilters: (
+                newFilters: { filterKey: string; value: string }[]
+              ) => {
+                if (
+                  uiActions &&
+                  typeof uiActions === 'object' &&
+                  'setTableFilters' in uiActions
+                ) {
+                  typeof uiActions?.setTableFilters === 'function' &&
+                    uiActions?.setTableFilters?.(element._id, newFilters)
+                }
               },
               filters: clientFilters,
             }
@@ -129,7 +141,7 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
                   elementPropsObject?.formData ??
                   appController.actions.getFormData(element._id),
                 onChangeFormData: eventHandlerProps?.onChangeFormData
-                  ? (newFormData: any) =>
+                  ? (newFormData: Record<string, unknown>) =>
                       createAppAction?.({
                         element,
                         eventName: 'onChangeFormData',
@@ -141,13 +153,11 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
                         navigate,
                         isProduction,
                       })?.(null, newFormData)
-                  : /* eslint-disable @typescript-eslint/no-unused-vars */
-                    (
-                      newFormData: any,
-                      propertyKey: string,
-                      propertyValue: any,
-                      prevFormData: any
-                      /* eslint-enable @typescript-eslint/no-explicit-any */
+                  : (
+                      newFormData: Record<string, unknown>
+                      // propertyKey: string,
+                      // propertyValue: any,
+                      // prevFormData: any
                     ) => {
                       appController.actions.changeFormData(
                         element._id,
@@ -158,7 +168,7 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
             })()
           : element._type === 'Button'
             ? {
-                onClick: (e: any) => {
+                onClick: (e: MouseEvent) => {
                   if (element?._type === 'Button') {
                     appController.actions.changeButtonState(element._id)
                   }
@@ -189,18 +199,18 @@ export const getReactElementProps = (params: GetReactElementPropsParams) => {
                 : element._type === 'AppBar'
                   ? {
                       sx:
-                        ((elementPropsObject as any)?.position === 'fixed' ||
-                          !(elementPropsObject as any)?.position) &&
+                        (elementPropsObject?.position === 'fixed' ||
+                          !elementPropsObject?.position) &&
                         !isProduction
                           ? {
-                              ...((elementPropsObject as any)?.sx ?? {}),
+                              ...(elementPropsObject?.sx ?? {}),
                               top: 42,
                               left: editorState.ui.previewMode ? 0 : 364,
                               width: editorState.ui.previewMode
                                 ? '100%'
                                 : 'calc(100% - 364px - 350px)',
                             }
-                          : { ...((elementPropsObject as any)?.sx ?? {}) },
+                          : { ...(elementPropsObject?.sx ?? {}) },
                     }
                   : {}
   return reactiveElementProps

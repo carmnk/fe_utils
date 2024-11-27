@@ -2,7 +2,6 @@ import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
 import { ICON_NAMES } from '../../../defs/iconNames'
 import { MuiSize } from '../../../defs/muiSizeDict'
 import { BASE_POINTER_EVENTS } from '../../commonSchemas/basePointerEvents'
-import { CLIPBOARD_EVENTS } from '../../commonSchemas/clipboardEvents'
 import { DRAG_EVENTS } from '../../commonSchemas/dragEvents'
 import { FOCUS_EVENTS } from '../../commonSchemas/focusEvents'
 import { KEYBOARD_EVENTS } from '../../commonSchemas/keyboardEvents'
@@ -21,9 +20,12 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.String,
       form: {},
       enum: [],
-      groupBy: (item: any) => item?.category,
+      groupBy: (item) =>
+        item && typeof item === 'object' && 'category' in item
+          ? (item?.category as string)
+          : undefined,
       category: 'shortcut',
-    } as any,
+    },
     label: {
       type: PropertyType.String,
       required: false,
@@ -202,7 +204,7 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       label: 'sx',
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
-    } as any,
+    },
 
     slotProps: {
       type: PropertyType.Object,
@@ -219,7 +221,7 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'sx',
-        } as any,
+        },
         startIcon: {
           type: PropertyType.json,
           form: {
@@ -227,7 +229,7 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'sx',
-        } as any,
+        },
         endIcon: {
           type: PropertyType.json,
           form: {
@@ -235,7 +237,7 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'sx',
-        } as any,
+        },
         loadingIconContainer: {
           type: PropertyType.json,
           form: {
@@ -243,7 +245,7 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'sx',
-        } as any,
+        },
         loadingProgress: {
           type: PropertyType.json,
           form: {
@@ -251,7 +253,7 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'sx',
-        } as any,
+        },
         tooltip: {
           type: PropertyType.json,
           form: {
@@ -259,16 +261,9 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'sx',
-        } as any,
+        },
       },
-
-      // keysDict: CSS_RULE_NAMES_DICT_FULL,
     },
-
-    // children: {
-    //   type: PropertyType.String,
-    //   required: true,
-    // },
     ...BASE_POINTER_EVENTS,
     ...MOUSE_EVENTS,
     ...POINTER_EVENTS,
@@ -276,7 +271,5 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
     ...TOUCH_EVENTS,
     ...DRAG_EVENTS,
     ...FOCUS_EVENTS,
-
-    // ...CLIPBOARD_EVENTS,
   },
 }

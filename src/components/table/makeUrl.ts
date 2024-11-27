@@ -1,14 +1,14 @@
-import { FilterType } from './types'
+import { GenericFilterType } from './types'
 import { TableUiType } from './useTableController'
 
 export type MakeFilterUrlParams = {
   url: string
 
   searchValue?: string
-  externalFilters?: FilterType[]
+  externalFilters?: GenericFilterType[]
   disablePagination?: boolean
-  preprocessFilters?: (filters: FilterType[]) => FilterType[]
-  postprocessFilters?: (filters: FilterType[]) => FilterType[]
+  preprocessFilters?: (filters: GenericFilterType[]) => GenericFilterType[]
+  postprocessFilters?: (filters: GenericFilterType[]) => GenericFilterType[]
   searchParamIn?: TableUiType['searchParam']
   filters?: TableUiType['filters']
   pageNumber: number

@@ -5,6 +5,7 @@ import { EllipsisTextWithTooltip } from '../../basics/EllipsisTooltip'
 import { Button } from '../../buttons/Button'
 import { FilteredTableHeaderCell } from './FilteredColumns'
 import { FilterType, TableProps } from '../types'
+import { CSSProperties } from 'react'
 
 const Thead = (props: BoxProps) => <Box component="thead" {...props} />
 
@@ -60,8 +61,8 @@ export const TableHeader = (props: TableHeaderProps) => {
           )
 
           const defaultSelectedFilter = filters
-            ?.filter((aparam: any) => aparam.filterKey === col?.filterKey)
-            ?.map?.((aparam: any) => aparam?.value)
+            ?.filter((aparam) => aparam.filterKey === col?.filterKey)
+            ?.map?.((aparam) => aparam?.value)
 
           return col?.isRowSelect ? (
             <Tooltip
@@ -76,9 +77,9 @@ export const TableHeader = (props: TableHeaderProps) => {
             >
               <td
                 // className={'hover:bg-gray-200 ' + col?.className || ''}
-                style={(col as any)?.style}
+                style={'style' in col ? (col.style as CSSProperties) : {}}
               >
-                {!disableTableHeader && onUnselectAll && onSelectAll && (
+                {!disableTableHeader && (
                   <Flex
                     // className="relative flex items-center justify-center cursor-pointer "
                     position="relative"
@@ -127,7 +128,10 @@ export const TableHeader = (props: TableHeaderProps) => {
               disableTableHeader={disableTableHeader}
             />
           ) : (
-            <td key={cIdx} style={(col as any)?.style}>
+            <td
+              key={cIdx}
+              style={'style' in col ? (col?.style as CSSProperties) : undefined}
+            >
               {!disableTableHeader && (
                 <Tooltip arrow title={col?.headerToolTip ?? ''} placement="top">
                   <Stack direction="row" gap="2px" pr={!col?.sortKey ? 0 : 1}>

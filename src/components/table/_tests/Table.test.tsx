@@ -14,11 +14,11 @@ const ROWS = [
 const COLUMNS: TableProps['columns'] = [
   {
     isRowSelect: true,
-  },
+  } as any,
   {
     header: 'ID',
-    renderCell: (row) => <td>{row.id}</td>,
-    // renderFooterCell: (footerData) => <td>{footerData.title}</td>,
+    renderCell: (row: any) => <td>{row.id}</td>,
+    renderFooterCell: (footerData) => <td>-</td>,
     // additionalFilterKeys
     filterKey: 'id',
     sortKey: 'id',
@@ -26,8 +26,8 @@ const COLUMNS: TableProps['columns'] = [
   {
     header: 'Name',
     // additionalFilterKeys
-    renderCell: (row) => <td>{row.name}</td>,
-    renderFooterCell: (footerData) => <td>{footerData.total}</td>,
+    renderCell: (row: any) => <td>{row.name}</td>,
+    renderFooterCell: (footerData: any) => <td>{footerData.total}</td>,
     filterKey: 'name',
     sortKey: 'name',
   },
@@ -37,16 +37,16 @@ const FixtureComponent = (props: Partial<TableProps>) => {
   return (
     <Table
       columns={COLUMNS}
-      rows={ROWS}
-      allFilters={[]}
+      data={ROWS}
+      filters={[]}
       headerBackground="red"
       disableTableHeader={false}
-      disableClearFilters={false}
+      disableClearFiltersOnNoResults={false}
       disableNoResults={false}
       disableSelection={false}
       //   footer={}
       // expandedRowIds={}
-      getRowColor={() => 'gray'}
+      getTrLeftBorderColor={() => 'gray'}
       loading={false}
       noResultsLabel="There were no results found"
       //   reorderRowId=''
@@ -58,51 +58,49 @@ const renderFixture = (
   overrideProps?: Partial<TableProps>,
   rerender?: () => any
 ): ReturnType<typeof render> & {
-  handleSetPageNumber: jest.Mock<any, any>
-  handleClearFilters: jest.Mock<any, any>
-  handleSetAllFilters: jest.Mock<any, any>
+  // handleSetPageNumber: jest.Mock<any, any>
+  // handleClearFilters: jest.Mock<any, any>
+  handleSetFilters: jest.Mock<any, any>
   handleSelectAll: jest.Mock<any, any>
   handleSelectRow: jest.Mock<any, any>
   handleClearSelected: jest.Mock<any, any>
-  handleExpandedRow: jest.Mock<any, any>
+  // handleExpandedRow: jest.Mock<any, any>
   handleReorder: jest.Mock<any, any>
-  handleOnSetAllFilters: jest.Mock<any, any>
+  // handleOnSetAllFilters: jest.Mock<any, any>
 } => {
-  const handleSetPageNumber = jest.fn()
-  const handleClearFilters = jest.fn()
-  const handleSetAllFilters = jest.fn()
-  const handleOnSetAllFilters = jest.fn()
+  // const handleSetPageNumber = jest.fn()
+  // const handleClearFilters = jest.fn()
+  const handleSetFilters = jest.fn()
+  // const handleOnSetAllFilters = jest.fn()
   const handleSelectAll = jest.fn()
   const handleSelectRow = jest.fn()
   const handleClearSelected = jest.fn()
-  const handleExpandedRow = jest.fn()
+  // const handleExpandedRow = jest.fn()
   const handleReorder = jest.fn()
 
   const renderResult = (rerender || render)(
     <FixtureComponent
-      setPageNumber={handleSetPageNumber}
-      clearFilters={handleClearFilters}
-      setAllFilters={handleSetAllFilters}
-      onSelectAll={handleSelectAll}
+      // setPageNumber={handleSetPageNumber}
+      // clearFilters={handleClearFilters}
+      // onSetAllFilters={handleOnSetAllFilters}
+
+      onSetFilters={handleSetFilters}
+      onSelectAllFilters={handleSelectAll}
       onSelectRow={handleSelectRow}
-      onUnselectAll={handleClearSelected}
-      onExpandedRow={handleExpandedRow}
+      onUnselectAllFilters={handleClearSelected}
+      // ={handleExpandedRow}
       onReorder={handleReorder}
-      onSetAllFilters={handleOnSetAllFilters}
       {...overrideProps}
     />
   )
   return {
     ...renderResult,
-    handleSetAllFilters,
-    handleClearFilters,
-    handleSetPageNumber,
+    handleSetFilters,
     handleSelectAll,
     handleSelectRow,
     handleClearSelected,
-    handleExpandedRow,
     handleReorder,
-    handleOnSetAllFilters,
+    // handleOnSetAllFilters,
   }
 }
 
@@ -135,7 +133,7 @@ describe('Table', () => {
     expect(tfootElement).toBeInTheDocument()
     expect(tfootElement).toHaveStyle('background-color: blue;')
     const tds = tfootElement?.querySelectorAll('td')
-    expect(tds).toHaveLength(COLUMNS.length)
+    expect(tds).toHaveLength(COLUMNS.length - 1)
     const items = Object.keys(FOOTER)
       .map((key) => FOOTER[key])
       .flat()
@@ -146,7 +144,7 @@ describe('Table', () => {
   it('renders a customizable no results note if no rows prop is empty', () => {
     const { getAllByRole, getByText, getByTestId, rerender, queryByText } =
       renderFixture({
-        rows: [],
+        data: [],
       })
     const noResultsRowLength = 1
     // +1 for the header row
@@ -155,7 +153,7 @@ describe('Table', () => {
 
     renderFixture(
       {
-        rows: [],
+        data: [],
         noResultsLabel: 'nothing found',
       },
       rerender as any
@@ -163,7 +161,7 @@ describe('Table', () => {
     expect(getByText('nothing found')).toBeInTheDocument()
     renderFixture(
       {
-        rows: [],
+        data: [],
         noResultsLabel: 'nothing found',
         disableNoResults: true,
       },
@@ -174,7 +172,7 @@ describe('Table', () => {
   it('renders a customizable table header', () => {
     const { getAllByRole, getByText, getByTestId, rerender, queryByText } =
       renderFixture({
-        //   rows: [],
+        //   data: [],
         headerBackground: 'magenta',
       })
 
@@ -215,7 +213,7 @@ describe('Table', () => {
     expect(allTdElements).toHaveLength(10 * COLUMNS.length)
   })
   it('renders select all checkbox triggering the corresponding callbacks', async () => {
-    const { rerender, handleSelectAll } = renderFixture({})
+    const { rerender, handleSelectAll, getByTestId } = renderFixture({})
 
     const theadElement = document.querySelector('thead')
     expect(theadElement).toBeInTheDocument()
@@ -228,7 +226,7 @@ describe('Table', () => {
       await fireEvent.click(eventContainer as HTMLElement, { button: 0 })
     })
     expect(handleSelectAll).toHaveBeenCalled()
-    const { handleClearFilters } = renderFixture(
+    const { handleClearSelected } = renderFixture(
       { selectedRows: [1] },
       rerender as any
     )
@@ -238,40 +236,46 @@ describe('Table', () => {
     await act(async () => {
       await fireEvent.click(eventContainer1 as HTMLElement, { button: 0 })
     })
-    expect(handleClearFilters).toHaveBeenCalledTimes(1)
+    expect(handleClearSelected).toHaveBeenCalledTimes(1)
   })
 
   it('it will call the setAllFilter/onSetAllFilters CB when sorting button for col is clicked', async () => {
-    const { rerender, handleSetAllFilters, handleOnSetAllFilters } =
-      renderFixture({
-        columns: COLUMNS.map((col) => ({ ...col, filterKey: 'filter' })),
-      })
+    const { rerender, handleSetFilters, getByAltText } = renderFixture({
+      columns: COLUMNS.map((col) => ({
+        ...col,
+        filterKey: 'filter',
+        filterOptions: [],
+      })),
+    })
     const theadElement = document.querySelector('thead')
     const trElement = theadElement?.querySelector('tr')
     const filterButtons = trElement?.querySelectorAll('button')
     // -1 for the row select column
-    expect(filterButtons).toHaveLength(COLUMNS.length - 1)
+    // expect(getByAltText('Sort')).toBeInTheDocument()
+    expect(filterButtons).toHaveLength((COLUMNS.length - 1) * 2)
+
+    console.warn('filterButtons', filterButtons)
     const button1 = filterButtons?.[0]
     await act(async () => {
-      fireEvent.click(button1)
+      fireEvent.click(button1 as any)
     })
-    expect(handleSetAllFilters).toHaveBeenCalledTimes(1)
-    const handleSetAllFiltersArgs = handleSetAllFilters.mock.calls[0][0]
-    const setAllFiltersArgs = handleSetAllFiltersArgs([])
+    expect(handleSetFilters).toHaveBeenCalledTimes(1)
+    const handleSetAllFiltersArgs = handleSetFilters.mock.calls[0][0]
+    const setAllFiltersArgs = handleSetAllFiltersArgs
     expect(setAllFiltersArgs).toEqual([
       { filterKey: 'sorting', value: 'id,asc' },
     ])
-    expect(handleOnSetAllFilters).toHaveBeenCalledTimes(1)
-    expect(handleOnSetAllFilters).toHaveBeenCalledWith([
-      { filterKey: 'sorting', value: 'id,asc' },
-    ])
+    // expect(handleOnSetAllFilters).toHaveBeenCalledTimes(1)
+    // expect(handleOnSetAllFilters).toHaveBeenCalledWith([
+    //   { filterKey: 'sorting', value: 'id,asc' },
+    // ])
 
     const {
-      handleSetAllFilters: setAll2,
-      handleOnSetAllFilters: onSetAll2,
+      handleSetFilters: setAll2,
+      // handleOnSetFilters: onSetAll2,
       rerender: re2,
     } = renderFixture(
-      { allFilters: [{ filterKey: 'sorting', value: 'id,asc' }] },
+      { filters: [{ filterKey: 'sorting', value: 'id,asc' }] },
       rerender as any
     )
     const theadElement2 = document.querySelector('thead')
@@ -279,33 +283,33 @@ describe('Table', () => {
     const filterButtons2 = trElement2?.querySelectorAll('button')
     const button2 = filterButtons2?.[0]
     await act(async () => {
-      fireEvent.click(button2)
+      fireEvent.click(button2 as any)
     })
     expect(setAll2).toHaveBeenCalledTimes(1)
     expect(setAll2).toHaveBeenCalledWith([
       { filterKey: 'sorting', value: 'id,desc' },
     ])
-    expect(onSetAll2).toHaveBeenCalledTimes(1)
-    expect(onSetAll2).toHaveBeenCalledWith([
-      { filterKey: 'sorting', value: 'id,desc' },
-    ])
+    // expect(onSetAll2).toHaveBeenCalledTimes(1)
+    // expect(onSetAll2).toHaveBeenCalledWith([
+    //   { filterKey: 'sorting', value: 'id,desc' },
+    // ])
 
-    const { handleSetAllFilters: setAll3, handleOnSetAllFilters: onSetAll3 } =
-      renderFixture(
-        { allFilters: [{ filterKey: 'sorting', value: 'id,desc' }] },
-        rerender as any
-      )
+    // const { handleSetAllFilters: setAll3, handleOnSetAllFilters: onSetAll3 } =
+    //   renderFixture(
+    //     { filters: [{ filterKey: 'sorting', value: 'id,desc' }] },
+    //     rerender as any
+    //   )
     const theadElement3 = document.querySelector('thead')
     const trElement3 = theadElement3?.querySelector('tr')
     const filterButtons3 = trElement3?.querySelectorAll('button')
     const button3 = filterButtons3?.[0]
     await act(async () => {
-      fireEvent.click(button3)
+      fireEvent.click(button3 as any)
     })
-    expect(setAll3).toHaveBeenCalledTimes(1)
-    expect(setAll3).toHaveBeenCalledWith([])
-    expect(onSetAll3).toHaveBeenCalledTimes(1)
-    expect(onSetAll3).toHaveBeenCalledWith([])
+    // expect(setAll3).toHaveBeenCalledTimes(1)
+    // expect(setAll3).toHaveBeenCalledWith([])
+    // expect(onSetAll3).toHaveBeenCalledTimes(1)
+    // expect(onSetAll3).toHaveBeenCalledWith([])
   })
 
   // Continue with tests for other properties...

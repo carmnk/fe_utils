@@ -249,5 +249,8 @@ export const HTML_TAG_NAMES_STRUCTURED_OPTIONS = [
 
 export const HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS =
   HTML_TAG_NAMES_STRUCTURED_OPTIONS.filter(
-    (item) => !Object.values(HTML_VOID_TAG_NAMES).includes(item.value as any)
+    (item) =>
+      !Object.values(HTML_VOID_TAG_NAMES).includes(
+        item.value as HTML_VOID_TAG_NAMES
+      )
   )

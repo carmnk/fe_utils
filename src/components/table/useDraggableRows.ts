@@ -3,9 +3,9 @@ import { ReactDOMAttributes } from '@use-gesture/react/dist/declarations/src/typ
 import { useState, useMemo } from 'react'
 
 export type UseDraggableRowsParams = {
-  rows: any[]
+  rows: Record<string, unknown>[]
   reorderRowId?: string | undefined
-  onReorder?: (startDragItem: any, currentHoverItem: any) => void
+  onReorder?: (startDragItem: unknown, currentHoverItem: unknown) => void
 }
 /**
  * Hook to make rows draggable
@@ -18,15 +18,15 @@ export type UseDraggableRowsParams = {
 export const useDraggableRows = (
   params: UseDraggableRowsParams
 ): {
-  draggedRows: any[]
-  bind: (...args: any[]) => ReactDOMAttributes
+  draggedRows: Record<string, unknown>[]
+  bind: (...args: unknown[]) => ReactDOMAttributes
   hoverItemId: string | number | boolean
   draggedItemId: string | number | boolean
 } => {
   const { rows, reorderRowId, onReorder } = params
   const [dragging, setDragging] = useState<{
-    startDragItem: { [key: string]: any; _idx: number }
-    currentHoverItem: { [key: string]: any; _idx: number }
+    startDragItem: { [key: string]: unknown; _idx: number }
+    currentHoverItem: { [key: string]: unknown; _idx: number }
   }>({ startDragItem: { _idx: -1 }, currentHoverItem: { _idx: -1 } })
 
   const bind = useGesture(
@@ -37,7 +37,12 @@ export const useDraggableRows = (
         if (item) {
           setDragging((current) => ({
             ...current,
-            currentHoverItem: !state?.active ? {} : { ...item, _idx },
+            currentHoverItem: !state?.active
+              ? ({} as {
+                  [key: string]: unknown
+                  _idx: number
+                })
+              : { ...item, _idx },
           }))
         }
       },
@@ -49,6 +54,7 @@ export const useDraggableRows = (
           startDragItem: { ...item, _idx },
         }))
       },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       onDragEnd: (state) => {
         onReorder?.(dragging?.startDragItem, dragging?.currentHoverItem)
         setDragging({
@@ -86,7 +92,7 @@ export const useDraggableRows = (
       !reorderRowId
     )
       return rows
-    return rows?.map((row, rIdx) =>
+    return rows?.map((row) =>
       row?.[reorderRowId] === draggedItemId
         ? dragging?.currentHoverItem
         : row?.[reorderRowId] === hoverItemId
@@ -94,5 +100,10 @@ export const useDraggableRows = (
           : row
     )
   }, [dragging, rows, draggedItemId, hoverItemId, reorderRowId])
-  return { draggedRows: adjRows, bind, draggedItemId, hoverItemId }
+  return {
+    draggedRows: adjRows,
+    bind,
+    draggedItemId: draggedItemId as string,
+    hoverItemId: hoverItemId as string,
+  }
 }

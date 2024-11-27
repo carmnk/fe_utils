@@ -37,7 +37,7 @@ export const tablePropsSchema: ExtendedObjectSchemaType = {
       ],
       label: 'Data',
       category: 'data',
-    } as any,
+    },
     columns: {
       type: PropertyType.Array,
       required: false,
@@ -69,7 +69,7 @@ export const tablePropsSchema: ExtendedObjectSchemaType = {
       },
       label: 'Footer-Data',
       category: 'data',
-    } as any,
+    },
     // children: {
     //   type: PropertyType.String,
     //   required: true,

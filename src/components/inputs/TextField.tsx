@@ -26,6 +26,7 @@ export type SpecificMuiTextFieldProps = Omit<
       | 'slotProps'
       | 'InputLabelProps'
       | 'SelectProps'
+      | 'ref'
     )
   | keyof GenericInputFieldProps<'text'>
 >
@@ -50,10 +51,10 @@ export type CustomTextFieldProps = {
 
 export type CTextFieldProps = GenericInputFieldProps<'text'> &
   SpecificMuiTextFieldProps &
-  CustomTextFieldProps
+  CustomTextFieldProps & { ref?: ForwardedRef<HTMLInputElement> }
 
 export const CTextField = forwardRef(
-  (props: CTextFieldProps, ref: ForwardedRef<any>) => {
+  (props: CTextFieldProps, ref?: ForwardedRef<HTMLInputElement>) => {
     const {
       value,
       label,
@@ -140,7 +141,7 @@ export const CTextField = forwardRef(
         onBlur: handleChangeCompleted,
         onFocus: handleChangeStarted,
         ...rest,
-        variant: (rest.variant ?? 'outlined') as any,
+        variant: rest.variant ?? 'outlined',
         inputProps: {
           maxLength,
           title: name,
@@ -233,7 +234,10 @@ export const CTextField = forwardRef(
     ])
 
     const labelRightInfoTooltip = useMemo(() => {
-      return labelRightInfo && (parseSimpleFormating(labelRightInfo) as any)
+      return (
+        labelRightInfo &&
+        (parseSimpleFormating(labelRightInfo) as unknown as string)
+      )
     }, [labelRightInfo])
 
     return (

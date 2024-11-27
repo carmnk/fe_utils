@@ -21,12 +21,10 @@ export const enrichEntityJoiningsWithPath = (
                 const linkedEntityJoinings = lowerLevelEntityJoinings?.find?.(
                   (v) => v.linked_entity_id === baseEntityId
                 )
-                baseEntityId = linkedEntityJoinings?.base_entity_id as any
-                const laName = linkedEntityJoinings?.linked_entity?.entity_name
+                baseEntityId = linkedEntityJoinings?.base_entity_id as number
+                // const laName = linkedEntityJoinings?.linked_entity?.entity_name
                 return (linkedEntityJoinings ??
-                  []) as (ENRICHED_ENTITY_JOININGS_MODEL_TYPE & {
-                  path: ENRICHED_ENTITY_JOININGS_MODEL_TYPE[]
-                })[] as any
+                  []) as ENRICHED_ENTITY_JOININGS_MODEL_TYPE
               })
               ?.reverse() || [],
         }

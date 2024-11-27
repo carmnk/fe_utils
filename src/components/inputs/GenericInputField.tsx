@@ -1,23 +1,29 @@
 import { CAutoComplete, CAutoCompleteProps } from './AutoComplete'
 import { MultiSelect, MultiSelectProps } from './MultiSelect'
 import { CNumberFieldProps, NumberField } from './NumberField'
-import { CSelectProps, Select } from './Select'
+import { CSelectProps } from './Select'
 import { CTextField, CTextFieldProps } from './TextField'
 import { DatePicker, DatePickerProps } from './DatePicker'
-import { TextArea, TextAreaProps } from './_archiv/TextArea'
+import { TextAreaProps } from './_archiv/TextArea'
 import { Checkbox, CheckboxProps } from './Checkbox'
 import { InputFieldType } from './types'
 import { Switch } from './Switch'
 import { GenericInputFieldProps } from './types'
-import { useMemo } from 'react'
+import { KeyboardEvent, KeyboardEventHandler, useMemo } from 'react'
 import { CSelect2 } from './Select2'
-import { CTimeField } from './TimeField'
+import { CTimeField, CTimeFieldProps } from './TimeField'
 import { JsonField, JsonFieldProps } from './JsonField'
-import { Box, Typography } from '@mui/material'
+import { Moment } from 'moment'
 
 export type GenericInputFieldOption = {
   label: string
   value: number | string | boolean
+}
+
+export type StringValueOption = {
+  label: string
+  value: string
+  textLabel?: string
 }
 
 export type SpecificInputProps<T extends InputFieldType> = T extends 'text'
@@ -66,8 +72,8 @@ export type GGenericInputFieldProps<T extends InputFieldType> =
         ? { [key: string]: { file: File; filename: string }[] }
         : never
       onFileChange?: (name: string, files: File[]) => void
-      onKeyDown?: (e: any) => void
-      onKeyUp?: (e: any) => void
+      onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+      onKeyUp?: (e: KeyboardEvent<HTMLInputElement>) => void
     }
 
 // export type GenericInputFieldProps<T extends InputFieldType> =
@@ -108,10 +114,38 @@ export const GenericInputField = <
     return sx
   }, [invisible, sx])
 
+  const multiSelectContainerProps = useMemo(() => {
+    return {
+      ...(
+        rest as unknown as {
+          ContainerProps: MultiSelectProps['ContainerProps']
+        }
+      )?.ContainerProps,
+      sx: {
+        width: '100%',
+        ...((
+          rest as unknown as {
+            ContainerProps: MultiSelectProps['ContainerProps']
+          }
+        )?.ContainerProps?.sx ?? {}),
+      },
+    }
+  }, [rest])
+
+  const multiSelectValue = useMemo(() => {
+    return value
+      ? typeof value === 'string' &&
+        value.startsWith('[') &&
+        value.endsWith(']')
+        ? JSON.parse(value)
+        : value
+      : []
+  }, [value])
+
   return hidden ? null : type === 'text' ? (
     <CTextField
       label={label}
-      value={value as any}
+      value={value as string}
       name={name}
       required={required}
       sx={sxAdj}
@@ -124,23 +158,27 @@ export const GenericInputField = <
   ) : type === 'number' ? (
     <NumberField
       label={label}
-      value={value as any}
+      value={value as number}
       name={name}
       required={required}
       sx={sxAdj}
       error={error}
-      {...(rest as any)}
+      {...rest}
+      onChange={rest.onChange as CNumberFieldProps['onChange']}
+      color={rest?.color === 'default' ? undefined : rest?.color}
     />
   ) : type === 'int' ? (
     <NumberField
       label={label}
-      value={value as any}
+      value={value as number}
       name={name}
       required={required}
       sx={sxAdj}
       error={error}
       isInt
-      {...(rest as any)}
+      {...rest}
+      onChange={rest.onChange as CNumberFieldProps['onChange']}
+      color={rest?.color === 'default' ? undefined : rest?.color}
     />
   ) : type === 'json' ? (
     // <NumberField
@@ -155,13 +193,14 @@ export const GenericInputField = <
     // />
 
     <JsonField
-      value={value}
+      value={value as unknown as Record<string, unknown>}
       name={name}
       required={required}
       sx={sxAdj}
       error={error}
-      label={label}
-      {...(rest as any)}
+      label={label as string}
+      {...rest}
+      onChange={rest.onChange as JsonFieldProps['onChange']}
     />
   ) : //
   // : type === 'file' ? (
@@ -187,42 +226,57 @@ export const GenericInputField = <
   type === 'bool' ? (
     <Checkbox
       label={label}
-      value={value as any}
+      value={value as boolean}
       name={name}
       required={required}
       error={error}
       sx={sxAdj}
-      {...(rest as Omit<SpecificInputProps<'bool'>, 'name' | 'value'>)}
+      {...rest}
+      onKeyUp={
+        rest.onKeyUp as unknown as KeyboardEventHandler<HTMLButtonElement>
+      }
+      onKeyDown={rest.onKeyDown as KeyboardEventHandler<HTMLButtonElement>}
+      onChange={rest.onChange as CheckboxProps['onChange']}
     />
   ) : type === 'switch' ? (
     <Switch
       label={label}
-      value={value as any}
+      value={value as boolean}
       name={name}
       required={required}
       sx={sxAdj}
       error={error}
-      {...(rest as any)}
+      {...rest}
+      onKeyUp={
+        rest.onKeyUp as unknown as KeyboardEventHandler<HTMLButtonElement>
+      }
+      onKeyDown={rest.onKeyDown as KeyboardEventHandler<HTMLButtonElement>}
+      color={rest?.color === 'default' ? undefined : rest?.color}
+      onChange={rest.onChange as CheckboxProps['onChange']}
     />
   ) : type === 'date' ? (
     <DatePicker
       label={label}
-      value={value as any}
+      value={value as string}
       name={name}
       required={required}
       sx={sxAdj}
       error={error}
-      {...(rest as any)}
+      {...rest}
+      color={rest?.color === 'default' ? undefined : rest?.color}
+      onChange={rest.onChange as DatePickerProps['onChange']}
     />
   ) : type === 'time' ? (
     <CTimeField
       label={label}
-      value={value as any}
+      value={value as unknown as Moment & string}
       name={name}
       required={required}
       sx={sxAdj}
       error={error}
-      {...(rest as any)}
+      color={rest?.color === 'default' ? undefined : rest?.color}
+      {...rest}
+      onChange={rest.onChange as CTimeFieldProps['onChange']}
     />
   ) : type === 'textarea' ? (
     <CTextField
@@ -232,53 +286,51 @@ export const GenericInputField = <
       required={required}
       sx={sxAdj}
       error={error}
-      {...(rest as any)}
+      {...rest}
+      color={rest?.color === 'default' ? undefined : rest?.color}
       multiline
+      onChange={rest.onChange as CTextFieldProps['onChange']}
     />
   ) : type === 'select' ? (
     <CSelect2
       label={label}
-      value={value}
+      value={value as string}
       name={name}
       required={required}
-      options={(options as any) ?? []}
+      options={(options as GenericInputFieldOption[]) ?? []}
       sx={sxAdj}
       error={error}
-      {...(rest as any)}
+      {...rest}
+      color={rest?.color === 'default' ? undefined : rest?.color}
+      onChange={rest.onChange as CTextFieldProps['onChange']}
     />
   ) : type === 'autocomplete' ? (
     <CAutoComplete
       label={label}
-      value={(value as any) ?? ''}
+      value={(value as string) ?? ''}
       name={name}
       required={required}
-      options={options ?? []}
+      options={(options as StringValueOption[]) ?? []}
       sx={sxAdj}
       error={error}
-      {...(rest as any)}
+      {...rest}
+      onKeyUp={rest.onKeyUp as KeyboardEventHandler<HTMLInputElement>}
+      color={rest?.color === 'default' ? undefined : rest?.color}
+      onChange={rest.onChange as CAutoCompleteProps['onChange']}
     />
   ) : type === 'multiselect' ? (
     <MultiSelect
       label={label}
-      value={
-        (value
-          ? typeof value === 'string' &&
-            value.startsWith('[') &&
-            value.endsWith(']')
-            ? JSON.parse(value)
-            : value
-          : []) || []
-      }
+      value={multiSelectValue}
       name={name}
       required={required}
-      options={options ?? []}
+      options={(options as StringValueOption[]) ?? []}
       sx={sxAdj}
       error={error}
-      {...(rest as any)}
-      ContainerProps={{
-        ...(rest as any)?.ContainerProps,
-        sx: { width: '100%', ...((rest as any)?.ContainerProps?.sx ?? {}) },
-      }}
+      {...rest}
+      color={rest?.color === 'default' ? undefined : rest?.color}
+      ContainerProps={multiSelectContainerProps}
+      onChange={rest.onChange as MultiSelectProps['onChange']}
     />
   ) : null
 }

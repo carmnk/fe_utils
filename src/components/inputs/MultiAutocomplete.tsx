@@ -1,15 +1,10 @@
-import { ReactNode, useCallback, useMemo } from 'react'
-import {
-  useTheme,
-  FormHelperText,
-  Chip,
-  Autocomplete,
-  TextField,
-  Tooltip,
-} from '@mui/material'
+import { ChangeEvent, ReactNode, useCallback, useMemo } from 'react'
+import { useTheme, FormHelperText, Chip, ChipProps } from '@mui/material'
+import { Autocomplete, TextField, Tooltip, TextFieldProps } from '@mui/material'
 import { FormControl, FormControlProps, AutocompleteProps } from '@mui/material'
 import { Typography, BoxProps } from '@mui/material'
 import { CommonInputFieldProps } from './types'
+import { GenericOptionsType } from '../table/types'
 
 const requiredFieldText = 'This field is required'
 const ITEM_HEIGHT = 48
@@ -45,7 +40,10 @@ export type MultiAutocompleteProps = CommonInputFieldProps &
     disableLabel?: boolean
     labelSx?: BoxProps['sx']
     ContainerProps?: FormControlProps
-    onChange?: (newValue: (string | number | boolean)[], e: any) => void
+    onChange?: (
+      newValue: (string | number | boolean)[],
+      e: ChangeEvent<HTMLInputElement>
+    ) => void
     // onChange?:
     //   | ((newValue: string[], e: SpecificSelectChangeEvent) => void)
     //   | ((newValue: number[], e: SpecificSelectChangeEvent) => void)
@@ -75,9 +73,12 @@ export const MultiAutocomplete = (props: MultiAutocompleteProps) => {
 
   const theme = useTheme()
   const handleChange = useCallback(
-    (e: any, newValue: any) => {
-      const newValueAdj = newValue.map((val: any) => val?.value ?? val)
-      onChange?.(newValueAdj as never, e)
+    (
+      e: ChangeEvent<HTMLInputElement>,
+      newValue: Exclude<GenericOptionsType, string[]>[]
+    ) => {
+      const newValueAdj = newValue.map((val) => val?.value ?? val)
+      onChange?.(newValueAdj, e)
     },
     [onChange]
   )
@@ -120,14 +121,18 @@ export const MultiAutocomplete = (props: MultiAutocompleteProps) => {
     return {
       ...rest,
       multiple: true,
-      value: value ?? '',
-      onChange: handleChange,
+      value: (value ?? '') as unknown as CMultiAutocompleteProps['value'],
+      onChange: handleChange as unknown as CMultiAutocompleteProps['onChange'],
       error: !!error,
       size: 'small',
       disabled,
-      renderTags: (value: any, getTagProps: any) => {
-        return value.map((option: any, index: any) => {
+      renderTags: (
+        value: (string | number | boolean)[][],
+        getTagProps: (params: { index: number }) => ChipProps
+      ) => {
+        return value.map((option: unknown, index: number) => {
           const { key, ...tagProps } = getTagProps({ index })
+
           return (
             <Tooltip
               title={options?.find((opt) => opt.value === option)?.label}
@@ -155,14 +160,15 @@ export const MultiAutocomplete = (props: MultiAutocompleteProps) => {
         name: name,
         placeholder: placeholder,
       },
-      renderInput: (params: any) => (
+      renderInput: (params: TextFieldProps) => (
         <TextField {...params} variant="outlined" />
       ),
-      options: options ?? [],
+      options: (options as unknown as CMultiAutocompleteProps['options']) ?? [],
       displayEmpty: true,
       MenuProps,
-      defaultValue: props?.defaultValue as any,
-    } as any
+      defaultValue:
+        props?.defaultValue as CMultiAutocompleteProps['defaultValue'],
+    }
   }, [
     name,
     value,
@@ -181,7 +187,7 @@ export const MultiAutocomplete = (props: MultiAutocompleteProps) => {
       {!disableLabel && labelNode}
       <Autocomplete
         {...selectProps}
-        disableClearable={true as any}
+        disableClearable={true as false}
       ></Autocomplete>
       {!disableHelperText && (
         <FormHelperText {...helperTextProps}>

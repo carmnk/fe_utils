@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { ChangeEvent, RefObject, useCallback, useMemo, useState } from 'react'
 import moment, { Moment } from 'moment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DesktopDatePickerProps } from '@mui/x-date-pickers/DesktopDatePicker'
@@ -8,8 +8,11 @@ import { Button } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
 import { CTextField, CTextFieldProps } from './TextField'
 import { TimeField, TimeFieldProps } from '@mui/x-date-pickers/TimeField'
+import { TextFieldProps } from '@mui/material'
+import { FieldChangeHandler } from '@mui/x-date-pickers/internals'
+import { TimeValidationError } from '@mui/x-date-pickers'
 
-export type CTimeFieldProps = GenericInputFieldProps<'time'> &
+export type CTimeFieldProps = Omit<GenericInputFieldProps<'time'>, 'value'> &
   TimeFieldProps<Moment> &
   CTextFieldProps & {
     // onChange?: (newValue: Moment | null, name?: string) => void
@@ -18,9 +21,6 @@ export type CTimeFieldProps = GenericInputFieldProps<'time'> &
       CTextFieldProps['slotProps']
     outputFormat?: 'ISO_UTC'
   }
-
-// type a = Pick<TimeFieldProps<Moment>, keyof CTextFieldProps>
-// type b = a['']
 
 export const CTimeField = (props: CTimeFieldProps) => {
   const {
@@ -47,7 +47,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
     selectedSections,
     shouldDisableTime,
     shouldRespectLeadingZeros,
-    slots,
+    // slots,
     timezone,
     // end timefieldOnly props
     // textfieldProps
@@ -77,7 +77,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
     defaultValue,
     onError,
     inputRef,
-    ...restIn1
+    // ...restIn1
   } = props
 
   //  props
@@ -90,7 +90,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
   console.debug('VALID DATE', validDate, value)
 
   const handleChange = useCallback(
-    (newValue: Moment | null) => {
+    (newValue: Moment | null, e: ChangeEvent<HTMLInputElement>) => {
       setValidDate(moment(newValue).isValid())
       const valueOut =
         outputFormat === 'ISO_UTC'
@@ -99,8 +99,15 @@ export const CTimeField = (props: CTimeFieldProps) => {
               .toISOString()
           : newValue
       onChange?.(
-        valueOut as any,
-        { target: { value: valueOut as any, name: name as any } } as any,
+        valueOut as string,
+        {
+          ...e,
+          target: {
+            ...(e?.target ?? {}),
+            value: valueOut as string,
+            name: name as string,
+          },
+        },
         name
       )
     },
@@ -114,22 +121,31 @@ export const CTimeField = (props: CTimeFieldProps) => {
           iconButton
           icon={mdiCalendar}
           variant="text"
-          {...(props as any)}
+          {...props}
+          color={props.color === 'default' ? undefined : props.color}
         />
       ),
-      textField: (propsFromDateField: any) => {
-        // const { ...restFromDateField } = propsFromDateField
-        // console.warn('PROPS TEXTFIELD', propsFromDateField)
-        const onChangeTextField = (newValue: Moment, e?: any, name?: any) => {
+      textField: (propsFromDateField: TextFieldProps) => {
+        const onChangeTextField = (
+          newValue: string,
+          e?: ChangeEvent<HTMLInputElement>,
+          name?: string
+        ) => {
           const event = {
             ...(e ?? {}),
-            target: { ...(e?.target ?? {}), value: newValue, name },
-          }
+            target: {
+              ...(e?.target ?? {}),
+              value: newValue as unknown as string,
+              name,
+            },
+          } as ChangeEvent<HTMLInputElement>
           propsFromDateField?.onChange?.(event)
         }
         return (
           <CTextField
             {...propsFromDateField}
+            value={propsFromDateField.value as string}
+            ref={propsFromDateField.ref as RefObject<HTMLInputElement>}
             borderRadius={borderRadius}
             disabled={disabled}
             error={error}
@@ -212,7 +228,12 @@ export const CTimeField = (props: CTimeFieldProps) => {
         // format="DD/MM/YYYY"
 
         value={valueMoment}
-        onChange={handleChange}
+        onChange={
+          handleChange as unknown as FieldChangeHandler<
+            Moment | null,
+            TimeValidationError
+          >
+        }
         disabled={disabled}
         slots={timeFieldSlots}
         ampm={ampm}

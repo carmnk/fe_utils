@@ -59,7 +59,7 @@ describe('GenericInputField', () => {
       <GenericInputField
         type="multiselect"
         options={[{ value: 'test', label: 'TEST' }]}
-        value={'test'}
+        value={['test']}
         onChange={() => {}}
       />
     )
@@ -73,7 +73,7 @@ describe('GenericInputField', () => {
       />
     )
     const dateInputElement = document.querySelector('input')
-    expect(dateInputElement).toHaveValue('02/01/2024')
+    expect(dateInputElement).toHaveValue('01/02/2024')
     // Checkbox
     rerender(<GenericInputField type="bool" value={true} onChange={() => {}} />)
     const checkboxElement = document.querySelector('input')
@@ -98,19 +98,29 @@ describe('GenericInputField', () => {
         type="text"
         value="initial value"
         onChange={handleChange}
+        name="test-name"
       />
     )
     fireEvent.change(getByRole('textbox'), { target: { value: 'new value' } })
-    expect(handleChange).toHaveBeenCalledWith('new value', expect.anything())
+    expect(handleChange).toHaveBeenCalledWith(
+      'new value',
+      expect.anything(),
+      'test-name'
+    )
     // TextArea
     rerender(
       <GenericInputField
         type="textarea"
         value="initial value"
         onChange={handleChange}
+        name="test-name"
       />
     )
     fireEvent.change(getByRole('textbox'), { target: { value: 'new value' } })
-    expect(handleChange).toHaveBeenCalledWith('new value', expect.anything())
+    expect(handleChange).toHaveBeenCalledWith(
+      'new value',
+      expect.anything(),
+      'test-name'
+    )
   })
 })

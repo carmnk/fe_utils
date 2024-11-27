@@ -4,6 +4,8 @@ import { createMuiTheme } from '../../theme/createTheme'
 import { SerializedThemeType } from '../types/serializedTheme'
 import { ThemeTypography } from '../types/themeTypographys'
 import { CSSProperties } from 'react'
+import { Typography } from '@mui/material/styles/createTypography'
+import { PaletteMode } from '@mui/material'
 
 export const transformEditorStateTheme = (
   themes: ExtendedTheme[],
@@ -127,7 +129,7 @@ export const reloadSerializedThemes = (
           disabledBackground: themeIn.action_disabled_background,
           focus: themeIn.action_focus,
         },
-        mode: themeIn?.mode ?? 'light',
+        mode: (themeIn?.mode as PaletteMode) ?? ('light' as const),
       },
     }
 
@@ -161,7 +163,7 @@ export const reloadSerializedThemes = (
           }
           return { ...acc, [name]: subTypography }
         }, {}) ?? {}),
-      } as any
+      } as Typography
     }
 
     // // undefined values have to be removed
@@ -188,7 +190,9 @@ export const reloadSerializedThemes = (
     const muiTheme = {
       ...createMuiTheme({
         ...newThemeStatic,
-      } as any),
+        name: themeIn.name,
+        id: themeIn.id,
+      }),
       name: themeIn.name,
       id: themeIn.id,
     }

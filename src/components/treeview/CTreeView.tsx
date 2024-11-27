@@ -47,6 +47,7 @@ const recursiveMap = (
           : events?.actions
       const children = (items?.filter((it) => it._parentId === item.nodeId) ??
         []) as StyledTreeItemProps[]
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { children: _c, ...props } = item
       return (
         <StyledTreeItem
@@ -140,7 +141,7 @@ export const CTreeView = (props: CTreeViewProps) => {
   const handleDragEnd = useCallback(
     (event: any) => {
       const overItem = event?.over?.data?.current
-      const overNodeId = overItem?.nodeId
+      // const overNodeId = overItem?.nodeId
 
       if (!overItem || !overlay) return
 

@@ -33,7 +33,7 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
   const { value, onChange, items, showLabels, rootInjection, sx } = props
 
   const handleChangeItem = useCallback(
-    (e: any, newValue: string) => {
+    (e: unknown, newValue: string) => {
       onChange(newValue)
     },
     [onChange]
@@ -54,7 +54,7 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
             icon={<Icon path={item?.icon ?? mdiInformation} size={1} />}
             {...(item.value === value
               ? props.slotProps?.bottomNavigationSelectedAction
-              : props.slotProps?.bottomNavigationAction ?? {})}
+              : (props.slotProps?.bottomNavigationAction ?? {}))}
           />
         )
       })}

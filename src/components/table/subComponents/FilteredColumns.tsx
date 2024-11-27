@@ -11,6 +11,7 @@ import { Button } from '../../buttons/Button/Button'
 import {
   FilteredTableHeaderCellProps as FilteredTableHeaderCellPropsIn,
   FilterType,
+  GenericOptionsType,
 } from '../types'
 import { CTextField } from '../../inputs/TextField'
 
@@ -29,7 +30,7 @@ export interface FilteredTableHeaderCellProps
 }
 
 export const FilteredTableHeaderCell = forwardRef(
-  (props: FilteredTableHeaderCellProps, ref: any) => {
+  (props: FilteredTableHeaderCellProps, ref: unknown) => {
     const {
       onOpen,
       onClose,
@@ -62,22 +63,22 @@ export const FilteredTableHeaderCell = forwardRef(
             (
               (typeof getItemLabel === 'function'
                 ? getItemLabel?.(opt)
-                : typeof getItemLabel === 'string'
-                  ? opt['string']
-                  : opt
+                : typeof getItemLabel === 'string' && typeof opt === 'object'
+                  ? (opt as Record<string, string>)[getItemLabel]
+                  : (opt as unknown as string)
               )?.toLowerCase() || ''
             ).includes(searchValue.toLowerCase())
           )
     }, [searchValue, filterOptions, getItemLabel])
 
     const handleOnFilter = useCallback(
-      (val: any, key: any) => {
+      (val: GenericOptionsType, key: string) => {
         const value =
           typeof getFilterValue === 'function'
             ? getFilterValue?.(val)
             : typeof getFilterValue === 'string'
-              ? val[getFilterValue]
-              : val
+              ? (val as Record<string, string>)[getFilterValue]
+              : (val as unknown as string)
         if (value === undefined) return
         const keyAdj = renderFilterKey ? renderFilterKey(key, value) : key
         if (
@@ -100,10 +101,10 @@ export const FilteredTableHeaderCell = forwardRef(
     )
 
     const handleSearchValueChange = useCallback(
-      (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value as any
+      (newValue: string, e?: ChangeEvent<HTMLInputElement>) => {
+        const value = e?.target?.value as string | number
         if (!value && value !== '' && value !== 0) return
-        setSearchValue(value)
+        setSearchValue(value as string)
       },
       []
     )
@@ -151,10 +152,10 @@ export const FilteredTableHeaderCell = forwardRef(
             (typeof getFilterValue === 'function'
               ? getFilterValue?.(opt)
               : typeof getFilterValue === 'string'
-                ? opt[getFilterValue]
-                : opt) ?? ''
+                ? (opt as Record<string, string>)[getFilterValue as 'value']
+                : (opt as unknown as string)) ?? ''
           return {
-            value,
+            value: value,
             filterKey: renderFilterKey
               ? renderFilterKey(filterKey, value)
               : filterKey,
@@ -177,15 +178,20 @@ export const FilteredTableHeaderCell = forwardRef(
     }, [onClose, onSetFilters])
 
     const handleKeyUpMenuItem = useCallback(
-      (e: KeyboardEvent, item: any) => {
-        if (e?.type !== 'keyup' || e?.key !== 'Enter') return
+      (e: KeyboardEvent, item: GenericOptionsType) => {
+        if (
+          e?.type !== 'keyup' ||
+          e?.key !== 'Enter' ||
+          filterKey === undefined
+        )
+          return
         handleOnFilter?.(item, filterKey)
       },
       [handleOnFilter, filterKey]
     )
     const handleClickMenuItem = useCallback(
-      (e: MouseEvent, item: any) => {
-        if (e?.type === 'keydown') return
+      (e: MouseEvent, item: GenericOptionsType) => {
+        if (e?.type === 'keydown' || filterKey === undefined) return
         handleOnFilter?.(item, filterKey)
       },
       [handleOnFilter, filterKey]
@@ -200,7 +206,8 @@ export const FilteredTableHeaderCell = forwardRef(
         if (
           e?.type !== 'keyup' ||
           e?.key !== 'Enter' ||
-          filteredOptions?.length > 1
+          filteredOptions?.length > 1 ||
+          filterKey === undefined
           // ||
           // e?.sourceEvent === 'onClear'
         )
@@ -352,7 +359,7 @@ export const FilteredTableHeaderCell = forwardRef(
                   <CTextField
                     fullWidth={true}
                     value={searchValue}
-                    onChange={handleSearchValueChange as any}
+                    onChange={handleSearchValueChange}
                     // InputProps={{ sx: { background: '#fafafa' } }}
                     autoFocus={true}
                     onKeyUp={handleKeyUpSearchField}
@@ -376,13 +383,13 @@ export const FilteredTableHeaderCell = forwardRef(
                       typeof getFilterValue === 'function'
                         ? getFilterValue?.(item)
                         : typeof getFilterValue === 'string'
-                          ? item[getFilterValue]
+                          ? (item as Record<string, string>)[getFilterValue]
                           : item
                     const itemLabel =
                       typeof getItemLabel === 'function'
                         ? getItemLabel(item)
                         : typeof getItemLabel === 'string'
-                          ? item[getItemLabel]
+                          ? (item as Record<string, string>)[getItemLabel]
                           : item
                     return (
                       <MenuItem
@@ -399,7 +406,7 @@ export const FilteredTableHeaderCell = forwardRef(
                           <div className="flex items-center">
                             {selectedFilter &&
                               selectedFilter.length > 0 &&
-                              selectedFilter.includes(value) && (
+                              selectedFilter.includes(value as string) && (
                                 <Icon
                                   path={mdiCheck}
                                   size={1}
@@ -419,12 +426,12 @@ export const FilteredTableHeaderCell = forwardRef(
                                 selectedFilter &&
                                 selectedFilter.length > 0 &&
                                 value &&
-                                selectedFilter.includes(value)
+                                selectedFilter.includes(value as string)
                                   ? 'font-bold'
                                   : ''
                               }
                             >
-                              {itemLabel}
+                              {itemLabel as string}
                             </div>
                           )}
                         </Typography>

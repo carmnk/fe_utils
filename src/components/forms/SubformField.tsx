@@ -1,24 +1,24 @@
-import { mdiDelete, mdiInformation, mdiPencil, mdiPlus } from '@mdi/js'
-import { Box, Divider, Grid, Typography, useTheme } from '@mui/material'
-import { GenericForm, GenericFormProps } from './GenericForm'
+import { mdiDelete, mdiPencil, mdiPlus } from '@mdi/js'
+import { Box, Divider, Typography, useTheme } from '@mui/material'
+import { GenericForm } from './GenericForm'
 import { Button } from '../buttons'
 import { DynamicFieldDefinition } from './fields'
 import { Fragment } from 'react/jsx-runtime'
 import { Table } from '../table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import Icon from '@mdi/react'
+import { FormDataType, GenericFormParams, GenericFormProps } from './types'
 
 export type SubformFieldProps = {
   field: DynamicFieldDefinition
-  formData: any
-  rootFormData: any
-  onChangeFormData: any
+  formData: FormDataType
+  rootFormData?: FormDataType
+  onChangeFormData: GenericFormProps['onChangeFormData']
   showError: boolean
-  subforms?: Record<string, any>
-  settings: any
+  subforms?: Record<string, GenericFormParams>
+  settings: GenericFormProps['settings']
   useAlwaysArraysInFormData: boolean
-  _path?: any[]
-  fIdx: any
+  _path?: (string | number)[]
+  fIdx: number
   slotProps: GenericFormProps['slotProps']
   disableUseFormElement?: boolean
   injections?: GenericFormProps['injections']
@@ -64,9 +64,10 @@ export const SubformField = (props: SubformFieldProps) => {
   const sub = subforms?.[field?.name ?? '']
   const subFieldsForList = useMemo(
     () =>
-      sub?.fields
-        ?.filter((f: any) => f?.form?.showInArrayList)
-        ?.map((f: any) => ({
+      // TODO - add support for fn() fields getter
+      (sub?.fields as DynamicFieldDefinition<'array'>[])
+        ?.filter((f) => f?.form?.showInArrayList)
+        ?.map((f) => ({
           header: f.label,
           renderCell: f.name,
         })) || [],
@@ -114,9 +115,11 @@ export const SubformField = (props: SubformFieldProps) => {
       if (!fieldName) return
       const newFormData = {
         ...formData,
-        [fieldName]: formData?.[fieldName]?.filter(
-          (f: any, fIdx2: number) => fIdx2 !== removeIdx
-        ),
+        [fieldName]: (
+          (Array.isArray(formData?.[fieldName])
+            ? formData[fieldName]
+            : []) as unknown[]
+        )?.filter((f: unknown, fIdx2: number) => fIdx2 !== removeIdx),
       }
 
       const AdjNewFormData = injections?.onBeforeChange?.(
@@ -128,71 +131,69 @@ export const SubformField = (props: SubformFieldProps) => {
       onChangeFormData?.(
         AdjNewFormData ?? newFormData,
         fieldName,
-        formData?.[fieldName],
-        formData,
-        fieldName
+        (AdjNewFormData ?? newFormData ?? formData)?.[fieldName],
+        formData
       )
     },
     [formData, fieldName, onChangeFormData, injections]
   )
 
   const arrayTableProps = useMemo(
-    () =>
-      ({
-        getTrProps: (item: any, rIdx: number) =>
-          rIdx === ui.open
-            ? {
-                sx: { bgcolor: theme.palette.action.selected + ' !important' },
+    () => ({
+      getTrProps: (item: unknown, rIdx: number) =>
+        rIdx === ui.open
+          ? {
+              sx: { bgcolor: theme.palette.action.selected + ' !important' },
+            }
+          : {},
+      data: (formData?.[fieldName ?? ''] as Record<string, unknown>[]) || [],
+      columns: [
+        ...subFieldsForList,
+        {
+          header: (
+            <Button
+              icon={mdiPlus}
+              iconButton
+              variant={ui?.open === 'new' ? 'outlined' : 'text'}
+              sx={
+                ui?.open === 'new'
+                  ? { bgcolor: theme.palette.action.selected }
+                  : undefined
               }
-            : undefined,
-        data: formData?.[fieldName ?? ''] || [],
-        columns: [
-          ...subFieldsForList,
-          {
-            header: (
+              // variant="outlined"
+              // color="secondary"
+              onClick={() => {
+                handleSetOpen('new')
+              }}
+            />
+          ),
+          renderCell: (item: unknown, cIdx: number, rIdx: number) => (
+            <Box component="td" display="flex" alignItems="center" gap={1}>
               <Button
-                icon={mdiPlus}
+                icon={mdiPencil}
                 iconButton
-                variant={ui?.open === 'new' ? 'outlined' : 'text'}
-                sx={
-                  ui?.open === 'new'
-                    ? { bgcolor: theme.palette.action.selected }
-                    : undefined
-                }
-                // variant="outlined"
-                // color="secondary"
+                variant={ui?.open === rIdx ? 'outlined' : 'text'}
                 onClick={() => {
-                  handleSetOpen('new')
+                  handleSetOpen(rIdx)
                 }}
               />
-            ),
-            renderCell: (item: any, cIdx: number, rIdx: number) => (
-              <Box component="td" display="flex" alignItems="center" gap={1}>
-                <Button
-                  icon={mdiPencil}
-                  iconButton
-                  variant={ui?.open === rIdx ? 'outlined' : 'text'}
-                  onClick={() => {
-                    handleSetOpen(rIdx)
-                  }}
-                />
-                <Button
-                  icon={mdiDelete}
-                  iconButton
-                  variant="text"
-                  onClick={() => handleRemoveArrayItem(rIdx)}
-                />
-              </Box>
-            ),
-            style: {
-              // width: '64px',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              pr: 0,
-            },
+              <Button
+                icon={mdiDelete}
+                iconButton
+                variant="text"
+                onClick={() => handleRemoveArrayItem(rIdx)}
+              />
+            </Box>
+          ),
+          style: {
+            // width: '64px',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            pr: 0,
           },
-        ],
-      }) as any,
+        },
+      ],
+    }),
     [
       formData,
       fieldName,
@@ -204,25 +205,37 @@ export const SubformField = (props: SubformFieldProps) => {
     ]
   )
 
-  const [tempFormData, setTempFormData] = useState<any>({})
+  const [tempFormData, setTempFormData] = useState<FormDataType>({})
 
   useEffect(() => {
     if (ui?.open === 'new') {
-      setTempFormData(
-        sub?.injections?.initialFormData?.(formData, rootFormData, ArrayIdx) ||
-          {}
-      )
+      const initialFormDataRaw = sub?.injections?.initialFormData
+      const initialFormData =
+        typeof initialFormDataRaw === 'function'
+          ? initialFormDataRaw(
+              formData,
+              rootFormData as FormDataType,
+              ArrayIdx as number
+            )
+          : initialFormDataRaw
+      setTempFormData(initialFormData || {})
     } else if (typeof ui?.open === 'number') {
-      setTempFormData(formData?.[fieldName ?? '']?.[ui?.open] ?? {})
+      const fieldData = formData?.[fieldName ?? '']
+      const newTempFormData =
+        Array.isArray(fieldData) && typeof ui?.open === 'number'
+          ? fieldData[ui?.open]
+          : {}
+      setTempFormData(newTempFormData)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ui?.open])
 
   if (!fieldName || !subform) return null
   const onChangeObjectSub = (
-    newFormData: any,
-    changedPropertyName: any,
-    changedPropertyValue: any,
-    prevFormData: any
+    newFormData: FormDataType,
+    changedPropertyName: string,
+    changedPropertyValue: unknown
+    // prevFormData: any
   ) => {
     const transformedNewFormData = {
       ...formData,
@@ -243,22 +256,26 @@ export const SubformField = (props: SubformFieldProps) => {
     )
   }
 
-  const addnewItemArraySub = (changedPropertyName: any, prevFormData: any) => {
+  const addnewItemArraySub = (
+    changedPropertyName: string,
+    prevFormData: FormDataType
+  ) => {
     if (!fieldName) return
-    const prevArrayFormData = prevFormData?.[fieldName]
-
+    const prevArrayFormData = Array.isArray(prevFormData?.[fieldName])
+      ? prevFormData?.[fieldName]
+      : []
     const injectedFormDataRaw =
       subforms?.[fieldName]?.injections?.initialFormData
-    const injectedRawFormData =
-      (typeof injectedFormDataRaw === 'function'
-        ? injectedFormDataRaw(formData, rootFormData, (ArrayIdx ?? -1) + 1)
-        : injectedFormDataRaw) ?? {}
+    // const injectedRawFormData =
+    //   (typeof injectedFormDataRaw === 'function'
+    //     ? injectedFormDataRaw(formData, rootFormData, (ArrayIdx ?? -1) + 1)
+    //     : injectedFormDataRaw) ?? {}
     const newItem = {
       ...injectedFormDataRaw,
       ...tempFormData,
     }
 
-    const newValue = [...(prevArrayFormData ?? []), newItem]
+    const newValue = [...((prevArrayFormData as unknown[]) ?? []), newItem]
     const transformedNewFormData = {
       ...formData,
       [fieldName]: newValue,
@@ -298,12 +315,12 @@ export const SubformField = (props: SubformFieldProps) => {
           settings={settings}
           formData={
             useAlwaysArraysInFormData
-              ? formData?.[fieldName]?.[0]
-              : formData?.[fieldName]
+              ? (formData?.[fieldName] as FormDataType[])?.[0]
+              : (formData?.[fieldName] as FormDataType)
           } //?? subforms?.[fieldName]?.injections?.initialFormData ?? {}}
           onChangeFormData={onChangeObjectSub}
           rootFormData={formData}
-          onChangeFormDataRoot={onChangeFormData as (newValue: any) => void}
+          onChangeFormDataRoot={onChangeFormData as any}
           _path={[...(_path ?? []), field.name]}
           showError={showError}
           subforms={subform?.subforms}
@@ -333,7 +350,7 @@ export const SubformField = (props: SubformFieldProps) => {
             <GenericForm
               disableUseFormElement={disableUseFormElement}
               useAlwaysArraysInFormData={useAlwaysArraysInFormData}
-              fields={sub?.fields}
+              fields={sub?.fields ?? []}
               injections={sub?.injections}
               settings={settings}
               onChangeFormData={setTempFormData}
@@ -359,9 +376,12 @@ export const SubformField = (props: SubformFieldProps) => {
                           return
                         const newFormData = {
                           ...formData,
-                          [fieldName]: formData?.[fieldName]?.map(
-                            (f: any, fIdx2: number) =>
-                              fIdx2 === ui?.open ? tempFormData : f
+                          [fieldName]: (
+                            (Array.isArray(formData?.[fieldName])
+                              ? formData[fieldName]
+                              : []) as FormDataType[]
+                          )?.map((f: FormDataType, fIdx2: number) =>
+                            fIdx2 === ui?.open ? tempFormData : f
                           ),
                         }
                         const AdjNewFormData = injections?.onBeforeChange?.(

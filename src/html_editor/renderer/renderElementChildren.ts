@@ -8,26 +8,27 @@ import {
 } from '../editorRendererController'
 import { renderElements } from './renderElements'
 import { NavigateFunction } from 'react-router-dom'
+import { FC } from 'react'
 
 export type RenderElementChildrenParams = {
+  uiActions?: unknown
+
   element: Element
   elementProps: Property[]
   editorState: EditorStateType
   appController: AppController
   theme: Theme
   currentViewportElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType<object>['COMPONENT_MODELS']
+  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
   selectedPageElements: Element[]
-  uiActions: any
   baseComponentId?: string
-  selectedElement: Element | null
   onSelectElement: (element: Element, isHovering: boolean) => void
   isProduction?: boolean
   isPointerProduction?: boolean
   disableOverlay?: boolean
-  icons: any
+  icons: Record<string, string>
   rootCompositeElementId?: string
-  OverlayComponent?: any
+  OverlayComponent?: FC<{ element: Element }>
   navigate: NavigateFunction
 }
 
@@ -42,7 +43,6 @@ export const renderElementChildren = (params: RenderElementChildrenParams) => {
     selectedPageElements,
     COMPONENT_MODELS,
     uiActions,
-    selectedElement,
     baseComponentId,
     onSelectElement,
     isProduction,
@@ -63,7 +63,7 @@ export const renderElementChildren = (params: RenderElementChildrenParams) => {
     ) ?? []
 
   const navContainerChildren =
-    element?._type === ('NavContainer' as any)
+    element?._type === 'NavContainer'
       ? (() => {
           const sourceControlElementId = getPropByName('navigationElementId')
           // ?.navigationElementId
@@ -74,11 +74,14 @@ export const renderElementChildren = (params: RenderElementChildrenParams) => {
           )
           const activeTab =
             sourceControlElement?._type === 'Button'
-              ? (appController?.state?.buttonStates?.[sourceControlElementId] ??
-                false)
-              : appController?.state?.[sourceControlElementId]
-          const activeId = getPropByName('items')?.find(
-            (item: any) => item.value === activeTab
+              ? (appController?.state?.buttonStates?.[
+                  sourceControlElementId as string
+                ] ?? false)
+              : appController?.state?.[sourceControlElementId as string]
+          const itemsValue = getPropByName('items')
+          const activeId = (Array.isArray(itemsValue) ? itemsValue : [])?.find(
+            (item: { value: string; childId: string }) =>
+              item.value === activeTab
           )?.childId
           const activeChild = elementChildren?.find?.(
             (child) => child._id === activeId
@@ -100,7 +103,6 @@ export const renderElementChildren = (params: RenderElementChildrenParams) => {
         currentViewportElements,
         selectedPageElements,
         COMPONENT_MODELS,
-        selectedElement,
         uiActions,
         onSelectElement,
         theme,

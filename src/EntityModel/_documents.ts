@@ -48,5 +48,3 @@ export type DOCUMENTS_TYPE = {
   document_key: string
   upload_date: Date
 }
-// it is not possible to directly apply static typing restrictions and still infer the actual type of js object/fn..
-type CheckJoiningsResponseKeys = DOCUMENTS_TYPE[DOCUMENTS_MODEL_FIELDNAME_TYPE] // Error here means ENTITY_MODEL_TYPE is missing a key!

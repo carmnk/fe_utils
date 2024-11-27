@@ -1,7 +1,8 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import { ChangeEvent, ReactNode, useCallback, useEffect, useState } from 'react'
 import { GenericInputField } from '../../inputs/GenericInputField'
 import { CustomField, CustomFieldDefinition } from './CustomField'
 import { GenericInputFieldProps, InputFieldType } from '../../inputs/types'
+import { FormDataType } from '../types'
 
 export type FormFieldType =
   | InputFieldType
@@ -17,11 +18,17 @@ type InputFieldLayoutProps = {
     | Width12
     | { xs: Width12; sm?: Width12; md?: Width12; lg?: Width12; xl?: Width12 }
   fillWidth?: boolean
+  _prop_type?: string
 }
 type ArrayInputFieldProps = {
   type: 'array'
   name: string
   enableDeleteFirst?: boolean
+  form?: {
+    defaultValue?: unknown
+    showInArrayList?: boolean
+  }
+  label?: string
 }
 type ObjectInputFieldProps = {
   type: 'object'
@@ -61,13 +68,27 @@ export type DynamicFieldDefinition<Type extends FormFieldType = FormFieldType> =
     | 'invisible'
     | 'hidden'
   > & {
-    disabled?: boolean | ((formData: any, rootFormData: any) => boolean)
-    required?: boolean | ((formData: any, rootFormData: any) => boolean)
-    options?: any[] | ((formData: any, rootFormData: any) => any[])
-    error?: boolean | ((formData: any, rootFormData: any) => boolean)
-    helperText?: string | ((formData: any, rootFormData: any) => string)
-    invisible?: boolean | ((formData: any, rootFormData: any) => boolean)
-    hidden?: boolean | ((formData: any, rootFormData: any) => boolean)
+    disabled?:
+      | boolean
+      | ((formData: FormDataType, rootFormData: FormDataType) => boolean)
+    required?:
+      | boolean
+      | ((formData: FormDataType, rootFormData: FormDataType) => boolean)
+    options?:
+      | any[]
+      | ((formData: FormDataType, rootFormData: FormDataType) => any[])
+    error?:
+      | boolean
+      | ((formData: FormDataType, rootFormData: FormDataType) => boolean)
+    helperText?:
+      | ReactNode
+      | ((formData: FormDataType, rootFormData: FormDataType) => ReactNode)
+    invisible?:
+      | boolean
+      | ((formData: FormDataType, rootFormData: FormDataType) => boolean)
+    hidden?:
+      | boolean
+      | ((formData: FormDataType, rootFormData: FormDataType) => boolean)
   }
 
 // | ArrayInputFieldProps
@@ -75,18 +96,18 @@ export type DynamicFieldDefinition<Type extends FormFieldType = FormFieldType> =
 // | StringArrayInputFieldProps
 
 export type FieldProps = {
-  formData: any
+  formData: FormDataType
   onChangeFormData: any // (value: any) => void
-  rootFormData: any
+  rootFormData: FormDataType
   onChangeFormDataRoot: any // (value: any) => void
-  _path: any
+  _path: (string | number)[]
   onBeforeChange?: any //(value: any) => any
   showError?: boolean
   // type: string
   field: DynamicFieldDefinition<InputFieldType | 'inject'> // -> make gneric! StaticFieldType
-  files?: any
+  files?: { [key: string]: { file: File; filename: string }[] }
   onFileChange?: any
-  fieldProps?: GenericInputFieldProps
+  fieldProps?: Partial<GenericInputFieldProps>
   useChangeCompleted?: boolean
   fields: any
   subforms: any
@@ -120,7 +141,10 @@ export const Field = (props: FieldProps) => {
     []
   )
   useEffect(() => {
-    setInnerValue(formData?.[field?.name ?? ''] ?? '')
+    setInnerValue(
+      (formData?.[field?.name ?? ''] as string | number | boolean | null) ?? ''
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData?.[field?.name ?? '']])
 
   const handleChange = useCallback(
@@ -166,11 +190,14 @@ export const Field = (props: FieldProps) => {
     <CustomField
       formData={formData}
       onChangeFormData={onChangeFormData}
-      params={(field as CustomFieldDefinition<FormData, any>).params}
+      params={
+        (field as CustomFieldDefinition<FormData, { [key: string]: any }>)
+          .params
+      }
       rootFormData={rootFormData}
       onChangeFormDataRoot={onChangeFormDataRoot}
       _path={_path}
-      onBeforeChange={onBeforeChange as any}
+      onBeforeChange={onBeforeChange}
       // showError={showError}
       field={field as any}
       onFileChange={onFileChange}
@@ -236,12 +263,13 @@ export const Field = (props: FieldProps) => {
           'number',
           'int',
         ].includes(field.type)
-          ? (e: any) => handleChange(e.target.value, e)
+          ? (e: ChangeEvent<HTMLInputElement>) =>
+              handleChange(e.target.value, e)
           : undefined
       }
       onKeyDown={
         useChangeCompleted
-          ? (e: any) => {
+          ? (e: ChangeEvent<HTMLInputElement> & { key: string }) => {
               if (e.key === 'Enter') {
                 handleChange(e.target.value, e)
               }

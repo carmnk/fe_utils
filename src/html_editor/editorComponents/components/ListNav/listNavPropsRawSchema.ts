@@ -34,9 +34,12 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.String,
       form: {},
       enum: [],
-      groupBy: (item: any) => item?.category,
+      groupBy: (item) =>
+        item && typeof item === 'object' && 'category' in item
+          ? (item?.category as string)
+          : undefined,
       category: 'shortcut',
-    } as any,
+    },
     dense: {
       type: PropertyType.Boolean,
       required: false,
@@ -61,7 +64,7 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
       label: 'sx',
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
-    } as any,
+    },
 
     slotProps: {
       type: PropertyType.Object,
@@ -78,7 +81,7 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'listItem',
-        } as any,
+        },
         listItemButton: {
           type: PropertyType.json,
           form: {
@@ -86,7 +89,7 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'listItemButton',
-        } as any,
+        },
         listItemIcon: {
           type: PropertyType.json,
           form: {
@@ -94,7 +97,7 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'listItemIcon',
-        } as any,
+        },
         listItemText: {
           type: PropertyType.json,
           form: {
@@ -102,7 +105,7 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'listItemText',
-        } as any,
+        },
         icon: {
           type: PropertyType.json,
           form: {
@@ -110,7 +113,7 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'icon',
-        } as any,
+        },
       },
     },
   },

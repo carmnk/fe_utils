@@ -1,6 +1,6 @@
 import { mdiDeleteOutline } from '@mdi/js'
 import { Box, Stack } from '@mui/material'
-import { Fragment, ReactNode } from 'react'
+import { ChangeEvent, Fragment, ReactNode, useCallback } from 'react'
 import { Button } from '../buttons/Button/Button'
 import { CTextField } from './TextField'
 
@@ -8,9 +8,9 @@ export type StringArrayFieldProps = {
   value?: string[] | null
   label?: ReactNode
   name?: string
-  required?: any
+  required?: boolean
   error?: boolean
-  onChangeArray: (newValue: string, name?: string, arrayIdx?: number) => void
+  onChangeArray: (newValue: string, name?: string) => void // index??
   onRemoveItem: (name: string | undefined, arrayIndex: number) => void
   enableDeleteFirst?: boolean
   // disableHelperText?: boolean
@@ -33,6 +33,15 @@ export const StringArrayField = (props: StringArrayFieldProps) => {
   } = props
   const valueAdjusted = value?.length ? value : ['']
 
+  const handleChange = useCallback(
+    (newValue: string, e?: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e?.target ?? {}
+      if (!value) return
+      onChangeArray(value, name)
+    },
+    [onChangeArray]
+  )
+
   return (
     <Fragment>
       {valueAdjusted?.map((item, index) => (
@@ -50,11 +59,7 @@ export const StringArrayField = (props: StringArrayFieldProps) => {
             label={label}
             name={name}
             required={required && !index}
-            onChange={(newValue: any, e: any) => {
-              const { name, value } = e?.target ?? {}
-              if (!value) return
-              onChangeArray(value, name, index)
-            }}
+            onChange={handleChange}
             sx={{ width: '100%' }}
             error={error} //?? (required && !value && !index)}
             // disableHelperText={disableHelperText}

@@ -42,7 +42,7 @@ export type EditorStateType = {
   attributes: Attribute[]
   properties: Property[]
   transformers: Transformer[]
-  // ui: Ui
+  ui: Ui
   server: {
     config: ServerConfig
     entityDataModel: EntityDataModel

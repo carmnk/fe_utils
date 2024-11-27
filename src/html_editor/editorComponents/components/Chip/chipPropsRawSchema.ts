@@ -9,10 +9,6 @@ import { MOUSE_EVENTS } from '../../commonSchemas/mouseEvents'
 import { POINTER_EVENTS } from '../../commonSchemas/pointerEvents'
 import { TOUCH_EVENTS } from '../../commonSchemas/touchEvents'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
-// const booleanOptions = [
-//   { value: false, label: 'false' },
-//   { value: true, label: 'true' },
-// ]
 
 export const muiBaseColors = [
   'primary',
@@ -35,9 +31,12 @@ export const chipPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.String,
       form: {},
       enum: [],
-      groupBy: (item: any) => item?.category,
+      groupBy: (item) =>
+        item && typeof item === 'object' && 'category' in item
+          ? (item?.category as string)
+          : undefined,
       category: 'shortcut',
-    } as any,
+    },
     icon: {
       type: PropertyType.icon,
       required: false,
@@ -127,7 +126,7 @@ export const chipPropsSchema: ExtendedObjectSchemaType = {
       label: 'sx',
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
-    } as any,
+    },
 
     ...BASE_POINTER_EVENTS,
     ...MOUSE_EVENTS,

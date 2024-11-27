@@ -1,3 +1,4 @@
+import React from 'react'
 import { render, fireEvent, act, getByRole } from '@testing-library/react'
 import { Button } from '../Button'
 import { mdiTestTube } from '@mdi/js'
@@ -130,7 +131,7 @@ describe('Button', () => {
       <Button data-testid="button" variant="outlined" />
     )
     expect(getByTestId('button')).toHaveStyle(
-      'border: 1px solid rgba(25, 118, 210, 0.5);'
+      'border: 1px solid #1976d2;'
     )
   })
 
@@ -138,6 +139,6 @@ describe('Button', () => {
     const { getByTestId } = render(
       <Button data-testid="button" variant="text" />
     )
-    expect(getByTestId('button')).toHaveStyle('border: 0px;')
+    expect(getByTestId('button')).toHaveStyle('border: 0px solid #1976d2;')
   })
 })

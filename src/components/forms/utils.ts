@@ -1,10 +1,10 @@
 import { DynamicFieldDefinition, StaticFieldDefinition } from './fields/Field'
-import { GenericFormProps } from './GenericForm'
+import { FormDataType, GenericFormProps } from './types'
 
 export const getInjectedValue = (
-  param: ((value: any) => any) | any,
-  formData: any,
-  rootFormData: any
+  param: ((value: unknown) => unknown) | unknown,
+  formData: FormDataType,
+  rootFormData: FormDataType | undefined
 ) =>
   (typeof param === 'function' ? param?.(formData, rootFormData) : param) ??
   undefined
@@ -12,8 +12,8 @@ export const getInjectedValue = (
 export const getDynamicFields = (params: {
   fields: GenericFormProps['fields'] // StaticFieldDefinition[] | ((formData: any) => StaticFieldDefinition[])
   injections: GenericFormProps['injections']
-  formData: any
-  rootFormData: any
+  formData: Record<string, unknown>
+  rootFormData: Record<string, unknown>
 }): DynamicFieldDefinition[] => {
   const { fields: fieldsIn, injections, formData, rootFormData } = params
 
@@ -21,7 +21,7 @@ export const getDynamicFields = (params: {
     typeof fieldsIn === 'function'
       ? fieldsIn?.(formData, rootFormData)
       : fieldsIn
-  const getInjectedValue = (param: ((value: any) => any) | any) =>
+  const getInjectedValue = (param: ((value: unknown) => unknown) | unknown) =>
     (typeof param === 'function' ? param?.(formData, rootFormData) : param) ??
     undefined
   const dynamicFields = fields?.map((field) => {
@@ -44,12 +44,12 @@ export const getDynamicFields = (params: {
       ...injectDynamics,
     }
   })
-  return dynamicFields as any
+  return dynamicFields
 }
 
 export const getInitialFieldValues = (
   fieldsIn: StaticFieldDefinition[]
-): { [key: string]: any } => {
+): { [key: string]: unknown } => {
   return fieldsIn.reduce((acc, cur) => {
     if (!cur?.name) return acc
     return {

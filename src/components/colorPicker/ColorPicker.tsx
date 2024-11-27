@@ -1,34 +1,14 @@
-import {
-  CSSProperties,
-  useCallback,
-  useEffect,
-  useState,
-  useRef,
-  useMemo,
-  MouseEvent,
-} from 'react'
-import {
-  Box,
-  BoxProps,
-  Divider,
-  Popover,
-  PopoverProps,
-  Theme,
-  Typography,
-  hexToRgb,
-  useTheme,
-} from '@mui/material'
-import { SketchPicker } from 'react-color'
+import { CSSProperties, useCallback, useEffect } from 'react'
+import { useState, useRef, useMemo, MouseEvent } from 'react'
+import { Box, BoxProps, Divider, Popover, PopoverProps } from '@mui/material'
+import { Theme, Typography, hexToRgb, useTheme } from '@mui/material'
+import { ColorChangeHandler, ColorResult, SketchPicker } from 'react-color'
 import { Button } from '../buttons/Button/Button'
 import { mdiCheck } from '@mdi/js'
 import { Flex } from '../_wrapper'
 import { ThemeColors } from './ThemeColors'
-import {
-  ThemeActionColorsEnum,
-  ThemeBackgroundColorsEnum,
-  ThemeColorsEnum,
-  ThemeTextColorsEnum,
-} from '../../utils/types'
+import { ThemeActionColorsEnum, ThemeTextColorsEnum } from '../../utils/types'
+import { ThemeBackgroundColorsEnum, ThemeColorsEnum } from '../../utils/types'
 import { ThemeSingleColor } from './ThemeSingleColor'
 
 type GenericColorPickerProps = {
@@ -51,6 +31,13 @@ type EnabledColorPickerProps = GenericColorPickerProps & {
 export type ColorPickerProps = BoxProps &
   (EnabledColorPickerProps | DisabledColorPickerProps)
 
+export type ColorObject = {
+  r: number
+  g: number
+  b: number
+  a?: number
+}
+
 const simplifiedRgbaRegex =
   /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/
 const simplifiedHexRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
@@ -62,21 +49,23 @@ const rgbaToObj = (rgbaString?: string, defaultRgbaStr?: string) => {
       ?.match(/rgba*\((.*)\)/)?.[1]
       ?.split(',')
       ?.map((val: string) => val?.trim?.()) ?? []
-  const defaultColor: any = defaultRgbaStr
+  const defaultColor: ColorObject = defaultRgbaStr
     ? rgbaToObj(defaultRgbaStr)
     : { r: 0, g: 0, b: 0, a: 1 }
 
   return {
-    r: parseInt(colorParts?.[0] || defaultColor),
-    g: parseInt(colorParts?.[1] || defaultColor),
-    b: parseInt(colorParts?.[2] || defaultColor),
-    a: rgbaString?.match(/rgba\((.*)\)/) ? colorParts?.[3] || defaultColor : 1,
+    r: parseInt((colorParts?.[0] || defaultColor?.r?.toString()) ?? '0'),
+    g: parseInt(colorParts?.[1] || defaultColor?.g?.toString()),
+    b: parseInt(colorParts?.[2] || defaultColor?.b?.toString()),
+    a: rgbaString?.match(/rgba\((.*)\)/)
+      ? parseInt(colorParts?.[3]) || defaultColor?.a
+      : 1,
   }
 }
 
-const extractRgbaValuesFromString = (rgba: string) => {
-  return rgba.replaceAll(/^(?:\d+(?:,\d+)*,?)?$/, '')?.split(',')
-}
+// const extractRgbaValuesFromString = (rgba: string) => {
+//   return rgba.replaceAll(/^(?:\d+(?:,\d+)*,?)?$/, '')?.split(',')
+// }
 
 const popoverOrigins: Pick<PopoverProps, 'anchorOrigin' | 'transformOrigin'> = {
   anchorOrigin: {
@@ -107,7 +96,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
   } = props
   const theme = useTheme()
   const themeAdj = themeIn ?? theme
-  const [color, setColor] = useState(rgbaToObj(value))
+  const [color, setColor] = useState<ColorObject>(rgbaToObj(value))
   const [unchangedColor, setUnchangedColor] = useState(value)
   const [isThemeColor, setIsThemeColor] = useState(false)
   const [displayColorPicker, setDisplayColorPicker] = useState(false)
@@ -117,16 +106,19 @@ export const ColorPicker = (props: ColorPickerProps) => {
     setDisplayColorPicker((current) => !current)
   }, [disabled])
 
-  const handleChangeColor = useCallback((color: any) => {
-    console.debug('handleChangeColor, ', color)
-    setColor(color.rgb)
-    setIsThemeColor(false)
-    // setUnchangedColor(color.rgb)
-  }, [])
+  const handleChangeColor: ColorChangeHandler = useCallback(
+    (color: ColorResult) => {
+      console.debug('handleChangeColor, ', color)
+      setColor(color?.rgb)
+      setIsThemeColor(false)
+      // setUnchangedColor(color.rgb)
+    },
+    []
+  )
 
   const handleTakeover = useCallback(() => {
     if (isThemeColor && !resolveThemeColors) {
-      onChange?.(unchangedColor as any)
+      onChange?.(unchangedColor as string)
       return
     }
     const defaultObjectColor =
@@ -147,7 +139,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
     // }, ${color?.a ?? 1})`;
     onChange?.(colorAdj)
     setDisplayColorPicker(false)
-  }, [onChange, color, isThemeColor, unchangedColor])
+  }, [onChange, color, isThemeColor, unchangedColor, resolveThemeColors])
 
   const indicatorRef = useRef<HTMLDivElement>(null)
 
@@ -255,7 +247,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
           onClose={handleToggleColorPicker}
         >
           <div onClick={handleToggleColorPicker} />
-          <SketchPicker color={color as any} onChange={handleChangeColor} />
+          <SketchPicker color={color} onChange={handleChangeColor} />
 
           {!disableThemeColors && (
             <Box bgcolor="#fff" position="relative" top={-6}>

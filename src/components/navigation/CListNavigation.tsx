@@ -1,16 +1,8 @@
 import Icon from '@mdi/react'
 import { IconProps } from '@mdi/react/dist/IconProps'
-import {
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemButtonProps,
-  ListItemIcon,
-  ListItemIconProps,
-  ListItemProps,
-  ListItemTextProps,
-  ListProps,
-} from '@mui/material'
+import { List, ListItem, ListItemButton, ListItemIcon } from '@mui/material'
+import { ListItemButtonProps, ListItemIconProps } from '@mui/material'
+import { ListItemProps, ListItemTextProps, ListProps } from '@mui/material'
 import { ListItemText, ListSubheader, alpha, useTheme } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
 
@@ -100,7 +92,7 @@ export const ListNavigation = (props: ListNavigationProps) => {
           <ListItemButton onClick={handleClicks[iIdx]} {...listItemButton}>
             {item?.icon && (
               <ListItemIcon {...listItemIconRoot}>
-                <Icon path={item?.icon as any} size={1} {...listItemIcon} />
+                <Icon path={item?.icon as string} size={1} {...listItemIcon} />
               </ListItemIcon>
             )}
             <ListItemText

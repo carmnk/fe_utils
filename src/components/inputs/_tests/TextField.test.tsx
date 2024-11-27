@@ -1,31 +1,32 @@
+import React from 'react'
 import { render, fireEvent, act } from '@testing-library/react'
-import { TextField } from '../TextField'
+import { CTextField } from '../TextField'
 
-describe('TextField', () => {
+describe('CTextField', () => {
   it('renders with correct value', () => {
-    const { getByDisplayValue } = render(<TextField value="Test Value" />)
+    const { getByDisplayValue } = render(<CTextField value="Test Value" />)
     expect(getByDisplayValue('Test Value')).toBeInTheDocument()
   })
 
   it('renders with correct label', () => {
-    const { getByText } = render(<TextField label="Test Label" />)
+    const { getByText } = render(<CTextField label="Test Label" />)
     expect(getByText('Test Label')).toBeInTheDocument()
   })
   it('doesnt render a label if disableLabel', () => {
     const { queryByText } = render(
-      <TextField label="Text Label" disableLabel />
+      <CTextField label="Text Label" disableLabel />
     )
     expect(queryByText('Helper Text')).not.toBeInTheDocument()
   })
 
   it('renders with correct helperText', () => {
-    const { getByText } = render(<TextField helperText="Helper Text" />)
+    const { getByText } = render(<CTextField helperText="Helper Text" />)
     expect(getByText('Helper Text')).toBeInTheDocument()
   })
 
   it('doesnt render a helperText if disableHelperText', () => {
     const { queryByText } = render(
-      <TextField helperText="Helper Text" disableHelperText />
+      <CTextField helperText="Helper Text" disableHelperText />
     )
     expect(queryByText('Helper Text')).not.toBeInTheDocument()
   })
@@ -33,7 +34,7 @@ describe('TextField', () => {
   it('calls onChange when value is changed', async () => {
     const handleChange = jest.fn()
     const { getByLabelText } = render(
-      <TextField label="Test Label" onChange={handleChange} />
+      <CTextField label="Test Label" onChange={handleChange} />
     )
     await act(async () => {
       const input = document.querySelector('input')
@@ -48,7 +49,7 @@ describe('TextField', () => {
     const handleChange = jest.fn()
     const handleChangeCompleted = jest.fn()
     const { getByLabelText, rerender } = render(
-      <TextField
+      <CTextField
         label="Test Label"
         onChange={handleChange}
         onChangeCompleted={handleChangeCompleted}
@@ -67,7 +68,7 @@ describe('TextField', () => {
       })
     })
     rerender(
-      <TextField
+      <CTextField
         label="Test Label"
         onChange={handleChange}
         onChangeCompleted={handleChangeCompleted}
@@ -83,7 +84,7 @@ describe('TextField', () => {
 
   it('renders with correct name', () => {
     const { getByTestId } = render(
-      <TextField name="test-name" data-testid="textfield" />
+      <CTextField name="test-name" data-testid="textfield" />
     )
     const input = document.querySelector('input')
     expect(input!.name).toBe('test-name')
@@ -91,14 +92,14 @@ describe('TextField', () => {
 
   it('renders with correct placeholder', () => {
     const { getByPlaceholderText } = render(
-      <TextField placeholder="Test Placeholder" />
+      <CTextField placeholder="Test Placeholder" />
     )
     expect(getByPlaceholderText('Test Placeholder')).toBeInTheDocument()
   })
 
   it('renders as required when required is true', () => {
     const { getByTestId } = render(
-      <TextField required={true} data-testid="textfield" />
+      <CTextField required={true} data-testid="textfield" />
     )
     const input = document.querySelector('input')
     expect(input).toBeRequired()
@@ -108,9 +109,9 @@ describe('TextField', () => {
   })
 
   it('renders with error when error is true', () => {
-    // This test assumes that you're using Material-UI's TextField and that it adds the 'Mui-error' class when error is true.
+    // This test assumes that you're using Material-UI's CTextField and that it adds the 'Mui-error' class when error is true.
     const { getByText } = render(
-      <TextField error data-testid="textfield" label="Test Label" />
+      <CTextField error data-testid="textfield" label="Test Label" />
     )
     const input = document.querySelector('input')
     const label = getByText('Test Label')
@@ -120,22 +121,22 @@ describe('TextField', () => {
 
   it('renders with correct maxLength', () => {
     const { getByTestId } = render(
-      <TextField maxLength={10} data-testid="textfield" />
+      <CTextField maxLength={10} data-testid="textfield" />
     )
     const input = document.querySelector('input')
     expect(input.maxLength).toBe(10)
   })
   it('renders as disabled when disabled', () => {
     const { getByTestId } = render(
-      <TextField locked={true} data-testid="textfield" />
+      <CTextField disabled={true} data-testid="textfield" />
     )
     const input = document.querySelector('input')
     expect(input).toBeDisabled()
   })
 
-  it('renders as disabled when locked is true', () => {
+  it('renders as disabled when disabled is true', () => {
     const { getByTestId } = render(
-      <TextField locked={true} data-testid="textfield" />
+      <CTextField disabled={true} data-testid="textfield" />
     )
     const input = document.querySelector('input')
     expect(input).toBeDisabled()
@@ -143,18 +144,18 @@ describe('TextField', () => {
 
   it('renders with correct icon', () => {
     const Icon = () => <span>Icon</span>
-    const { getByText } = render(<TextField icon={<Icon />} />)
+    const { getByText } = render(<CTextField endIcon={<Icon />} />)
     expect(getByText('Icon')).toBeInTheDocument()
   })
 
   it('renders with correct startIcon', () => {
     const StartIcon = () => <span>StartIcon</span>
-    const { getByText } = render(<TextField startIcon={<StartIcon />} />)
+    const { getByText } = render(<CTextField startIcon={<StartIcon />} />)
     expect(getByText('StartIcon')).toBeInTheDocument()
   })
   it('renders with an injected component when injectComponent is set', () => {
     const Icon = () => <span>Icon</span>
-    const { getByText } = render(<TextField injectComponent={<Icon />} />)
+    const { getByText } = render(<CTextField injectComponent={<Icon />} />)
     expect(getByText('Icon')).toBeInTheDocument()
   })
 })

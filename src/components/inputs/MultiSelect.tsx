@@ -34,7 +34,7 @@ export type MultiSelectProps = CommonInputFieldProps &
     options?: {
       value: string | number | boolean
       label: ReactNode
-      textLabel: string
+      textLabel?: string
     }[]
     disableHelperText?: boolean
     disableLabel?: boolean
@@ -140,7 +140,7 @@ export const MultiSelect = (props: MultiSelectProps) => {
           const selectedOptions =
             options
               ?.filter((opt) => selectedIds.includes(opt.value))
-              ?.map((opt) => opt.textLabel) ?? []
+              ?.map((opt) => opt?.textLabel ?? opt?.label) ?? []
           return selectedOptions?.length
             ? selectedOptions.join(', ')
             : placeholder
@@ -166,7 +166,7 @@ export const MultiSelect = (props: MultiSelectProps) => {
       {!disableLabel && labelNode}
       <Select {...selectProps}>
         {options?.map((opt, oIdx) => (
-          <MenuItem value={opt?.value as any} key={oIdx} sx={menuItemStyles}>
+          <MenuItem value={opt?.value as string} key={oIdx} sx={menuItemStyles}>
             <Checkbox
               checked={(value || []).indexOf(opt.value) > -1}
               size={'small'}

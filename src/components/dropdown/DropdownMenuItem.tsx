@@ -1,4 +1,11 @@
-import { MouseEvent, ReactNode, useCallback, useMemo } from 'react'
+import {
+  KeyboardEventHandler,
+  MouseEvent,
+  PointerEventHandler,
+  ReactNode,
+  useCallback,
+  useMemo,
+} from 'react'
 import { MenuItem, Tooltip, Stack } from '@mui/material'
 import { CircularProgress, MenuItemProps } from '@mui/material'
 import { useTheme, Divider, Typography } from '@mui/material'
@@ -12,8 +19,8 @@ export type DropDownMenuItemProps = MenuItemProps & {
   disabled?: boolean
   loading?: boolean
   label: string
-  onPointerDown?: any
-  onKeyDown?: any
+  onPointerDown?: PointerEventHandler<HTMLLIElement>
+  onKeyDown?: KeyboardEventHandler<HTMLLIElement>
   sx?: MenuItemProps['sx']
 }
 

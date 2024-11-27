@@ -82,8 +82,8 @@ export const TableComponent = (
           },
         },
       },
-      ...((sx as any) ?? {}),
-    }
+      ...(sx ?? {}),
+    } as BoxProps<'table'>['sx']
   }, [hasFinePointer, theme, disableTableHeader, sx])
 
   return (

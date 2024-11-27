@@ -53,7 +53,7 @@ export const Checkbox = (props: CheckboxProps) => {
     color,
     slotProps,
     disableHelperText,
-    disableLabel,
+    // disableLabel,
     error,
     ...restCheckBoxProps
   } = props

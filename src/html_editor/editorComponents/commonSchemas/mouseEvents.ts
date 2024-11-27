@@ -1,9 +1,4 @@
-import {
-  EventHandlerType,
-  ExtendedObjectSchemaType,
-  ObjectSchemaType,
-  PropertyType,
-} from '../schemaTypes'
+import { ExtendedObjectSchemaType, PropertyType } from '../schemaTypes'
 
 export const MOUSE_EVENTS: ExtendedObjectSchemaType['properties'] = {
   onMouseOver: {

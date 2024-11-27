@@ -1,19 +1,22 @@
-import { ExtendedTheme } from '../../theme/muiTheme'
 import { defaultEditorState } from '../defaultEditorState'
 import { EditorStateType } from '../types'
 import { isComponentType } from '../../renderer/utils'
 import { reloadSerializedThemes } from './transformEditorStateTheme'
 import { EditorStateDbDataType } from './editorDbStateType'
 import { PropertyType } from '../../editorComponents/schemaTypes'
+import { checkForPlaceholders } from '../../renderer/placeholder/replacePlaceholder'
+import { ComponentDefType } from '../../editorComponents'
 import {
-  checkForPlaceholders,
-  REGEX_PLACEHOLDERS,
-} from '../../renderer/placeholder/replacePlaceholder'
+  LeftMenuBackendTabs,
+  LeftMenuGlobalTabs,
+  LeftMenuTabs,
+  UI_POINTER_MODE,
+} from '../../defs'
 
 export const transformEditorStateFromPayload = (
   data: EditorStateDbDataType,
   currentEditorState = defaultEditorState(),
-  componentsIn: any[],
+  componentsIn: ComponentDefType[],
   disableThemeReload = false
 ): EditorStateType => {
   const {
@@ -50,25 +53,25 @@ export const transformEditorStateFromPayload = (
     },
     navigationMenu: {
       ...(currentEditorState?.ui?.navigationMenu ?? {}),
-      activeTab: active_tab as any,
-      activeBackendTab: active_backend_tab as any,
-      activeMenu:
-        (active_menu as any) ??
-        currentEditorState?.ui?.navigationMenu?.activeMenu,
+      activeTab: (active_tab ?? null) as LeftMenuTabs,
+      activeBackendTab: (active_backend_tab ?? null) as LeftMenuBackendTabs,
+      activeMenu: (active_menu ??
+        currentEditorState?.ui?.navigationMenu
+          ?.activeMenu) as LeftMenuGlobalTabs,
     },
-    pointerMode: pointer_mode as any,
+    pointerMode: (pointer_mode as UI_POINTER_MODE) ?? UI_POINTER_MODE.mixed,
   }
 
   const newImageAssets = {
     images: data?.images?.map?.((image) => ({
       ...((currentEditorState?.assets?.images?.find?.(
         (img) => img._id === image.asset_id
-      ) ?? {}) as any),
+      ) ?? {}) as EditorStateType['assets']['images'][0]),
       _id: image.asset_id,
       type: image.type,
       fileName: image.asset_filename,
-      created_datetime: (image as any).created_datetime,
-      edited_datetime: (image as any).edited_datetime,
+      created_datetime: image.created_datetime ?? null,
+      edited_datetime: image.edited_datetime ?? null,
       // src:
     })),
   }
@@ -80,8 +83,8 @@ export const transformEditorStateFromPayload = (
       _id: el.element_id,
       _userID: el.element_html_id,
       _parentId: el.parent_id,
-      _content: el.content as any,
-      _type: el.element_type as any,
+      _content: el.content as string,
+      _type: el.element_type as string,
       _disableDelete: el.element_disable_delete ?? undefined,
       _page: el.element_page as string,
       viewport: el.viewport,
@@ -106,9 +109,9 @@ export const transformEditorStateFromPayload = (
 
   const themes =
     disableThemeReload || !data.themes?.length
-      ? (data.themes as any)
+      ? currentEditorState.themes
       : reloadSerializedThemes(
-          data.themes as any,
+          data.themes,
           currentEditorState?.themes,
           data.theme_typographys
         )
@@ -119,15 +122,17 @@ export const transformEditorStateFromPayload = (
         external_api_id: api.external_api_id,
         name: api.name,
         auth:
-          api.auth_type === 'basic'
+          api.auth_type === 'basic' &&
+          api.auth_basic_username &&
+          api.auth_basic_password
             ? {
                 type: api.auth_type,
                 username: api.auth_basic_username,
                 password: api.auth_basic_password,
               }
-            : api.auth_type === 'bearer'
+            : api.auth_type === 'bearer' && api.auth_bearer_token
               ? { type: api.auth_type, token: api.auth_bearer_token }
-              : { type: api.auth_type },
+              : { type: 'none' },
         baseUrl: api.base_url,
         useCookies: api.use_cookies,
         project_id: api.project_id,
@@ -199,7 +204,8 @@ export const transformEditorStateFromPayload = (
         const baseComponentSchemaProps = baseComponentSchema?.properties
         const baseComponentSchemaProp =
           baseComponentSchemaProps?.[prop.prop_name]
-        const baseComponentSchemaPropType = baseComponentSchemaProp?.type
+        const baseComponentSchemaPropType =
+          baseComponentSchemaProp?.type as PropertyType
         const isSchemaPropInt = baseComponentSchemaPropType === PropertyType.Int
         const isSchemaPropNumeric =
           isSchemaPropInt || baseComponentSchemaPropType === PropertyType.Number
@@ -210,7 +216,8 @@ export const transformEditorStateFromPayload = (
           baseComponentSchemaPropType === PropertyType.eventHandler
 
         const isHtmlEvent =
-          prop.prop_name?.startsWith('on') && !isComponentType(element?._type)
+          prop.prop_name?.startsWith('on') &&
+          !isComponentType(element?._type ?? '')
 
         const value =
           isHtmlEvent ||
@@ -231,7 +238,7 @@ export const transformEditorStateFromPayload = (
             // 'onClick',
           ].includes(prop.prop_name) ||
           (['children'].includes(prop.prop_name) &&
-            element?.element_type !== 'Typography')
+            element?._type !== 'Typography')
             ? (() => {
                 try {
                   const propValue = prop.prop_value
@@ -241,9 +248,9 @@ export const transformEditorStateFromPayload = (
                     if (matches) {
                       return propValue
                     }
+                    return JSON.parse(propValue)
                   }
-
-                  return JSON.parse(propValue)
+                  return propValue
                 } catch (e) {
                   // console.error(e, prop)
                   return prop.prop_value
@@ -256,9 +263,9 @@ export const transformEditorStateFromPayload = (
                 : prop.prop_value === 'false'
                   ? false
                   : isSchemaPropInt
-                    ? parseInt(prop?.prop_value)
+                    ? parseInt(prop?.prop_value as string)
                     : isSchemaPropNumeric
-                      ? parseFloat(prop?.prop_value)
+                      ? parseFloat(prop?.prop_value as string)
                       : prop.prop_value
         return { ...prop, prop_value: value }
       }) ?? [],
@@ -267,7 +274,7 @@ export const transformEditorStateFromPayload = (
         const value = ['style'].includes(attr.attr_name)
           ? (() => {
               try {
-                return JSON.parse(attr.attr_value)
+                return JSON.parse(attr.attr_value as string)
               } catch (e) {
                 console.error(e, attr)
                 return attr.attr_value
@@ -282,24 +289,18 @@ export const transformEditorStateFromPayload = (
                 : attr.attr_value
         return { ...attr, attr_value: value }
       }) ?? [],
-    defaultTheme: defaultTheme as any,
+    defaultTheme: defaultTheme as 'light',
     alternativeViewports,
     project,
     elements,
     components: data.components ?? [],
-    cssSelectors:
-      (data?.cssSelectors?.map?.((cssSelector) => ({
-        ...cssSelector,
-        _id: cssSelector.css_selector_id,
-        _userId: cssSelector.css_selector_name,
-      })) as any[]) ?? [],
+    cssSelectors: [],
     ui,
     assets: newImageAssets,
     themes,
     theme:
       themes?.find?.(
-        (theme: ExtendedTheme) =>
-          theme.palette.mode === currentEditorState.theme.name
+        (theme) => theme.palette.mode === currentEditorState.theme.name
       ) || currentEditorState?.theme,
     externalApis,
     // events:

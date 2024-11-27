@@ -5,10 +5,11 @@ import { isEqual as isDeepEqual } from 'lodash'
  * @returns all unique paths from base entity to all sub entities sequenced be pathlength descending
  */
 export const getUniquePaths = <
-  UseJoiningOutput extends string | ENRICHED_ENTITY_JOININGS_MODEL_TYPE = string
+  UseJoiningOutput extends
+    ENRICHED_ENTITY_JOININGS_MODEL_TYPE = ENRICHED_ENTITY_JOININGS_MODEL_TYPE,
 >(
   enrichedStructuredEntityJoinings: (ENRICHED_ENTITY_JOININGS_MODEL_TYPE & {
-    path: any[]
+    path: string[]
   })[][],
   outputJoinings = false
 ): UseJoiningOutput[][] => {
@@ -21,7 +22,10 @@ export const getUniquePaths = <
       // const linkedEntityName = linkedEntity?.entity_name
       allPaths.push(
         path?.map((joining) =>
-          outputJoinings ? joining : joining.linked_entity.entity_name
+          outputJoinings
+            ? (joining as string)
+            : ((joining as ENRICHED_ENTITY_JOININGS_MODEL_TYPE)?.linked_entity
+                ?.entity_name as string)
         )
       )
     }
@@ -36,9 +40,10 @@ export const getUniquePaths = <
     const adjFilteredPath = !filteredPath?.length
       ? path
       : isDuplicate
-      ? null
-      : path
+        ? null
+        : path
     return adjFilteredPath as string[]
   })
-  return preFilteredPaths?.filter?.((v) => v) as UseJoiningOutput[][]
+  // TODO: probably bug
+  return preFilteredPaths?.filter?.((v) => v) as unknown as UseJoiningOutput[][]
 }

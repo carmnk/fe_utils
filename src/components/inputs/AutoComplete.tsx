@@ -1,4 +1,4 @@
-import { forwardRef, ForwardedRef, SyntheticEvent } from 'react'
+import { forwardRef, ForwardedRef, SyntheticEvent, HTMLAttributes } from 'react'
 import { ReactNode, ChangeEvent, useState, useRef } from 'react'
 import { FocusEvent, KeyboardEvent, useEffect } from 'react'
 import { useMemo } from 'react'
@@ -13,12 +13,13 @@ import { ListboxComponent } from './AutoCompleteVirtualization'
 export type CustomAutocompleteProps = {
   // onChange?: (newValue: string, e: ChangeEvent<HTMLInputElement>) => void
   onInputChange?: (newValue: string, e: SyntheticEvent<Element, Event>) => void
+  onChange?: (newValue: string, e: SyntheticEvent<Element, Event>) => void
   loading?: boolean
   // freeSolo?: boolean
   // disableHelperText?: boolean
   // disableLabel?: boolean
   options: { value: string; label: string }[]
-  onKeyUp?: (e?: KeyboardEvent<HTMLInputElement>) => void
+  onKeyUp?: (e: KeyboardEvent<HTMLInputElement>) => void
   value: string
   renderInput?: AutocompleteProps<string, false, false, boolean>['renderInput']
   slotProps?: AutocompleteProps<string, false, false, boolean>['slotProps'] &
@@ -44,7 +45,7 @@ export type CAutoCompleteProps = GenericInputFieldProps<'autocomplete'> &
   CustomAutocompleteProps
 
 const injectFieldNameToEvent = (
-  e: SyntheticEvent<HTMLInputElement, HTMLInputElement>,
+  e: SyntheticEvent<Element, Event>,
   name: string
 ): ChangeEvent<HTMLInputElement> =>
   ({
@@ -53,7 +54,7 @@ const injectFieldNameToEvent = (
   }) as unknown as ChangeEvent<HTMLInputElement>
 
 export const CAutoComplete = forwardRef(
-  (props: CAutoCompleteProps, ref: ForwardedRef<any>) => {
+  (props: CAutoCompleteProps, ref: ForwardedRef<HTMLInputElement>) => {
     const {
       onChange,
       onInputChange,
@@ -63,6 +64,7 @@ export const CAutoComplete = forwardRef(
       value = '',
       slotProps,
       startIcon,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       endIcon: _e,
       borderRadius,
       enableVirtualization,
@@ -99,7 +101,7 @@ export const CAutoComplete = forwardRef(
 
         const handleBlur = (
           e: FocusEvent<HTMLInputElement> &
-            SyntheticEvent<HTMLInputElement, HTMLInputElement>
+            SyntheticEvent<HTMLInputElement, Event>
         ) => {
           isFocussed.current = false
           // if (!freeSolo) return
@@ -107,28 +109,30 @@ export const CAutoComplete = forwardRef(
             (opt) => opt?.label === inputValue
           )?.value
           const valueAdj = option ?? (freeSolo ? inputValue : '')
-          const event = name ? injectFieldNameToEvent(e, name) : (e as any)
+          const event = name ? injectFieldNameToEvent(e, name) : e
           onChange?.(valueAdj, event, name)
           if (!freeSolo && !option) setInputValue('')
         }
         const onEnter = (
           e: KeyboardEvent<HTMLInputElement> &
-            SyntheticEvent<HTMLInputElement, HTMLInputElement>
+            SyntheticEvent<HTMLInputElement, KeyboardEvent>
         ) => {
           if (e?.key === 'Enter' && !isChanging.current) {
             const option = options?.find(
               (opt) => opt?.label === inputValue
             )?.value
             const valueAdj = option ?? (freeSolo ? inputValue : '')
-            const event = name ? injectFieldNameToEvent(e, name) : (e as any)
+            const event = name
+              ? injectFieldNameToEvent(e, name)
+              : (e as unknown as ChangeEvent<HTMLInputElement>)
             onChange?.(valueAdj, event)
           }
         }
         const handleFocus = () => {
           isFocussed.current = true
         }
-        const handleChange = ((
-          e: SyntheticEvent<HTMLInputElement, HTMLInputElement>,
+        const handleChange = (
+          e: SyntheticEvent<Element, Event>,
           newValue:
             | string
             | {
@@ -145,9 +149,9 @@ export const CAutoComplete = forwardRef(
                 ? newValue?.value
                 : ''
           isChanging.current = true
-          const event = name ? injectFieldNameToEvent(e, name) : (e as any)
-          onChange?.(value, event, name)
-        }) as any
+          const event = name ? injectFieldNameToEvent(e, name) : e
+          onChange?.(value, event as any, name)
+        }
 
         const handleInputChange = (
           e: SyntheticEvent<Element, Event>,
@@ -158,7 +162,7 @@ export const CAutoComplete = forwardRef(
           onInputChange?.(newValue ?? '', e)
         }
         return {
-          options: options as any,
+          options: options as any[],
           noOptionsText:
             'no optionen available' +
             (inputValue ? ` for "${inputValue}"` : ''),
@@ -173,12 +177,12 @@ export const CAutoComplete = forwardRef(
                   ...(event?.target ?? {}),
                 },
               }
-              params?.onChange?.(eventValue as any)
+              params?.onChange?.(eventValue)
             }
             return (
               <CTextField
                 {...params}
-                rows={params?.rows as any}
+                rows={params?.rows as number}
                 value={params?.value as string}
                 onChange={onChange}
                 onKeyUp={params?.onKeyUp as any}
@@ -228,12 +232,15 @@ export const CAutoComplete = forwardRef(
           renderOption: enableVirtualization
             ? (props, option, state) =>
                 [props, option, state.index] as ReactNode
-            : (props: any, option: any) => (
+            : (
+                props: HTMLAttributes<HTMLLIElement> & { key: string },
+                option: any
+              ) => (
                 <Box fontSize={14} component="li" {...props}>
                   {option?.label}
                 </Box>
               ),
-          ...restProps,
+          // ...restProps,
           ListboxComponent: enableVirtualization ? ListboxComponent : undefined,
           slotProps: {
             ...muiAutoSelectSlotProps,

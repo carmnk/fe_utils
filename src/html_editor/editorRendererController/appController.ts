@@ -10,7 +10,7 @@ export type EditorControllerAppStateParams = {
   properties: EditorStateType['properties']
   attributes: EditorStateType['attributes']
   transformers: EditorStateType['transformers']
-  currentViewportElements: EditorRendererControllerType<any>['currentViewportElements']
+  currentViewportElements: EditorRendererControllerType['currentViewportElements']
 }
 
 export const useAppController = (
@@ -27,6 +27,7 @@ export const useAppController = (
       selectedItem: {},
     },
     buttonStates: {},
+    navigationStates: {},
   })
 
   const actions = useMemo(() => {
@@ -34,7 +35,7 @@ export const useAppController = (
      * @param key - key = elementId of navElement
      * @param value - value = value of navElement
      * */
-    const updateProperty = (key: string, value: any) => {
+    const updateProperty = (key: string, value: unknown) => {
       setAppState((current) => ({ ...current, [key]: value }))
     }
 
@@ -45,7 +46,7 @@ export const useAppController = (
       setAppState((current) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [key]: _, ...rest } = current
-        return rest as any
+        return rest as typeof appState
       })
     }
 
@@ -55,7 +56,7 @@ export const useAppController = (
      * */
     const changeFormData = (
       elementId: string,
-      newFormData: Record<string, any>
+      newFormData: Record<string, unknown>
     ) => {
       setAppState((current) => {
         // const formData = current.forms?.[elementId] ?? {}
@@ -78,7 +79,7 @@ export const useAppController = (
      * @param key - key = currently actionId TODO
      * @param value - value = querried data (axios response)
      */
-    const updateData = (key: string, value: any) => {
+    const updateData = (key: string, value: { [key: string]: unknown }) => {
       setAppState((current) => {
         return {
           ...current,
@@ -94,7 +95,7 @@ export const useAppController = (
       setAppState((current) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [key]: _, ...rest } = current
-        return rest as any
+        return rest as typeof appState
       })
     }
 
@@ -113,7 +114,7 @@ export const useAppController = (
     const changeTreeviewSelectedItem = (
       treeViewElementId: string,
       selectedId: string,
-      selectedItem: any
+      selectedItem: Record<string, unknown>
     ) => {
       setAppState((current) => {
         return {
@@ -125,15 +126,14 @@ export const useAppController = (
               [treeViewElementId]: selectedItem,
             },
             selectedId: {
-              ...(current.treeviews.selectedId ?? {}),
-              [treeViewElementId]: [selectedId] as any,
+              ...((current.treeviews.selectedId ??
+                {}) as (typeof appState)['treeviews']['selectedId']),
+              [treeViewElementId]: [selectedId],
             },
           },
         }
       })
     }
-
-
 
     return {
       getFormData,
@@ -167,7 +167,7 @@ export const useAppController = (
       if (!treeviewItemsPropertyValue || !treeViewElement) return
 
       const treeviewItemsPropertyValueResolved0 = replacePlaceholdersInString(
-        treeviewItemsPropertyValue,
+        treeviewItemsPropertyValue as string,
         appState,
         [],
         properties,
@@ -188,12 +188,16 @@ export const useAppController = (
         : null
       // need to transform if transformer is present to get the name of the id column -> nodeId
       const treeviewItemsPropertyValueResolved = transformerFunction
-        ? (transformerFunction(treeviewItemsPropertyValueResolved0) as any)
+        ? transformerFunction(treeviewItemsPropertyValueResolved0)
         : treeviewItemsPropertyValueResolved0
 
       const id = itemId?.[0] ?? itemId?.[0]?.[0]
       const item = treeviewItemsPropertyValueResolved?.find?.(
-        (item: any) => item.nodeId === id
+        (item: unknown) =>
+          item &&
+          typeof item === 'object' &&
+          'nodeId' in item &&
+          item.nodeId === id
       )
       if (!item) return
       actions.changeTreeviewSelectedItem(treeViewElementId, id, item)
@@ -203,9 +207,11 @@ export const useAppController = (
     treeviewElementIds.forEach((elementId) => {
       const selectedId = appState.treeviews.selectedId[elementId]
       if (selectedId) {
-        onTreeViewSelectionChange(elementId, selectedId)
+        // TODO: check if this is correct -> selectedId as any
+        onTreeViewSelectionChange(elementId, selectedId as unknown as string)
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appState?._data])
 
   const controller = useMemo(() => {

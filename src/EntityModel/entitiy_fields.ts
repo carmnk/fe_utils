@@ -97,12 +97,19 @@ export const EntityFieldDbFieldsDefs = [
   },
 ]
 
-export const compareFormSequenceFn = (a: any, b: any, sequenceKey: string) =>
+export const compareFormSequenceFn = (
+  a: Record<string, number>,
+  b: Record<string, number>,
+  sequenceKey: string
+) =>
   typeof a?.[sequenceKey] === 'number' && typeof b?.[sequenceKey] === 'number'
     ? a?.[sequenceKey] - b?.[sequenceKey]
     : 0
 
-export const sortByFormSequence = (entityFields: any[], sequenceKey: string) =>
+export const sortByFormSequence = (
+  entityFields: Record<string, number>[],
+  sequenceKey: string
+) =>
   typeof entityFields?.[0]?.[sequenceKey] === 'number'
     ? entityFields?.sort((a, b) => compareFormSequenceFn(a, b, sequenceKey))
     : entityFields

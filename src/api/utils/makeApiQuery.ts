@@ -6,7 +6,10 @@ import {
 } from './httpQuerys'
 type QUERY_METHOD_STRING = `${QUERY_METHOD}`
 
-export type MakeAppSpecificApi = <PayloadType = undefined, ResponseType = any>(
+export type MakeAppSpecificApi = <
+  PayloadType = undefined,
+  ResponseType = unknown,
+>(
   url: string,
   method: QUERY_METHOD_STRING
 ) => {
@@ -31,9 +34,9 @@ export type MakeAppSpecificApi = <PayloadType = undefined, ResponseType = any>(
 export const makeAppSpecificApiQueryGenerator = (
   baseUrl: string,
   params: Partial<QueryParamType<unknown>>,
-  onResponse?: (response: QueryResponseType<unknown>) => any
+  onResponse?: (response: QueryResponseType<unknown>) => void
 ): MakeAppSpecificApi => {
-  return <PayloadType = undefined, ResponseType = any>(
+  return <PayloadType = undefined, ResponseType = unknown>(
     url: string,
     method: QUERY_METHOD_STRING
   ) => ({
@@ -41,13 +44,16 @@ export const makeAppSpecificApiQueryGenerator = (
       payload?: PayloadType,
       overrideQueryParams?: QueryParamType<unknown>
     ) => {
-      const response = await query<PayloadType, ResponseType>(method as any, {
-        ...params,
-        ...overrideQueryParams,
-        payload,
-        url: `${baseUrl}${url}`,
-      })
-      const resOnResponse = onResponse?.(response)
+      const response = await query<PayloadType, ResponseType>(
+        method as QUERY_METHOD,
+        {
+          ...params,
+          ...overrideQueryParams,
+          payload,
+          url: `${baseUrl}${url}`,
+        }
+      )
+      onResponse?.(response)
       return response
     },
     url,

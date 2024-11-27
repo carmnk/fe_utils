@@ -26,6 +26,3 @@ export type ENTITY_TYPE_TYPE = {
   required_list_field_types: string[]
   //   disable_backend_pagination?: boolean -> just leave out url params to get full data
 }
-// it is not possible to directly apply static typing restrictions and still infer the actual type of js object/fn..
-type CheckJoiningsResponseKeys =
-  ENTITY_TYPE_TYPE[ENTITY_TYPE_MODEL_FIELDNAME_TYPE] // Error here means ENTITY_MODEL_TYPE is missing a key!

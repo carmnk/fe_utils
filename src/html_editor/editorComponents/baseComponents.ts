@@ -31,7 +31,8 @@ export const baseComponents = [
 
   // Navigation container, currently treated specially/hardcoded (use for generic?)
   navigationContainerDef,
-] satisfies ComponentDefType[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+] satisfies ComponentDefType<any>[]
 
 export type BaseComponentsType = typeof baseComponents
 export type BaseComponentType = BaseComponentsType[number]

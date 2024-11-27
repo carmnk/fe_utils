@@ -4,8 +4,8 @@ export type Image = {
   src: string
   fileName: string
   type: string
-  edited_datetime: string
-  created_datetime: string
+  edited_datetime?: string | null
+  created_datetime?: string | null
 }
 
 export type ImageDb = {
@@ -15,4 +15,6 @@ export type ImageDb = {
   asset_filename: string
   project_id: string
   type: string
+  edited_datetime?: string | null
+  created_datetime?: string | null
 }

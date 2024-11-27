@@ -6,7 +6,7 @@ export enum DATATYPE {
   serialPrimaryKey = 'serial primary key',
   reference = 'reference', // will be mapped to integer references ${table}(${column}),
   references = 'references', // will be mapped to integer [], // FK emulation!
-  // document = 'document', // -> FILE uploader 
+  // document = 'document', // -> FILE uploader
 }
 
 export const DATATYPE_OPTIONS = Object.keys(DATATYPE).map((key) => ({
@@ -18,7 +18,7 @@ export const DATATYPE_OPTIONS = Object.keys(DATATYPE).map((key) => ({
 export const DATATYPE_FACTORY = {
   reference: (
     datatype: DATATYPE,
-    referencedEntityName: string,
-    referencedFieldName: string
+    referencedEntityName: string
+    // referencedFieldName: string
   ) => `${datatype} references ${referencedEntityName}(referencedFieldName)`,
 }

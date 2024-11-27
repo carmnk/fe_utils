@@ -163,7 +163,7 @@ export const query = async <PayloadType = unknown, ResponseType = unknown>(
         (e?.message as string)) ||
       null
     const response = {
-      data: (e as any)?.response?.data ?? null,
+      data: (e as AxiosError<ResponseType>)?.response?.data ?? null,
       error: e,
       status: axiosResponse?.status ?? altErrorCode ?? 'unknown',
       statusText: axiosResponse?.statusText ?? altMessage ?? 'unknown',

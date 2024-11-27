@@ -14,6 +14,7 @@ import { EditorStateType } from '../types/editorState'
 import { Property } from '../types/property'
 import { Template } from '../types/template'
 import { ThemeTypography } from '../types/themeTypographys'
+import { DataChange } from '../types/datachanges'
 
 export type EditorStateDbDataType = {
   components: Component[]
@@ -38,6 +39,6 @@ export type EditorStateDbDataType = {
   bodyParams: BodyParam[]
   actions: EditorStateType['actions']
   templates: Template[]
-  data_changes?: any[]
+  data_changes: DataChange[]
   theme_typographys: ThemeTypography[]
 }

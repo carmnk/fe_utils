@@ -4,12 +4,15 @@ import {
   LeftMenuBackendTabs,
 } from '../../defs/index'
 import { UI_POINTER_MODE } from '../../defs'
+import { Dispatch, SetStateAction } from 'react'
 
 export type Ui = {
   tableUis: {
     [key: string]: {
-      onSetFilters: any
-      filters: any[]
+      onSetFilters: Dispatch<
+        SetStateAction<{ filterKey: string; value: string }[]>
+      >
+      filters: { filterKey: string; value: string }[]
     }
   }
   initializeProjectModal: boolean

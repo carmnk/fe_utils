@@ -89,18 +89,14 @@ describe('StringArrayField', () => {
     fireEvent.change(firstInput, {
       target: { value: 'new value' },
     })
-    expect(handleChange).toHaveBeenCalledWith('new value', arrayFieldName, 0)
+    expect(handleChange).toHaveBeenCalledWith('new value', arrayFieldName)
 
     const secondInput = inputs[1]
     fireEvent.change(secondInput, {
       target: { value: 'new value 2' },
     })
     expect(handleChange).toHaveBeenCalledTimes(2)
-    expect(handleChange).toHaveBeenLastCalledWith(
-      'new value 2',
-      arrayFieldName,
-      1
-    )
+    expect(handleChange).toHaveBeenLastCalledWith('new value 2', arrayFieldName)
   })
   it('removes an item when the button is clicked', () => {
     const arrayFieldName = 'array_field'

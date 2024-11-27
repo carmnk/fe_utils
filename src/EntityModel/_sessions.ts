@@ -35,5 +35,3 @@ export type SESSION_TYPE = {
   expires_at: string
   gh_user_token: string
 }
-// it is not possible to directly apply static typing restrictions and still infer the actual type of js object/fn..
-type CheckJoiningsResponseKeys = SESSION_TYPE[USERS_MODEL_FIELDNAME_TYPE] // Error here means ENTITY_MODEL_TYPE is missing a key!

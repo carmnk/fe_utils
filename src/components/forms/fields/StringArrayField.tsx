@@ -3,27 +3,30 @@ import { Fragment } from 'react'
 import { Button } from '../../buttons/Button'
 import { DynamicFieldDefinition } from './Field'
 import { StringArrayField } from '../../inputs/StringArrayField'
+import { GenericFormProps } from '../types'
+
+type FormDataType = Record<string, unknown[]>
 
 export type StringArrayFieldProps = {
-  formData: any
-  onChangeFormData: any // (value: any) => void
-  rootFormData: any
-  onChangeFormDataRoot: any // (value: any) => void
-  onBeforeChange?: any //(value: any) => any
+  formData: FormDataType
+  onChangeFormData: GenericFormProps['onChangeFormData']
+  rootFormData: FormDataType
   showError?: boolean
   dynamicFields: DynamicFieldDefinition[]
-  injections: any
-  onBeforeRemoveArrayItem: any
+  injections: GenericFormProps['injections']
+  onBeforeRemoveArrayItem: (
+    transformedNewFormData: FormDataType,
+    formData: FormDataType,
+    name: string,
+    arrayIndex: number
+  ) => unknown
 }
 
 export const StringArrayFormField = (props: StringArrayFieldProps) => {
   const {
     formData,
     onChangeFormData,
-    onBeforeChange,
-    showError,
     rootFormData,
-    onChangeFormDataRoot,
     dynamicFields,
     injections,
     onBeforeRemoveArrayItem,
@@ -36,10 +39,11 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
       if (!fieldName) return null
       const onChangeObjectSub = (
         newValue: string,
-        name: string,
-        arrayIdx: any
+        name: string | undefined,
+        arrayIdx: number | undefined
         // prevFormData: any
       ) => {
+        if (arrayIdx === undefined) return
         const transformedNewFormData = {
           ...formData,
           [fieldName]: [
@@ -70,10 +74,13 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
         )
       }
 
-      const removeItemArraySub = (name: string, arrayIndex: number) => {
+      const removeItemArraySub = (
+        name: string | undefined,
+        arrayIndex: number
+      ) => {
         if (!field?.name) return
         const newValue = formData?.[field?.name]?.filter(
-          (dat: any, dIdx: number) => dIdx !== arrayIndex
+          (dat: unknown, dIdx: number) => dIdx !== arrayIndex
         )
         const transformedNewFormData = {
           ...formData,
@@ -86,13 +93,18 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
             field.name,
             arrayIndex
           ) ?? transformedNewFormData
-        onChangeFormData?.(injectedFormData, field.name, newValue, formData)
+        onChangeFormData?.(
+          injectedFormData as FormDataType,
+          field.name,
+          newValue,
+          formData
+        )
       }
 
       const requiredInjection = injections?.required?.[fieldName]
       const required =
         typeof requiredInjection === 'function'
-          ? requiredInjection?.(formData)
+          ? requiredInjection?.(formData, rootFormData)
           : requiredInjection
 
       const errorInjection = injections?.error?.[fieldName]
@@ -104,7 +116,7 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
       const disabledInjection = injections?.disabled?.[fieldName]
       const disabled =
         typeof disabledInjection === 'function'
-          ? disabledInjection?.(formData)
+          ? disabledInjection?.(formData, rootFormData)
           : disabledInjection
 
       // const disabledInjection = injections?.disabled?.[fieldName]
@@ -114,12 +126,12 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
           <StringArrayField
             {...field}
             name={fieldName}
-            value={formData?.[fieldName]}
+            value={formData?.[fieldName] as string[]}
             label={(field as any)?.label}
             required={!!required}
             disabled={!!disabled}
-            onChangeArray={onChangeObjectSub as any}
-            onRemoveItem={removeItemArraySub as any}
+            onChangeArray={onChangeObjectSub}
+            onRemoveItem={removeItemArraySub}
             enableDeleteFirst={(field as any)?.enableDeleteFirst}
             // showError={showError}
             error={error}

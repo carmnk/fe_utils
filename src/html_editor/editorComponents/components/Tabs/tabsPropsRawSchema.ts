@@ -40,9 +40,12 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.String,
       form: {},
       enum: [],
-      groupBy: (item: any) => item?.category,
+      groupBy: (item) =>
+        item && typeof item === 'object' && 'category' in item
+          ? (item?.category as string)
+          : undefined,
       category: 'shortcut',
-    } as any,
+    },
 
     // textColor: {
     //   type: PropertyType.String,
@@ -64,7 +67,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
     scrollButtons: {
       type: PropertyType.String,
       required: false,
-      enum: ['auto', false, true] as any,
+      enum: ['auto', false, true] as string[],
       category: 'shortcut',
     },
     orientation: {
@@ -128,7 +131,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
       label: 'sx',
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
-    } as any,
+    },
     slotProps: {
       type: PropertyType.Object,
       form: {
@@ -144,7 +147,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'typography',
-        } as any,
+        },
         activeTab: {
           type: PropertyType.json,
           form: {
@@ -152,7 +155,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'activeTab',
-        } as any,
+        },
         inactiveTabs: {
           type: PropertyType.json,
           form: {
@@ -160,7 +163,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'inactiveTabs',
-        } as any,
+        },
         tooltip: {
           type: PropertyType.json,
           form: {
@@ -168,7 +171,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'tooltip',
-        } as any,
+        },
         tabItemContainer: {
           type: PropertyType.json,
           form: {
@@ -176,7 +179,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'tabItemContainer',
-        } as any,
+        },
         icon: {
           type: PropertyType.json,
           form: {
@@ -184,7 +187,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'icon',
-        } as any,
+        },
       },
     },
   },

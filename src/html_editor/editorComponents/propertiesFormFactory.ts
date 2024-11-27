@@ -3,6 +3,8 @@ import { EditorStateType } from '../editorRendererController/types'
 import {
   ExtendedArraySchemaType,
   ExtendedObjectSchemaType,
+  ExtendedSchemaType,
+  ObjectSchemaType,
   PropertyType,
 } from './schemaTypes'
 import {
@@ -12,11 +14,11 @@ import {
 } from '../../components'
 
 type OptionsDictType = {
-  [key: string]: { value: any; label: string }[]
+  [key: string]: { value: string; label: string }[]
 }
 
 type KeysDictType = {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 const convertSchemaToFormType = (
@@ -44,13 +46,20 @@ const convertSchemaToFormType = (
   }
 }
 
+export type ConvertedPropertyField = (Omit<
+  StaticFieldDefinition,
+  'value' | 'onChange'
+> & {
+  _prop_type: string
+  _enum?: string[] | number[]
+  properties?: Record<string, ExtendedSchemaType>
+  items?: Record<string, ExtendedSchemaType>
+})[]
+
 const convertPropertiesToFields = (
   properties: ExtendedObjectSchemaType['properties'],
   injections?: GenericFormProps['injections'] // just created before fields!
-): (Omit<StaticFieldDefinition, 'value' | 'onChange'> & {
-  _prop_type: string
-  _enum?: any[]
-})[] => {
+): ConvertedPropertyField => {
   return Object.keys(properties).map((key) => {
     const prop = properties[key]
     const doOverrideSelectType =
@@ -71,11 +80,11 @@ const convertPropertiesToFields = (
           : doOverrideSelectType
             ? 'select'
             : convertSchemaToFormType(prop.type)
-    const field: Omit<StaticFieldDefinition, 'value' | 'onChange'> & {
+    const field: Omit<StaticFieldDefinition, 'value' | 'onChange' | 'items'> & {
       _prop_type: string
-      _enum?: any[]
+      _enum?: string[] | number[]
       label: string
-      items?: Omit<StaticFieldDefinition, 'value' | 'onChange'>[]
+      items: Record<string, ExtendedSchemaType>
       enableVirtualization?: boolean
       labelRightInfo?: string
     } = {
@@ -87,8 +96,8 @@ const convertPropertiesToFields = (
       _enum: 'enum' in prop ? prop?.enum : undefined,
       items:
         prop.type === PropertyType.Array
-          ? ((prop.items?.[0] as any)?.properties as any)
-          : undefined,
+          ? ((prop.items?.[0] ?? []) as ObjectSchemaType)?.properties
+          : ([] as unknown as ObjectSchemaType['properties']),
       ...injectedObjectProperties,
       enableVirtualization:
         !!doOverrideSelectType && prop?.type === PropertyType.icon,
@@ -104,7 +113,7 @@ const convertPropertiesToFields = (
 const extractInjectionOptionsFromProperties = (
   properties: ExtendedObjectSchemaType['properties'],
   injectionsIn?: DynamicFormInjectionsType,
-  actionsOptions?: { [key: string]: any }
+  actionsOptions?: { [key: string]: unknown[] }
 ) => {
   return Object.keys(properties).reduce((acc, propKey) => {
     const injectedDynamicOptions = Object.keys(actionsOptions ?? {}).includes(
@@ -137,15 +146,15 @@ export type DynamicFormInjectionsType = {
   dynamicOptionsDict?: OptionsDictType
   dynamicKeysDict?: KeysDictType
   onBeforeChange?: (
-    newFormData: any,
-    prevFormData: any,
+    newFormData: Record<string, unknown>,
+    prevFormData: Record<string, unknown>,
     changedKey: string,
-    changedValue: any
+    changedValue: unknown
   ) => {
-    newFormData: any
-    prevFormData: any
+    newFormData: Record<string, unknown>
+    prevFormData: Record<string, unknown>
     changedKey: string
-    changedValue: any
+    changedValue: unknown
   }
 }
 
@@ -311,22 +320,26 @@ export const propertyFormFactory = (
     return {
       ...acc,
       [obj.name as string]: {
-        fields: convertPropertiesToFields((obj as any).properties),
+        fields: obj?.properties
+          ? convertPropertiesToFields(obj.properties)
+          : [],
         injections: {
           //   initialFormData: injections.initialFormData?.[obj.name as string],
           required: {},
           disabled: {},
-          options: extractInjectionOptionsFromProperties(
-            (obj as any).properties,
-            undefined,
-            eventKeysDict
-          ),
+          options: obj.properties
+            ? extractInjectionOptionsFromProperties(
+                obj.properties,
+                undefined,
+                eventKeysDict
+              )
+            : [],
         },
       },
     }
   }, {})
   const itemsArraySubforms = itemsArrays?.length
-    ? {
+    ? ({
         items: {
           fields: convertPropertiesToFields(itemsArrayProperties),
           injections: {
@@ -340,19 +353,19 @@ export const propertyFormFactory = (
             ),
           },
         },
-      }
+      } as any)
     : {}
   const arraySubforms = arrays?.reduce(
     (acc, cur) => ({
       ...acc,
       [cur?.name as string]: {
-        fields: convertPropertiesToFields((cur as any)?.items ?? {}),
+        fields: convertPropertiesToFields(cur?.items ?? {}),
         injections: {
           //   initialFormData: injections.initialFormData?.items,
           required: {},
           disabled: {},
           options: extractInjectionOptionsFromProperties(
-            (cur as any)?.items ?? {},
+            cur?.items ?? {},
             undefined,
             eventKeysDict
           ),
@@ -377,13 +390,13 @@ export const propertyFormFactory = (
   //   : {}
 
   return {
-    fields: fields as any,
+    fields: fields,
     injections,
     subforms: {
       ...itemsArraySubforms,
       ...arraySubforms,
       ...objectSubforms,
-    } as any, // comes with arrays and objects
+    }, // comes with arrays and objects
     // settings: {
     //   gap: 2,
     //   gridWidth: '100%',

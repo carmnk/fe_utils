@@ -1,17 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { mdiChevronDown, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js'
 import { styled, Box, Stack, Typography, useTheme, alpha } from '@mui/material'
 import { TreeItemProps, TreeItem, treeItemClasses } from '@mui/x-tree-view'
-import {
-  ReactNode,
-  Ref,
-  forwardRef,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { ReactNode, forwardRef } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
 import { DropdownMenu } from '../dropdown/DropdownMenu'
 import { DropdownMenuItem } from '../dropdown/DropdownMenuItem'
@@ -95,7 +86,7 @@ const StyledTreeItemRoot = styled(TreeItem)<TreeItemProps & { nodeId: string }>(
 
 export const StyledTreeItem = forwardRef(function StyledTreeItem(
   props: StyledTreeItemProps,
-  ref: Ref<HTMLUListElement>
+  ref: unknown
 ) {
   const theme = useTheme()
   const {
@@ -287,8 +278,8 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
                       tooltip={action.tooltip}
                       onClick={(e) => {
                         e.stopPropagation()
-                        const actionFn = action.action as any
-                        !!nodeId && actionFn?.(nodeId as any, e)
+                        const actionFn = action.action
+                        !!nodeId && actionFn?.(nodeId as string, e)
                       }}
                       onPointerDown={stopPropagation}
                       onKeyDown={stopPropagation}
@@ -327,7 +318,7 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
         open={ui?.moreActionsOpen}
         // onPointerDown={stopPropagation}
         // onKeyDown={stopPropagation}
-        onClose={handleMoreActionsClick as any}
+        onClose={handleMoreActionsClick}
       >
         {additionalActionsInt?.map((action, aIdx) => (
           <DropdownMenuItem

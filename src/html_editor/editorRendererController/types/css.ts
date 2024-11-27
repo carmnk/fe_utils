@@ -5,6 +5,7 @@ export type CssWorkspace = {
 }
 export type CssSelector = CSSProperties & {
   _id: string
+  _userId: string
   // _userId: string
   _page?: string
   _type?: string

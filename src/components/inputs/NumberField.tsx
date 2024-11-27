@@ -1,5 +1,6 @@
 import {
   ChangeEvent,
+  FocusEvent,
   ForwardedRef,
   forwardRef,
   useCallback,
@@ -32,7 +33,7 @@ export type CNumberFieldProps = Omit<CTextFieldProps, 'value'> & {
 }
 
 export const NumberField = forwardRef(
-  (props: CNumberFieldProps, ref: ForwardedRef<any>) => {
+  (props: CNumberFieldProps, ref: ForwardedRef<HTMLInputElement>) => {
     const {
       value,
       label,
@@ -95,7 +96,7 @@ export const NumberField = forwardRef(
     }, [value])
 
     const handleChangeCompleted = useCallback(
-      (e: any) => {
+      (e: FocusEvent<HTMLInputElement>) => {
         //dont trigger if value has not changed
         if (
           typeof value === 'undefined' ||
@@ -103,7 +104,7 @@ export const NumberField = forwardRef(
           value.toString() === valueStarted
         )
           return
-        onChangeCompleted?.(value as any, e, name)
+        onChangeCompleted?.(value as string, e, name)
       },
       [onChangeCompleted, value, valueStarted, name]
     )
@@ -116,7 +117,7 @@ export const NumberField = forwardRef(
     const handleChangeNumber = useCallback(
       (
         newValue: string,
-        e: ChangeEvent<HTMLInputElement>
+        e?: ChangeEvent<HTMLInputElement>
         // nameIn?: string
       ) => {
         // const { name, value: valueIn } = e.target
@@ -156,11 +157,15 @@ export const NumberField = forwardRef(
 
         if (!valueInAdj) {
           onChange?.(
-            '' as any,
+            '' as string,
             {
               ...e,
-              target: { ...(e?.target ?? {}), value: '', name: name as any },
-            },
+              target: {
+                ...(e?.target ?? {}),
+                value: '',
+                name: name as string,
+              },
+            } as ChangeEvent<HTMLInputElement>,
             name
           )
           setInnerValue('')
@@ -199,15 +204,15 @@ export const NumberField = forwardRef(
             ) + (isLastCharComma ? ',' : '')
           setInnerValue(newInnerValue)
           onChange?.(
-            value as any,
+            value as unknown as string,
             {
               ...e,
               target: {
                 ...(e?.target ?? {}),
-                value: value as any,
-                name: name as any,
+                value: value as unknown as string,
+                name: name as string,
               },
-            },
+            } as ChangeEvent<HTMLInputElement>,
             name
           )
         }
@@ -228,7 +233,7 @@ export const NumberField = forwardRef(
         onChange: handleChangeNumber,
         onBlur: handleChangeCompleted,
         onFocus: handleChangeStarted,
-        ...(rest as any),
+        ...rest,
         slotProps,
       }
 
@@ -253,6 +258,7 @@ export const NumberField = forwardRef(
         injectComponent={injectComponent}
         fullWidth
         ref={ref}
+        maxLength={maxLength}
       />
     )
   }

@@ -6,7 +6,7 @@ const Tr = (props: BoxProps) => <Box component="tr" {...props} />
 
 export const RowComponent = (
   props: PropsWithChildren<{
-    bind: any
+    bind: (...params: unknown[]) => Record<string, unknown>
     getTrProps: TableProps['getTrProps']
     onClick?: (e?: MouseEvent<HTMLDivElement>) => void
     row: TableProps['data'][0]
@@ -28,9 +28,9 @@ export const RowComponent = (
     enableDrag,
   } = props
 
-  const dragBind = useMemo(() => {
-    return bind({ ...row, _idx: rowIdx }, rowIdx)
-  }, [bind, row, rowIdx])
+  // const dragBind = useMemo(() => {
+  //   return bind({ ...row, _idx: rowIdx }, rowIdx)
+  // }, [bind, row, rowIdx])
 
   const internalTrProps = useMemo(() => {
     const trBorderColor =
@@ -48,7 +48,7 @@ export const RowComponent = (
         //   ? theme.palette.primary.light + ' !important'
         //   : undefined,
         ...(getTrProps?.(row, rowIdx)?.sx ?? {}),
-        userSelect: enableDrag ? 'none' : undefined,
+        userSelect: enableDrag ? 'none' : (undefined as unknown as string),
         ...(isDragged
           ? {
               '& td': {

@@ -34,9 +34,12 @@ export const BottomNavPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.String,
       form: {},
       enum: [],
-      groupBy: (item: any) => item?.category,
+      groupBy: (item) =>
+        item && typeof item === 'object' && 'category' in item
+          ? (item?.category as string)
+          : undefined,
       category: 'shortcut',
-    } as any,
+    },
     showLabels: {
       type: PropertyType.Boolean,
       required: false,
@@ -55,7 +58,7 @@ export const BottomNavPropsSchema: ExtendedObjectSchemaType = {
       label: 'sx',
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
-    } as any,
+    },
     slotProps: {
       type: PropertyType.Object,
       form: {
@@ -71,7 +74,7 @@ export const BottomNavPropsSchema: ExtendedObjectSchemaType = {
             // label: 'sx',
           },
           label: 'sx',
-        } as any,
+        },
       },
     },
   },

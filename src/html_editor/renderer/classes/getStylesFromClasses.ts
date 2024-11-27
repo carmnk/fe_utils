@@ -1,8 +1,9 @@
 import { CSSProperties } from 'react'
+import { EditorStateType } from '../../editorRendererController'
 
 export const getStylesFromClasses = (
   selectorId: string,
-  cssSelectors: any[]
+  cssSelectors: EditorStateType['cssSelectors']
 ): CSSProperties => {
   const className = cssSelectors.find((sel) => sel._id === selectorId)?._userId
 

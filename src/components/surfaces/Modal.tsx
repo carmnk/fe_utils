@@ -27,7 +27,7 @@ export type CModalBaseProps = Omit<
   open: boolean
   header: ReactNode
   isConfirmation?: boolean
-  onConfirm?: (data?: any) => void
+  onConfirm?: (data?: unknown) => void
   confirmationIcon?: ReactNode
   confirmationDisabled?: boolean
   confirmationLabel?: string
@@ -227,7 +227,7 @@ export const Modal = (props: CModalProps) => {
               <Button
                 iconButton
                 icon={mdiClose}
-                onClick={onClose as any}
+                onClick={onClose}
                 variant="text"
                 borderRadius={buttonBorderRadiuses}
                 {...closeButton}
@@ -257,7 +257,7 @@ export const Modal = (props: CModalProps) => {
           >
             <Button
               variant="text"
-              onClick={onClose as any}
+              onClick={onClose}
               icon={cancelConfirmationIcon}
               loading={loading}
               borderRadius={buttonBorderRadiuses}
@@ -308,7 +308,7 @@ export const Modal = (props: CModalProps) => {
           >
             <Button
               variant="text"
-              onClick={onClose as any}
+              onClick={onClose}
               loading={loading}
               borderRadius={buttonBorderRadiuses}
               {...nonConfirmationButton}

@@ -32,7 +32,7 @@ export const formPropsSchema: ExtendedObjectSchemaType = {
       form: {
         defaultValue: [],
       },
-    } as any,
+    },
     showError: {
       type: PropertyType.Boolean,
       required: false,

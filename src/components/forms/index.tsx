@@ -1,5 +1,5 @@
 export { GenericForm } from './GenericForm'
-export type { GenericFormProps, GenericFormParams } from './GenericForm'
+export type { GenericFormProps, GenericFormParams, FormDataType } from './types'
 export { GenericFormModal } from './GenericFormModal'
 export type { GenericFormModalProps } from './GenericFormModal'
 export type * from './fields'

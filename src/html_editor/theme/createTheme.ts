@@ -1,9 +1,14 @@
-import { Theme } from '@mui/material'
+import { Palette, Theme } from '@mui/material'
 import { createTheme, responsiveFontSizes } from '@mui/material'
 
 export const createMuiTheme = (
-  theme: Theme & { name: string; id: string },
-  disableResponsiveFonts?: boolean
+  theme: {
+    name: string
+    id: string
+    palette: Pick<Palette, 'primary' | 'secondary' | 'mode'>
+    typography?: Theme['typography']
+  }
+  // disableResponsiveFonts?: boolean
 ) => {
   const palette = theme.palette
   const paletteMainKeys = Object.keys(palette)
@@ -11,10 +16,10 @@ export const createMuiTheme = (
     const mainColor = palette[key as keyof typeof palette]
     const mainColorSubColorNames = Object.keys(mainColor)
     const subColorNames = mainColorSubColorNames.filter(
-      (colorName) => (mainColor as any)[colorName]
+      (colorName) => mainColor[colorName as keyof typeof mainColor]
     )
     const subColors = subColorNames.reduce((acc, subColorName) => {
-      const value = (mainColor as any)[subColorName]
+      const value = mainColor[subColorName as keyof typeof mainColor]
       return {
         ...acc,
         [subColorName]: value,
@@ -26,10 +31,10 @@ export const createMuiTheme = (
       [key]: newValue,
     }
   }, {})
-  const paletteKeysCleaned: { [key: string]: any } = {}
+  const paletteKeysCleaned: { [key: string]: Palette['primary'] } = {}
   Object.keys(newPalette).forEach((key) => {
-    if (Object.keys((newPalette as any)[key]).length) {
-      paletteKeysCleaned[key] = (newPalette as any)[key]
+    if (Object.keys(newPalette[key as keyof typeof newPalette]).length) {
+      paletteKeysCleaned[key] = newPalette[key as keyof typeof newPalette]
     }
   })
   const cleanedTheme = {
@@ -38,9 +43,13 @@ export const createMuiTheme = (
   }
 
   const disableResponsiveFontsLocal = true
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const makeResponsiveFontTheme = (theme: any) =>
-    disableResponsiveFontsLocal ? theme : responsiveFontSizes(theme, { factor: 2 })
+    disableResponsiveFontsLocal
+      ? theme
+      : responsiveFontSizes<Theme>(theme, { factor: 2 })
 
+  // const muiTheme = makeResponsiveFontTheme(createTheme(cleanedTheme))
   return {
     name: cleanedTheme.name,
     id: cleanedTheme.id,

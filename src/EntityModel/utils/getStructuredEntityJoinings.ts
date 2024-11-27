@@ -11,7 +11,9 @@ export const getStructuredEntityJoinings = (
   baseEntityId: number,
   entity_fields: EntityFieldType[],
   entity_joinings: ENRICHED_ENTITY_JOININGS_MODEL_TYPE[]
-): (ENRICHED_ENTITY_JOININGS_MODEL_TYPE & { path: any[] })[][] => {
+): (ENRICHED_ENTITY_JOININGS_MODEL_TYPE & {
+  path: ENRICHED_ENTITY_JOININGS_MODEL_TYPE[]
+})[][] => {
   const baseEntityReferenceFields = entity_fields?.filter(
     (field) =>
       ['reference', 'references'].includes(field?.data_type) &&

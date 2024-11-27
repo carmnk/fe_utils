@@ -1,15 +1,10 @@
 import { mdiCheck, mdiDelete, mdiPencil } from '@mdi/js'
-import {
-  Stack,
-  Typography,
-  Box,
-  ClickAwayListener,
-  TypographyProps,
-  Chip,
-} from '@mui/material'
-import { ChangeEvent, ReactNode, memo, useCallback, useState } from 'react'
+import { Stack, Typography, Box } from '@mui/material'
+import { ClickAwayListener, TypographyProps, Chip } from '@mui/material'
+import { ChangeEvent, KeyboardEvent, ReactNode } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
-import { CAutoComplete } from './AutoComplete'
+import { CAutoComplete, CAutoCompleteProps } from './AutoComplete'
 import {
   GenericInputField,
   type GGenericInputFieldProps,
@@ -26,7 +21,7 @@ type CommonClickTextFieldProps = {
   handleRemoveItem?: () => void
   onToggle?: (isEdit: boolean) => void
 
-  groupBy?: (option: any) => string
+  groupBy?: (option: Record<string, unknown>) => string
   useChip?: boolean
   deleteIcon?: string
   deleteIconTooltip?: string
@@ -105,9 +100,10 @@ export const ClickTextFieldComponent = <
   }, [ui?.isEdit, onClickAway, value, onToggle])
 
   const handleChangeTempValue = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
+    (e?: ChangeEvent<HTMLInputElement>) => {
       const newValue = e?.target?.value
-      if (validateInput && !validateInput(newValue)) return
+      if (newValue === undefined || (validateInput && !validateInput(newValue)))
+        return
       setUi((current) => ({ ...current, tempValue: newValue }))
     },
     [validateInput]
@@ -123,9 +119,9 @@ export const ClickTextFieldComponent = <
   )
 
   const handleOnKeyUp = useCallback(
-    (e: KeyboardEvent) => {
+    (e?: KeyboardEvent<HTMLInputElement>) => {
       if (variant === 'textarea') return
-      if (e.key === 'Enter') {
+      if (e?.key === 'Enter') {
         handleTakeover()
       }
     },
@@ -188,37 +184,38 @@ export const ClickTextFieldComponent = <
         <Box flexGrow={1}>
           {variant === 'autocomplete' ? (
             <CAutoComplete
-              value={(ui?.tempValue as any) ?? ''}
+              value={ui?.tempValue ?? ''}
               placeholder={placeholder}
               options={options}
-              // value={ui.ruleValue}
-              onChange={handleChangeTempSelectValue as any}
-              size="small"
+              onChange={handleChangeTempSelectValue}
+              size={'small'}
               sx={{ width: '140px' }}
               disableLabel={true}
               disableHelperText={true}
               onKeyUp={handleOnKeyUp}
-              groupBy={groupBy}
+              groupBy={groupBy as CAutoCompleteProps['groupBy']}
               helperText={inputHelperText}
               error={inputError}
-              {...(fieldProps as any)}
+              {...(fieldProps as Partial<CAutoCompleteProps>)}
             />
           ) : (
             <GenericInputField
               type={variant ?? 'text'}
               placeholder={placeholder}
               size="small"
-              // inputProps={inputStyles}
-              onChange={(newValue: string | number, e: any) => {
+              onChange={(
+                newValue: string | number,
+                e?: ChangeEvent<HTMLInputElement>
+              ) => {
                 handleChangeTempValue(e)
               }}
               value={ui?.tempValue ?? ''}
-              onKeyUp={handleOnKeyUp as any}
+              onKeyUp={handleOnKeyUp}
               helperText={inputHelperText}
               disableLabel // ?
               disableHelperText={!inputHelperText}
               error={inputError}
-              {...(fieldProps as any)}
+              {...fieldProps}
             />
           )}
         </Box>

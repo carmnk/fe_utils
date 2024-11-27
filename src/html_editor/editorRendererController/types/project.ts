@@ -19,20 +19,20 @@ export type Project = {
 }
 
 export type ProjectDb = Project & {
-  active_tab?: string
-  active_backend_tab?: string
+  active_tab?: string | null
+  active_backend_tab?: string | null
   pointer_mode?: string
-  selected_css_selector?: string
-  selected_element?: string
-  selected_font?: string
-  selected_image?: string
-  selected_page?: string
-  selected_server_setting?: 'ssl' | 'cors'
-  selected_state?: string
+  selected_css_selector?: string | null
+  selected_element?: string | null
+  selected_font?: string | null
+  selected_image?: string | null
+  selected_page?: string | null
+  selected_server_setting?: 'ssl' | 'cors' | null
+  selected_state?: string | null
   default_theme?: string
-  selected_entity?: string
-  selected_entity_element?: 'fields' | 'lists' | 'values' | 'joinings'
-  github_updated_datetime?: string
-  github_updated_version_edited_datetime?: string
+  selected_entity?: string | null
+  selected_entity_element?: 'fields' | 'lists' | 'values' | 'joinings' | null
+  github_updated_datetime?: string | null
+  github_updated_version_edited_datetime?: string | null
   active_menu: string | null
 }

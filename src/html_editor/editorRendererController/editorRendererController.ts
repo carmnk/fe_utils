@@ -4,6 +4,7 @@ import { useAppController } from './appController'
 import { useShortcuts } from './useShortcuts'
 import { EditorStateType } from './types'
 import { replacePlaceholdersInString } from '../renderer'
+import { ComponentDefType } from '../editorComponents'
 
 export type EditorRendererControllerParams = {
   initialEditorState?: Pick<
@@ -17,8 +18,7 @@ export type EditorRendererControllerParams = {
     | 'themes'
   >
   injections?: {
-    components?: any[]
-    actions?: any[]
+    components?: ComponentDefType[]
   }
 }
 
@@ -58,12 +58,12 @@ export const useEditorRendererController = (
       (attr) => attr.element_id === editorState.ui.selected.element
     )
     const elementAttributesDict =
-      elementAttributes.reduce<Record<string, any>>((acc, attr) => {
+      elementAttributes.reduce<Record<string, string>>((acc, attr) => {
         const key = attr.attr_name
         if (key === 'style') {
           return acc
         }
-        const valueRaw = attr.attr_value
+        const valueRaw = attr.attr_value as string
         const regex = /{(.*?)}/
         const value = valueRaw.match(regex)
           ? replacePlaceholdersInString(

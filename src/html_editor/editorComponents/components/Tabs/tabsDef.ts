@@ -1,7 +1,7 @@
 import { mdiTab } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { TabsPropsSchema } from './tabsPropsRawSchema'
-import { Tabs } from '../../../../components/navigation/CTabs'
+import { CTabsProps, Tabs } from '../../../../components/navigation/CTabs'
 import { ComponentDefType } from '../../componentDefType'
 
 export const TabsComponentDef = {
@@ -22,10 +22,10 @@ export const TabsComponentDef = {
     },
   },
   state: 'test',
-  formGen: ({ editorState }: any) =>
+  formGen: ({ editorState }) =>
     propertyFormFactory(TabsPropsSchema, editorState),
   icon: mdiTab,
   category: 'navigation',
   component: Tabs,
   schema: TabsPropsSchema,
-}
+} satisfies ComponentDefType<Omit<CTabsProps, 'ref'>>

@@ -1,4 +1,4 @@
-import { FormControlLabelProps } from '@mui/material'
+import { BoxProps, FormControlLabelProps } from '@mui/material'
 import { ChangeEvent, ReactNode } from 'react'
 
 export type InputTextFieldType =
@@ -21,7 +21,7 @@ export type CommonBooleanInputFieldProps = {
   label?: ReactNode
   name?: string
   required?: boolean
-  sx?: any
+  sx?: BoxProps['sx']
   disabled?: boolean
   helperText?: ReactNode
   disableHelperText?: boolean
@@ -97,7 +97,6 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
                 e?: ChangeEvent<HTMLInputElement>,
                 name?: string
               ) => void
-              // rows?: number
               onChangeCompleted?: (
                 newValue: string,
                 e?: ChangeEvent<HTMLInputElement>,

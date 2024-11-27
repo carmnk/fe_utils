@@ -1,5 +1,6 @@
 import Icon from '@mdi/react'
 import { Box } from '@mui/material'
+import { ReactNode } from 'react'
 import { Fragment } from 'react/jsx-runtime'
 
 const parseLink = (lineText: string, icons?: Record<string, string>) => {
@@ -64,7 +65,7 @@ const inlineFormat = (lineText: string, icons?: Record<string, string>) => {
 
   return !boldMarkDownMatches || !boldMatches?.length
     ? parseLink(lineText, icons)
-    : boldMatches.reduce<any[]>((acc, match, idx, arr) => {
+    : boldMatches.reduce<ReactNode[]>((acc, match, idx, arr) => {
         const { match: bold, start, end } = match
         const prevBoldEnd = arr[idx - 1]?.end ?? 0
         const prevText = lineText.slice(prevBoldEnd, start)
@@ -108,7 +109,7 @@ export const parseSimpleFormating = (
             }}
             color={txt?.startsWith('  •') ? 'primary.main' : 'text.primary'}
           >
-            {inlineFormat(txt.trim().slice(1), icons) as any}
+            {inlineFormat(txt.trim().slice(1), icons)}
           </Box>
         ) : (
           <>

@@ -1,7 +1,17 @@
 import { mdiDelete, mdiMinus, mdiPlus } from '@mdi/js'
 import { Box, Typography, ClickAwayListener, Tooltip } from '@mui/material'
 import { cloneDeep, isEqual } from 'lodash'
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
+import {
+  ChangeEvent,
+  Dispatch,
+  KeyboardEventHandler,
+  MouseEvent,
+  MouseEventHandler,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import { Fragment } from 'react/jsx-runtime'
 import { Flex } from '../_wrapper'
 import { Button } from '../buttons'
@@ -68,24 +78,24 @@ const genericInputFieldPropValueProps = {
 }
 const miniButtonStyles = { width: 'max-content', m: 0 }
 
-const stopPropagation = (e: any) => e.stopPropagation()
+const stopPropagation: MouseEventHandler = (e) => e.stopPropagation()
 
 type EditPropertyType = {
   path: (string | number)[]
   type: 'name' | 'value'
-  tempValue: any
+  tempValue: string | number | boolean | Record<string, unknown>
 }
 
 export type JsonObjectFieldProps = {
-  value: Record<string, any>
+  value: Record<string, unknown>
   _path?: (string | number)[]
   editing?: EditPropertyType | null
-  setEditing?: (prev: EditPropertyType | null) => EditPropertyType
+  setEditing?: Dispatch<SetStateAction<EditPropertyType | null>>
   onChange: (
-    value: Record<string, any>,
+    value: Record<string, unknown>,
     e: { target: { name: string } }
   ) => void
-  keysDict?: any
+  keysDict?: Record<string, string>
   name?: string
   disabled?: boolean
   _collapsedPaths?: string[]
@@ -170,20 +180,20 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
       setEditing({
         path,
         type: 'value',
-        tempValue: valueIn[path[path.length - 1]],
+        tempValue: valueIn[path[path.length - 1]] as string,
       })
     },
     [editing, setEditing, valueIn]
   )
 
   const handleChangeTempValue = useCallback(
-    (newValue: any) => {
-      setEditing(((prev: any) => {
+    (newValue: string) => {
+      setEditing((prev: EditPropertyType | null) => {
         if (prev) {
           return { ...prev, tempValue: newValue }
         }
         return null
-      }) as any)
+      })
     },
     [setEditing]
   )
@@ -198,7 +208,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         if (!(pathAdj[i] in newValue)) {
           console.debug("Can't find path", pathAdj[i], newValue)
         }
-        newValue = newValue[pathAdj[i]]
+        newValue = newValue[pathAdj[i]] as Record<string, unknown>
       }
       const newPropertyValue = keysDict?.[name] ?? newValue[previousName]
 
@@ -221,7 +231,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         if (!(pathAdj[i] in newValue)) {
           console.debug("Can't find path", pathAdj[i], newValue)
         }
-        newValue = newValue[pathAdj[i]]
+        newValue = newValue[pathAdj[i]] as Record<string, unknown>
       }
       newValue[previousName] = value
       //   delete newValue[previousName]
@@ -240,7 +250,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
         if (!(pathAdj[i] in newValue)) {
           console.debug("Can't find path", pathAdj[i], newValue)
         }
-        newValue = newValue[pathAdj[i]]
+        newValue = newValue[pathAdj[i]] as Record<string, unknown>
       }
 
       if (newValue[previousName] !== undefined) {
@@ -252,18 +262,18 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
   )
 
   const handleAddObjectProperty = useCallback(
-    (e: any) => {
+    (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation()
       const valueInCopy = cloneDeep(valueIn)
       const newValue = valueInCopy
       newValue['~new'] = ''
       onChange(valueInCopy, { target: { name: nameIn ?? '' } })
       const key = '~new'
-      ;(setEditing as any)((current: any) => ({
-        tempValue: valueInCopy[key],
+      setEditing({
+        tempValue: valueInCopy[key] as string,
         type: 'name',
         path: [..._path, key],
-      }))
+      })
     },
     [valueIn, onChange, nameIn, _path, setEditing]
   )
@@ -291,8 +301,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
   const previosItemsAmountArrRaw = valueInKeysSorted.map((key) =>
     getAmountJsonChildren(valueIn[key], [..._path, key], _collapsedPaths ?? [])
   )
-  const previosItemsAmountArr = previosItemsAmountArrRaw.map((val, vIDx) => {
-    const key = valueInKeysSorted[vIDx]
+  const previosItemsAmountArr = previosItemsAmountArrRaw.map((val) => {
+    // const key = valueInKeysSorted[vIDx]
     const newPath = [..._path]
     if (_collapsedPaths?.includes(newPath.join('.'))) {
       return 0
@@ -342,15 +352,20 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                 const propertyValue = valueIn[key as keyof typeof valueIn]
                 // const pathUi = editing?.path
                 // const mappedPath = [..._path, key]
-                const handleClickPropName = (e: any) => {
+                const handleClickPropName = (e: MouseEvent<HTMLDivElement>) => {
                   e.stopPropagation()
                   toggleChangePropName([..._path, key])
                 }
-                const handleChangePropName = (newValue: string, e: any) => {
+                const handleChangePropName = (
+                  newValue: string,
+                  e?: ChangeEvent<HTMLInputElement>
+                ) => {
                   e?.stopPropagation()
                   handleChangeTempValue(newValue)
                 }
-                const handleKeyUpPropName = (e: any) => {
+                const handleKeyUpPropName = (
+                  e: ChangeEvent<HTMLInputElement> & KeyboardEvent
+                ) => {
                   const newValue = e?.target?.value
                   const name = editing?.path?.at(-1)
                   if ((e.key === 'Enter' || e.key === 'Tab') && name) {
@@ -361,8 +376,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       typeof newPropertyValue !== 'object' &&
                       typeof newPropertyValue !== 'boolean'
                     ) {
-                      // eslint-disable-next-line no-extra-semi
-                      ;(setEditing as any)((current: any) => ({
+                      setEditing((current) => ({
                         ...(current ?? {}),
                         tempValue: newPropertyValue,
                         type: 'value',
@@ -373,7 +387,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                     }
                   }
                 }
-                const handleChangeCompletedPropName = (newValue: any) => {
+                const handleChangeCompletedPropName = (newValue: string) => {
                   handleChangePropertyName([..._path, key], newValue)
                   const newPropertyValue = getNewPropertyValue(newValue)
                   if (
@@ -381,8 +395,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                     typeof newPropertyValue !== 'object' &&
                     typeof newPropertyValue !== 'boolean'
                   ) {
-                    // eslint-disable-next-line no-extra-semi
-                    ;(setEditing as any)((current: any) => ({
+                    setEditing((current) => ({
                       ...(current ?? {}),
                       tempValue: newPropertyValue,
                       type: 'value',
@@ -394,19 +407,23 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                 }
                 const handleClickAwayOnEdit = () => {
                   const newTempValue = editing?.tempValue
-                  const newPropertyValue = getNewPropertyValue(newTempValue)
+                  const newPropertyValue = getNewPropertyValue(
+                    newTempValue as string
+                  )
                   if (newTempValue) {
-                    handleChangePropertyName([..._path, key], newTempValue)
+                    handleChangePropertyName(
+                      [..._path, key],
+                      newTempValue as string
+                    )
                     if (
                       !Array.isArray(newPropertyValue) &&
                       typeof newPropertyValue !== 'object' &&
                       typeof newPropertyValue !== 'boolean'
                     ) {
-                      // eslint-disable-next-line no-extra-semi
-                      ;(setEditing as any)((current: any) => ({
+                      setEditing((current) => ({
                         ...current,
-                        tempValue: newPropertyValue,
-                        path: [..._path, newTempValue],
+                        tempValue: newPropertyValue as string,
+                        path: [..._path, newTempValue as string],
                         type: 'value',
                       }))
                     } else {
@@ -416,33 +433,42 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                     setEditing(null)
                   }
                 }
-                const handleDeleteProperty = (e: any) => {
+                const handleDeleteProperty = (
+                  e: MouseEvent<HTMLButtonElement>
+                ) => {
                   e.stopPropagation()
                   const path = [..._path, key]
                   handleRemoveProperty(path)
                 }
 
-                const handleChangePropValue = (newValue: string, e: any) => {
+                const handleChangePropValue = (
+                  newValue: string,
+                  e?: ChangeEvent<HTMLInputElement>
+                ) => {
                   e?.stopPropagation()
                   handleChangeTempValue(newValue)
                 }
                 const handleChangeCompletedPropValue = (
-                  newValue: any,
-                  e: any
+                  newValue: string
+                  // e: any
                 ) => {
                   handleChangePropertyValue([..._path, key], newValue)
                 }
 
-                const handleKeyUpPropValue = (e: any) => {
+                const handleKeyUpPropValue: KeyboardEventHandler<
+                  HTMLInputElement
+                > = (e) => {
                   if (e.key === 'Enter') {
                     handleChangePropertyValue(
                       [..._path, key],
-                      editing?.tempValue
+                      editing?.tempValue as string
                     )
                     setEditing(null)
                   }
                 }
-                const handleToggleChangePropValue = (e: any) => {
+                const handleToggleChangePropValue = (
+                  e: MouseEvent<HTMLDivElement>
+                ) => {
                   e.stopPropagation()
                   if (
                     disabled ||
@@ -454,7 +480,9 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                   }
                   toggleChangePropValue([..._path, key])
                 }
-                const handleChangeSubJsonField = (newValuePerSubobject: any) =>
+                const handleChangeSubJsonField = (
+                  newValuePerSubobject: unknown
+                ) =>
                   onChange(
                     {
                       ...valueIn,
@@ -475,7 +503,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                   }
                   handleChangePropertyValue(
                     [..._path, key],
-                    !propertyValue as any
+                    !propertyValue as unknown as string // typing issue ?
                   )
                   return
                 }
@@ -519,10 +547,12 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                                   ? 'autocomplete'
                                   : 'text'
                               }
-                              value={editing?.tempValue}
+                              value={editing?.tempValue as string}
                               onClick={stopPropagation}
                               onChange={handleChangePropName}
-                              onKeyUp={handleKeyUpPropName}
+                              onKeyUp={
+                                handleKeyUpPropName as unknown as KeyboardEventHandler<HTMLInputElement>
+                              }
                               onChangeCompleted={handleChangeCompletedPropName}
                               size={'small'}
                               {...genericInputFieldProps}
@@ -580,7 +610,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             }
                             {...{ disableNumberSeparator: true }}
                             autoFocus
-                            value={editing?.tempValue}
+                            value={editing?.tempValue as string}
                             onChange={handleChangePropValue}
                             onClick={stopPropagation}
                             onChangeCompleted={handleChangeCompletedPropValue}
@@ -619,9 +649,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             value={propertyValue}
                             _path={[..._path, key]}
                             editing={editing}
-                            setEditing={setEditing as any}
+                            setEditing={setEditing}
                             onChange={handleChangeSubJsonField}
-                            keysDict={keysDict?.[key]}
+                            keysDict={
+                              keysDict?.[key] as unknown as Record<
+                                string,
+                                string
+                              >
+                            }
                             _index={startLineIndex + kIdx} // array start in the same line of the containing object prop
                             _collapsedPaths={_collapsedPaths}
                             _setCollapsedPaths={_setCollapsedPaths}
@@ -632,12 +667,12 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                           <JsonField
                             disabled={disabled}
                             name={nameIn}
-                            value={propertyValue}
+                            value={propertyValue as Record<string, unknown>}
                             _path={[..._path, key]}
                             editing={editing}
-                            setEditing={setEditing as any}
+                            setEditing={setEditing}
                             onChange={handleChangeSubJsonField}
-                            keysDict={subJsonKeysDict}
+                            keysDict={subJsonKeysDict as Record<string, string>}
                             _index={startLineIndex + kIdx} // start on the same line as containing object prop
                             _collapsedPaths={_collapsedPaths}
                             _setCollapsedPaths={_setCollapsedPaths}

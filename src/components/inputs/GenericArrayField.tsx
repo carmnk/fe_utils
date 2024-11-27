@@ -1,14 +1,8 @@
 import { useCallback, useState } from 'react'
 import { GenericInputField } from './GenericInputField'
 import { GenericInputFieldProps, InputFieldType } from './types'
-import {
-  Box,
-  BoxProps,
-  Stack,
-  StackProps,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+import { Box, BoxProps, Stack, StackProps } from '@mui/material'
+import { Typography, TypographyProps } from '@mui/material'
 import { Flex, FlexProps } from '../_wrapper'
 import { Button, CButtonProps } from '../buttons'
 import { mdiDelete, mdiPlus } from '@mdi/js'
@@ -47,21 +41,21 @@ export const GenericArrayField = <
     ...inputFieldSlotProps
   } = slotProps ?? {}
 
-  const [newValue, setNewValue] = useState<any>('')
+  const [newValue, setNewValue] = useState<string>('')
 
-  const handleChangeNewValue = useCallback((newValue: any) => {
+  const handleChangeNewValue = useCallback((newValue: string) => {
     setNewValue(newValue)
   }, [])
 
   const handleAddItem = useCallback(
     (newValue: any) => {
-      onChange([...value, newValue] as never, name as any)
+      onChange([...value, newValue] as never, name as any) // TODO: Event ?!
     },
     [name, onChange, value]
   )
 
   const handleKeyUp = useCallback(
-    (e: any) => {
+    (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
         handleAddItem(newValue)
       }

@@ -1,12 +1,8 @@
-import { ChangeEvent, useMemo } from 'react'
-import {
-  FormHelperTextProps,
-  Select as MSelect,
-  MenuItem,
-  MenuItemProps,
-  TypographyProps,
-  useTheme,
-} from '@mui/material'
+import { ChangeEvent, FormEventHandler, KeyboardEventHandler } from 'react'
+import { useMemo } from 'react'
+import { FormControlProps, FormHelperTextProps } from '@mui/material'
+import { Select as MSelect, MenuItem } from '@mui/material'
+import { MenuItemProps, TypographyProps, useTheme } from '@mui/material'
 import { FormHelperText, FormControl, SelectProps } from '@mui/material'
 import { SelectChangeEvent, Typography } from '@mui/material'
 import Box, { BoxProps } from '@mui/material/Box'
@@ -21,7 +17,7 @@ export type CustomSelectProps = {
   disableHelperText?: boolean
   disableLabel?: boolean
   labelSx?: BoxProps['sx']
-  // ContainerProps?: FormControlProps
+
   onChange?:
     | ((newValue: string, e: ChangeEvent<HTMLInputElement>) => void)
     | ((newValue: number, e: ChangeEvent<HTMLInputElement>) => void)
@@ -30,9 +26,9 @@ export type CustomSelectProps = {
   // helperText?: string
   size?: string
   slotProps?: SelectProps['slotProps'] & {
-    rootContainer?: BoxProps
-    inputCombobox?: any // SelectProps['slotProps']['input']
-    inputContainer?: any // SelectProps['slotProps']['root']
+    rootContainer?: FormControlProps
+    inputCombobox?: SelectProps['inputProps']
+    inputContainer?: SelectProps['SelectDisplayProps']
     input?: SelectProps['inputProps']
     selectDisplay?: SelectProps['SelectDisplayProps']
     menu?: SelectProps['MenuProps']
@@ -55,7 +51,7 @@ export type SpecificMuiSelectProps = Omit<
   | keyof CustomSelectProps
 >
 
-export type CSelectProps = GenericInputFieldProps<'select'> &
+export type CSelectProps = Omit<GenericInputFieldProps<'select'>, 'value'> &
   SpecificMuiTextFieldProps &
   SpecificMuiSelectProps &
   CustomSelectProps
@@ -115,7 +111,7 @@ export const Select = (props: CSelectProps) => {
       ...(error ? errorTextStyle : {}),
     }
   }, [props?.sx, error])
-  const containerPropsAdj = useMemo(() => {
+  const containerPropsAdj = useMemo<Partial<FormControlProps>>(() => {
     return {
       ...(rootContainer ?? {}),
       sx: {
@@ -137,10 +133,10 @@ export const Select = (props: CSelectProps) => {
       value: value ?? '',
       onChange: (e: SelectChangeEvent<unknown>) => {
         const value = e?.target?.value
-        onChange?.(value as any, e as any, name)
+        onChange?.(value as string, e as ChangeEvent<HTMLInputElement>, name)
       },
       error: !!error,
-      size: size as any,
+      size: size as SelectProps['size'],
       disabled: isDisabledAdj,
       sx: {
         height: size === 'small' ? 32 : 40,
@@ -160,13 +156,15 @@ export const Select = (props: CSelectProps) => {
         ...(inputCombobox ? { input: inputCombobox } : {}),
         ...(inputContainer ? { root: inputContainer } : {}),
       },
-      variant: rest?.variant as any,
-      defaultValue: rest?.defaultValue as any,
+      variant: rest?.variant,
+      defaultValue: rest?.defaultValue,
       ...rest,
-      onInvalid: rest?.onInvalid as any,
-      margin: rest?.margin as any,
-      onKeyUp: rest?.onKeyUp as any,
-      onKeyDown: rest?.onKeyDown as any,
+      onInvalid: rest?.onInvalid as
+        | FormEventHandler<HTMLInputElement | HTMLTextAreaElement>
+        | undefined,
+      margin: rest?.margin as 'none' | 'dense' | undefined,
+      onKeyUp: rest?.onKeyUp as KeyboardEventHandler<HTMLInputElement>,
+      onKeyDown: rest?.onKeyDown as KeyboardEventHandler<HTMLInputElement>,
     }),
     [
       value,
@@ -187,7 +185,7 @@ export const Select = (props: CSelectProps) => {
   )
 
   return (
-    <FormControl {...(containerPropsAdj as any)}>
+    <FormControl {...containerPropsAdj}>
       {!disableLabel && (
         <Typography
           variant="caption"
@@ -208,7 +206,7 @@ export const Select = (props: CSelectProps) => {
       <MSelect {...muiSelectProps}>
         {options?.map((opt, oIdx) => (
           <MenuItem
-            value={opt?.value as any}
+            value={opt?.value as string}
             key={oIdx}
             sx={menuItemStyles}
             {...menuItemProps}

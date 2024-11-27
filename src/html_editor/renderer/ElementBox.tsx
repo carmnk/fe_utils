@@ -6,26 +6,26 @@ import { getStylesFromClasses } from './classes/getStylesFromClasses'
 import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
 import { ComponentBox } from './ComponentBox'
 import { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
+import { NavigateFunction } from 'react-router-dom'
+
 const regexAnyPlaceholder = /{(.*?)}/
 
-export type ElementBoxProps<
-  ControllreActionsType extends { [key: string]: any },
-> = {
+export type ElementBoxProps = {
   element: Element
   editorState: EditorStateType
-  appController: EditorRendererControllerType<ControllreActionsType>['appController']
+  appController: EditorRendererControllerType['appController']
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
+  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
   selectedElement: Element | null
-  uiActions?: any
+  uiActions?: unknown
   //
   onSelectElement: (element: Element, isHovering: boolean) => void
   isProduction?: boolean
   isPointerProduction?: boolean
   OverlayComponent?: FC<{ element: Element }>
-  navigate: any
-  events: { [key: string]: any }
+  navigate: NavigateFunction
+  events: { [key: string]: ((...fnParams: unknown[]) => void) | undefined }
   rootCompositeElementId?: string
 }
 
@@ -33,11 +33,7 @@ const sx = {
   position: 'relative',
 }
 
-export const ElementBox = <
-  ControllreActionsType extends { [key: string]: any },
->(
-  props: PropsWithChildren<ElementBoxProps<ControllreActionsType>>
-) => {
+export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
   const {
     element,
     children,
@@ -66,65 +62,70 @@ export const ElementBox = <
           // while (element?._type !== 'composite') {
           return attr.element_id === element._id && element?._id
         })
-        .reduce<Record<string, any>>((acc, attr) => {
-          const key = attr.attr_name
-          // if (key === 'style') {
-          //   return acc
-          // }
-          const valueRaw = attr.attr_value
-          const value =
-            typeof valueRaw === 'string' && valueRaw.match(regexAnyPlaceholder)
-              ? replacePlaceholdersInString(
-                  valueRaw,
-                  appController.state,
-                  editorState.compositeComponentProps,
-                  editorState.properties,
-                  editorState.attributes,
-                  element,
-                  element?._id,
-                  rootCompositeElementId,
-                  undefined,
-                  undefined // icons
-                )
-              : valueRaw &&
-                  typeof valueRaw === 'object' &&
-                  !Array.isArray(valueRaw) &&
-                  Object.keys(valueRaw).length > 0
-                ? Object.keys(valueRaw).reduce((acc, key) => {
-                    const valueRawSingle =
-                      valueRaw[key as keyof typeof valueRaw]
-                    const valueSingle =
-                      typeof valueRawSingle === 'string' &&
-                      valueRawSingle.match(regexAnyPlaceholder)
-                        ? replacePlaceholdersInString(
-                            valueRawSingle,
-                            appController.state,
-                            editorState.compositeComponentProps,
-                            editorState.properties,
-                            editorState.attributes,
-                            element,
-                            element?._id,
-                            rootCompositeElementId,
-                            undefined,
-                            undefined // icons
-                          )
-                        : valueRawSingle
+        .reduce<Record<string, string | Record<string, string>>>(
+          (acc, attr) => {
+            const key = attr.attr_name
+            // if (key === 'style') {
+            //   return acc
+            // }
+            const valueRaw = attr.attr_value
+            const value =
+              typeof valueRaw === 'string' &&
+              valueRaw.match(regexAnyPlaceholder)
+                ? replacePlaceholdersInString(
+                    valueRaw,
+                    appController.state,
+                    editorState.compositeComponentProps,
+                    editorState.properties,
+                    editorState.attributes,
+                    element,
+                    element?._id,
+                    rootCompositeElementId,
+                    undefined,
+                    undefined // icons
+                  )
+                : valueRaw &&
+                    typeof valueRaw === 'object' &&
+                    !Array.isArray(valueRaw) &&
+                    Object.keys(valueRaw).length > 0
+                  ? Object.keys(valueRaw).reduce((acc, key) => {
+                      const valueRawSingle = valueRaw[
+                        key as keyof typeof valueRaw
+                      ] as string
+                      const valueSingle =
+                        typeof valueRawSingle === 'string' &&
+                        valueRawSingle.match(regexAnyPlaceholder)
+                          ? replacePlaceholdersInString(
+                              valueRawSingle,
+                              appController.state,
+                              editorState.compositeComponentProps,
+                              editorState.properties,
+                              editorState.attributes,
+                              element,
+                              element?._id,
+                              rootCompositeElementId,
+                              undefined,
+                              undefined // icons
+                            )
+                          : valueRawSingle
 
-                    return {
-                      ...acc,
-                      [key]:
-                        typeof valueSingle === 'string'
-                          ? valueSingle
-                          : valueSingle?.toString(),
-                    }
-                  }, {})
-                : valueRaw
+                      return {
+                        ...acc,
+                        [key]:
+                          typeof valueSingle === 'string'
+                            ? valueSingle
+                            : valueSingle?.toString(),
+                      }
+                    }, {})
+                  : valueRaw
 
-          return {
-            ...acc,
-            [key]: key !== 'style' ? value.toString() : value, // react-html attributes must be strings (in contrast to react 'elements')
-          }
-        }, {}),
+            return {
+              ...acc,
+              [key]: key !== 'style' ? value.toString() : value, // react-html attributes must be strings (in contrast to react 'elements')
+            }
+          },
+          {}
+        ),
     [
       editorState.attributes,
       element,
@@ -170,17 +171,14 @@ export const ElementBox = <
     [className, editorState?.cssSelectors]
   )
 
-  const bgImageFile = useMemo(
-    () =>
-      elementAttributsDict?.style?.backgroundImage
-        ? (editorState.assets.images.find(
-            (img) =>
-              img._id === elementAttributsDict?.style?.backgroundImage &&
-              img.image
-          )?.image as unknown as File)
-        : undefined,
-    [elementAttributsDict?.style?.backgroundImage, editorState.assets.images]
-  )
+  const bgImageFile = useMemo(() => {
+    const styleAttributes = elementAttributsDict?.style as CSSProperties
+    return styleAttributes && styleAttributes?.backgroundImage
+      ? (editorState.assets.images.find(
+          (img) => img._id === styleAttributes.backgroundImage && img.image
+        )?.image as unknown as File)
+      : undefined
+  }, [elementAttributsDict, editorState.assets.images])
 
   const bgImgSrcValue = useMemo(() => {
     const source = bgImageFile ? URL.createObjectURL(bgImageFile) : undefined
@@ -293,9 +291,10 @@ export const ElementBox = <
       return {
         onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
           e.preventDefault()
-          const isExternalLink = !elementAttributsDict?.href?.startsWith('/')
+          const href = elementAttributsDict?.href as string
+          const isExternalLink = !href?.startsWith('/')
           if (isExternalLink) {
-            window.open(elementAttributsDict?.href, '_blank')
+            window.open(href, '_blank')
           } else {
             const href =
               elementAttributsDict?.href === '/index'
@@ -311,14 +310,17 @@ export const ElementBox = <
 
   const boxProps = useMemo(() => {
     const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       style: _s,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       href: _h,
       ...styleLessAttributes
     } = elementAttributsDict ?? {}
     return {
       component: isOverheadHtmlElement
         ? ('div' as const)
-        : (element._type as any),
+        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (element._type as any),
       key: element._id,
       ...(styleLessAttributes ?? {}),
       sx: styles,
@@ -377,23 +379,21 @@ export const ElementBox = <
   ) : (
     <Box {...boxProps} ref={elementRef} key={element._id} {...events}>
       {/* label / flag */}
-      {!isProduction &&
-        !isPointerProduction &&
-        ((
-          <Box
-            sx={{
-              display: 'none',
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              border: '1px solid rgba(0,150,136,0.5)',
-              borderRadius: '1px',
-              color: 'text.primary',
-            }}
-          >
-            {element._type}
-          </Box>
-        ) as any)}
+      {!isProduction && !isPointerProduction && (
+        <Box
+          sx={{
+            display: 'none',
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            border: '1px solid rgba(0,150,136,0.5)',
+            borderRadius: '1px',
+            color: 'text.primary',
+          }}
+        >
+          {element._type}
+        </Box>
+      )}
 
       {('_content' in element ? element?._content : children) || children}
     </Box>

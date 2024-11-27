@@ -1,4 +1,4 @@
-import { Menu, MenuProps } from '@mui/material'
+import { Menu, MenuProps, PaperProps } from '@mui/material'
 import { DropDownMenuItemProps, DropdownMenuItem } from './DropdownMenuItem'
 import { PropsWithChildren, useMemo } from 'react'
 
@@ -6,12 +6,13 @@ export type DropdownMenuProps = Omit<MenuProps, 'slotProps'> & {
   id?: string
   anchorEl: HTMLElement | null
   open: boolean
-  onClose: () => void
+  onClose: (e?: unknown) => void
   items?: DropDownMenuItemProps[] // Dropdown menu items - precendence over children (but children can by any ReactNode, though consider the <DropwdownMenu/> css styles)
-  slotProps?: MenuProps['slotProps'] & {
+  slotProps?: Omit<MenuProps['slotProps'], 'paper'> & {
     transitionContainer?: MenuProps['TransitionProps']
     menuList?: MenuProps['MenuListProps']
     dropDownMenuItem?: DropDownMenuItemProps
+    paper?: PaperProps
   }
   borderRadius?: number
 }
@@ -28,7 +29,7 @@ const menuOrigins: Pick<MenuProps, 'anchorOrigin' | 'transformOrigin'> = {
 }
 
 const defaultMenuListProps = { sx: { pt: 0, pb: 0 } }
-const defaultSlotProps = { paper: { sx: { borderRadius: 1 } } }
+// const defaultSlotProps = { paper: { sx: { borderRadius: 1 } } }
 
 export const DropdownMenu = (props: PropsWithChildren<DropdownMenuProps>) => {
   const {
@@ -55,7 +56,7 @@ export const DropdownMenu = (props: PropsWithChildren<DropdownMenuProps>) => {
       paper: {
         ...(slotPropsIn?.paper ?? {}),
         sx: {
-          ...((slotPropsIn?.paper as any)?.sx ?? {}),
+          ...(slotPropsIn?.paper?.sx ?? {}),
           borderRadius: borderRadius ? borderRadius + 'px' : undefined,
         },
       },

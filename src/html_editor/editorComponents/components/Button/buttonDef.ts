@@ -2,16 +2,17 @@ import { mdiButtonCursor } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ButtonPropsSchema } from './buttonPropsRawSchema'
 import { Button } from '../../../../components/buttons/Button'
+import { ComponentDefType } from '../../componentDefType'
 
 export const buttonEditorComponentDef = {
   type: 'Button' as const,
 
   component: Button,
-  formGen: ({ editorState }: any) =>
+  formGen: ({ editorState }) =>
     propertyFormFactory(ButtonPropsSchema, editorState),
   props: {
     type: 'primary',
-    label: 'test2324____r',
+    label: 'Test-Label',
     disabled: false,
     loading: false,
     iconButton: false,
@@ -24,8 +25,8 @@ export const buttonEditorComponentDef = {
       tooltip: {},
     },
   },
-  state: false as any,
+  state: false,
   icon: mdiButtonCursor,
   category: 'basic',
   schema: ButtonPropsSchema,
-}
+} satisfies ComponentDefType

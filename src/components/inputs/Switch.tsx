@@ -98,9 +98,9 @@ export const Switch = (props: CSwitchProps) => {
               checked={!!value}
               onChange={handleChange}
               sx={{
-                ...(restCheckBoxProps?.sx as any),
+                ...(restCheckBoxProps?.sx ?? {}),
               }}
-              {...(restCheckBoxProps as any)}
+              {...(restCheckBoxProps ?? {})}
             />
           }
           labelPlacement={labelPlacement ?? undefined}

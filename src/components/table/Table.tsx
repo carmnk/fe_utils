@@ -6,7 +6,14 @@ import { TableHeader } from './subComponents/TableHeader'
 import { TableProps } from './types'
 import { useDraggableRows } from './useDraggableRows'
 import { TableComponent } from './subComponents/TableComponent'
-import { useState, useEffect, useMemo, useCallback, Fragment } from 'react'
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  Fragment,
+  ReactNode,
+} from 'react'
 
 const Tfoot = (props: BoxProps) => <Box component="tfoot" {...props} />
 const Tr = (props: BoxProps) => <Box component="tr" {...props} />
@@ -92,15 +99,15 @@ export const Table = (props: TableProps) => {
       if (curSortFilter) {
         if (curSortFilter?.value.slice(-3) === 'asc') {
           onSetFilters?.([
-            ...allFiltersExSortings,
+            ...(allFiltersExSortings ?? []),
             { filterKey: sortKey, value: `${sortValue},desc` },
           ])
         } else {
-          onSetFilters?.(allFiltersExSortings)
+          onSetFilters?.(allFiltersExSortings ?? [])
         }
       } else {
         onSetFilters?.([
-          ...allFiltersExSortings,
+          ...(allFiltersExSortings ?? []),
           { filterKey: sortKey, value: `${sortValue},asc` },
         ])
       }
@@ -179,7 +186,10 @@ export const Table = (props: TableProps) => {
                 const selectedItemId =
                   typeof getSelectedRow === 'function'
                     ? getSelectedRow(row, rIdx)
-                    : typeof getSelectedRow === 'string'
+                    : typeof getSelectedRow === 'string' &&
+                        row &&
+                        typeof row === 'object' &&
+                        getSelectedRow in row
                       ? row[getSelectedRow]
                       : ''
                 return (
@@ -187,8 +197,8 @@ export const Table = (props: TableProps) => {
                     <RowComponent
                       enableDrag={!!reorderRowId}
                       isDragged={
-                        row?.[reorderRowId ?? ''] === draggedItemId &&
-                        !!draggedItemId
+                        row?.[(reorderRowId as keyof typeof row) ?? ''] ===
+                          draggedItemId && !!draggedItemId
                       }
                       bind={bind}
                       getTrProps={getTrProps}
@@ -216,7 +226,7 @@ export const Table = (props: TableProps) => {
                                 typeof row[col?.renderCell]
                               )
                                 ? row[col?.renderCell]?.toString()
-                                : row[col?.renderCell]}
+                                : (row[col?.renderCell] as ReactNode)}
                             </td>
                           ) : null
                         return col?.isRowSelect ? (
@@ -226,7 +236,9 @@ export const Table = (props: TableProps) => {
                                 disabled={disableSelection}
                                 tabIndex={-1}
                                 checked={
-                                  !!selectedRows?.includes?.(selectedItemId)
+                                  !!selectedRows?.includes?.(
+                                    selectedItemId as string
+                                  )
                                 }
                                 size="small"
                                 onClick={() => {
@@ -283,7 +295,7 @@ export const Table = (props: TableProps) => {
                 typeof col?.renderFooterCell === 'function' ? (
                   col?.renderFooterCell?.(footerData, cIdx)
                 ) : typeof col?.renderFooterCell === 'string' ? (
-                  <td>{footerData[col?.renderFooterCell]}</td>
+                  <td>{footerData[col?.renderFooterCell] as string}</td>
                 ) : null
               return !renderedFooterCell && renderedFooterCell !== null ? (
                 <td key={cIdx} />

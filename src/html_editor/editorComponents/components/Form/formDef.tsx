@@ -2,16 +2,19 @@ import { mdiListBoxOutline } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { formPropsSchema } from './formPropsRawSchema'
 import { GenericForm } from '../../../../components/forms/GenericForm'
+import { ComponentDefType } from '../../componentDefType'
+import { GenericFormProps } from '../../../../components'
 
 export const formEditorComponentDef = {
   type: 'Form' as const,
 
   component: GenericForm,
-  formGen: ({ editorState }: any) =>
+  formGen: ({ editorState }) =>
     propertyFormFactory(formPropsSchema, editorState, {
       dynamicKeysDict: {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        fields: (f: any, g: any) => {
+        fields: () => {
+          // formdata can be parameter
           return [
             {
               name: '',
@@ -53,4 +56,4 @@ export const formEditorComponentDef = {
   icon: mdiListBoxOutline,
   category: 'data',
   schema: formPropsSchema,
-}
+} satisfies ComponentDefType<GenericFormProps>

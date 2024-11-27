@@ -1,39 +1,29 @@
-import {
-  useRef,
-  useCallback,
-  useEffect,
-  KeyboardEvent,
-  ChangeEvent,
-  useState,
-  useMemo,
-} from 'react'
-import { FilterType } from './types'
+import { useCallback, useEffect, useState, useMemo } from 'react'
+import { KeyboardEvent, ChangeEvent } from 'react'
+import { GenericFilterType, GenericFilterValueType } from './types'
 import { makeFilterUrl } from './makeUrl'
-import { isEqual } from 'lodash'
 
 export type TableUiType = {
   searchValue: string // input value + pressed enter / blur field
   searchParam: string // input value
   pageNumber: number
   itemsPerPage: number
-  filters: FilterType[]
+  filters: GenericFilterType[]
 }
-
-type GenericFilterType = { filterKey: string; value: any }
 
 export type TableHookProps = {
   onStartLoading?: () => void
   onFetch: (url: string, srcUrl?: string) => void
   url: string
-  externalFilters?: { filterKey: string; value: any }[]
+  externalFilters?: { filterKey: string; value: GenericFilterValueType }[]
   initial?: {
-    filters?: { filterKey: string; value: any }[]
+    filters?: { filterKey: string; value: GenericFilterValueType }[]
     searchParam?: string
     pageNumber?: number
     itemsPerPage?: number
   }
   onUpdateTableParams?: (newValue: {
-    filters: { filterKey: string; value: any }[]
+    filters: { filterKey: string; value: GenericFilterValueType }[]
     searchParam: string
     pageNumber: number
     itemsPerPage: number
@@ -41,15 +31,15 @@ export type TableHookProps = {
   onChangeItemsPerPage?: (newvalue: number) => void
   itemsPerPageStorageKey?: string
   preprocessFilters?: (
-    filtersIn: { filterKey: string; value: any }[]
-  ) => { filterKey: string; value: any }[]
+    filtersIn: { filterKey: string; value: GenericFilterValueType }[]
+  ) => { filterKey: string; value: GenericFilterValueType }[]
   postprocessFilters?: (
-    filtersIn: { filterKey: string; value: any }[]
-  ) => { filterKey: string; value: any }[]
+    filtersIn: { filterKey: string; value: GenericFilterValueType }[]
+  ) => { filterKey: string; value: GenericFilterValueType }[]
   searchValue?: string
   isUnpaginated?: boolean
   disablePagination?: boolean
-  scrollContainer?: any
+  scrollContainerId?: string
 }
 
 export const useTableUi = (props: TableHookProps) => {
@@ -61,13 +51,13 @@ export const useTableUi = (props: TableHookProps) => {
     initial,
     onUpdateTableParams,
     onChangeItemsPerPage,
-    itemsPerPageStorageKey,
+    // itemsPerPageStorageKey,
     preprocessFilters,
     postprocessFilters,
     searchValue,
     isUnpaginated,
     disablePagination,
-    scrollContainer,
+    scrollContainerId,
   } = props ?? {}
   const {
     filters: initialAllFilters,
@@ -260,7 +250,7 @@ export const useTableUi = (props: TableHookProps) => {
         })
         // Scroll to a certain element
         const scroollContainerElement = document.querySelector(
-          `#${scrollContainer ?? 'scroll_container'}`
+          `#${scrollContainerId ?? 'scroll_container'}`
         )
         if (scroollContainerElement)
           scroollContainerElement.scrollTo({
@@ -275,7 +265,7 @@ export const useTableUi = (props: TableHookProps) => {
         }
       })
     },
-    [onUpdateTableParams, scrollContainer]
+    [onUpdateTableParams, scrollContainerId]
   )
   const changeItemsPerPage = useCallback(
     (newValue: ((current: number) => number) | number) => {

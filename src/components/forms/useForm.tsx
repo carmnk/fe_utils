@@ -1,8 +1,7 @@
 import { useState, useCallback } from 'react'
-import { GenericFormParams, GenericFormProps } from './GenericForm'
+import { FormDataType, GenericFormParams, GenericFormProps } from './types'
 
-export type UseFormParams<F extends { [key: string]: any }> =
-  GenericFormParams<F>
+export type UseFormParams = GenericFormParams
 // & {
 // fields: GenericFormParams<F>['fields']
 // subforms?: GenericFormParams<F>['subforms']
@@ -10,18 +9,18 @@ export type UseFormParams<F extends { [key: string]: any }> =
 // onSubmit?: (formData: F) => F
 // }
 
-export const useForm = <F extends { [key: string]: any }>(
-  params: UseFormParams<F>
+export const useForm = <F extends FormDataType = FormDataType>(
+  params: UseFormParams
 ): GenericFormProps<F> => {
   // const { fields, subforms, injections } = params
   const [formData, setFormData] = useState<F>({} as F)
 
   const onChangeFormData = useCallback(
     (
-      newFormData: F,
-      changedPropertyName: keyof F,
-      changedValue: any,
-      prevFormData: F
+      newFormData: F
+      // changedPropertyName: keyof F,
+      // changedValue: any,
+      // prevFormData: F
     ) => {
       setFormData(newFormData)
     },
@@ -31,7 +30,7 @@ export const useForm = <F extends { [key: string]: any }>(
   // const [formData, setFormData] = useState<F>({} as F)
 
   return {
-    ...params,
+    ...(params as GenericFormProps<F>),
     formData,
     onChangeFormData,
   }

@@ -13,7 +13,6 @@ export type ResolveElementPropsParams = {
   appController: AppController
   icons?: { [key: string]: string }
   elementProps: Property[]
-  selectedElement: Element | null
 }
 
 export const resolveElementProps = (params: ResolveElementPropsParams) => {
@@ -24,7 +23,6 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
     appController,
     icons,
     elementProps,
-    selectedElement,
   } = params
 
   const getPropByName = (key: string) =>
@@ -33,18 +31,18 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
   const elementPropsDict = elementProps.reduce<Record<string, unknown>>(
     (acc, cur) => {
       const key = cur.prop_name
-      const keyValue = getPropByName(key)
+      const keyValue = getPropByName(key) as string
       const matches = keyValue?.match?.(
         /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
       )
       const keyValueAdj = matches
         ? replacePlaceholdersInString(
-            keyValue,
+            keyValue as string,
             appController.state,
             editorState.compositeComponentProps,
             editorState.properties,
             editorState.attributes,
-            element as any,
+            element,
             element._id,
             rootCompositeElementId,
             undefined,

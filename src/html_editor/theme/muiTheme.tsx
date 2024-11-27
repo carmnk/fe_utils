@@ -1,4 +1,4 @@
-import { responsiveFontSizes, createTheme, Theme } from '@mui/material'
+import { createTheme, Theme } from '@mui/material'
 import { v4 as uuid } from 'uuid'
 
 export type ExtendedTheme = Theme & { name: string; id: string }

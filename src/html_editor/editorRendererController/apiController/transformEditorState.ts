@@ -7,7 +7,7 @@ import { EndpointDb } from '../types/endpoint'
 
 export const transformEditorStateToPayload = (
   payload: EditorStateType
-): EditorStateDbDataType | null => {
+): Omit<EditorStateDbDataType, 'data_changes'> | null => {
   const projectIn = payload?.project ?? {}
   const project_id = projectIn.project_id
   if (!project_id) {
@@ -35,18 +35,18 @@ export const transformEditorStateToPayload = (
   } = uiIn.selected
   // save with project
   const uiOut = {
-    selected_page: page,
-    selected_server_setting: serverSetting,
-    selected_css_selector: cssSelector,
-    selected_image: image,
-    selected_state: state,
-    selected_element: element,
-    selected_font: font,
+    selected_page: page ?? null,
+    selected_server_setting: serverSetting ?? null,
+    selected_css_selector: cssSelector ?? null,
+    selected_image: image ?? null,
+    selected_state: state ?? null,
+    selected_element: element ?? null,
+    selected_font: font ?? null,
     active_menu: uiIn?.navigationMenu?.activeMenu ?? null,
     active_tab: uiIn?.navigationMenu?.activeTab ?? null,
     active_backend_tab: uiIn?.navigationMenu?.activeBackendTab ?? null,
     pointer_mode: uiIn?.pointerMode ?? null,
-    selected_entity: entity,
+    selected_entity: entity ?? null,
     selected_entity_element: entityElement ?? null,
   }
   const projectOut = {
@@ -114,7 +114,7 @@ export const transformEditorStateToPayload = (
   const cssSelectorsOut = cssSelectorsIn.map((cssSelector) => {
     return {
       css_selector_id: cssSelector._id,
-      css_selector_name: cssSelector?.css_selector_name ?? [],
+      css_selector_name: cssSelector?.css_selector_name ?? '',
       project_id,
       // _user,
       //   selector_page?: string
@@ -136,11 +136,11 @@ export const transformEditorStateToPayload = (
     }
   })
   const imageFiles = payload.assets.images
-    ?.filter((img) => (img as any)._upload)
+    ?.filter((img) => (img as typeof img & { _upload: boolean })._upload)
     ?.map((image) => {
       return {
         asset_id: image._id,
-        image: image.image as any,
+        image: image.image as unknown as File,
         // image: includeBase64Images && image.image
         //   ? toBase64(image.image as any)
         //   : (image.image as any),
@@ -161,9 +161,9 @@ export const transformEditorStateToPayload = (
       project_id,
       base_url: api.baseUrl,
       auth_type: api.auth.type,
-      auth_basic_username: (api.auth as any).username,
-      auth_basic_password: (api.auth as any).password,
-      auth_bearer_token: (api.auth as any).token,
+      auth_basic_username: api.auth.type === 'basic' ? api.auth.username : null,
+      auth_basic_password: api.auth.type === 'basic' ? api.auth.password : null,
+      auth_bearer_token: api.auth.type === 'bearer' ? api.auth.token : null,
       use_cookies: api.useCookies,
     }
   })
@@ -267,11 +267,11 @@ export const transformEditorStateToPayload = (
   // endpoints: Endpoint[]
 
   return {
-    project: projectOut as any,
+    project: projectOut,
     elements: elementsOut,
     components: payload.components,
     attributes,
-    cssSelectors: cssSelectorsOut as any,
+    cssSelectors: cssSelectorsOut,
     images,
     imageFiles,
     themes,

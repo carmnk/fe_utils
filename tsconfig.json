@@ -22,14 +22,14 @@
     "declaration": true, // Generates declaration files for TypeScript.
 
     "outDir": "./dist", // Specifies an output directxory for the generated files.
-    "types": ["node", "jest"] // Specifies the types that should be included in the compilation.
+    "types": ["node", "jest", "@testing-library/jest-dom"] // Specifies the types that should be included in the compilation.
   },
   "include": ["src"], // Specifies the directory to include when searching for TypeScript files.
 
   "exclude": [
     "src/**/__docs__",
-    "src/**/_tests",
-    "src/**/**.test.tsx",
+    // "src/**/_tests",
+    // "src/**/**.test.tsx",
     "src/stories/**",
     "dist/**/*"
   ]

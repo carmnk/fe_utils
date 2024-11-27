@@ -1,47 +1,45 @@
 import { EditorStateType, Element } from '../editorRendererController/types'
 import { ElementBox } from './ElementBox'
-import { Box, Theme } from '@mui/material'
+import { Box, BoxProps, Theme } from '@mui/material'
 import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
 import { isComponentType, isStringLowerCase } from './utils'
 import {
   checkForPlaceholders,
   replacePlaceholdersInString,
 } from './placeholder/replacePlaceholder'
-import { FC, ReactNode, ComponentType } from 'react'
+import { FC, ReactNode } from 'react'
 import { getInjectedElementIconProps } from './icons/getInjectedElementIconProps'
 import { NavigateFunction } from 'react-router-dom'
 import { resolveElementProps } from './placeholder/resolveElementProps'
 import { renderElementChildren } from './renderElementChildren'
 import { getElementEventHandlerProps } from './actions/getElementEventHandlerProps'
 import { getReactElementProps } from './getReactElementProps'
+import { ComponentDefType } from '../editorComponents'
 
 // const ANY_PLACEHOLDER_REGEX =
 //   /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
 
-export const renderElements = <
-  ControllreUiActionsType extends Record<string, unknown>,
->(params: {
+export const renderElements = (params: {
   elements: Element[]
   //
   editorState: EditorStateType
-  appController: EditorRendererControllerType<ControllreUiActionsType>['appController']
+  appController: EditorRendererControllerType['appController']
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType<ControllreUiActionsType>['COMPONENT_MODELS']
-  selectedElement: Element | null
-  uiActions?: ControllreUiActionsType
+  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  uiActions?: unknown
   //
   onSelectElement: (element: Element, isHovering: boolean) => void
   theme: Theme
   isProduction?: boolean
-  icons?: { [key: string]: string }
+  icons: Record<string, string>
   parentId?: string
   isPointerProduction?: boolean
   baseComponentId?: string
   disableOverlay?: boolean
   rootCompositeElementId?: string
   OverlayComponent?: FC<{ element: Element }>
-  debug?: any
+  debug?: unknown
   navigate: NavigateFunction
 }): ReactNode => {
   const {
@@ -51,7 +49,6 @@ export const renderElements = <
     currentViewportElements,
     selectedPageElements,
     COMPONENT_MODELS,
-    selectedElement,
     uiActions,
     onSelectElement,
     theme,
@@ -107,14 +104,16 @@ export const renderElements = <
     )
     const allElementProps = [...(elementProps ?? []), ...(templateProps ?? [])]
 
-    const schemaProps = (element as any)?.schema?.properties ?? {}
+    const schemaProps =
+      (element as unknown as ComponentDefType)?.schema?.properties ?? {}
     const baseComponent = COMPONENT_MODELS?.find(
       (com) => com.type === element?._type
     )
     const CurrentComponent =
-      baseComponent &&
-      'component' in baseComponent &&
-      (baseComponent.component as ComponentType<'Button'>)
+      (baseComponent &&
+        'component' in baseComponent &&
+        baseComponent.component) ||
+      Box
 
     // icon injections
     const injectedIconProps = getInjectedElementIconProps({
@@ -131,7 +130,6 @@ export const renderElements = <
       editorState,
       appController,
       elementProps: allElementProps,
-      selectedElement: element,
       icons,
     })
 
@@ -162,7 +160,6 @@ export const renderElements = <
       selectedPageElements,
       COMPONENT_MODELS,
       uiActions,
-      selectedElement: element,
       onSelectElement,
       isProduction,
       icons,
@@ -191,7 +188,7 @@ export const renderElements = <
       elementProps,
       elementPropsObject,
       appController,
-      CurrentComponent,
+      CurrentComponent: CurrentComponent, // TODO: Pobably bug here
       tableUis,
       uiActions,
       icons,
@@ -213,26 +210,6 @@ export const renderElements = <
       _content: content,
     }
 
-    console.log(
-      'IS PRODUCTION',
-      isProduction,
-      isPointerProduction,
-      'ELEMENT',
-      element?._type,
-      element?._id
-    )
-    // if (
-    //   element?._parentId === 'e9780d0e-c07b-4b1b-90ba-5562f7915e65' ||
-    //   debug
-    // ) {
-    //   console.debug(
-    //     'elementAdj  43333   ',
-    //     debug,
-    //     elementAdj2,
-    //     renderedElementChildren
-    //   )
-    // }
-
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />
 
@@ -248,7 +225,7 @@ export const renderElements = <
         selectedPageElements={selectedPageElements}
         selectedElement={element}
         COMPONENT_MODELS={COMPONENT_MODELS}
-        isProduction={isProduction }
+        isProduction={isProduction}
         isPointerProduction={isPointerProduction}
         OverlayComponent={OverlayComponent}
         navigate={navigate}
@@ -273,23 +250,24 @@ export const renderElements = <
       ].includes(element?._type) && CurrentComponent ? (
         <CurrentComponent
           key={element._id}
-          {...((elementPropsObject as any) ?? {})} // icon injections needed ? -> more generic approach
+          {...(elementPropsObject ?? {})} // icon injections needed ? -> more generic approach
           {...injectedIconProps}
           sx={
             !isProduction
               ? {
-                  ...((elementPropsObject as any)?.sx ?? {}),
+                  ...(elementPropsObject?.sx ?? {}),
                   position: 'relative',
                 }
-              : (elementPropsObject as any)?.sx
+              : (elementPropsObject?.sx as BoxProps['sx'])
           }
-          rootInjection={
-            ['Paper', 'Dialog', 'AppBar'].includes(element._type)
+          {...{
+            rootInjection: ['Paper', 'Dialog', 'AppBar'].includes(element._type)
               ? undefined
-              : rootInjectionOverlayComponent
-          }
+              : rootInjectionOverlayComponent,
+          }}
           {...eventHandlerProps}
-          {...specificReactElementProps}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...(specificReactElementProps as any)}
         >
           {renderedElementChildren}
           {/* these dont have the rootInjection interface yet */}
@@ -299,8 +277,8 @@ export const renderElements = <
       ) : // Navigation Container -> specific render case (but could be component, too)
       element?._type === 'NavContainer' ? (
         (() => {
-          const { children, ...childLessProps } =
-            (elementPropsObject as any) ?? {}
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { children, ...childLessProps } = elementPropsObject ?? {}
 
           return (
             <Box
@@ -314,22 +292,20 @@ export const renderElements = <
           )
         })()
       ) : (
-        // ['Button', 'Chip', 'Typography', 'Table', 'Form', 'Icon']
         <CurrentComponent
           key={element._id}
           {...(elementPropsObject ?? {})}
           {...injectedIconProps}
-          rootInjection={rootInjectionOverlayComponent}
+          // rootInjection={rootInjectionOverlayComponent}
           sx={
             !isProduction
               ? {
-                  ...((elementPropsObject as any)?.sx ?? {}),
+                  ...(elementPropsObject?.sx ?? {}),
                   position: 'relative',
                 }
-              : (elementPropsObject as any)?.sx
+              : (elementPropsObject?.sx as BoxProps['sx'])
           }
           {...eventHandlerProps}
-          {...specificReactElementProps}
         />
       )
     ) : null

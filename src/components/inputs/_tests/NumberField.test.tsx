@@ -1,3 +1,4 @@
+import React from 'react'
 import { render, fireEvent, act } from '@testing-library/react'
 import { NumberField } from '../NumberField'
 
@@ -120,7 +121,7 @@ describe('NumberField', () => {
 
   it('renders with correct icon', () => {
     const Icon = () => <span>Icon</span>
-    const { getByText } = render(<NumberField icon={<Icon />} />)
+    const { getByText } = render(<NumberField endIcon={<Icon />} />)
     expect(getByText('Icon')).toBeInTheDocument()
   })
 

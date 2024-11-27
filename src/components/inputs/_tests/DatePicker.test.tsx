@@ -9,7 +9,7 @@ describe('DatePicker', () => {
     const testDate = moment(new Date(2022, 1, 1))
     const { getByRole } = render(<DatePicker value={testDate} />)
     const datePicker = getByRole('textbox')
-    expect(datePicker.value).toBe('01/02/2022')
+    expect(datePicker.value).toBe('02/01/2022')
   })
 
   it('calls onChange when value is changed', () => {
@@ -21,7 +21,9 @@ describe('DatePicker', () => {
     const mock = handleChange.mock
     const calls = mock.calls
     const valuePart = calls[0][0] // first param of onChange, 2nd is event
-    expect(valuePart.toISOString()).toEqual('2022-02-01T23:00:00.000Z')
+    console.error('valuePart', valuePart)
+    // expect(valuePart.toISOString()).toEqual('2022-02-01T23:00:00.000Z')
+    expect(valuePart).toEqual('2022-02-01T23:00:00.000Z')
   })
 
   it('renders with correct label', () => {

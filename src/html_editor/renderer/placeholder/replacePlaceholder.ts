@@ -30,17 +30,17 @@ export const checkForPlaceholders = (text: string) => {
 */
 export const replacePlaceholdersInString = (
   text: string,
-  appState: EditorRendererControllerType<any>['appController']['state'],
+  appState: EditorRendererControllerType['appController']['state'],
   componentPropertyDefinitions: EditorStateType['compositeComponentProps'],
   properties: EditorStateType['properties'],
   attributes: EditorStateType['attributes'],
-  currentElement: EditorRendererControllerType<any>['selectedElement'],
+  currentElement: EditorRendererControllerType['selectedElement'],
   elementId: string | null,
   rootCompositeElementId?: string,
   forceEval?: boolean,
   icons?: Record<string, string>,
   isTransformer?: boolean,
-  formData?: Record<string, any>
+  formData?: Record<string, unknown>
 ) => {
   const getTemplates = (text: string) => {
     let templatesOut: {
@@ -49,6 +49,7 @@ export const replacePlaceholdersInString = (
       type: string
       placeholderRaw: string
       placeholderCutted: string
+      isValueUndefined: boolean
     }[] = []
 
     const buttonStatesMatches = text.match(REGEX_BUTTON_STATES_PLACEHOLDER)
@@ -114,8 +115,14 @@ export const replacePlaceholdersInString = (
           placeholder: key,
           placeholderRaw: keyRaw,
           placeholderCutted: keyRaw.replace(key, ''),
-          value: (appState?.treeviews as any)?.[key] ?? '',
-          isValueUndefined: (appState?.treeviews as any)?.[key] === undefined,
+          value:
+            key in appState.treeviews
+              ? (appState.treeviews?.[key as keyof typeof appState.treeviews] ??
+                '')
+              : '',
+          isValueUndefined:
+            appState?.treeviews?.[key as keyof typeof appState.treeviews] ===
+            undefined,
         }
       }) || []
 
@@ -259,7 +266,7 @@ export const replacePlaceholdersInString = (
             )
             ?.replaceAll?.('{formData.', '')
     } else {
-      if ((template as any).isValueUndefined) {
+      if (template.isValueUndefined) {
         undefinedPlaceholders.push(template.placeholder)
         continue
       }
@@ -271,14 +278,18 @@ export const replacePlaceholdersInString = (
 
         const value = getDeepPropertyByPath(template.value, path)
         console.debug('PATH', template, path, value)
-        if (typeof value === 'object') {
-          newText = value
+        if (value && typeof value === 'object') {
+          newText = value as any
           break
         }
         newText = newText
           .replaceAll(
             template.placeholderRaw,
-            value ? (typeof value === 'string' ? '"' + value + '"' : value) : ''
+            value
+              ? typeof value === 'string'
+                ? '"' + value + '"'
+                : (value as string)
+              : ''
           )
           .replaceAll('{_data.', '')
           .replaceAll('{formData.', '')
@@ -293,12 +304,9 @@ export const replacePlaceholdersInString = (
   }
 
   if (typeof newText === 'string' && templates.length && !isTransformer) {
-    const nt = newText
     newText = newText.replaceAll('{props.', '').replaceAll('}', '')
   }
-  // if (typeof newText === 'object') {
 
-  // }
   try {
     console.debug(
       'BEFORE EVAL -',

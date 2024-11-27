@@ -8,11 +8,11 @@ export const useElementHover = (params: UseElementHoverParams) => {
   const { disabled } = params ?? {}
   const [isHovering, setIsHovering] = useState(false)
 
-  const handleMouseOver = useCallback((e: any) => {
+  const handleMouseOver = useCallback((e: MouseEvent) => {
     e.stopPropagation()
     setIsHovering(true)
   }, [])
-  const handleMouseOut = useCallback((e: any) => {
+  const handleMouseOut = useCallback((e: MouseEvent) => {
     e.stopPropagation()
     setIsHovering(false)
   }, [])
@@ -20,7 +20,7 @@ export const useElementHover = (params: UseElementHoverParams) => {
   const nodeRef = useRef<HTMLElement>()
 
   const callbackRef = useCallback(
-    (node: any) => {
+    (node: HTMLElement) => {
       if (disabled) return
       if (nodeRef.current) {
         nodeRef.current.removeEventListener('mouseover', handleMouseOver)

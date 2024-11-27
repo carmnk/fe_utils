@@ -1,15 +1,16 @@
 import { mdiTable } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { tablePropsSchema } from './tablePropsRawSchema'
-import { ComponentDefType } from '../../componentDefType'
 import { Table } from '../../../../components/table/Table'
 import { uniq } from 'lodash'
+import { ComponentDefType } from '../../componentDefType'
+import { TableProps } from '../../../../components'
 
 export const tableEditorComponentDef = {
   type: 'Table' as const,
 
   component: Table,
-  formGen: ({ editorState }: any) =>
+  formGen: ({ editorState }) =>
     propertyFormFactory(tablePropsSchema, editorState, {
       // dynamicOptionsDict: {
       //   component: [
@@ -17,17 +18,20 @@ export const tableEditorComponentDef = {
       //     ...HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS,
       //   ],
       // },
-      onBeforeChange: (newFormData, prevFormData, changedKey, changedValue) => {
+      onBeforeChange: (newFormData) => {
         const adjFormData = Object.keys(newFormData).includes('columns')
           ? {
               ...newFormData,
               columns:
-                newFormData?.columns?.map?.((col: any) => {
+                (Array.isArray(newFormData?.columns)
+                  ? newFormData.columns
+                  : []
+                )?.map?.((col) => {
                   const filterOptions = uniq(
-                    newFormData?.data
-                      ?.map?.((item: any) => item?.[col?.header])
-                      ?.filter((val: any) => val)
-                  )?.sort((a: any, b: any) => (a > b ? 1 : b > a ? -1 : 0))
+                    (Array.isArray(newFormData?.data) ? newFormData.data : [])
+                      ?.map?.((item) => item?.[col?.header])
+                      ?.filter((val) => val)
+                  )?.sort((a, b) => (a > b ? 1 : b > a ? -1 : 0))
 
                   return {
                     ...col,
@@ -46,39 +50,31 @@ export const tableEditorComponentDef = {
                 }) ?? [],
             }
           : newFormData
-        return adjFormData
+        // TODO: Check if type is wrong or code (return) here is wrong
+        return adjFormData as any
       },
 
       dynamicKeysDict: {
-        data: (f: any, g: any) => {
-          console.debug('DATA dynamicKeysDict', f, g)
+        data: (f: Record<string, unknown>) => {
+          console.debug('DATA dynamicKeysDict', f)
           if (!f?.columns) return []
-          const columnHeaders = f?.columns?.map?.(
-            (column: any) => column.header
-          )
-
-          const columnHeaderDict = columnHeaders.reduce(
-            (acc: any, header: any) => {
-              acc[header] = ''
-              return acc
-            },
-            {}
-          )
+          const columnHeaders = (
+            Array.isArray(f?.columns) ? f?.columns : []
+          )?.map?.((column) => column.header)
+          const columnHeaderDict = columnHeaders.reduce((acc, header) => {
+            acc[header] = ''
+            return acc
+          }, {})
           return [columnHeaderDict]
         },
-        footerData: (f: any, g: any) => {
-          if (!f?.columns) return []
-          const columnHeaders = f?.columns?.map?.(
-            (column: any) => column.header
-          )
+        footerData: (f: Record<string, unknown>) => {
+          if (!f?.columns || !Array.isArray(f.columns)) return []
+          const columnHeaders = f.columns.map?.((column) => column.header)
 
-          const columnHeaderDict = columnHeaders.reduce(
-            (acc: any, header: any) => {
-              acc[header] = ''
-              return acc
-            },
-            {}
-          )
+          const columnHeaderDict = columnHeaders.reduce((acc, header) => {
+            acc[header] = ''
+            return acc
+          }, {})
           return columnHeaderDict
         },
       },
@@ -108,4 +104,4 @@ export const tableEditorComponentDef = {
   icon: mdiTable,
   category: 'data',
   schema: tablePropsSchema,
-}
+} satisfies ComponentDefType<TableProps>

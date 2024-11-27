@@ -21,9 +21,8 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   currentViewportElements: Element[]
   selectedPageElements: Element[]
   uiActions?: UiActionsType
-  COMPONENT_MODELS: EditorRendererControllerType<UiActionsType>['COMPONENT_MODELS']
-  selectedElement: Element | null
-  appController: EditorRendererControllerType<UiActionsType>['appController']
+  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  appController: EditorRendererControllerType['appController']
   pageName: string //const pageName = location.pathname.slice(1) || 'index'
   navigate: NavigateFunction
   isInHelpMode?: boolean
@@ -48,7 +47,6 @@ export const HtmlRendererComponent = <
     selectedPageElements,
     uiActions,
     COMPONENT_MODELS,
-    selectedElement,
     appController,
     pageName,
     navigate,
@@ -91,7 +89,6 @@ export const HtmlRendererComponent = <
         currentViewportElements,
         selectedPageElements,
         COMPONENT_MODELS,
-        selectedElement,
         uiActions: uiActions,
         onSelectElement: handleSelectElement,
         theme: themeAdj,
@@ -111,7 +108,6 @@ export const HtmlRendererComponent = <
       currentViewportElements,
       selectedPageElements,
       COMPONENT_MODELS,
-      selectedElement,
       handleSelectElement,
       icons,
       themeAdj,
@@ -218,29 +214,6 @@ export const HtmlRendererComponent = <
     setEditorState,
   ])
 
-  const selectedViewport = editorState.ui.selected.viewport
-  const viewportLowerWidthLimit =
-    selectedViewport === 'xl'
-      ? theme.breakpoints.values.xl
-      : selectedViewport === 'lg'
-        ? theme.breakpoints.values.lg
-        : selectedViewport === 'md'
-          ? theme.breakpoints.values.md
-          : selectedViewport === 'sm'
-            ? theme.breakpoints.values.sm
-            : theme.breakpoints.values.xs
-
-  const viewportUpperWidthLimit =
-    selectedViewport === 'xl'
-      ? null
-      : selectedViewport === 'lg'
-        ? theme.breakpoints.values.xl
-        : selectedViewport === 'md'
-          ? theme.breakpoints.values.lg
-          : selectedViewport === 'sm'
-            ? theme.breakpoints.values.md
-            : theme.breakpoints.values.sm
-
   return (
     <ThemeProvider theme={themeAdj}>
       {isProduction ? (
@@ -266,28 +239,6 @@ export const HtmlRendererComponent = <
           height={editorState.ui.previewMode ? '100%' : undefined}
           sx={containerStyles}
         >
-          {/* {editorState.ui.viewportLimitsMode &&
-            typeof viewportLowerWidthLimit === 'number' && (
-              <Box
-                width={'6px'}
-                bgcolor={'primary.main'}
-                height="100%"
-                position="absolute"
-                left={viewportLowerWidthLimit - 3}
-                top={0}
-              />
-            )}
-          {editorState.ui.viewportLimitsMode &&
-            typeof viewportUpperWidthLimit === 'number' && (
-              <Box
-                width={'6px'}
-                bgcolor={'secondary.main'}
-                height="100%"
-                position="absolute"
-                left={viewportUpperWidthLimit - 3}
-                top={0}
-              />
-            )} */}
           {injectElementInContainerStart}
           {renderedCurrentPageElements}
         </Box>

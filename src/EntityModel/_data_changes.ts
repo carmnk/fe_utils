@@ -71,6 +71,3 @@ export type DATA_CHANGES_TYPE = {
   sql_query: string
   change_type: 'main' | 'sub' | 'step'
 }
-// it is not possible to directly apply static typing restrictions and still infer the actual type of js object/fn..
-type CheckJoiningsResponseKeys =
-  DATA_CHANGES_TYPE[DATA_CHANGES__MODEL_FIELDNAME_TYPE] // Error here means ENTITY_MODEL_TYPE is missing a key!

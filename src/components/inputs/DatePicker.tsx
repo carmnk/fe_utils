@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, RefObject, useCallback } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import moment, { Moment } from 'moment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import {
-  DesktopDatePicker,
-  DesktopDatePickerProps,
-} from '@mui/x-date-pickers/DesktopDatePicker'
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker'
+import { DesktopDatePickerProps } from '@mui/x-date-pickers/DesktopDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-
 import { GenericInputFieldProps } from './types'
 import { Button } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
 import { CTextField, CTextFieldProps } from './TextField'
 import { isEqual } from 'lodash'
+import { ButtonProps, TextFieldProps } from '@mui/material'
 
 type MDatePickerExTextfieldProps = Omit<
   DesktopDatePickerProps<Moment>,
@@ -89,8 +88,10 @@ export const DatePicker = (props: DatePickerProps) => {
           ? moment(newValue).startOf('day').toISOString()
           : newValue
       onChange?.(
-        valueOut as any,
-        { target: { value: valueOut as any, name: name as any } } as any,
+        valueOut as string,
+        {
+          target: { value: valueOut as string, name: name as string },
+        } as ChangeEvent<HTMLInputElement>,
         name
       )
     },
@@ -105,24 +106,31 @@ export const DatePicker = (props: DatePickerProps) => {
           iconButton
           icon={mdiCalendar}
           variant="text"
-          {...(props as any)}
+          {...(props as ButtonProps)}
         />
       ),
-      textField: (propsFromDateField: any) => {
-        // const { ...restFromDateField } = propsFromDateField
-        // console.warn('PROPS TEXTFIELD', propsFromDateField)
-        const onChangeTextField = (newValue: Moment, e?: any, name?: any) => {
+      textField: (propsFromDateField: TextFieldProps) => {
+        const onChangeTextField = (
+          newValue: Moment,
+          e?: ChangeEvent<HTMLInputElement>,
+          name?: string
+        ) => {
           const event = {
             ...(e ?? {}),
             target: { ...(e?.target ?? {}), value: newValue, name },
           }
-          propsFromDateField?.onChange?.(event)
+          propsFromDateField?.onChange?.(
+            event as unknown as ChangeEvent<HTMLInputElement>
+          )
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { startAdornment: _s, ...inputContainerPropsFromDatefield } =
           propsFromDateField?.InputProps ?? {}
         return (
           <CTextField
             {...propsFromDateField}
+            ref={propsFromDateField?.ref as RefObject<HTMLInputElement>}
+            value={propsFromDateField?.value as string}
             required={required}
             sx={sx}
             disableHelperText={disableHelperText}
@@ -169,7 +177,10 @@ export const DatePicker = (props: DatePickerProps) => {
             }
             error={error}
             name={name}
-            onChange={onChangeTextField}
+            // TODO: check if this is correct
+            onChange={
+              onChangeTextField as unknown as CTextFieldProps['onChange']
+            }
           />
         )
       },

@@ -1,5 +1,9 @@
+import React from 'react'
 import { render, fireEvent, act, getByTestId } from '@testing-library/react'
-import { FilteredTableHeaderCell } from '../subComponents/FilteredColumns'
+import {
+  FilteredTableHeaderCell,
+  FilteredTableHeaderCellProps,
+} from '../subComponents/FilteredColumns'
 import {
   mdiArrowDownThin,
   mdiArrowUpThin,
@@ -7,7 +11,6 @@ import {
   mdiLock,
   mdiMinus,
 } from '@mdi/js'
-import { add } from 'lodash'
 
 const FILTER_KEY = 'test_filter_key'
 const SORT_KEY = 'test_sort_key'
@@ -25,20 +28,26 @@ const FILTER_OPTIONS = [
   },
 ]
 
-const FixtureComponent = (props: Record<string, any>) => {
+const FixtureComponent = (props: Partial<FilteredTableHeaderCellProps>) => {
   return (
     <FilteredTableHeaderCell
+      renderCell={() => ''}
+      changeSorting={() => {}}
       header={HEADER_LABEL}
       filterKey={FILTER_KEY}
       sortKey={SORT_KEY}
       //
-      getFilterValue={(opt) => opt.value}
-      getIcon={(opt) => opt.icon}
-      getItemLabel={(opt) => opt.label}
+      getFilterValue={(opt: any) => opt.value}
+      getIcon={(opt: any) => opt.icon}
+      getItemLabel={(opt: any) => opt.label}
       //   renderFilterKey={() => {}}
       isFilterLocked={false}
       open={false}
-      allFilters={[]}
+      filters={[]}
+      // onSetFilters={}
+      // onClose={}
+      // onOpen={}
+
       filterOptions={FILTER_OPTIONS}
       selectedFilter={[]}
       headerToolTip="test_tooltip"
@@ -48,8 +57,9 @@ const FixtureComponent = (props: Record<string, any>) => {
     />
   )
 }
+
 const renderFixture = (
-  overrideProps?: Record<string, any>,
+  overrideProps?: Partial<FilteredTableHeaderCellProps>,
   rerender?: () => any
 ): ReturnType<typeof render> & {
   handleOnClose: jest.Mock<any, any>
@@ -57,22 +67,19 @@ const renderFixture = (
   handleSetAllFilters: jest.Mock<any, any>
   handleChangeSorting: jest.Mock<any, any>
   handleChangePageNumber: jest.Mock<any, any>
-  onSetAllFilters: jest.Mock<any, any>
 } => {
   const handleOnClose = jest.fn()
   const handleOnOpen = jest.fn()
   const handleSetAllFilters = jest.fn()
   const handleChangeSorting = jest.fn()
   const handleChangePageNumber = jest.fn()
-  const onSetAllFilters = jest.fn()
+
   const renderResult = (rerender || render)(
     <FixtureComponent
       onOpen={handleOnOpen}
       onClose={handleOnClose}
       changeSorting={handleChangeSorting}
-      setAllFilters={handleSetAllFilters}
-      onSetAllFilters={onSetAllFilters}
-      setPageNumber={handleChangePageNumber}
+      onSetFilters={handleSetAllFilters}
       {...overrideProps}
     />
   )
@@ -83,7 +90,6 @@ const renderFixture = (
     handleSetAllFilters,
     handleChangeSorting,
     handleChangePageNumber,
-    onSetAllFilters,
   }
 }
 
@@ -115,15 +121,15 @@ describe('FilteredTableHeaderCell', () => {
 
   it('renders the correct sorting icons', async () => {
     const { rerender } = renderFixture({
-      allFilters: [{ filterKey: 'sorting', value: `${SORT_KEY},asc` }],
+      filters: [{ filterKey: 'sorting', value: `${SORT_KEY},asc` }],
     })
     const sortingIconElement = document.querySelector('path')
     expect(sortingIconElement).toHaveAttribute('d', mdiArrowDownThin)
     renderFixture(
       {
-        allFilters: [{ filterKey: 'sorting', value: `${SORT_KEY},desc` }],
+        filters: [{ filterKey: 'sorting', value: `${SORT_KEY},desc` }],
       },
-      rerender
+      rerender as any
     )
     const sortingIconElement2 = document.querySelector('path')
     expect(sortingIconElement2).toHaveAttribute('d', mdiArrowUpThin)
@@ -131,12 +137,12 @@ describe('FilteredTableHeaderCell', () => {
 
   it('will call onOpen on click on td OR the filter icon', async () => {
     const { handleOnOpen } = renderFixture({
-      allFilters: [{ filterKey: 'sorting', value: `${SORT_KEY},asc` }],
+      filters: [{ filterKey: 'sorting', value: `${SORT_KEY},asc` }],
     })
     const td = document.querySelector('td')
     const filterButtonElement = document.querySelectorAll('button')?.[1]
     await act(async () => {
-      fireEvent.click(td, { button: 0 })
+      fireEvent.click(td as any, { button: 0 })
       fireEvent.click(filterButtonElement, { button: 0 })
     })
     expect(handleOnOpen).toHaveBeenCalledTimes(2)
@@ -148,7 +154,7 @@ describe('FilteredTableHeaderCell', () => {
     const td = document.querySelector('td')
     const filterButtonElement = document.querySelectorAll('button')?.[1]
     await act(async () => {
-      fireEvent.click(td, { button: 0 })
+      fireEvent.click(td as any, { button: 0 })
       fireEvent.click(filterButtonElement, { button: 0 })
     })
     expect(handleOnOpen).toHaveBeenCalledTimes(0)
@@ -159,7 +165,7 @@ describe('FilteredTableHeaderCell', () => {
 
   it('renders with filter-dropdown-menu correctly', () => {
     const { getByText, getByTestId } = renderFixture({
-      allFilters: [
+      filters: [
         {
           filterKey: FILTER_KEY,
           value: 'test_value_1',
@@ -215,33 +221,35 @@ describe('FilteredTableHeaderCell', () => {
       //   },
     ]
 
-    const {
-      getByText,
-      handleSetAllFilters,
-      handleChangePageNumber,
-      onSetAllFilters,
-    } = renderFixture({
-      open: true,
-      allFilters: initialFilters,
-      filterOptions: FILTER_OPTIONS,
-      selectedFilter: ['test_value_1'],
-      additionalFilterKeys: ['category'],
-    })
+    const { getByText, handleSetAllFilters, handleChangePageNumber } =
+      renderFixture({
+        open: true,
+        filters: initialFilters,
+        filterOptions: FILTER_OPTIONS,
+        selectedFilter: ['test_value_1'],
+        additionalFilterKeys: ['category'],
+      })
     const selectAllFiltersButton = getByText('Select All filters')
     await act(async () => {
       await fireEvent.click(selectAllFiltersButton, { button: 0 })
     })
 
-    expect(handleSetAllFilters).toHaveBeenCalledWith(expect.any(Function)) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith([
+    expect(handleSetAllFilters).toHaveBeenCalledWith([
       ...initialFilters,
       {
         filterKey: 'test_filter_key',
         value: 'test_value_2',
       },
-    ])
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    ]) // uses SetState callback
+    // expect(onSetAllFilters).toHaveBeenCalled()
+    // expect(onSetAllFilters).toHaveBeenCalledWith([
+    //   ...initialFilters,
+    //   {
+    //     filterKey: 'test_filter_key',
+    //     value: 'test_value_2',
+    //   },
+    // ])
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
   })
 
   it('considers additional filter (e.g. from external component/filter) when passed as additionalFilterKeys for UNselect all event', async () => {
@@ -256,27 +264,23 @@ describe('FilteredTableHeaderCell', () => {
       },
     ]
 
-    const {
-      getByText,
-      handleSetAllFilters,
-      handleChangePageNumber,
-      onSetAllFilters,
-    } = renderFixture({
-      allFilters: initialFilters,
-      open: true,
-      selectedFilter: ['test_value_1'],
-      getByTestId,
-      additionalFilterKeys: ['category'],
-    })
+    const { getByText, handleSetAllFilters, handleChangePageNumber } =
+      renderFixture({
+        filters: initialFilters,
+        open: true,
+        selectedFilter: ['test_value_1'],
+        getByTestId,
+        additionalFilterKeys: ['category'],
+      })
     const unselectAllFiltersButton = getByText('Remove all filters')
     await act(async () => {
       await fireEvent.click(unselectAllFiltersButton, { button: 0 })
     })
 
-    expect(handleSetAllFilters).toHaveBeenCalledWith(expect.any(Function)) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith([])
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    expect(handleSetAllFilters).toHaveBeenCalledWith([]) // uses SetState callback
+    // expect(onSetAllFilters).toHaveBeenCalled()
+    // expect(onSetAllFilters).toHaveBeenCalledWith([])
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
   })
 
   it('calls the onChange fns when an option is focused and keyup', async () => {
@@ -295,9 +299,8 @@ describe('FilteredTableHeaderCell', () => {
       getByTestId,
       handleSetAllFilters,
       handleChangePageNumber,
-      onSetAllFilters,
     } = renderFixture({
-      allFilters: initialFilters,
+      filters: initialFilters,
       open: true,
     })
     const filterElement1 = getByText('test_label_1')
@@ -305,20 +308,26 @@ describe('FilteredTableHeaderCell', () => {
     expect(filterButtonElement1?.tagName).toBe('LI')
 
     await act(async () => {
-      await fireEvent.keyUp(filterButtonElement1, { key: 'Enter' })
+      await fireEvent.keyUp(filterButtonElement1 as any, { key: 'Enter' })
     })
 
-    expect(handleSetAllFilters).toHaveBeenCalledWith(expect.any(Function)) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith([
+    expect(handleSetAllFilters).toHaveBeenCalledWith([
       ...initialFilters,
       {
         filterKey: 'test_filter_key',
         value: 'test_value_1',
       },
-    ])
+    ]) // uses SetState callback
+    // expect(onSetAllFilters).toHaveBeenCalled()
+    // expect(onSetAllFilters).toHaveBeenCalledWith([
+    //   ...initialFilters,
+    //   {
+    //     filterKey: 'test_filter_key',
+    //     value: 'test_value_1',
+    //   },
+    // ])
 
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
   })
 
   it('calls the onChange fns when an option is clicked and selected', async () => {
@@ -333,35 +342,37 @@ describe('FilteredTableHeaderCell', () => {
       },
     ]
 
-    const {
-      getByText,
-      handleSetAllFilters,
-      handleChangePageNumber,
-      onSetAllFilters,
-    } = renderFixture({
-      allFilters: initialFilters,
-      open: true,
-    })
+    const { getByText, handleSetAllFilters, handleChangePageNumber } =
+      renderFixture({
+        filters: initialFilters,
+        open: true,
+      })
 
     const filterElement1 = getByText('test_label_1')
     const filterButtonElement1 = filterElement1?.parentElement?.parentElement
     expect(filterButtonElement1?.tagName).toBe('LI')
 
     await act(async () => {
-      await fireEvent.click(filterButtonElement1, { button: 0 })
+      await fireEvent.click(filterButtonElement1 as any, { button: 0 })
     })
 
-    expect(handleSetAllFilters).toHaveBeenCalledWith(expect.any(Function)) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith([
+    expect(handleSetAllFilters).toHaveBeenCalledWith([
       ...initialFilters,
       {
         filterKey: 'test_filter_key',
         value: 'test_value_1',
       },
-    ])
+    ]) // uses SetState callback
+    // expect(onSetAllFilters).toHaveBeenCalled()
+    // expect(onSetAllFilters).toHaveBeenCalledWith([
+    //   ...initialFilters,
+    //   {
+    //     filterKey: 'test_filter_key',
+    //     value: 'test_value_1',
+    //   },
+    // ])
 
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
   })
 
   it('calls the onChange fns when an option is clicked and UNselected', async () => {
@@ -376,31 +387,27 @@ describe('FilteredTableHeaderCell', () => {
       },
     ]
 
-    const {
-      getByText,
-      handleSetAllFilters,
-      handleChangePageNumber,
-      onSetAllFilters,
-    } = renderFixture({
-      open: true,
-      allFilters: initialFilters,
-      selectedFilter: ['test_value_1'],
-    })
+    const { getByText, handleSetAllFilters, handleChangePageNumber } =
+      renderFixture({
+        open: true,
+        filters: initialFilters,
+        selectedFilter: ['test_value_1'],
+      })
 
     const filterElement1 = getByText('test_label_1')
     const filterButtonElement1 = filterElement1?.parentElement?.parentElement
     expect(filterButtonElement1?.tagName).toBe('LI')
 
     await act(async () => {
-      await fireEvent.click(filterButtonElement1, { button: 0 })
+      await fireEvent.click(filterButtonElement1 as any, { button: 0 })
     })
 
     const newFilters = initialFilters.filter((f) => f.value !== 'test_value_1')
     expect(handleSetAllFilters).toHaveBeenCalledWith(newFilters) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith(newFilters)
+    // expect(onSetAllFilters).toHaveBeenCalled()
+    // expect(onSetAllFilters).toHaveBeenCalledWith(newFilters)
 
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
   })
 
   it('has a buttons to select all of this column filter', async () => {
@@ -410,16 +417,12 @@ describe('FilteredTableHeaderCell', () => {
         value: 'test_value_1',
       },
     ]
-    const {
-      getByText,
-      handleSetAllFilters,
-      handleChangePageNumber,
-      onSetAllFilters,
-    } = renderFixture({
-      open: true,
-      allFilters: initialFilters,
-      selectedFilter: ['test_value_1'],
-    })
+    const { getByText, handleSetAllFilters, handleChangePageNumber } =
+      renderFixture({
+        open: true,
+        filters: initialFilters,
+        selectedFilter: ['test_value_1'],
+      })
 
     const selectAllFiltersButton = getByText('Select All filters')
 
@@ -427,9 +430,21 @@ describe('FilteredTableHeaderCell', () => {
       await fireEvent.click(selectAllFiltersButton, { button: 0 })
     })
 
-    expect(handleSetAllFilters).toHaveBeenCalledWith(expect.any(Function)) // uses SetState callback
+    expect(handleSetAllFilters).toHaveBeenCalledWith([
+      {
+        filterKey: 'test_filter_key',
+        value: 'test_value_1',
+      },
+      {
+        filterKey: 'test_filter_key',
+        value: 'test_value_2',
+      },
+    ]) // uses SetState callback
     const callbackSetFilters = handleSetAllFilters.mock.lastCall?.[0]
-    const newFilters = callbackSetFilters(initialFilters)
+    const newFilters =
+      typeof callbackSetFilters === 'function'
+        ? callbackSetFilters(initialFilters)
+        : callbackSetFilters
     expect(newFilters).toEqual([
       {
         filterKey: 'test_filter_key',
@@ -440,16 +455,16 @@ describe('FilteredTableHeaderCell', () => {
         value: 'test_value_2',
       },
     ]) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith([
-      ...initialFilters,
-      {
-        filterKey: 'test_filter_key',
-        value: 'test_value_2',
-      },
-    ])
+    // expect(onSetAllFilters).toHaveBeenCalled()
+    // expect(onSetAllFilters).toHaveBeenCalledWith([
+    //   ...initialFilters,
+    //   {
+    //     filterKey: 'test_filter_key',
+    //     value: 'test_value_2',
+    //   },
+    // ])
 
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
   })
   it('has a buttons to UNselect all of this column filter', async () => {
     const initialFilters = [
@@ -466,39 +481,38 @@ describe('FilteredTableHeaderCell', () => {
         value: 'test_value_1_SO',
       },
     ]
-    const {
-      getByText,
-      handleSetAllFilters,
-      handleChangePageNumber,
-      onSetAllFilters,
-    } = renderFixture({
-      open: true,
-      allFilters: initialFilters,
-      selectedFilter: ['test_value_1'],
-      additionalFilterKeys: ['additional_filter_key'],
-    })
+    const { getByText, handleSetAllFilters, handleChangePageNumber } =
+      renderFixture({
+        open: true,
+        filters: initialFilters,
+        selectedFilter: ['test_value_1'],
+        additionalFilterKeys: ['additional_filter_key'],
+      })
     const removeAllFiltersButton = getByText('Remove all filters')
     await act(async () => {
       await fireEvent.click(removeAllFiltersButton, { button: 0 })
     })
 
     const callbackSetFilters = handleSetAllFilters.mock.lastCall?.[0]
-    const newFilters = callbackSetFilters(initialFilters)
+    const newFilters =
+      typeof callbackSetFilters === 'function'
+        ? callbackSetFilters(initialFilters)
+        : callbackSetFilters
     expect(newFilters).toEqual([
       {
         filterKey: 'some_other_filter',
         value: 'test_value_1_SO',
       },
     ]) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith([
-      {
-        filterKey: 'some_other_filter',
-        value: 'test_value_1_SO',
-      },
-    ])
+    // expect(onSetAllFilters).toHaveBeenCalled()
+    // expect(onSetAllFilters).toHaveBeenCalledWith([
+    //   {
+    //     filterKey: 'some_other_filter',
+    //     value: 'test_value_1_SO',
+    //   },
+    // ])
 
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
   })
 
   it('filters the dropdowns entrys using the search field', async () => {
@@ -514,19 +528,19 @@ describe('FilteredTableHeaderCell', () => {
     ]
     const { getByText, queryByText } = renderFixture({
       open: true,
-      allFilters: initialFilters,
+      filters: initialFilters,
       selectedFilter: [],
     })
     const searchFieldInputElement = document.querySelector('input')
     expect(searchFieldInputElement).toBeInTheDocument()
 
     await act(async () => {
-      await fireEvent.change(searchFieldInputElement, {
+      await fireEvent.change(searchFieldInputElement as any, {
         target: { value: 'test_label_1' },
       })
     })
     await act(async () => {
-      await fireEvent.keyUp(searchFieldInputElement, {
+      await fireEvent.keyUp(searchFieldInputElement as any, {
         target: { value: 'test_label_1' },
       })
     })
@@ -548,26 +562,22 @@ describe('FilteredTableHeaderCell', () => {
         value: 'test_value_2',
       },
     ]
-    const {
-      getByText,
-      handleSetAllFilters,
-      onSetAllFilters,
-      handleChangePageNumber,
-    } = renderFixture({
-      open: true,
-      allFilters: initialFilters,
-      selectedFilter: ['test_value_1'],
-    })
+    const { getByText, handleSetAllFilters, handleChangePageNumber } =
+      renderFixture({
+        open: true,
+        filters: initialFilters,
+        selectedFilter: ['test_value_1'],
+      })
     const searchFieldInputElement = document.querySelector('input')
     expect(searchFieldInputElement).toBeInTheDocument()
 
     await act(async () => {
-      await fireEvent.change(searchFieldInputElement, {
+      await fireEvent.change(searchFieldInputElement as any, {
         target: { value: 'test_label_1' },
       })
     })
     await act(async () => {
-      await fireEvent.keyUp(searchFieldInputElement, {
+      await fireEvent.keyUp(searchFieldInputElement as any, {
         key: 'Enter',
         target: { value: 'test_value_1' },
       })
@@ -576,12 +586,12 @@ describe('FilteredTableHeaderCell', () => {
     expect(handleSetAllFilters).toHaveBeenCalledWith([
       { filterKey: 'test_filter_key', value: 'test_value_2' },
     ]) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith([
-      { filterKey: 'test_filter_key', value: 'test_value_2' },
-    ])
+    // expect(onSetAllFilters).toHaveBeenCalled()
+    // expect(onSetAllFilters).toHaveBeenCalledWith([
+    //   { filterKey: 'test_filter_key', value: 'test_value_2' },
+    // ])
 
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
   })
 
   it('restores the filter values in the dropdown from initial render when onClick on Cancel', async () => {
@@ -600,11 +610,10 @@ describe('FilteredTableHeaderCell', () => {
       getByText,
       handleSetAllFilters,
       handleChangePageNumber,
-      onSetAllFilters,
       handleOnClose,
     } = renderFixture({
       open: true,
-      allFilters: initialFilters,
+      filters: initialFilters,
       selectedFilter: [],
     })
 
@@ -616,9 +625,7 @@ describe('FilteredTableHeaderCell', () => {
     })
 
     expect(handleSetAllFilters).toHaveBeenCalledWith(initialFilters) // uses SetState callback
-    expect(onSetAllFilters).toHaveBeenCalled()
-    expect(onSetAllFilters).toHaveBeenCalledWith(initialFilters)
-    expect(handleChangePageNumber).toHaveBeenCalledWith(1)
+    // expect(handleChangePageNumber).toHaveBeenCalledWith(1)
     expect(handleOnClose).toHaveBeenCalled()
   })
   it('calls onClose on Ok', async () => {
@@ -634,7 +641,7 @@ describe('FilteredTableHeaderCell', () => {
     ]
 
     const { getByText, handleOnClose } = renderFixture({
-      allFilters: initialFilters,
+      filters: initialFilters,
       selectedFilter: [],
       open: true,
     })

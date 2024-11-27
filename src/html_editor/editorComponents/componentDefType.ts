@@ -1,23 +1,28 @@
+import { FC } from 'react'
 import {
   EditorRendererControllerType,
   EditorStateType,
 } from '../editorRendererController'
 import { ExtendedObjectSchemaType } from './schemaTypes'
+import { GenericFormProps } from '../../components'
 
-export type ComponentDefType = {
+export type ComponentDefType<ComponentProps extends object = object> = {
   type: string
-  component?: any
+  component?: FC<ComponentProps>
 
   category: string
-  state?: string // currently just tested for truthyness
+  state?: string | boolean // currently just tested for truthyness
   schema: ExtendedObjectSchemaType
-  props?: Record<string, any>
+  props?: Record<string, unknown>
   icon: string
   // rootInjection?: DynamicFormInjectionsType
-  formGen?: (params: {
-    editorState: EditorStateType
-    appController: EditorRendererControllerType<any>['appController']
-    currentViewportElements: EditorRendererControllerType<any>['currentViewportElements']
-    selectedPageElements: EditorRendererControllerType<any>['selectedPageElements']
-  }) => any
+  formGen?: (
+    params: {
+      editorState: EditorStateType
+      appController: EditorRendererControllerType['appController']
+      currentViewportElements: EditorRendererControllerType['currentViewportElements']
+      selectedPageElements: EditorRendererControllerType['selectedPageElements']
+    },
+    apiController?: unknown
+  ) => Omit<GenericFormProps, 'formData' | 'onChangeFormData'>
 }

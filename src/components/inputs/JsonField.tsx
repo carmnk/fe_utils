@@ -11,9 +11,14 @@ import { getAmountJsonChildren } from './getAmountJsonChildren'
 
 const lineHeight = 28.8 // 28.8 + 2px gap
 
-export type JsonFieldProps = JsonObjectFieldProps & {
+type JsonFieldValue = Record<string, unknown> | Record<string, unknown>[]
+
+export type JsonFieldProps = Omit<
+  JsonObjectFieldProps,
+  'value' | 'onChange'
+> & {
   label?: string
-  value: Record<string, any> | Record<string, any>[]
+  value: JsonFieldValue
   useModal?: boolean
   disableLabel?: boolean
   _collapsedPaths?: string[]
@@ -21,6 +26,7 @@ export type JsonFieldProps = JsonObjectFieldProps & {
   startCollapsed?: boolean
   _index?: number
   hideLineNumbers?: boolean
+  onChange: (newValue: JsonFieldValue, e: { target: { name: string } }) => void
 }
 
 const buttonSlotProps = {
@@ -61,7 +67,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
   const handleAddItem = useCallback(() => {
     if (Array.isArray(keysDict)) {
       const newItem = keysDict?.[0]
-      onChange([...((value as any) || []), newItem], {
+      onChange([...((value as unknown[]) || []), newItem], {
         target: { name: name ?? '' },
       })
     }
@@ -82,7 +88,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
     [value, newPath, _collapsedPaths]
   )
 
-  const newIndexesArray = newIndexesArrayRaw.map((val, vIDx) => {
+  const newIndexesArray = newIndexesArrayRaw.map((val) => {
     // const key = valueInKeysSorted[vIDx]
     const newPath = [..._path]
     if (_collapsedPaths?.includes(newPath.join('.'))) {
@@ -91,14 +97,14 @@ export const RawJsonField = (props: JsonFieldProps) => {
     return val
   })
 
-  const newIndexesArrayForChildren = newIndexesArrayRaw.map((val, vIDx) => {
-    const key = value[vIDx]
-    const newPath = [..._path, key]
-    if (_collapsedPaths?.includes(newPath.join('.'))) {
-      return 0
-    }
-    return val
-  })
+  // const newIndexesArrayForChildren = newIndexesArrayRaw.map((val, vIDx) => {
+  //   const key = value[vIDx]
+  //   const newPath = [..._path, key]
+  //   if (_collapsedPaths?.includes(newPath.join('.'))) {
+  //     return 0
+  //   }
+  //   return val
+  // })
 
   return (
     <Box>
@@ -133,11 +139,13 @@ export const RawJsonField = (props: JsonFieldProps) => {
                     target: { name: name ?? '' },
                   })
                 }
-                const handleChangeJsonField = (newValuePerItem: any) =>
+                const handleChangeJsonField = (
+                  newValuePerItem: JsonFieldValue
+                ) =>
                   onChange(
-                    value?.map((v, vIdx) =>
+                    (value?.map((v, vIdx) =>
                       vIdx === arrIdx ? newValuePerItem : v
-                    ) || [],
+                    ) || []) as JsonFieldValue,
                     { target: { name: name ?? '' } }
                   )
 
@@ -154,7 +162,8 @@ export const RawJsonField = (props: JsonFieldProps) => {
                       useModal={useModal}
                       disabled={disabled}
                       name={name}
-                      keysDict={keysDict?.[0]}
+                      // TODO: bug ?
+                      keysDict={keysDict?.[0] as any} 
                       value={item}
                       _path={newPath}
                       editing={editing}
@@ -225,7 +234,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
           value={value}
           _path={newPath}
           editing={editing}
-          setEditing={setEditing as any}
+          setEditing={setEditing}
           onChange={onChange}
           keysDict={keysDict}
           _collapsedPaths={_collapsedPaths}
@@ -280,7 +289,7 @@ export const JsonField = (props: JsonFieldProps) => {
     const handleScroll = () => {
       if (rootContainer) {
         setScrollPosition(rootContainer.scrollTop)
-        const scrollPos = rootContainer.scrollTop
+        // const scrollPos = rootContainer.scrollTop
       }
     }
     rootContainer?.addEventListener('scroll', handleScroll)

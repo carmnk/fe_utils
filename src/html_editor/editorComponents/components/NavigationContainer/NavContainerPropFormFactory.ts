@@ -1,6 +1,6 @@
 import { EditorRendererControllerType } from '../../../editorRendererController/types/editorRendererController'
 import { EditorStateType } from '../../../editorRendererController/types'
-import type { GenericFormProps } from '../../../../components/forms/GenericForm'
+import type { GenericFormProps } from '../../../../components/forms/types'
 
 const optionsDict = {
   // disabled: booleanOptions,
@@ -11,24 +11,30 @@ type GenerateFieldProps = {
   name: string
 }
 type GenerateOptionsDictType = {
-  [key: string]: { value: any; label: string }[]
+  [key: string]: { value: string; label: string }[]
 }
 
 type GenerateFormPropsType = {
   optionsDict: GenerateOptionsDictType
-  initialFormData: { [key: string]: any }
+  initialFormData: { [key: string]: unknown }
   fields: GenerateFieldProps[]
   subforms?: { [key: string]: GenericFormProps }
+  injections?: {
+    options?: Record<string, { label: string; value: unknown }[]>
+    disabled?: Record<string, boolean>
+  }
 }
-const generateFormProps = (params: GenerateFormPropsType): GenericFormProps => {
+const generateFormProps = (
+  params: GenerateFormPropsType
+): Omit<GenericFormProps, 'formData' | 'onChangeFormData'> => {
   const {
     optionsDict,
     initialFormData,
     fields: fieldsIn,
     subforms,
     injections: injectionsIn,
-  } = params as any
-  const fields = fieldsIn.map((field: any) => {
+  } = params
+  const fields = fieldsIn.map((field) => {
     // const isOption = field?.name in options;
     const fieldProps = {
       ...field,
@@ -46,18 +52,18 @@ const generateFormProps = (params: GenerateFormPropsType): GenericFormProps => {
     fields,
     subforms,
   }
-  return formProps as any
+  return formProps as GenericFormProps
 }
 
 export const NavContainerComponentPropsFormFactory = (prarams: {
   editorState: EditorStateType
-  selectedPageElements: EditorRendererControllerType<any>['selectedPageElements']
-  currentViewportElements: EditorRendererControllerType<any>['currentViewportElements']
+  selectedPageElements: EditorRendererControllerType['selectedPageElements']
+  currentViewportElements: EditorRendererControllerType['currentViewportElements']
 }) => {
   const { editorState, selectedPageElements, currentViewportElements } = prarams
   const pageElements = selectedPageElements
   const navElements = pageElements.filter(
-    (el: any) =>
+    (el) =>
       el._type.slice(0, 1).toUpperCase() === el._type.slice(0, 1) &&
       'state' in el
   )
@@ -109,14 +115,14 @@ export const NavContainerComponentPropsFormFactory = (prarams: {
       //   },
     },
     subforms: {
-      items: ItemPropsFormFactory(editorState, currentViewportElements),
+      items: ItemPropsFormFactory(editorState, currentViewportElements) as any,
     },
-  } as any)
+  })
 }
 
 export const ItemPropsFormFactory = (
   editorState: EditorStateType,
-  currentViewportElements: EditorRendererControllerType<any>['currentViewportElements']
+  currentViewportElements: EditorRendererControllerType['currentViewportElements']
 ) => {
   // const tabsValues =
   return {
@@ -140,7 +146,7 @@ export const ItemPropsFormFactory = (
     ],
     injections: {
       options: {
-        value: (formData: any, rootFormData: any) => {
+        value: () => {
           const selectedElementId = editorState?.ui?.selected?.element
           const selectedElement = currentViewportElements?.find(
             (el) => el._id === selectedElementId
@@ -155,7 +161,7 @@ export const ItemPropsFormFactory = (
               prop.template_id === selectedElement.template_id
           )
           const navContainerPropsObject = navContainerProps.reduce<
-            Record<string, any>
+            Record<string, unknown>
           >((acc, prop) => {
             return {
               ...acc,
@@ -175,7 +181,7 @@ export const ItemPropsFormFactory = (
               prop.template_id === controlElement?.template_id
           )
           const controlElementPropsObject = controlElementProps.reduce<
-            Record<string, any>
+            Record<string, unknown>
           >((acc, prop) => {
             return {
               ...acc,
@@ -191,7 +197,7 @@ export const ItemPropsFormFactory = (
               : controlElementPropsObject?.items
           return navItemOptions ?? []
         },
-        childId: (formData: any, rootFormData: any) => {
+        childId: () => {
           const selectedNavContainerId = editorState?.ui?.selected?.element
           const navigationContainer = currentViewportElements?.find(
             (el) => el._id === selectedNavContainerId
@@ -202,7 +208,7 @@ export const ItemPropsFormFactory = (
               prop.template_id === navigationContainer?.template_id
           )
           const navContainerPropsObject = navContainerProps.reduce<
-            Record<string, any>
+            Record<string, unknown>
           >((acc, prop) => {
             return {
               ...acc,
@@ -221,7 +227,7 @@ export const ItemPropsFormFactory = (
               prop.template_id === controlElement?.template_id
           )
           const controlElementPropsObject = controlElementProps.reduce<
-            Record<string, any>
+            Record<string, unknown>
           >((acc, prop) => {
             return {
               ...acc,
@@ -229,12 +235,14 @@ export const ItemPropsFormFactory = (
             }
           }, {})
 
-          const navTabs = controlElementPropsObject?.items?.map?.(
-            (tab: any) => ({
-              value: tab.value,
-              label: tab.label,
-            })
-          )
+          const navTabs = (
+            Array.isArray(controlElementPropsObject?.items)
+              ? controlElementPropsObject?.items
+              : []
+          )?.map?.((tab) => ({
+            value: tab.value,
+            label: tab.label,
+          }))
           const children =
             currentViewportElements
               ?.filter((el) => el._parentId === selectedNavContainerId)
@@ -242,11 +250,12 @@ export const ItemPropsFormFactory = (
                 value: child?._id,
                 label: child?._type,
                 stateValue: navTabs?.find(
-                  (tab: any) =>
+                  (tab) =>
                     tab.value ===
-                    navContainerPropsObject?.items?.find(
-                      (item: any) => item.childId === child?._id
-                    )?.value
+                    (Array.isArray(navContainerPropsObject?.items)
+                      ? navContainerPropsObject?.items
+                      : []
+                    )?.find((item) => item.childId === child?._id)?.value
                 )?.value,
               })) ?? []
           return children ?? []

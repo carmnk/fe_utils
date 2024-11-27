@@ -2,12 +2,9 @@ import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
 import { BASE_POINTER_EVENTS } from '../../commonSchemas/basePointerEvents'
 import { CLIPBOARD_EVENTS } from '../../commonSchemas/clipboardEvents'
 import { DRAG_EVENTS } from '../../commonSchemas/dragEvents'
-import { FOCUS_EVENTS } from '../../commonSchemas/focusEvents'
-import { KEYBOARD_EVENTS } from '../../commonSchemas/keyboardEvents'
 import { MOUSE_EVENTS } from '../../commonSchemas/mouseEvents'
 import { POINTER_EVENTS } from '../../commonSchemas/pointerEvents'
 import { TOUCH_EVENTS } from '../../commonSchemas/touchEvents'
-// import { HTML_TAG_NAMES_STRUCTURED_OPTIONS } from '../../../defs/HTMLTagNamesDict'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 
 export const muiTypographyColors = [
@@ -63,9 +60,12 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.String,
       form: {},
       enum: [],
-      groupBy: (item: any) => item?.category,
+      groupBy: (item) =>
+        item && typeof item === 'object' && 'category' in item
+          ? (item?.category as string)
+          : undefined,
       category: 'shortcut',
-    } as any,
+    },
     noWrap: {
       type: PropertyType.Boolean,
       form: {
@@ -110,14 +110,12 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
       label: 'sx',
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
-    } as any,
+    },
     ...BASE_POINTER_EVENTS,
     ...MOUSE_EVENTS,
     ...POINTER_EVENTS,
-    // ...KEYBOARD_EVENTS,
     ...TOUCH_EVENTS,
     ...CLIPBOARD_EVENTS,
     ...DRAG_EVENTS,
-    // ...FOCUS_EVENTS,
   },
 }

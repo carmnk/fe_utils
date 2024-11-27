@@ -3,6 +3,7 @@ import { appBarDef } from '../AppBar/appBarDef'
 import { paperPropsSchema } from './paperPropsRawSchema'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { Paper } from '@mui/material'
+import { ComponentDefType } from '../../componentDefType'
 
 export const paperDef = {
   ...appBarDef,
@@ -13,9 +14,9 @@ export const paperDef = {
     children: [],
   },
 
-  formGen: ({ editorState }: any) =>
+  formGen: ({ editorState }) =>
     propertyFormFactory(paperPropsSchema, editorState),
   category: 'surface',
   schema: paperPropsSchema,
   component: Paper,
-}
+} satisfies ComponentDefType

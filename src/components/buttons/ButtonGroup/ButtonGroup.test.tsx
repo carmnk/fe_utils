@@ -1,3 +1,4 @@
+import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import { ButtonGroup } from './ButtonGroup'
 import { mdiTestTube } from '@mdi/js'
@@ -6,7 +7,7 @@ describe('ButtonGroup', () => {
   it('renders with correct initial value when using buttons', () => {
     const { getByText } = render(
       <ButtonGroup
-        buttons={[
+        items={[
           { value: 'button1', label: 'Button 1' },
           { value: 'button2', label: 'Button 2' },
         ]}
@@ -28,7 +29,7 @@ describe('ButtonGroup', () => {
   it('renders as IconButtonGroup', () => {
     const { queryByText, getByText } = render(
       <ButtonGroup
-        buttons={[
+        items={[
           { value: 'button1', label: 'Button 1', icon: mdiTestTube },
           { value: 'button2', label: 'Button 2', icon: mdiTestTube },
         ]}
@@ -72,7 +73,7 @@ describe('ButtonGroup', () => {
     const handleChange = jest.fn()
     const { getByText } = render(
       <ButtonGroup
-        buttons={[
+        items={[
           { value: 'button1', label: 'Button 1' },
           { value: 'button2', label: 'Button 2' },
         ]}
@@ -88,7 +89,7 @@ describe('ButtonGroup', () => {
     const handleChange = jest.fn()
     const { getByText } = render(
       <ButtonGroup
-        buttons={[
+        items={[
           { value: 'button1 action', label: 'Button 1' },
           { value: 'button2 action', label: 'Button 2' },
         ]}
@@ -108,7 +109,7 @@ describe('ButtonGroup', () => {
     const handleChange = jest.fn()
     const { getByText } = render(
       <ButtonGroup
-        buttons={[
+        items={[
           { value: 'button1 action', label: 'Button 1' },
           { value: 'button2 action', label: 'Button 2' },
         ]}

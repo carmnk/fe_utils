@@ -1,6 +1,6 @@
 import { ListSubheader, MenuItem, MenuItemProps } from '@mui/material'
 import { CTextField, CTextFieldProps } from './TextField'
-import { useMemo } from 'react'
+import { RefObject, useMemo } from 'react'
 import { uniq } from 'lodash'
 
 type SelectOption = { value: string | number | boolean; label: string }
@@ -15,6 +15,7 @@ export type CSelect2Props = CTextFieldProps & {
 }
 
 export const CSelect2 = (props: CSelect2Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { options, endIcon: _e, groupBy, ...rest } = props
   const menuItemProps = rest?.slotProps?.menuItem
 
@@ -23,7 +24,7 @@ export const CSelect2 = (props: CSelect2Props) => {
   }, [groupBy, options])
 
   return (
-    <CTextField {...rest} select>
+    <CTextField {...rest} select ref={rest?.ref as RefObject<HTMLInputElement>}>
       {optionGroupNames?.length && groupBy
         ? optionGroupNames.map((groupName, gIdx) => [
             <ListSubheader key={gIdx + '_list_header'}>
@@ -33,7 +34,7 @@ export const CSelect2 = (props: CSelect2Props) => {
               ?.filter((opt) => groupBy(opt) === groupName)
               .map((opt, oIdx) => (
                 <MenuItem
-                  value={opt?.value as any}
+                  value={opt?.value as string}
                   {...menuItemProps}
                   key={oIdx}
                 >
@@ -42,7 +43,11 @@ export const CSelect2 = (props: CSelect2Props) => {
               )),
           ])
         : options?.map((opt, oIdx) => (
-            <MenuItem value={opt?.value as any} {...menuItemProps} key={oIdx}>
+            <MenuItem
+              value={opt?.value as string}
+              {...menuItemProps}
+              key={oIdx}
+            >
               {opt.label}
             </MenuItem>
           ))}

@@ -1,4 +1,5 @@
-import { query } from '../../../api/utils/httpQuerys'
+import { ResponseType } from 'axios'
+import { query, QUERY_METHOD } from '../../../api/utils/httpQuerys'
 import { AppController } from '../../editorRendererController/types'
 import { BodyParam } from '../../editorRendererController/types/bodyParam'
 import { Header } from '../../editorRendererController/types/Header'
@@ -7,7 +8,7 @@ import { Param } from '../../editorRendererController/types/param'
 const replacePlaceholders = (
   text: string,
   placeholders: { [key: string]: string },
-  debug: any = false
+  debug: boolean | string | number = false
 ) => {
   if (!['string', 'number'].includes(typeof text) || !placeholders) {
     console.debug('replacePlaceholders out1', text, placeholders)
@@ -44,15 +45,15 @@ const replacePlaceholders = (
 export const queryAction = async (
   appController: AppController,
   actionId: string,
-  method: any,
+  method: string,
   url: string,
   useCookies: boolean,
   payload: BodyParam[] = [],
   headers: Header[] = [],
   params: Param[] = [],
-  responseType?: any,
+  responseType?: string,
   basicAuth?: { username: string; password: string },
-  placeholders: { [key: string]: string } = {}
+  placeholders: Record<string, string> = {}
 ) => {
   const adjMethod = replacePlaceholders(method, placeholders)
 
@@ -92,7 +93,9 @@ export const queryAction = async (
     // params: Object.keys(params ?? {}).reduce((acc, key) => {
     //   return { ...acc, [key]: replacePlaceholders(params[key], placeholders) }
     // }, {}),
-    responseType: replacePlaceholders(responseType, placeholders) as any,
+    responseType: responseType
+      ? (replacePlaceholders(responseType, placeholders) as ResponseType)
+      : undefined,
   }
 
   // IMPLEMENTATION -> replace all relevantProps with placeholders if any
@@ -125,12 +128,14 @@ export const queryAction = async (
     method,
     url
   )
-  const response = await query(adjMethod as any, adjParams)
+  const response = await query(adjMethod as QUERY_METHOD, adjParams)
 
-  const responseRaw = response?.data as any
-  // const responseAdj = responseRaw?.success ? responseRaw.data : responseRaw
-  if (response?.data) {
-    appController.actions.updateData(actionId, responseRaw)
+  const responseRaw = response?.data
+  if (responseRaw) {
+    appController.actions.updateData(
+      actionId,
+      responseRaw as Record<string, unknown>
+    )
   }
 
   return response

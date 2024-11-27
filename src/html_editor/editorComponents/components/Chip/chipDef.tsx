@@ -1,7 +1,8 @@
 import { mdiInformation } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { chipPropsSchema } from './chipPropsRawSchema'
-import { ChipWrapper } from './ChipWrapper'
+import { ChipWrapper, ChipWrapperProps } from './ChipWrapper'
+import { ComponentDefType } from '../../componentDefType'
 
 export const chipEditorComponentDef = {
   type: 'Chip' as const,
@@ -14,7 +15,7 @@ export const chipEditorComponentDef = {
     disabled: false,
     sx: {},
   },
-  formGen: ({ editorState }: any) =>
+  formGen: ({ editorState }) =>
     propertyFormFactory(
       chipPropsSchema,
       editorState
@@ -31,5 +32,4 @@ export const chipEditorComponentDef = {
   category: 'basic',
   component: ChipWrapper,
   schema: chipPropsSchema,
-}
-//
+} satisfies ComponentDefType<ChipWrapperProps>

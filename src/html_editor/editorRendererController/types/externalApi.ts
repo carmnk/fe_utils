@@ -20,9 +20,9 @@ export type ExternalApiDb = Omit<
 > & {
   base_url: string
   auth_type: 'basic' | 'bearer' | 'none'
-  auth_basic_username: string
-  auth_basic_password: string
-  auth_bearer_token: string
+  auth_basic_username: string | null
+  auth_basic_password: string | null
+  auth_bearer_token: string | null
   use_cookies: boolean
   project_id: string
 }

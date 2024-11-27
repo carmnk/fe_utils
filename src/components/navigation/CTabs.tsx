@@ -1,13 +1,7 @@
-import { ForwardedRef, ReactNode, forwardRef, useMemo } from 'react'
-import {
-  Stack,
-  Tab,
-  TabProps,
-  TabsProps,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import { CSSProperties, ForwardedRef, ReactNode } from 'react'
+import { forwardRef, useMemo } from 'react'
+import { BoxProps, Stack, Tab, TabProps } from '@mui/material'
+import { Tooltip, Typography, useTheme, TabsProps } from '@mui/material'
 import { Tabs as MTabs } from '@mui/material'
 import Icon from '@mdi/react'
 
@@ -20,7 +14,7 @@ export type CTabsProps = Omit<TabsProps, 'onChange' | 'value'> & {
     tooltip?: string
     disabled?: boolean
     icon?: string
-    sx?: any
+    sx?: BoxProps['sx']
   }[]
 
   disableIndicator?: boolean
@@ -127,7 +121,7 @@ export const Tabs = forwardRef(
               transition: 'background 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
               opacity: 1,
               ...injectTabBorders,
-              ...(item?.sx ?? {}),
+              ...((item?.sx as CSSProperties) ?? {}),
               ...(item.value === value ? activeTabStyles : {}),
             }}
             disabled={item?.disabled}

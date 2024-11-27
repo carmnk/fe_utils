@@ -14,7 +14,7 @@ export enum PropertyType {
 
 export type LiteralType = StringType | NumberType | BooleanType
 export type SchemaType<IsExtendedType extends boolean = false> = FormProps &
-  (
+  ((
     | LiteralType
     | ObjectSchemaType<IsExtendedType>
     | ArraySchemaType
@@ -23,7 +23,7 @@ export type SchemaType<IsExtendedType extends boolean = false> = FormProps &
     | IconType
     | JsonType
     | EventHandlerType
-  )
+  ) & { label?: string }) // is label used ???
 
 type FormProps = {
   form?: {
@@ -35,7 +35,12 @@ type FormProps = {
     disabled?: boolean
     hidden?: boolean
     invisible?: boolean
-    defaultValue?: any
+    defaultValue?:
+      | string
+      | number
+      | boolean
+      | Record<string, unknown>
+      | unknown[]
     showInArrayList?: boolean
   }
   eventType?: string
@@ -59,6 +64,7 @@ export type StringType = {
   maxLength?: number
   minLength?: number
   enum?: string[]
+  groupBy?: (item: unknown) => string | number | undefined
 }
 
 export type NumberType = {
@@ -138,6 +144,8 @@ export type IconType = {
 export type JsonType = {
   type: PropertyType.json
   required?: boolean
+  keysDict?: Record<string, string>
+  items?: ObjectSchemaType[]
 }
 export type EventHandlerType = {
   type: PropertyType.eventHandler

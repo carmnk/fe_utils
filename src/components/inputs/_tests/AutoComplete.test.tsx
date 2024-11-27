@@ -39,7 +39,7 @@ describe('Select', () => {
     const select = getByTestId('select')
     await act(async () => {
       // await fireEvent.mouseDown(getByRole('combobox'))
-      await fireEvent.mouseDown(inputElement)
+      await fireEvent.mouseDown(inputElement as any)
       // await fireEvent.mouseDown(select)
     })
     const popoverElementRoot = await findByRole('presentation')
@@ -79,13 +79,13 @@ describe('Select', () => {
     const select = getByTestId('select')
     await act(async () => {
       // await fireEvent.mouseDown(getByRole('combobox'))
-      await fireEvent.change(inputElement, { target: { value: 'option2' } })
+      await fireEvent.change(inputElement as any, { target: { value: 'option2' } })
       // await fireEvent.mouseDown(select)
     })
     const optionElement = getByText('O2')
     expect(handleInputChange).toHaveBeenCalled()
     await act(async () => {
-      await fireEvent.keyUp(inputElement, { key: 'Enter', code: 'Enter' })
+      await fireEvent.keyUp(inputElement as any, { key: 'Enter', code: 'Enter' })
     })
 
     expect(handleChange).toHaveBeenCalled()
@@ -96,13 +96,13 @@ describe('Select', () => {
 
     await act(async () => {
       // await fireEvent.mouseDown(getByRole('combobox'))
-      await fireEvent.change(inputElement, { target: { value: 'option1' } })
+      await fireEvent.change(inputElement as any, { target: { value: 'option1' } })
       // await fireEvent.mouseDown(select)
     })
     const optionElement2 = getByDisplayValue('option1')
     expect(handleInputChange).toHaveBeenCalledTimes(2)
     await act(async () => {
-      await fireEvent.blur(inputElement, { key: 'Enter', code: 'Enter' })
+      await fireEvent.blur(inputElement as any, { key: 'Enter', code: 'Enter' })
     })
     expect(handleChange).toHaveBeenCalledTimes(2)
   })

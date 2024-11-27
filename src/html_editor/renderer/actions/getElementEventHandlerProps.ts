@@ -1,9 +1,10 @@
+import { ComponentDefType } from '../../editorComponents'
 import {
   AppController,
+  EditorRendererControllerType,
   EditorStateType,
-  Element,
-  Property,
 } from '../../editorRendererController'
+import { Element, Property } from '../../editorRendererController'
 import { isComponentType } from '../utils'
 import { createAppAction } from './createAppAction'
 import { htmlEventCategories } from './htmlElementEvents'
@@ -15,8 +16,8 @@ export type GetElementEventHandlersParams = {
   appController: AppController
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: any
-  icons: any
+  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  icons?: Record<string, string>
   elementProps: Property[]
   navigate: NavigateFunction
   isProduction?: boolean
@@ -43,15 +44,23 @@ export const getElementEventHandlerProps = (
 
   const componentEventNames = (() => {
     if (isReactElement) {
-      const componentEvents = (element as any)
-        ?.formGen?.({
-          editorState,
-          appController,
-          currentViewportElements,
-          selectedPageElements,
-        })
-        ?.fields?.filter((field: any) => field._prop_type === 'eventHandler')
-      return componentEvents?.map((ev: any) => ev.name)
+      const componentDef = element as unknown as ComponentDefType
+      const fieldsRaw = componentDef?.formGen?.({
+        editorState,
+        appController,
+        currentViewportElements,
+        selectedPageElements,
+      })?.fields
+      const fields =
+        typeof fieldsRaw === 'function'
+          ? (componentDef.props &&
+              fieldsRaw(componentDef.props, componentDef.props)) ||
+            []
+          : fieldsRaw
+      const componentEvents = fields?.filter(
+        (field) => field._prop_type === 'eventHandler'
+      )
+      return componentEvents?.map((ev) => ev.name) ?? []
     } else {
       return htmlEventCategories
         .map((category) => {
@@ -60,14 +69,27 @@ export const getElementEventHandlerProps = (
         .flat()
     }
   })()
-  const eventHandlerProps = componentEventNames?.reduce(
-    (acc: any, currentEventName: string) => {
-      const eventProps = getPropByName(currentEventName)
-      if (!eventProps) return acc
-      return {
-        ...acc,
-        [currentEventName]: isReactElement
-          ? createAppAction({
+  const eventHandlerProps = componentEventNames?.reduce<
+    Record<string, ((...fnParams: unknown[]) => void) | undefined>
+  >((acc, currentEventName: string) => {
+    const eventProps = getPropByName(currentEventName)
+    if (!eventProps) return acc
+    return {
+      ...acc,
+      [currentEventName]: isReactElement
+        ? createAppAction({
+            element,
+            eventName: currentEventName,
+            editorState,
+            currentViewportElements,
+            COMPONENT_MODELS,
+            appController,
+            icons,
+            navigate,
+            isProduction,
+          })
+        : () => {
+            return createAppAction({
               element,
               eventName: currentEventName,
               editorState,
@@ -78,22 +100,8 @@ export const getElementEventHandlerProps = (
               navigate,
               isProduction,
             })
-          : () => {
-              return createAppAction({
-                element,
-                eventName: currentEventName,
-                editorState,
-                currentViewportElements,
-                COMPONENT_MODELS,
-                appController,
-                icons,
-                navigate,
-                isProduction,
-              })
-            },
-      }
-    },
-    {}
-  )
+          },
+    }
+  }, {})
   return eventHandlerProps
 }

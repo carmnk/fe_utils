@@ -1,8 +1,9 @@
 import { mdiFormatText } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { typographyPropsSchema } from './typographyPropsRawSchema'
-import { TypographyWrapper } from './TypographyWrapper'
+import { TypographyWrapper, TypographyWrapperProps } from './TypographyWrapper'
 import { ComponentDefType } from '../../componentDefType'
+import { FC } from 'react'
 
 export const typographyEditorComponentDef = {
   type: 'Typography' as const,
@@ -13,12 +14,11 @@ export const typographyEditorComponentDef = {
     variant: 'body1',
     sx: {},
   },
-  formGen: ({ editorState }: any) =>
+  formGen: ({ editorState }) =>
     propertyFormFactory(typographyPropsSchema, editorState),
 
   icon: mdiFormatText,
   category: 'basic',
-  component: TypographyWrapper,
+  component: TypographyWrapper as FC<TypographyWrapperProps>,
   schema: typographyPropsSchema,
-}
-//
+} satisfies ComponentDefType<TypographyWrapperProps>

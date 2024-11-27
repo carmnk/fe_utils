@@ -3,31 +3,26 @@ import { EditorRendererControllerType } from '../editorRendererController/types/
 import { EditorStateType, Element } from '../editorRendererController/types'
 import { renderElements } from './renderElements'
 import { FC, useMemo } from 'react'
+import { NavigateFunction } from 'react-router-dom'
 
-export type ComponentElementBoxProps<
-  ControllreActionsType extends { [key: string]: any },
-> = {
+export type ComponentElementBoxProps = {
   element: Element
   //
   editorState: EditorStateType
-  appController: EditorRendererControllerType<ControllreActionsType>['appController']
+  appController: EditorRendererControllerType['appController']
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType<ControllreActionsType>['COMPONENT_MODELS']
+  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
   selectedElement: Element | null
-  uiActions?: ControllreActionsType
+  uiActions?: unknown
   //
   isProduction: boolean
   OverlayComponent?: FC<{ element: Element }>
-  navigate: any
+  navigate: NavigateFunction
   rootCompositeElementId?: string
 }
 
-export const ComponentBox = <
-  ControllreActionsType extends { [key: string]: any },
->(
-  props: ComponentElementBoxProps<ControllreActionsType>
-) => {
+export const ComponentBox = (props: ComponentElementBoxProps) => {
   const {
     element,
     editorState,
@@ -36,11 +31,10 @@ export const ComponentBox = <
     uiActions,
     selectedPageElements,
     COMPONENT_MODELS,
-    selectedElement,
     isProduction,
     OverlayComponent,
     navigate,
-    rootCompositeElementId,
+    // rootCompositeElementId,
   } = props
 
   console.debug(
@@ -81,13 +75,12 @@ export const ComponentBox = <
         currentViewportElements,
         selectedPageElements,
         COMPONENT_MODELS,
-        selectedElement,
         uiActions,
         onSelectElement: () => {},
         theme: editorState.theme,
         isProduction,
-        icons: [] as any,
-        parentId: null as any, // start with the elements without parent !
+        icons: {},
+        parentId: undefined, // start with the elements without parent !
         isPointerProduction: true,
         baseComponentId:
           element?.ref_component_id ?? element?.component_id ?? undefined,
@@ -102,7 +95,6 @@ export const ComponentBox = <
       currentViewportElements,
       selectedPageElements,
       COMPONENT_MODELS,
-      selectedElement,
       uiActions,
       isProduction,
       OverlayComponent,

@@ -3,25 +3,27 @@ import { getStylesFromClasses } from '../renderer/classes/getStylesFromClasses'
 import { getInitialStyles } from '../utils'
 import { EditorStateType, Element } from './types'
 import { baseComponents } from '../editorComponents/baseComponents'
+import { ComponentDefType } from '../editorComponents'
 
 const getRecursiveChildren = (
   allElements: Element[],
   parentId: string
 ): Element[] => {
   const children = allElements.filter((el) => el._parentId === parentId)
-  return (children as any)
-    .map((child: any) =>
-      child._id
-        ? [child, ...getRecursiveChildren(allElements, child._id)]
-        : null
+  return children
+    .map(
+      (child) =>
+        child._id
+          ? [child, ...getRecursiveChildren(allElements, child._id)]
+          : (null as unknown as Element) // filter later
     )
-    .filter((val: any) => val)
+    .filter((val) => val)
     .flat()
 }
 
 export const useShortcuts = (params: {
   editorState: EditorStateType
-  customComponents?: any[]
+  customComponents?: ComponentDefType[]
 }) => {
   const { editorState, customComponents } = params
 
@@ -59,7 +61,7 @@ export const useShortcuts = (params: {
         (attr) => attr.element_id === elementId
       )
       const elementAttributesDict = elementAttributes.reduce<
-        Record<string, any>
+        Record<string, unknown>
       >((acc, attr) => {
         return {
           ...acc,
@@ -79,16 +81,15 @@ export const useShortcuts = (params: {
     const elementAttributes = editorState.attributes.filter(
       (attr) => attr.element_id === editorState.ui.selected.element
     )
-    const elementAttributesDict = elementAttributes.reduce<Record<string, any>>(
-      (acc, attr) => {
-        return {
-          ...acc,
-          [attr.attr_name]: attr.attr_value,
-        }
-      },
-      {}
-    )
-    const className = elementAttributesDict?.className
+    const elementAttributesDict = elementAttributes.reduce<
+      Record<string, unknown>
+    >((acc, attr) => {
+      return {
+        ...acc,
+        [attr.attr_name]: attr.attr_value,
+      }
+    }, {})
+    const className = elementAttributesDict?.className as string | undefined
     return {
       ...getInitialStyles(),
       ...getStylesFromClasses(className ?? '', editorState?.cssSelectors),
@@ -104,15 +105,14 @@ export const useShortcuts = (params: {
     const elementAttributes = editorState.attributes.filter(
       (attr) => attr.element_id === editorState.ui.selected.element
     )
-    const elementAttributesDict = elementAttributes.reduce<Record<string, any>>(
-      (acc, attr) => {
-        return {
-          ...acc,
-          [attr.attr_name]: attr.attr_value,
-        }
-      },
-      {}
-    )
+    const elementAttributesDict = elementAttributes.reduce<
+      Record<string, unknown>
+    >((acc, attr) => {
+      return {
+        ...acc,
+        [attr.attr_name]: attr.attr_value,
+      }
+    }, {})
 
     return elementAttributesDict
   }, [editorState.ui.selected.element, editorState.attributes])
@@ -124,7 +124,7 @@ export const useShortcuts = (params: {
         editorState.assets.images.find(
           (image) => image._id === selectedImageId
         ) ?? null
-      return { ...selectedImage, imageSrcId: imageId ?? '' } as any
+      return { ...selectedImage, imageSrcId: imageId ?? '' }
     },
     [editorState?.assets.images, editorState.ui.selected.image]
   )

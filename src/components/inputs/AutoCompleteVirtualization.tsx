@@ -37,7 +37,7 @@ function renderRow(props: ListChildComponentProps) {
     </Typography>
   )
 }
-function useResetCache(data: any) {
+function useResetCache(data: unknown) {
   const ref = useRef<VariableSizeList>(null)
   useEffect(() => {
     if (ref.current != null) {
@@ -48,7 +48,7 @@ function useResetCache(data: any) {
 }
 
 const OuterElementType = forwardRef<HTMLDivElement>((props, ref) => {
-  const outerProps = useContext<Record<string, any>>(OuterElementContext as any)
+  const outerProps = useContext<Record<string, unknown>>(OuterElementContext)
   return <div ref={ref} {...props} {...outerProps} />
 })
 // Adapter for react-window
@@ -57,9 +57,9 @@ export const ListboxComponent = forwardRef<
   HTMLAttributes<HTMLElement>
 >(function ListboxComponent(props, ref) {
   const { children, ...other } = props
-  const itemData: ReactElement<any>[] = []
-  ;(children as ReactElement<any>[]).forEach(
-    (item: ReactElement<any> & { children?: ReactElement<any>[] }) => {
+  const itemData: ReactElement[] = []
+  ;(children as ReactElement[]).forEach(
+    (item: ReactElement & { children?: ReactElement[] }) => {
       itemData.push(item)
       itemData.push(...(item.children || []))
     }
@@ -72,7 +72,7 @@ export const ListboxComponent = forwardRef<
   const itemCount = itemData.length
   const itemSize = smUp ? 36 : 48
 
-  const getChildSize = (child: ReactElement<any>) => {
+  const getChildSize = (child: ReactElement) => {
     if (child.hasOwnProperty('group')) {
       return 48
     }

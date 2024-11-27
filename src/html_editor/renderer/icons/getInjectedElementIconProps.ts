@@ -1,10 +1,14 @@
-import { PropertyType } from '../../editorComponents'
+import {
+  ArraySchemaType,
+  ExtendedObjectSchemaType,
+  PropertyType,
+} from '../../editorComponents'
 import { Element, Property } from '../../editorRendererController'
 
 export type GetInjectedElementIconParams = {
   element: Element
-  schemaProps: any
-  icons: any
+  schemaProps: ExtendedObjectSchemaType['properties']
+  icons?: Record<string, string>
   isHtmlElement: boolean
   elementProps: Property[]
 }
@@ -25,7 +29,7 @@ export const getInjectedElementIconProps = (
   const injectedIconsDict = elementIconKeys?.reduce(
     (acc, key) => ({
       ...acc,
-      [key]: icons?.[getPropByName(key)],
+      [key]: icons?.[getPropByName(key) as string],
     }),
     {}
   )
@@ -33,9 +37,15 @@ export const getInjectedElementIconProps = (
   const elementArrayIconKeys = isHtmlElement
     ? []
     : Object.keys(schemaProps)?.filter((key) => {
-        const itemsProps = (schemaProps?.[key] as any)?.items?.[0]?.properties
+        const propertySchema = schemaProps[key] as ArraySchemaType
+        const itemsProps =
+          'items' in propertySchema &&
+          propertySchema.items?.length &&
+          'properties' in propertySchema.items[0]
+            ? propertySchema.items[0]?.properties
+            : {}
         return (
-          schemaProps[key]?.type === PropertyType.Array &&
+          propertySchema?.type === PropertyType.Array &&
           Object.keys(itemsProps || {})?.filter?.(
             (key) => itemsProps[key]?.type === PropertyType.icon
           )
@@ -47,19 +57,28 @@ export const getInjectedElementIconProps = (
     ? {}
     : elementArrayIconKeys
         .map((key) => {
-          const itemsProps = (schemaProps?.[key] as any)?.items?.[0]?.properties
+          const propertySchema = schemaProps[key] as ArraySchemaType
+          const itemsProps =
+            ('items' in propertySchema &&
+              propertySchema.items?.length &&
+              'properties' in propertySchema.items[0] &&
+              propertySchema?.items?.[0]?.properties) ||
+            {}
           return Object.keys(itemsProps || {})
             ?.filter((key) => itemsProps[key]?.type === PropertyType.icon)
             ?.map((itemKey) => ({ key, itemKey }))
         })
         .flat()
         ?.reduce((acc, it) => {
+          const propValue = getPropByName(it.key)
           return {
             ...acc,
-            [it.key]: getPropByName(it.key)?.map?.((item: any) => ({
-              ...item,
-              [it.itemKey]: icons?.[item[it.itemKey]],
-            })),
+            [it.key]: Array.isArray(propValue)
+              ? propValue?.map?.((item) => ({
+                  ...item,
+                  [it.itemKey]: icons?.[item[it.itemKey]],
+                }))
+              : [],
           }
         }, {})
 
