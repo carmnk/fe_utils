@@ -30,6 +30,7 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   id?: string
   injectElementAtEnd?: React.ReactNode
   injectElementInContainerStart?: React.ReactNode
+  importIconByName: (name: string) => Promise<string>
 }
 
 export const HtmlRendererComponent = <
@@ -55,6 +56,7 @@ export const HtmlRendererComponent = <
     id,
     injectElementAtEnd,
     injectElementInContainerStart,
+    importIconByName,
   } = props
 
   const selectElement = uiActions?.selectElement
@@ -63,7 +65,8 @@ export const HtmlRendererComponent = <
   const [icons] = useMdiIcons(
     selectedPageElements,
     COMPONENT_MODELS,
-    editorState.properties
+    editorState.properties,
+    importIconByName
   )
 
   const handleSelectElement = useCallback(

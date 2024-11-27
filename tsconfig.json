@@ -28,8 +28,8 @@
 
   "exclude": [
     "src/**/__docs__",
-    // "src/**/_tests",
-    // "src/**/**.test.tsx",
+    "src/**/_tests",
+    "src/**/**.test.tsx",
     "src/stories/**",
     "dist/**/*"
   ]
