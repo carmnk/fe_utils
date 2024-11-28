@@ -70,9 +70,8 @@ export const reloadSerializedThemes = (
     const injectCurrentThemeTypographyProps = {
       typography: currentThemeProps?.typography,
     }
-    const themeTypographys = theme_typographys.filter(
-      (tt) => tt.theme_id === themeIn.id
-    )
+    const themeTypographys =
+      theme_typographys?.filter?.((tt) => tt.theme_id === themeIn.id) ?? []
     const newThemeStatic = {
       ...injectCurrentThemeTypographyProps,
       palette: {
