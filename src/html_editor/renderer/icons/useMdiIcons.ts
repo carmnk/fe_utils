@@ -95,6 +95,7 @@ export const useMdiIcons = (
       if (!iconsNames.length) return
       const iconsNew: Record<string, string> = {}
 
+      console.log('iconsNames', iconsNames)
       for (let i = 0; i < iconsNames.length; i++) {
         const iconName = iconsNames[i]
         if (!icons[iconName]) {
