@@ -113,7 +113,7 @@ export const useMdiIcons = (
     }
     updateIcons()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPageElements, properties, components])
+  }, [selectedPageElements, properties, components, importIconByName])
 
   return [icons, setIcons]
 }
