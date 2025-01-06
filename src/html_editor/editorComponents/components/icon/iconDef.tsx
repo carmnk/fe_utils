@@ -1,7 +1,7 @@
 import { mdiPlusCircleOutline } from '@mdi/js'
-import { propertyFormFactory } from '@cmk/fe_utils'
+import { propertyFormFactory } from '../../propertiesFormFactory'
 import { IconPropsSchema } from './iconPropsRawSchema'
-import { ComponentDefType } from '@cmk/fe_utils'
+import { ComponentDefType } from '../../componentDefType'
 import { IconComponentWrapper } from './IconComponentWrapper'
 
 export const IconComponentDef: ComponentDefType = {
