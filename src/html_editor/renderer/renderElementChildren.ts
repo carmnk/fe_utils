@@ -95,7 +95,8 @@ export const renderElementChildren = (params: RenderElementChildrenParams) => {
             itemsValue,
             activeId,
             activeChild,
-            children
+            children,
+            elementProps
           )
           return children
         })()

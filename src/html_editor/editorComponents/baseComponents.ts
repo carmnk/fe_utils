@@ -11,6 +11,7 @@ import { formEditorComponentDef } from './components/Form/formDef'
 import { ComponentDefType } from './componentDefType'
 import { navigationContainerDef } from './components/NavigationContainer/navigationContainerDef'
 import { paperDef } from './components/Paper/paperDef'
+import { IconComponentDef } from './components/icon/iconDef'
 
 export const baseComponents = [
   typographyEditorComponentDef,
@@ -18,6 +19,7 @@ export const baseComponents = [
   // surface components
   appBarDef,
   paperDef,
+  IconComponentDef,
 
   // Navigation components
   buttonEditorComponentDef,

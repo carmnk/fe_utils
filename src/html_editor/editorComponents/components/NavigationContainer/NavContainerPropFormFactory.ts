@@ -178,7 +178,8 @@ export const ItemPropsFormFactory = (
           const controlElementProps = editorState.properties.filter(
             (prop) =>
               prop.element_id === controlElement?._id ||
-              prop.template_id === controlElement?.template_id
+              (prop.template_id === controlElement?.template_id &&
+                prop.prop_name !== 'items')
           )
           const controlElementPropsObject = controlElementProps.reduce<
             Record<string, unknown>
@@ -195,6 +196,15 @@ export const ItemPropsFormFactory = (
                   { value: false, label: 'false' },
                 ]
               : controlElementPropsObject?.items
+
+          console.log(
+            'WTF',
+            selectedElementId,
+            selectedElement,
+            isSelectedElementNavContainer,
+            controlElementProps,
+            controlElement
+          )
           return navItemOptions ?? []
         },
         childId: () => {
