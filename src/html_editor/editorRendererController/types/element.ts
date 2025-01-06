@@ -6,7 +6,7 @@ export type GenericElement<T extends string = string> = {
   _parentId: string | null // -> _ was children before !!!
   _content?: string // -> _
   _type: T //  -> _
-  _disableDelete?: boolean
+  // _disableDelete?: boolean
   _page: string | null
   template_id: string | null
   component_id: string | null
@@ -24,7 +24,7 @@ export type Element = {
   _parentId: string | null // -> _ was children before !!!
   _content?: string // -> _
   _type: string //  -> _
-  _disableDelete?: boolean
+  // _disableDelete?: boolean
   _page: string | null
   template_id: string | null
   component_id: string | null
@@ -39,7 +39,7 @@ export type ElementDb = {
   parent_id: string | null
   content: string | null
   element_type: string
-  element_disable_delete: boolean | null
+  // element_disable_delete?: boolean | null
   element_page: string | null
   viewport: string | null
   template_id: string | null

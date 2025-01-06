@@ -85,7 +85,7 @@ export const transformEditorStateFromPayload = (
       _parentId: el.parent_id,
       _content: el.content as string,
       _type: el.element_type as string,
-      _disableDelete: el.element_disable_delete ?? undefined,
+      // _disableDelete: el.element_disable_delete ?? undefined,
       _page: el.element_page as string,
       viewport: el.viewport,
       template_id: el.template_id,

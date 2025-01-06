@@ -87,6 +87,16 @@ export const renderElementChildren = (params: RenderElementChildrenParams) => {
             (child) => child._id === activeId
           )
           const children = activeChild ? [activeChild] : []
+          console.info(
+            'NavContainer children',
+            sourceControlElementId,
+            sourceControlElement,
+            activeTab,
+            itemsValue,
+            activeId,
+            activeChild,
+            children
+          )
           return children
         })()
       : []

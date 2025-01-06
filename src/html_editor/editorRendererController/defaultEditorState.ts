@@ -12,7 +12,7 @@ export const baseHtmlDocument: Element[] = [
   {
     _id: uuid(),
     _type: 'div',
-    _disableDelete: true,
+    // _disableDelete: true,
     _page: 'index',
     _parentId: null,
     _userID: '',
