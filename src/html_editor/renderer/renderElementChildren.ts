@@ -101,9 +101,8 @@ export const renderElementChildren = (params: RenderElementChildrenParams) => {
         })()
       : []
 
-  const children = navContainerChildren?.length
-    ? navContainerChildren
-    : elementChildren
+  const children =
+    element?._type === 'NavContainer' ? navContainerChildren : elementChildren
 
   const renderedElementChildren = children?.length
     ? renderElements({
