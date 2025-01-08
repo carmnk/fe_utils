@@ -49,6 +49,7 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
       {items?.map((item) => {
         return (
           <BottomNavigationAction
+            key={item.value}
             value={item.value}
             label={item.label}
             icon={<Icon path={item?.icon ?? mdiInformation} size={1} />}

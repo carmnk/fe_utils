@@ -25,4 +25,5 @@ export type ComponentDefType<ComponentProps extends object = object> = {
     },
     apiController?: unknown
   ) => Omit<GenericFormProps, 'formData' | 'onChangeFormData'>
+  renderType?: 'form' | 'navigation' | 'custom'
 }

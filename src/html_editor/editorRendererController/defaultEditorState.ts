@@ -5,8 +5,8 @@ import { UI_POINTER_MODE } from '../defs/uiPointerMode'
 import { v4 as uuid } from 'uuid'
 import { LeftMenuGlobalTabs } from '../defs/LeftMenuGlobalTabs'
 import { LeftMenuBackendTabs } from '../defs/LeftMenuBackendTabs'
-import { EditorStateType } from './types/editorState'
-import { Element } from './types'
+import { EditorStateType } from '../types/editorState'
+import { Element } from '../types'
 
 export const baseHtmlDocument: Element[] = [
   {
@@ -34,8 +34,8 @@ export const defaultPageElements = () =>
 /** ATTENTION - DUPLICATE IN THE TEMPLATE PROJECT */
 export const defaultEditorState = (): EditorStateType => {
   return {
-    actionParams: [],
-    compositeComponentProps: [],
+    action_params: [],
+    composite_component_props: [],
     components: [],
     endpoints: [],
     defaultTheme: 'light',
@@ -50,7 +50,7 @@ export const defaultEditorState = (): EditorStateType => {
       use_github: false,
       use_github_pages: false,
     },
-    templateComponents: [],
+    elementTemplates: [],
     attributes: [],
     properties: [],
     transformers: [],
@@ -72,7 +72,6 @@ export const defaultEditorState = (): EditorStateType => {
       isAutoSaveReady: false,
       initializeProjectModal: true,
       isProjectInited: false,
-      tableUis: {},
       previewMode: false,
       pointerMode: UI_POINTER_MODE.mixed,
       dragMode: 'reorder',

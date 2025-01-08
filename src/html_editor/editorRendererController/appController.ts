@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
-import { AppState, EditorStateType } from './types'
-import { AppController } from './types'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { AppState, EditorStateType } from '../types'
+import { AppController } from '../types'
 import { replacePlaceholdersInString } from '../renderer'
-import { EditorRendererControllerType } from './types/editorRendererController'
+import { EditorRendererControllerType } from '../types/editorRendererController'
 
 export type EditorControllerAppStateParams = {
   // editorState: EditorStateType
@@ -26,6 +26,7 @@ export const useAppController = (
       selectedId: {},
       selectedItem: {},
     },
+    tableUis: {},
     buttonStates: {},
     navigationStates: {},
   })
@@ -135,7 +136,27 @@ export const useAppController = (
       })
     }
 
+    const updateTableUi = (tableUi: {
+      [key: string]: {
+        onSetFilters: Dispatch<
+          SetStateAction<{ filterKey: string; value: string }[]>
+        >
+        filters: { filterKey: string; value: string }[]
+      }
+    }) => {
+      setAppState((current) => {
+        return {
+          ...current,
+          tableUis: {
+            ...current.tableUis,
+            ...tableUi,
+          },
+        }
+      })
+    }
+
     return {
+      updateTableUi,
       getFormData,
       changeFormData,
       addProperty: updateProperty,
@@ -220,6 +241,5 @@ export const useAppController = (
       actions,
     }
   }, [appState, actions])
-
   return controller
 }

@@ -1,4 +1,9 @@
-import { ChangeEvent, FormEventHandler, KeyboardEventHandler } from 'react'
+import {
+  ChangeEvent,
+  FormEventHandler,
+  KeyboardEventHandler,
+  forwardRef,
+} from 'react'
 import { useMemo } from 'react'
 import { FormControlProps, FormHelperTextProps } from '@mui/material'
 import { Select as MSelect, MenuItem } from '@mui/material'
@@ -68,7 +73,7 @@ const errorTextStyle = {
   fontWeight: 700,
 }
 
-export const Select = (props: CSelectProps) => {
+export const Select = forwardRef((props: CSelectProps, ref: any) => {
   const {
     disableTopPadding,
     value,
@@ -203,7 +208,7 @@ export const Select = (props: CSelectProps) => {
           )}
         </Typography>
       )}
-      <MSelect {...muiSelectProps}>
+      <MSelect {...muiSelectProps} ref={ref}>
         {options?.map((opt, oIdx) => (
           <MenuItem
             value={opt?.value as string}
@@ -222,4 +227,4 @@ export const Select = (props: CSelectProps) => {
       )}
     </FormControl>
   )
-}
+})

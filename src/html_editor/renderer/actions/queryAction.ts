@@ -1,9 +1,9 @@
 import { ResponseType } from 'axios'
 import { query, QUERY_METHOD } from '../../../api/utils/httpQuerys'
-import { AppController } from '../../editorRendererController/types'
-import { BodyParam } from '../../editorRendererController/types/bodyParam'
-import { Header } from '../../editorRendererController/types/Header'
-import { Param } from '../../editorRendererController/types/param'
+import { AppController } from '../../types'
+import { BodyParam } from '../../types/bodyParam'
+import { Header } from '../../types/Header'
+import { Param } from '../../types/param'
 
 const replacePlaceholders = (
   text: string,

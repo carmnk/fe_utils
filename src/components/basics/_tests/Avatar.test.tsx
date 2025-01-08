@@ -52,7 +52,7 @@ describe('Avatar', () => {
         })
       )
     })
-    console.log(avt)
+    console.debug(avt)
     const tooltip = await findByText(testTooltip)
     expect(tooltip).toBeInTheDocument()
   })
@@ -67,8 +67,8 @@ describe('Avatar', () => {
       <Avatar fontSize={32} fullName="John Doe" data-testid="avatar" />
     )
     const initialsElement = getByText('JD')
-    const fs = initialsElement.style?.["font-size"]
-    console.warn(initialsElement.style, initialsElement.style.fontSize, fs )
+    const fs = initialsElement.style?.['font-size']
+    console.warn(initialsElement.style, initialsElement.style.fontSize, fs)
     expect(initialsElement).toHaveStyle('font-size: 32px;')
   })
 })

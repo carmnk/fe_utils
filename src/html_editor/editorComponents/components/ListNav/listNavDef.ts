@@ -1,11 +1,10 @@
 import { mdiFormatListNumbered } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ListNavPropsSchema } from './listNavPropsRawSchema'
-import {
-  ListNavigation,
-  ListNavigationProps,
-} from '../../../../components/navigation/CListNavigation'
+import { ListNavigationProps } from '../../../../components/navigation/CListNavigation'
 import { ComponentDefType } from '../../componentDefType'
+import { ListNavWrapper } from './ListNavWrapper'
+import { CommonComponentPropertys } from '../../componentProperty'
 
 export const listNavEditorComponentDef = {
   type: 'ListNavigation' as const,
@@ -29,8 +28,9 @@ export const listNavEditorComponentDef = {
 
   icon: mdiFormatListNumbered,
   category: 'navigation',
-  component: ListNavigation,
+  component: ListNavWrapper,
   schema: ListNavPropsSchema,
-} satisfies ComponentDefType<ListNavigationProps>
+  renderType: 'navigation',
+} satisfies ComponentDefType<ListNavigationProps & CommonComponentPropertys>
 
 // ButtonPropsSchema

@@ -1,10 +1,10 @@
-import { ExtendedTheme } from '../../theme/muiTheme'
+import { ExtendedTheme } from '../theme/muiTheme'
 import { Action } from './action'
 import { ActionsParams } from './actionParam'
 import { Attribute } from './attribute'
 import { Component } from './component'
 import { ComponentPropertyDefinition } from './componentPropertyDefinition'
-import { CssSelector } from './css'
+import { CssSelectorDb } from './css'
 import { Endpoint } from './endpoint'
 import { EntityDataModel } from './entityDataModel'
 import { ExternalApi } from './externalApi'
@@ -20,9 +20,9 @@ import { ThemeTypography } from './themeTypographys'
 
 export type EditorStateType = {
   components: Component[]
-  compositeComponentProps: ComponentPropertyDefinition[]
-  actionParams: ActionsParams[]
-  templateComponents: Template[]
+  composite_component_props: ComponentPropertyDefinition[]
+  action_params: ActionsParams[]
+  elementTemplates: Template[]
   project: Project
   elements: Element[]
   alternativeViewports: {
@@ -31,7 +31,7 @@ export type EditorStateType = {
     lg: Element[]
     xl: Element[]
   }
-  cssSelectors: CssSelector[]
+  cssSelectors: CssSelectorDb[]
   assets: {
     images: Image[]
   }

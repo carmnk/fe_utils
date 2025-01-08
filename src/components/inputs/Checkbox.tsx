@@ -12,6 +12,10 @@ import { ChangeEvent, useCallback, useMemo } from 'react'
 
 export type CheckboxProps = GenericInputFieldProps<'bool'> &
   Omit<MCBProps, 'value' | 'onChange'> & {
+    onChangeCompleted?: (
+      checked: boolean,
+      e: ChangeEvent<HTMLInputElement>
+    ) => void
     // now common for all
     // tooltip?: string
     // color?:
@@ -53,7 +57,8 @@ export const Checkbox = (props: CheckboxProps) => {
     color,
     slotProps,
     disableHelperText,
-    // disableLabel,
+    disableLabel,
+    onChangeCompleted,
     error,
     ...restCheckBoxProps
   } = props

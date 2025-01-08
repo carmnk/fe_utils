@@ -1,6 +1,6 @@
 import { getDeepPropertyByPath } from '../../../utils/object'
-import { EditorRendererControllerType } from '../../editorRendererController/types/editorRendererController'
-import { EditorStateType } from '../../editorRendererController/types'
+import { EditorRendererControllerType } from '../../types/editorRendererController'
+import { EditorStateType } from '../../types'
 
 export const REGEX_DATA_PLACEHOLDER = /{_data\.[^}]*}/g
 export const REGEX_FORMDATA_PLACEHOLDER = /{formData\.[^}]*}/g
@@ -31,7 +31,7 @@ export const checkForPlaceholders = (text: string) => {
 export const replacePlaceholdersInString = (
   text: string,
   appState: EditorRendererControllerType['appController']['state'],
-  componentPropertyDefinitions: EditorStateType['compositeComponentProps'],
+  componentPropertyDefinitions: EditorStateType['composite_component_props'],
   properties: EditorStateType['properties'],
   attributes: EditorStateType['attributes'],
   currentElement: EditorRendererControllerType['selectedElement'],
@@ -167,7 +167,7 @@ export const replacePlaceholdersInString = (
             prop.element_id === rootCompositeElementId
         )?.prop_value
 
-        console.log(
+        console.debug(
           'PROPS render',
           key,
           keyRaw,
@@ -244,7 +244,7 @@ export const replacePlaceholdersInString = (
   let newText = text
   const templates = typeof text === 'string' ? getTemplates(text) : []
 
-  console.log(
+  console.debug(
     'TEMPLATes',
     templates,
     componentPropertyDefinitions,

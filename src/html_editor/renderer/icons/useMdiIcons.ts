@@ -1,4 +1,4 @@
-import { EditorStateType, Element } from '../../editorRendererController/types'
+import { EditorStateType, Element } from '../../types'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { ArraySchemaType, ComponentDefType } from '../../editorComponents'
 

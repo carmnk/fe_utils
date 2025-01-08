@@ -5,7 +5,7 @@ import {
   EditorStateType,
 } from '../../editorRendererController'
 import { Element, Property } from '../../editorRendererController'
-import { isComponentType } from '../utils'
+import { isComponentType } from '../../utils'
 import { createAppAction } from './createAppAction'
 import { htmlEventCategories } from './htmlElementEvents'
 import { NavigateFunction } from 'react-router-dom'
@@ -69,6 +69,7 @@ export const getElementEventHandlerProps = (
         .flat()
     }
   })()
+
   const eventHandlerProps = componentEventNames?.reduce<
     Record<string, ((...fnParams: unknown[]) => void) | undefined>
   >((acc, currentEventName: string) => {
@@ -103,5 +104,40 @@ export const getElementEventHandlerProps = (
           },
     }
   }, {})
+
+  // Special render case for renderType = Form
+  const baseComponent =
+    isComponentType(element._type) &&
+    COMPONENT_MODELS.find((comp) => comp.type === element._type)
+  if (
+    baseComponent &&
+    'renderType' in baseComponent &&
+    baseComponent.renderType === 'form'
+  ) {
+    eventHandlerProps.formData =
+      (getPropByName('formData') as any) ??
+      (appController.actions.getFormData(element._id) as any)
+    eventHandlerProps.onChangeFormData = eventHandlerProps?.onChangeFormData
+      ? (((newFormData: Record<string, unknown>) =>
+          createAppAction?.({
+            element,
+            eventName: 'onChangeFormData',
+            editorState,
+            currentViewportElements,
+            COMPONENT_MODELS,
+            appController,
+            icons,
+            navigate,
+            isProduction,
+          })?.(null, newFormData)) as any)
+      : (
+          newFormData: Record<string, unknown>
+          // propertyKey: string,
+          // propertyValue: any,
+          // prevFormData: any
+        ) => {
+          appController.actions.changeFormData(element._id, newFormData)
+        }
+  }
   return eventHandlerProps
 }

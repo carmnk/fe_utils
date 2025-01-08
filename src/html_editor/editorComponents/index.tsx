@@ -22,4 +22,5 @@ export { PropertyType } from './schemaTypes'
 
 export { propertyFormFactory } from './propertiesFormFactory'
 export type { DynamicFormInjectionsType } from './propertiesFormFactory'
-export * from './commonSchemas'
+export * from './eventSchemas'
+export type { CommonComponentPropertys } from './componentProperty'

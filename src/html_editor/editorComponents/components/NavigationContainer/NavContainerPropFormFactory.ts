@@ -1,5 +1,5 @@
-import { EditorRendererControllerType } from '../../../editorRendererController/types/editorRendererController'
-import { EditorStateType } from '../../../editorRendererController/types'
+import { EditorRendererControllerType } from '../../../types/editorRendererController'
+import { EditorStateType } from '../../../types'
 import type { GenericFormProps } from '../../../../components/forms/types'
 
 const optionsDict = {
@@ -197,14 +197,6 @@ export const ItemPropsFormFactory = (
                 ]
               : controlElementPropsObject?.items
 
-          console.log(
-            'WTF',
-            selectedElementId,
-            selectedElement,
-            isSelectedElementNavContainer,
-            controlElementProps,
-            controlElement
-          )
           return navItemOptions ?? []
         },
         childId: () => {

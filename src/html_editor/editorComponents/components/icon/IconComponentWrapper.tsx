@@ -1,8 +1,8 @@
-import Icon from "@mdi/react"
+import Icon from '@mdi/react'
 import { Box } from '@mui/material'
 
 export const IconComponentWrapper = (props: any) => {
-  const { rootInjection, sx, ...rest } = props
+  const { rootInjection, sx, path, ...rest } = props
 
   const isVerticalPaddingSet =
     sx?.pt ||
@@ -19,7 +19,7 @@ export const IconComponentWrapper = (props: any) => {
       width="max-content"
       height={isVerticalPaddingSet ? undefined : rest?.size}
     >
-      <Icon {...rest} />
+      <Icon path={path ?? ''} {...rest} />
       {rootInjection}
     </Box>
   )

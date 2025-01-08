@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { defaultEditorState } from './defaultEditorState'
 import { useAppController } from './appController'
 import { useShortcuts } from './useShortcuts'
-import { EditorStateType } from './types'
+import { EditorStateType } from '../types'
 import { replacePlaceholdersInString } from '../renderer'
 import { ComponentDefType } from '../editorComponents'
 
@@ -69,7 +69,7 @@ export const useEditorRendererController = (
           ? replacePlaceholdersInString(
               valueRaw,
               appController.state,
-              editorState.compositeComponentProps,
+              editorState.composite_component_props,
               editorState.properties,
               editorState.attributes,
               selectedElement,
@@ -87,7 +87,7 @@ export const useEditorRendererController = (
     editorState.ui.selected.element,
     editorState.attributes,
     appController.state,
-    editorState.compositeComponentProps,
+    editorState.composite_component_props,
     editorState.properties,
     selectedElement,
   ])

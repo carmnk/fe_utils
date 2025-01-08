@@ -1,6 +1,6 @@
 import { defaultEditorState } from '../defaultEditorState'
-import { EditorStateType } from '../types'
-import { isComponentType } from '../../renderer/utils'
+import { EditorStateType } from '../../types'
+import { isComponentType } from '../../utils'
 import { reloadSerializedThemes } from './transformEditorStateTheme'
 import { EditorStateDbDataType } from './editorDbStateType'
 import { PropertyType } from '../../editorComponents/schemaTypes'
@@ -276,7 +276,7 @@ export const transformEditorStateFromPayload = (
               try {
                 return JSON.parse(attr.attr_value as string)
               } catch (e) {
-                console.error(e, attr)
+                console.error('Json parse error, ', e, attr)
                 return attr.attr_value
               }
             })()
@@ -308,9 +308,9 @@ export const transformEditorStateFromPayload = (
     //   [],
     actions:
       data?.actions?.sort((a, b) => (a.action_id > b.action_id ? 1 : -1)) ?? [],
-    templateComponents: data?.templates ?? [],
-    compositeComponentProps: data?.composite_component_props ?? [],
-    actionParams: data?.action_params ?? [],
+    elementTemplates: data?.templates ?? [],
+    composite_component_props: data?.composite_component_props ?? [],
+    action_params: data?.action_params ?? [],
     theme_typographys: data?.theme_typographys ?? [],
   }
 }

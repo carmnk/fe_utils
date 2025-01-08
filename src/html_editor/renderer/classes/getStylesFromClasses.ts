@@ -5,11 +5,13 @@ export const getStylesFromClasses = (
   selectorId: string,
   cssSelectors: EditorStateType['cssSelectors']
 ): CSSProperties => {
-  const className = cssSelectors.find((sel) => sel._id === selectorId)?._userId
+  const className = cssSelectors.find(
+    (sel) => sel.css_selector_id === selectorId
+  )?.css_selector_name
 
   const classNames = className?.trim?.()?.split?.(' ') || []
   const cssSelector = cssSelectors?.find(
-    (selector) => classNames.includes(selector._userId) // or _id?!
+    (selector) => classNames.includes(selector.css_selector_name) // or _id?!
   )
 
   const classStyles = cssSelector ?? {}

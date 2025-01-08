@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
-import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
-import { EditorStateType, Element } from '../editorRendererController/types'
+import { EditorRendererControllerType } from '../types/editorRendererController'
+import { EditorStateType, Element } from '../types'
 import { renderElements } from './renderElements'
 import { FC, useMemo } from 'react'
 import { NavigateFunction } from 'react-router-dom'
@@ -37,24 +37,24 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     // rootCompositeElementId,
   } = props
 
-  console.debug(
-    'COMPONENT ELEMENTS',
-    editorState.elements.filter(
-      (el) =>
-        (el._type !== 'composite' &&
-          el.component_id === element.component_id) ||
-        (el.component_id === element.ref_component_id &&
-          element?.ref_component_id &&
-          element.component_id &&
-          (el?._type !== 'composite' ||
-            (el._type === 'composite' &&
-              el.component_id !== el.ref_component_id)) &&
-          !el?._parentId)
-    ),
-    'component_id',
-    element?.ref_component_id ?? element?.component_id ?? undefined,
-    isProduction
-  )
+  // console.debug(
+  //   'COMPONENT ELEMENTS',
+  //   editorState.elements.filter(
+  //     (el) =>
+  //       (el._type !== 'composite' &&
+  //         el.component_id === element.component_id) ||
+  //       (el.component_id === element.ref_component_id &&
+  //         element?.ref_component_id &&
+  //         element.component_id &&
+  //         (el?._type !== 'composite' ||
+  //           (el._type === 'composite' &&
+  //             el.component_id !== el.ref_component_id)) &&
+  //         !el?._parentId)
+  //   ),
+  //   'component_id',
+  //   element?.ref_component_id ?? element?.component_id ?? undefined,
+  //   isProduction
+  // )
   const renderedComponentElements = useMemo(
     () =>
       renderElements({

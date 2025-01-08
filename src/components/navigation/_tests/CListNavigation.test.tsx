@@ -17,7 +17,7 @@ describe('ListNavigation', () => {
     const item1Element = getByText('Item 1').parentElement?.parentElement
     const styles1 = item1Element?.style
     expect(item1Element).toHaveStyle('background-color: rgba(0, 0, 0, 0.04);')
-    console.log(getByText('Item 2').parentElement?.parentElement)
+    console.debug(getByText('Item 2').parentElement?.parentElement)
     const item2Element = getByText('Item 2').parentElement?.parentElement
     const styles2 = item2Element?.style
     expect(item2Element).toHaveStyle('background-color: rgba(0, 0, 0, 0.04);')

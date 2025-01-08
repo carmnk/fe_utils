@@ -4,14 +4,15 @@ export type CssWorkspace = {
   [classes: string]: CSSProperties
 }
 export type CssSelector = CSSProperties & {
-  _id: string
-  _userId: string
+  css_selector_id: string
   // _userId: string
-  _page?: string
-  _type?: string
+  // _userId: string
+  // _page?: string
+  // _type?: string
   css_selector_value: string
   css_selector_name?: string
   css_selector_key?: string
+  project_id: string
 }
 
 export type CssSelectorDb = {

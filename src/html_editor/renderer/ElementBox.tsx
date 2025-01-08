@@ -1,9 +1,9 @@
 import { useMemo, useRef, FC } from 'react'
 import { CSSProperties, PropsWithChildren, MouseEvent } from 'react'
-import { EditorStateType, Element } from '../editorRendererController/types'
+import { EditorStateType, Element } from '../types'
 import { Box } from '@mui/material'
 import { getStylesFromClasses } from './classes/getStylesFromClasses'
-import { EditorRendererControllerType } from '../editorRendererController/types/editorRendererController'
+import { EditorRendererControllerType } from '../types/editorRendererController'
 import { ComponentBox } from './ComponentBox'
 import { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
 import { NavigateFunction } from 'react-router-dom'
@@ -75,7 +75,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
                 ? replacePlaceholdersInString(
                     valueRaw,
                     appController.state,
-                    editorState.compositeComponentProps,
+                    editorState.composite_component_props,
                     editorState.properties,
                     editorState.attributes,
                     element,
@@ -98,7 +98,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
                           ? replacePlaceholdersInString(
                               valueRawSingle,
                               appController.state,
-                              editorState.compositeComponentProps,
+                              editorState.composite_component_props,
                               editorState.properties,
                               editorState.attributes,
                               element,
@@ -130,40 +130,40 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
       editorState.attributes,
       element,
       appController.state,
-      editorState.compositeComponentProps,
+      editorState.composite_component_props,
       editorState.properties,
       rootCompositeElementId,
     ]
   )
-  if (
-    element?._type === 'composite' ||
-    element?._type === 'svg' ||
-    element?._type === 'polygon' ||
-    element?.component_id
-  ) {
-    console.debug(
-      'elementAttributsDict',
-      element._id,
-      element?._type,
-      element?.component_id,
-      elementAttributsDict,
-      editorState.attributes.filter(
-        (attr) =>
-          (attr.element_id === element._id && element?._id) ||
-          (attr.component_id === element.component_id && element.component_id)
-      ),
-      'attrsRaw',
-      editorState.attributes.filter((attr) => {
-        return (
-          attr.element_id === element._id &&
-          element?._id &&
-          attr.attr_name === 'style'
-        )
-      }),
-      'children',
-      children
-    )
-  }
+  // if (
+  //   element?._type === 'composite' ||
+  //   element?._type === 'svg' ||
+  //   element?._type === 'polygon' ||
+  //   element?.component_id
+  // ) {
+  //   console.debug(
+  //     'elementAttributsDict',
+  //     element._id,
+  //     element?._type,
+  //     element?.component_id,
+  //     elementAttributsDict,
+  //     editorState.attributes.filter(
+  //       (attr) =>
+  //         (attr.element_id === element._id && element?._id) ||
+  //         (attr.component_id === element.component_id && element.component_id)
+  //     ),
+  //     'attrsRaw',
+  //     editorState.attributes.filter((attr) => {
+  //       return (
+  //         attr.element_id === element._id &&
+  //         element?._id &&
+  //         attr.attr_name === 'style'
+  //       )
+  //     }),
+  //     'children',
+  //     children
+  //   )
+  // }
   const className = elementAttributsDict?.className as string
 
   const stylesFromClasses = useMemo(
@@ -211,7 +211,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
           ? (replacePlaceholdersInString(
               valueRaw,
               appController.state,
-              editorState.compositeComponentProps,
+              editorState.composite_component_props,
               editorState.properties,
               editorState.attributes,
               element,
@@ -279,7 +279,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
     elementAttributsDict,
     bgImgSrcValue,
     appController.state,
-    editorState.compositeComponentProps,
+    editorState.composite_component_props,
     editorState.properties,
     // selectedElement,
     editorState.attributes,

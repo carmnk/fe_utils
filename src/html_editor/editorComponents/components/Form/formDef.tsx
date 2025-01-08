@@ -56,4 +56,5 @@ export const formEditorComponentDef = {
   icon: mdiListBoxOutline,
   category: 'data',
   schema: formPropsSchema,
+  renderType: 'form',
 } satisfies ComponentDefType<GenericFormProps>

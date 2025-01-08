@@ -1,13 +1,14 @@
 import { mdiButtonCursor } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ButtonPropsSchema } from './buttonPropsRawSchema'
-import { Button } from '../../../../components/buttons/Button'
 import { ComponentDefType } from '../../componentDefType'
+import { ButtonWrapper } from './ButtonWrapper'
+import { CommonComponentPropertys } from '../../componentProperty'
 
 export const buttonEditorComponentDef = {
   type: 'Button' as const,
 
-  component: Button,
+  component: ButtonWrapper,
   formGen: ({ editorState }) =>
     propertyFormFactory(ButtonPropsSchema, editorState),
   props: {
@@ -29,4 +30,4 @@ export const buttonEditorComponentDef = {
   icon: mdiButtonCursor,
   category: 'basic',
   schema: ButtonPropsSchema,
-} satisfies ComponentDefType
+} satisfies ComponentDefType<CommonComponentPropertys>

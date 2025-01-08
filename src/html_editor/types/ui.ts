@@ -2,19 +2,19 @@ import {
   LeftMenuGlobalTabs,
   LeftMenuTabs,
   LeftMenuBackendTabs,
-} from '../../defs/index'
-import { UI_POINTER_MODE } from '../../defs'
+} from '../defs/index'
+import { UI_POINTER_MODE } from '../defs'
 import { Dispatch, SetStateAction } from 'react'
 
 export type Ui = {
-  tableUis: {
-    [key: string]: {
-      onSetFilters: Dispatch<
-        SetStateAction<{ filterKey: string; value: string }[]>
-      >
-      filters: { filterKey: string; value: string }[]
-    }
-  }
+  // tableUis: {
+  //   [key: string]: {
+  //     onSetFilters: Dispatch<
+  //       SetStateAction<{ filterKey: string; value: string }[]>
+  //     >
+  //     filters: { filterKey: string; value: string }[]
+  //   }
+  // }
   initializeProjectModal: boolean
   isProjectInited: boolean
   isAutoSaveReady: boolean

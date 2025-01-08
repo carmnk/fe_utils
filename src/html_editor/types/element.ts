@@ -1,4 +1,4 @@
-import { BaseComponentType } from '../../editorComponents'
+import { BaseComponentType } from '../editorComponents'
 
 export type GenericElement<T extends string = string> = {
   _id: string // -> _

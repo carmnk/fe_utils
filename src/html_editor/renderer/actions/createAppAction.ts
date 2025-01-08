@@ -80,7 +80,7 @@ export const createAppAction = (params: {
             continue
           }
           if (isPageNavigation) {
-            const actionsParmValue = editorState.actionParams.find(
+            const actionsParmValue = editorState.action_params.find(
               (ap) =>
                 ap.param_name === 'navigatePage' &&
                 ap.element_id === element._id &&
@@ -114,7 +114,7 @@ export const createAppAction = (params: {
             const action = editorState.actions.find(
               (act) => act.endpoint_id === endpoint?.endpoint_id
             )
-            const elementTemplateValuesDict = editorState.actionParams
+            const elementTemplateValuesDict = editorState.action_params
               .filter((ap) => ap.element_id === element._id)
               .reduce<Record<string, string>>((acc, cur) => {
                 return {
@@ -122,9 +122,11 @@ export const createAppAction = (params: {
                   [cur.param_name]: cur.param_value,
                 }
               }, {})
-            const isItemEvent = COMPONENT_MODELS.find(
+            const componentModel = COMPONENT_MODELS.find(
               (mod) => mod.type === element._type
-            )?.schema?.properties[eventName]?.eventType
+            )
+            const isItemEvent =
+              componentModel?.schema?.properties[eventName]?.eventType
 
             const elementTemplateValuesDictAdj = isItemEvent
               ? Object.keys(elementTemplateValuesDict).reduce<
@@ -145,23 +147,11 @@ export const createAppAction = (params: {
                     newValue?.match?.(
                       /{(_data|form|formData|props|treeviews|buttonStates)\.[^}]*}/g
                     )
-                  if (element._type === 'Form') {
-                    console.debug(
-                      'Before Replace Placeholders with Form element',
-                      newValue,
-                      element,
-                      fnParams,
-                      'form passed',
-                      element?._type === 'Form'
-                        ? (fnParams?.[1] as Record<string, unknown>)
-                        : undefined
-                    )
-                  }
                   const newValueReplaced = matches
                     ? replacePlaceholdersInString(
                         newValue,
                         appController.state,
-                        editorState.compositeComponentProps,
+                        editorState.composite_component_props,
                         editorState.properties,
                         editorState.attributes,
                         element,
@@ -170,7 +160,7 @@ export const createAppAction = (params: {
                         undefined,
                         icons,
                         undefined,
-                        element?._type === 'Form'
+                        componentModel?.renderType === 'form'
                           ? (fnParams?.[1] as Record<string, unknown>)
                           : undefined
                       )
@@ -211,7 +201,7 @@ export const createAppAction = (params: {
             )
           } else if (navigationAction) {
             const navElementId = actionId
-            const actionParam = editorState.actionParams.find(
+            const actionParam = editorState.action_params.find(
               (ap) => ap.param_name === navElementId
             )
             const elementWithEvent = actionParam?.element_id

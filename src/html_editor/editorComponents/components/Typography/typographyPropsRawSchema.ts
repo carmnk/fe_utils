@@ -1,10 +1,10 @@
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
-import { BASE_POINTER_EVENTS } from '../../commonSchemas/basePointerEvents'
-import { CLIPBOARD_EVENTS } from '../../commonSchemas/clipboardEvents'
-import { DRAG_EVENTS } from '../../commonSchemas/dragEvents'
-import { MOUSE_EVENTS } from '../../commonSchemas/mouseEvents'
-import { POINTER_EVENTS } from '../../commonSchemas/pointerEvents'
-import { TOUCH_EVENTS } from '../../commonSchemas/touchEvents'
+import { BASE_POINTER_EVENTS } from '../../eventSchemas/basePointerEvents'
+import { CLIPBOARD_EVENTS } from '../../eventSchemas/clipboardEvents'
+import { DRAG_EVENTS } from '../../eventSchemas/dragEvents'
+import { MOUSE_EVENTS } from '../../eventSchemas/mouseEvents'
+import { POINTER_EVENTS } from '../../eventSchemas/pointerEvents'
+import { TOUCH_EVENTS } from '../../eventSchemas/touchEvents'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 
 export const muiTypographyColors = [

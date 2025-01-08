@@ -2,6 +2,8 @@ import { mdiRectangleOutline } from '@mdi/js'
 import { NavContainerComponentPropsFormFactory } from './NavContainerPropFormFactory'
 import { ComponentDefType } from '../../componentDefType'
 import { ExtendedObjectSchemaType } from '../../schemaTypes'
+import { NavContainerWrapper } from './NavigationContainerWrapper'
+import { NavContainerComponentPropertys } from '../../componentProperty'
 
 export const navigationContainerDef = {
   type: 'NavContainer' as const,
@@ -16,4 +18,6 @@ export const navigationContainerDef = {
   icon: mdiRectangleOutline,
   category: 'navigation',
   schema: null as unknown as ExtendedObjectSchemaType,
-} satisfies ComponentDefType
+  component: NavContainerWrapper,
+  renderType: 'custom',
+} satisfies ComponentDefType<NavContainerComponentPropertys>

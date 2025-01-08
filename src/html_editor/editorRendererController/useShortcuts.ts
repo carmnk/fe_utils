@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react'
 import { getStylesFromClasses } from '../renderer/classes/getStylesFromClasses'
 import { getInitialStyles } from '../utils'
-import { EditorStateType, Element } from './types'
+import { EditorStateType, Element } from '../types'
 import { baseComponents } from '../editorComponents/baseComponents'
 import { ComponentDefType } from '../editorComponents'
 

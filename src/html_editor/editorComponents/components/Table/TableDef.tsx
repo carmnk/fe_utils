@@ -1,15 +1,17 @@
 import { mdiTable } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { tablePropsSchema } from './tablePropsRawSchema'
-import { Table } from '../../../../components/table/Table'
+// import { Table } from '../../../../components/table/Table'
 import { uniq } from 'lodash'
 import { ComponentDefType } from '../../componentDefType'
 import { TableProps } from '../../../../components'
+import { TableWrapper } from './TableWrapper'
+import { CommonComponentPropertys } from '../../componentProperty'
 
 export const tableEditorComponentDef = {
   type: 'Table' as const,
 
-  component: Table,
+  component: TableWrapper,
   formGen: ({ editorState }) =>
     propertyFormFactory(tablePropsSchema, editorState, {
       // dynamicOptionsDict: {
@@ -104,4 +106,4 @@ export const tableEditorComponentDef = {
   icon: mdiTable,
   category: 'data',
   schema: tablePropsSchema,
-} satisfies ComponentDefType<TableProps>
+} satisfies ComponentDefType<TableProps & CommonComponentPropertys>

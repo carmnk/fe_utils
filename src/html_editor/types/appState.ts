@@ -1,4 +1,5 @@
-import { useAppController } from '../appController'
+import { Dispatch, SetStateAction } from 'react'
+import { useAppController } from '../editorRendererController/appController'
 
 export type AppState = {
   [key: string]: unknown
@@ -15,6 +16,14 @@ export type AppState = {
     }
   }
   buttonStates: { [key: string]: boolean }
+  tableUis: {
+    [key: string]: {
+      onSetFilters: Dispatch<
+        SetStateAction<{ filterKey: string; value: string }[]>
+      >
+      filters: { filterKey: string; value: string }[]
+    }
+  }
   // tables: { [key: string]: Record<string, any> }
 }
 
@@ -39,5 +48,13 @@ export type AppController = {
       selectedItem: Record<string, unknown>
     ) => void
     changeButtonState: (buttonElementId: string) => void
+    updateTableUi: (tableUi: {
+      [key: string]: {
+        onSetFilters: Dispatch<
+          SetStateAction<{ filterKey: string; value: string }[]>
+        >
+        filters: { filterKey: string; value: string }[]
+      }
+    }) => void
   }
 }

@@ -39,7 +39,7 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
         ? replacePlaceholdersInString(
             keyValue as string,
             appController.state,
-            editorState.compositeComponentProps,
+            editorState.composite_component_props,
             editorState.properties,
             editorState.attributes,
             element,
@@ -59,7 +59,7 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
           ? replacePlaceholdersInString(
               transformerStr,
               appController.state,
-              editorState.compositeComponentProps,
+              editorState.composite_component_props,
               editorState.properties,
               editorState.attributes,
               element,

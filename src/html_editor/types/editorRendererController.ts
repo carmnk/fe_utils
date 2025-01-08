@@ -1,6 +1,6 @@
 import { CSSProperties, Dispatch, SetStateAction } from 'react'
 import { AppController, EditorStateType, Element } from '.'
-import { ComponentDefType } from '../../editorComponents'
+import { ComponentDefType } from '../editorComponents'
 
 export type EditorRendererControllerType =
   // <

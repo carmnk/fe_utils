@@ -1,9 +1,9 @@
-import { EditorStateType } from '../types'
+import { EditorStateType } from '../../types'
 import { v4 as uuid } from 'uuid'
 import { transformEditorStateTheme } from './transformEditorStateTheme'
 import { EditorStateDbDataType } from './editorDbStateType'
-import { ExternalApiDb } from '../types/externalApi'
-import { EndpointDb } from '../types/endpoint'
+import { ExternalApiDb } from '../../types/externalApi'
+import { EndpointDb } from '../../types/endpoint'
 
 export const transformEditorStateToPayload = (
   payload: EditorStateType
@@ -113,7 +113,7 @@ export const transformEditorStateToPayload = (
   const cssSelectorsIn = payload?.cssSelectors || []
   const cssSelectorsOut = cssSelectorsIn.map((cssSelector) => {
     return {
-      css_selector_id: cssSelector._id,
+      css_selector_id: cssSelector.css_selector_id,
       css_selector_name: cssSelector?.css_selector_name ?? '',
       project_id,
       // _user,
@@ -288,9 +288,9 @@ export const transformEditorStateToPayload = (
       payload.actions?.sort((a, b) => (a.action_id > b.action_id ? 1 : -1)) ??
       [],
     properties,
-    templates: payload.templateComponents,
-    composite_component_props: payload.compositeComponentProps,
-    action_params: payload.actionParams,
+    templates: payload.elementTemplates,
+    composite_component_props: payload.composite_component_props,
+    action_params: payload.action_params,
     transformers: payload.transformers,
   }
 }
