@@ -49,13 +49,13 @@ export const NavContainerWrapper = (
       (baseComponentId
         ? editorState.elements
         : currentViewportElements
-      )?.filter((el) => el._parentId === id && id) ?? []
+      )?.filter((el) => el.parent_id === id && id) ?? []
 
     const sourceControlElement = currentViewportElements?.find(
-      (el) => el._id === sourceControlElementId
+      (el) => el.element_id === sourceControlElementId
     )
     const activeTab =
-      sourceControlElement?._type === 'Button'
+      sourceControlElement?.element_type === 'Button'
         ? (appController?.state?.buttonStates?.[
             sourceControlElementId as string
           ] ?? false)
@@ -65,7 +65,7 @@ export const NavContainerWrapper = (
       (item: { value: string; childId: string }) => item.value === activeTab
     )?.childId
     const activeChild = elementChildren?.find?.(
-      (child) => child._id === activeId
+      (child) => child.element_id === activeId
     )
     const children = activeChild ? [activeChild] : []
 

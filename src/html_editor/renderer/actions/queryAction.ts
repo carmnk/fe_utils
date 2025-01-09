@@ -47,11 +47,11 @@ export const queryAction = async (
   actionId: string,
   method: string,
   url: string,
-  useCookies: boolean,
+  use_cookies: boolean,
   payload: BodyParam[] = [],
   headers: Header[] = [],
   params: Param[] = [],
-  responseType?: string,
+  response_type?: string,
   basicAuth?: { username: string; password: string },
   placeholders: Record<string, string> = {}
 ) => {
@@ -70,7 +70,7 @@ export const queryAction = async (
     // Object.keys(payload ?? {}).reduce((acc, key) => {
     //   return { ...acc, [key]: replacePlaceholders(payload[key], placeholders) }
     // }, {}),
-    withCredentials: useCookies,
+    withCredentials: use_cookies,
     auth: basicAuth,
     headers:
       headers?.reduce((acc, header) => {
@@ -93,8 +93,8 @@ export const queryAction = async (
     // params: Object.keys(params ?? {}).reduce((acc, key) => {
     //   return { ...acc, [key]: replacePlaceholders(params[key], placeholders) }
     // }, {}),
-    responseType: responseType
-      ? (replacePlaceholders(responseType, placeholders) as ResponseType)
+    responseType: response_type
+      ? (replacePlaceholders(response_type, placeholders) as ResponseType)
       : undefined,
   }
 

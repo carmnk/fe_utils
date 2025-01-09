@@ -65,17 +65,17 @@ export const useMdiIcons = (
           const {
             directIconKeys,
             arrayOfObjectProperties,
-            // TODO: el._type richtig oder doch el.type?
-          } = getIconKeys(el._type, components)
+            // TODO: el.element_type richtig oder doch el.type?
+          } = getIconKeys(el.element_type, components)
 
           const directIconNames = directIconKeys.map((iconKey) => {
-            return getPropByName(iconKey, el._id)
+            return getPropByName(iconKey, el.element_id)
           })
           // UNCLEAR ???
           const arrayItemIconNames =
             arrayOfObjectProperties
               ?.map?.((props) => {
-                const propertyValueRaw = getPropByName(props.key, el._id)
+                const propertyValueRaw = getPropByName(props.key, el.element_id)
                 const propertyValue = Array.isArray(propertyValueRaw)
                   ? propertyValueRaw
                   : []

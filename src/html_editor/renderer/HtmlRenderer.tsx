@@ -74,8 +74,8 @@ export const HtmlRendererComponent = <
       if (isProduction) {
         return
       }
-      if (!element?._id) return
-      selectElement?.(element._id, boundingRect)
+      if (!element?.element_id) return
+      selectElement?.(element.element_id, boundingRect)
     },
     [selectElement, isProduction]
   )
@@ -83,7 +83,7 @@ export const HtmlRendererComponent = <
   const renderPage = useCallback(
     (page: string) => {
       const pageElements = currentViewportElements.filter(
-        (el) => el._page === page
+        (el) => el.element_page === page
       )
       return renderElements({
         elements: pageElements,

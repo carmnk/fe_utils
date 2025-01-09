@@ -35,7 +35,7 @@ export const createAppAction = (params: {
   } = params
 
   const elementProps = editorState.properties?.filter(
-    (prop) => prop.element_id === element._id
+    (prop) => prop.element_id === element.element_id
   )
   const templateProps = editorState.properties?.filter(
     (prop) =>
@@ -58,11 +58,11 @@ export const createAppAction = (params: {
         const navigationActionElements = actionIds
           .map(
             (actId) =>
-              currentViewportElements.find((el) => el._id === actId) ?? null
+              currentViewportElements.find((el) => el.element_id === actId) ?? null
           )
           .filter((el) => el)
         const navigationActionElementIds = navigationActionElements.map(
-          (el) => el?._id
+          (el) => el?.element_id
         ) as string[]
 
         for (let a = 0; a < actionIds.length; a++) {
@@ -83,7 +83,7 @@ export const createAppAction = (params: {
             const actionsParmValue = editorState.action_params.find(
               (ap) =>
                 ap.param_name === 'navigatePage' &&
-                ap.element_id === element._id &&
+                ap.element_id === element.element_id &&
                 ap.event_name === eventName
             )?.param_value
             if (isProduction) {
@@ -110,12 +110,12 @@ export const createAppAction = (params: {
             const api = editorState.externalApis.find(
               (api) => api.external_api_id === endpoint?.api_id
             )
-            const url = (api?.baseUrl || '') + (endpoint?.url || '')
+            const url = (api?.base_url || '') + (endpoint?.url || '')
             const action = editorState.actions.find(
               (act) => act.endpoint_id === endpoint?.endpoint_id
             )
             const elementTemplateValuesDict = editorState.action_params
-              .filter((ap) => ap.element_id === element._id)
+              .filter((ap) => ap.element_id === element.element_id)
               .reduce<Record<string, string>>((acc, cur) => {
                 return {
                   ...acc,
@@ -123,7 +123,7 @@ export const createAppAction = (params: {
                 }
               }, {})
             const componentModel = COMPONENT_MODELS.find(
-              (mod) => mod.type === element._type
+              (mod) => mod.type === element.element_type
             )
             const isItemEvent =
               componentModel?.schema?.properties[eventName]?.eventType
@@ -155,7 +155,7 @@ export const createAppAction = (params: {
                         editorState.properties,
                         editorState.attributes,
                         element,
-                        element._id,
+                        element.element_id,
                         undefined,
                         undefined,
                         icons,
@@ -191,11 +191,11 @@ export const createAppAction = (params: {
               action?.action_id ?? '', // should never happen -> should always have action
               endpoint?.method as string,
               url,
-              !!endpoint?.useCookies,
+              !!endpoint?.use_cookies,
               endpoint?.body,
               endpoint?.headers,
               endpoint?.params,
-              endpoint?.responseType,
+              endpoint?.response_type,
               undefined,
               elementTemplateValuesDictAdj
             )

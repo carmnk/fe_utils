@@ -52,15 +52,15 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
     rootCompositeElementId,
   } = props
 
-  const isOverheadHtmlElement = ['html', 'head', 'body'].includes(element._type)
+  const isOverheadHtmlElement = ['html', 'head', 'body'].includes(element.element_type)
   const elementRef = useRef<HTMLDivElement>(null)
 
   const elementAttributsDict = useMemo(
     () =>
       editorState.attributes
         .filter((attr) => {
-          // while (element?._type !== 'composite') {
-          return attr.element_id === element._id && element?._id
+          // while (element?.element_type !== 'composite') {
+          return attr.element_id === element.element_id && element?.element_id
         })
         .reduce<Record<string, string | Record<string, string>>>(
           (acc, attr) => {
@@ -79,7 +79,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
                     editorState.properties,
                     editorState.attributes,
                     element,
-                    element?._id,
+                    element?.element_id,
                     rootCompositeElementId,
                     undefined,
                     undefined // icons
@@ -102,7 +102,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
                               editorState.properties,
                               editorState.attributes,
                               element,
-                              element?._id,
+                              element?.element_id,
                               rootCompositeElementId,
                               undefined,
                               undefined // icons
@@ -136,27 +136,27 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
     ]
   )
   // if (
-  //   element?._type === 'composite' ||
-  //   element?._type === 'svg' ||
-  //   element?._type === 'polygon' ||
+  //   element?.element_type === 'composite' ||
+  //   element?.element_type === 'svg' ||
+  //   element?.element_type === 'polygon' ||
   //   element?.component_id
   // ) {
   //   console.debug(
   //     'elementAttributsDict',
-  //     element._id,
-  //     element?._type,
+  //     element.element_id,
+  //     element?.element_type,
   //     element?.component_id,
   //     elementAttributsDict,
   //     editorState.attributes.filter(
   //       (attr) =>
-  //         (attr.element_id === element._id && element?._id) ||
+  //         (attr.element_id === element.element_id && element?.element_id) ||
   //         (attr.component_id === element.component_id && element.component_id)
   //     ),
   //     'attrsRaw',
   //     editorState.attributes.filter((attr) => {
   //       return (
-  //         attr.element_id === element._id &&
-  //         element?._id &&
+  //         attr.element_id === element.element_id &&
+  //         element?.element_id &&
   //         attr.attr_name === 'style'
   //       )
   //     }),
@@ -175,7 +175,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
     const styleAttributes = elementAttributsDict?.style as CSSProperties
     return styleAttributes && styleAttributes?.backgroundImage
       ? (editorState.assets.images.find(
-          (img) => img._id === styleAttributes.backgroundImage && img.image
+          (img) => img.asset_id === styleAttributes.backgroundImage && img.image
         )?.image as unknown as File)
       : undefined
   }, [elementAttributsDict, editorState.assets.images])
@@ -187,7 +187,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
 
   const styles = useMemo(() => {
     const linkHoverStyles =
-      element._type === 'a' && elementAttributsDict?.href
+      element.element_type === 'a' && elementAttributsDict?.href
         ? { cursor: 'pointer' }
         : {}
     const bgImageStyles = bgImgSrcValue
@@ -215,7 +215,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
               editorState.properties,
               editorState.attributes,
               element,
-              element?._id,
+              element?.element_id,
               rootCompositeElementId,
               undefined,
               undefined // icons
@@ -287,7 +287,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
   ])
 
   const linkProps = useMemo(() => {
-    if (element._type === 'a') {
+    if (element.element_type === 'a') {
       return {
         onClick: (e: MouseEvent<HTMLAnchorElement, MouseEvent>) => {
           e.preventDefault()
@@ -320,8 +320,8 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
       component: isOverheadHtmlElement
         ? ('div' as const)
         : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (element._type as any),
-      key: element._id,
+          (element.element_type as any),
+      key: element.element_id,
       ...(styleLessAttributes ?? {}),
       sx: styles,
       ...linkProps,
@@ -330,9 +330,9 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
 
   const imageFile = useMemo(
     () =>
-      element?._type === 'img' && elementAttributsDict?.src
+      element?.element_type === 'img' && elementAttributsDict?.src
         ? (editorState.assets.images.find(
-            (img) => img._id === elementAttributsDict?.src && img.image
+            (img) => img.asset_id === elementAttributsDict?.src && img.image
           )?.image as unknown as File)
         : undefined,
     [element, elementAttributsDict, editorState.assets.images]
@@ -340,11 +340,11 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
   const prodImageAsset = useMemo(
     () =>
       editorState.assets.images.find(
-        (img) => img._id === elementAttributsDict?.src
+        (img) => img.asset_id === elementAttributsDict?.src
       ),
     [elementAttributsDict, editorState.assets.images]
   )
-  const prodFilenameExtension = prodImageAsset?.fileName?.split('.')?.pop()
+  const prodFilenameExtension = prodImageAsset?.asset_filename?.split('.')?.pop()
   const imageSrc =
     isProduction && !isPointerProduction && elementAttributsDict?.src
       ? // this will only work for gh pages with project in subfolder (rel. to root)!!!
@@ -353,7 +353,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
         ? URL.createObjectURL(imageFile)
         : undefined
 
-  return element?._type === 'composite' ? (
+  return element?.element_type === 'composite' ? (
     <ComponentBox
       element={element}
       editorState={editorState}
@@ -368,16 +368,16 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
       navigate={navigate}
       rootCompositeElementId={rootCompositeElementId}
     />
-  ) : ['br', 'hr', 'img'].includes(element?._type) ? ( // null
+  ) : ['br', 'hr', 'img'].includes(element?.element_type) ? ( // null
     <Box
       {...boxProps}
       src={imageSrc}
       ref={elementRef}
-      key={element._id}
+      key={element.element_id}
       {...events}
     />
   ) : (
-    <Box {...boxProps} ref={elementRef} key={element._id} {...events}>
+    <Box {...boxProps} ref={elementRef} key={element.element_id} {...events}>
       {/* label / flag */}
       {!isProduction && !isPointerProduction && (
         <Box
@@ -391,11 +391,11 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
             color: 'text.primary',
           }}
         >
-          {element._type}
+          {element.element_type}
         </Box>
       )}
 
-      {('_content' in element ? element?._content : children) || children}
+      {('content' in element ? element?.content : children) || children}
     </Box>
   )
 }

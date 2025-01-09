@@ -65,20 +65,21 @@ export const useEditorRendererController = (
         }
         const valueRaw = attr.attr_value as string
         const regex = /{(.*?)}/
-        const value = valueRaw.match(regex)
-          ? replacePlaceholdersInString(
-              valueRaw,
-              appController.state,
-              editorState.composite_component_props,
-              editorState.properties,
-              editorState.attributes,
-              selectedElement,
-              selectedElement?._id ?? null,
-              undefined,
-              undefined,
-              undefined // icons
-            )
-          : valueRaw
+        const value =
+          typeof valueRaw === 'string' && valueRaw.match(regex)
+            ? replacePlaceholdersInString(
+                valueRaw,
+                appController.state,
+                editorState.composite_component_props,
+                editorState.properties,
+                editorState.attributes,
+                selectedElement,
+                selectedElement?.element_id ?? null,
+                undefined,
+                undefined,
+                undefined // icons
+              )
+            : valueRaw
         const valueAdj = typeof value === 'string' ? value : value?.toString?.()
         return { ...acc, [key]: valueAdj }
       }, {}) ?? {}

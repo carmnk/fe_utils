@@ -64,20 +64,20 @@ export const renderElements = (params: {
 
   const relevantElements = (
     !parentId
-      ? elements?.filter((el) => !el._parentId)
-      : elements?.filter((el) => el._parentId === parentId)
+      ? elements?.filter((el) => !el.parent_id)
+      : elements?.filter((el) => el.parent_id === parentId)
   )?.filter(
     (el) =>
       !(baseComponentId && el.component_id) || //
       (baseComponentId && el.component_id === baseComponentId) ||
-      (!baseComponentId && el._page === editorState.ui.selected.page)
+      (!baseComponentId && el.element_page === editorState.ui.selected.page)
   )
 
   const renderedElements = relevantElements.map((element) => {
-    const typeFirstLetter = element._type.slice(0, 1)
+    const typeFirstLetter = element.element_type.slice(0, 1)
     const isHtmlElement = isStringLowerCase(typeFirstLetter)
     const elementProps = editorState.properties?.filter(
-      (prop) => prop.element_id === element._id
+      (prop) => prop.element_id === element.element_id
     )
     const templateProps = editorState.properties?.filter(
       (prop) =>
@@ -89,7 +89,7 @@ export const renderElements = (params: {
     const schemaProps =
       (element as unknown as ComponentDefType)?.schema?.properties ?? {}
     const baseComponent = COMPONENT_MODELS?.find(
-      (com) => com.type === element?._type
+      (com) => com.type === element?.element_type
     )
     const CurrentComponentIn =
       (baseComponent &&
@@ -116,28 +116,27 @@ export const renderElements = (params: {
       icons,
     })
 
-    const matches =
-      !!element?._content && checkForPlaceholders(element?._content)
+    const matches = !!element?.content && checkForPlaceholders(element?.content)
     const content = matches
       ? replacePlaceholdersInString(
-          element._content ?? '',
+          element.content ?? '',
           appController.state,
           editorState.composite_component_props,
           editorState.properties,
           editorState.attributes,
           element,
-          element._id,
+          element.element_id,
           rootCompositeElementId,
           undefined,
           icons
         )
-      : element._content
+      : element.content
 
     const elementChildren =
       (baseComponentId
         ? editorState.elements
         : currentViewportElements
-      )?.filter((el) => el._parentId === element._id && element._id) ?? []
+      )?.filter((el) => el.parent_id === element.element_id && element.element_id) ?? []
 
     const renderedElementChildren = elementChildren?.length
       ? renderElements({
@@ -152,7 +151,7 @@ export const renderElements = (params: {
           theme,
           isProduction,
           icons,
-          parentId: element._id,
+          parentId: element.element_id,
           isPointerProduction,
           baseComponentId,
           disableOverlay,
@@ -183,7 +182,6 @@ export const renderElements = (params: {
         ...(elementPropsObject ?? {}),
         ...injectedIconProps,
       },
-      _content: content,
     }
 
     const rootInjectionOverlayComponent = !disableOverlay &&
@@ -191,7 +189,7 @@ export const renderElements = (params: {
 
     return isHtmlElement ? (
       <ElementBox
-        key={element._id}
+        key={element.element_id}
         element={elementAdj2}
         onSelectElement={onSelectElement}
         editorState={editorState}
@@ -217,12 +215,12 @@ export const renderElements = (params: {
       (() => {
         return (
           <CurrentComponent
-            key={element._id}
+            key={element.element_id}
             {...(elementPropsObject ?? {})}
             {...eventHandlerProps}
             {...injectedIconProps}
             appController={appController}
-            id={element._id}
+            id={element.element_id}
             isProduction={isProduction}
             editorStateUi={editorState.ui}
             editorState={editorState}
@@ -232,7 +230,7 @@ export const renderElements = (params: {
             onSelectElement={onSelectElement}
             theme={theme}
             icons={icons}
-            parentId={element._id}
+            parentId={element.element_id}
             isPointerProduction={isPointerProduction}
             baseComponentId={baseComponentId}
             disableOverlay={disableOverlay}
@@ -244,7 +242,7 @@ export const renderElements = (params: {
     ) : CurrentComponent ? (
       <>
         <CurrentComponent
-          key={element._id}
+          key={element.element_id}
           {...(elementPropsObject ?? {})}
           {...injectedIconProps}
           // rootInjection={rootInjectionOverlayComponent}
@@ -256,21 +254,21 @@ export const renderElements = (params: {
                 }
               : (elementPropsObject?.sx as BoxProps['sx'])
           }
-          {...(['Paper', 'Dialog', 'AppBar'].includes(element._type)
+          {...(['Paper', 'Dialog', 'AppBar'].includes(element.element_type)
             ? {}
             : {
                 rootInjection: rootInjectionOverlayComponent,
               })}
           {...eventHandlerProps}
           appController={appController}
-          id={element._id}
+          id={element.element_id}
           isProduction={isProduction}
           editorStateUi={editorState.ui}
         >
           {renderedElementChildren}
           {elementPropsObject?.children}
           {/* these dont have the rootInjection interface yet */}
-          {['Paper', 'Dialog', 'AppBar'].includes(element._type) &&
+          {['Paper', 'Dialog', 'AppBar'].includes(element.element_type) &&
             rootInjectionOverlayComponent}
         </CurrentComponent>
       </>

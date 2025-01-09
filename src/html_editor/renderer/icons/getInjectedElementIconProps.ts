@@ -51,7 +51,7 @@ export const getInjectedElementIconProps = (
           )
         )
       })
-  const elementArrayIconInjectionDict = element?._type
+  const elementArrayIconInjectionDict = element?.element_type
     ?.toLowerCase()
     .includes('treeview')
     ? {}

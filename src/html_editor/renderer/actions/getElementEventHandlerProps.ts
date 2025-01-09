@@ -38,7 +38,7 @@ export const getElementEventHandlerProps = (
     isProduction,
   } = params
 
-  const isReactElement = isComponentType(element._type)
+  const isReactElement = isComponentType(element.element_type)
   const getPropByName = (key: string) =>
     elementProps?.find((prop) => prop.prop_name === key)?.prop_value
 
@@ -107,8 +107,8 @@ export const getElementEventHandlerProps = (
 
   // Special render case for renderType = Form
   const baseComponent =
-    isComponentType(element._type) &&
-    COMPONENT_MODELS.find((comp) => comp.type === element._type)
+    isComponentType(element.element_type) &&
+    COMPONENT_MODELS.find((comp) => comp.type === element.element_type)
   if (
     baseComponent &&
     'renderType' in baseComponent &&
@@ -116,7 +116,7 @@ export const getElementEventHandlerProps = (
   ) {
     eventHandlerProps.formData =
       (getPropByName('formData') as any) ??
-      (appController.actions.getFormData(element._id) as any)
+      (appController.actions.getFormData(element.element_id) as any)
     eventHandlerProps.onChangeFormData = eventHandlerProps?.onChangeFormData
       ? (((newFormData: Record<string, unknown>) =>
           createAppAction?.({
@@ -136,7 +136,7 @@ export const getElementEventHandlerProps = (
           // propertyValue: any,
           // prevFormData: any
         ) => {
-          appController.actions.changeFormData(element._id, newFormData)
+          appController.actions.changeFormData(element.element_id, newFormData)
         }
   }
   return eventHandlerProps

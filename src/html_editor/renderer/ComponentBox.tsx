@@ -41,15 +41,15 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
   //   'COMPONENT ELEMENTS',
   //   editorState.elements.filter(
   //     (el) =>
-  //       (el._type !== 'composite' &&
+  //       (el.element_type !== 'composite' &&
   //         el.component_id === element.component_id) ||
   //       (el.component_id === element.ref_component_id &&
   //         element?.ref_component_id &&
   //         element.component_id &&
-  //         (el?._type !== 'composite' ||
-  //           (el._type === 'composite' &&
+  //         (el?.element_type !== 'composite' ||
+  //           (el.element_type === 'composite' &&
   //             el.component_id !== el.ref_component_id)) &&
-  //         !el?._parentId)
+  //         !el?.parent_id)
   //   ),
   //   'component_id',
   //   element?.ref_component_id ?? element?.component_id ?? undefined,
@@ -60,15 +60,15 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
       renderElements({
         elements: editorState.elements.filter(
           (el) =>
-            (el._type !== 'composite' &&
+            (el.element_type !== 'composite' &&
               el.component_id === element.component_id) ||
             (el.component_id === element.ref_component_id &&
               element?.ref_component_id &&
               element.component_id &&
-              (el?._type !== 'composite' ||
-                (el._type === 'composite' &&
+              (el?.element_type !== 'composite' ||
+                (el.element_type === 'composite' &&
                   el.component_id !== el.ref_component_id)) &&
-              !el?._parentId)
+              !el?.parent_id)
         ),
         editorState,
         appController,
@@ -85,7 +85,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
         baseComponentId:
           element?.ref_component_id ?? element?.component_id ?? undefined,
         disableOverlay: true,
-        rootCompositeElementId: element._id,
+        rootCompositeElementId: element.element_id,
         OverlayComponent: OverlayComponent,
         navigate,
       }),

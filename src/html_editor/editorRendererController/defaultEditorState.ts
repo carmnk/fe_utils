@@ -8,31 +8,33 @@ import { LeftMenuBackendTabs } from '../defs/LeftMenuBackendTabs'
 import { EditorStateType } from '../types/editorState'
 import { Element } from '../types'
 
-export const baseHtmlDocument: Element[] = [
+const baseHtmlDocument: Element[] = [
   {
-    _id: uuid(),
-    _type: 'div',
+    element_id: uuid(),
+    element_type: 'div',
     // _disableDelete: true,
-    _page: 'index',
-    _parentId: null,
-    _userID: '',
+    element_page: 'index',
+    parent_id: null,
+    element_html_id: null,
     template_id: null,
     component_id: null,
   } as Element,
 ]
 
-export const defaultPageElements = () =>
+export const defaultElements = (project_id: string) =>
   cloneDeep(baseHtmlDocument)?.map((el) => ({
     ...el,
-    _id: uuid(),
-    _parentId: null,
-    _userID: null,
-    _type: el._type,
-    _page: 'index',
+    element_id: uuid(),
+    project_id,
+    // parent_id: null,
+    // element_html_id: null,
+    // element_type: el.element_type,
+    // element_page: 'index',
   })) ?? []
 
 /** ATTENTION - DUPLICATE IN THE TEMPLATE PROJECT */
 export const defaultEditorState = (): EditorStateType => {
+  const project_id = uuid()
   return {
     action_params: [],
     composite_component_props: [],
@@ -40,7 +42,7 @@ export const defaultEditorState = (): EditorStateType => {
     endpoints: [],
     defaultTheme: 'light',
     project: {
-      project_id: uuid(),
+      project_id,
       project_name: '',
       html_pages_title: 'Test Website',
       html_pages_description:
@@ -54,7 +56,7 @@ export const defaultEditorState = (): EditorStateType => {
     attributes: [],
     properties: [],
     transformers: [],
-    elements: defaultPageElements(),
+    elements: defaultElements(project_id),
     alternativeViewports: {
       sm: [],
       md: [],

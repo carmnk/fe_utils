@@ -2,7 +2,6 @@ import { Header } from '../../types/Header'
 import { BodyParam } from '../../types/bodyParam'
 import { ElementDb } from '../../types/element'
 import { EndpointDb } from '../../types/endpoint'
-import { ImageDb } from '../../types/image'
 import { Param } from '../../types/param'
 import { ProjectDb } from '../../types/project'
 import { SerializedThemeType } from '../../types/serializedTheme'
@@ -24,11 +23,6 @@ export type EditorStateDbDataType = Pick<
 > & {
   project: ProjectDb
   elements: ElementDb[]
-  images: ImageDb[]
-  imageFiles?: {
-    asset_id: string
-    image: File
-  }[]
 
   themes: SerializedThemeType[]
 
@@ -39,6 +33,12 @@ export type EditorStateDbDataType = Pick<
   bodyParams: BodyParam[]
 
   templates: EditorStateType['elementTemplates']
+  images: EditorStateType['assets']['images']
+
+  imageFiles?: {
+    asset_id: string
+    image: File
+  }[]
   data_changes: DataChange[] // in FastEditorState
 
   // transformers: EditorStateType['transformers']

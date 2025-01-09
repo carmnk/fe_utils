@@ -11,7 +11,7 @@ export const getStylesFromClasses = (
 
   const classNames = className?.trim?.()?.split?.(' ') || []
   const cssSelector = cssSelectors?.find(
-    (selector) => classNames.includes(selector.css_selector_name) // or _id?!
+    (selector) => classNames.includes(selector.css_selector_name) // or element_id?!
   )
 
   const classStyles = cssSelector ?? {}

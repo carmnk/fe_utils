@@ -29,6 +29,7 @@ export const useAppController = (
     tableUis: {},
     buttonStates: {},
     navigationStates: {},
+    currentThemeName: 'light',
   })
 
   const actions = useMemo(() => {
@@ -155,6 +156,15 @@ export const useAppController = (
       })
     }
 
+    const updateCurrentTheme = (themeName: string) => {
+      setAppState((current) => {
+        return {
+          ...current,
+          currentThemeName: themeName,
+        }
+      })
+    }
+
     return {
       updateTableUi,
       getFormData,
@@ -166,6 +176,7 @@ export const useAppController = (
       removeData,
       changeTreeviewSelectedItem,
       changeButtonState,
+      updateCurrentTheme,
     }
   }, [setAppState, appState?.forms])
 
@@ -183,7 +194,7 @@ export const useAppController = (
       )?.prop_value
 
       const treeViewElement = currentViewportElements?.find?.(
-        (element) => element._id === treeViewElementId
+        (element) => element.element_id === treeViewElementId
       )
       if (!treeviewItemsPropertyValue || !treeViewElement) return
 

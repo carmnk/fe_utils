@@ -64,11 +64,11 @@ export const NavContainerComponentPropsFormFactory = (prarams: {
   const pageElements = selectedPageElements
   const navElements = pageElements.filter(
     (el) =>
-      el._type.slice(0, 1).toUpperCase() === el._type.slice(0, 1) &&
-      'state' in el
+      el.element_type.slice(0, 1).toUpperCase() ===
+        el.element_type.slice(0, 1) && 'state' in el
   )
   // const elementAttributes = editorState.attributes.filter(
-  //   (attr) => attr.element_id === selectedComponent._id
+  //   (attr) => attr.element_id === selectedComponent.element_id
   // )
   // const elementAttributesDict = elementAttributes.reduce<Record<string, any>>(
   //   (acc, attr) => {
@@ -80,14 +80,14 @@ export const NavContainerComponentPropsFormFactory = (prarams: {
   //   {}
   // )
   const navigationElementIdOptions = navElements.map((el) => ({
-    value: el._id,
+    value: el.element_id,
     label:
-      el._type +
+      el.element_type +
       ' - ' +
       (editorState.properties.find(
-        (prop) => prop.element_id === el._id && prop.prop_name === 'id'
+        (prop) => prop.element_id === el.element_id && prop.prop_name === 'id'
       )?.prop_value ??
-        el?._userID ??
+        el?.element_html_id ??
         ''),
   }))
 
@@ -149,10 +149,10 @@ export const ItemPropsFormFactory = (
         value: () => {
           const selectedElementId = editorState?.ui?.selected?.element
           const selectedElement = currentViewportElements?.find(
-            (el) => el._id === selectedElementId
+            (el) => el.element_id === selectedElementId
           )
           const isSelectedElementNavContainer =
-            selectedElement?._type === 'NavContainer'
+            selectedElement?.element_type === 'NavContainer'
           if (!isSelectedElementNavContainer) return []
 
           const navContainerProps = editorState.properties.filter(
@@ -173,11 +173,11 @@ export const ItemPropsFormFactory = (
             navContainerPropsObject?.navigationElementId
 
           const controlElement = currentViewportElements?.find(
-            (el) => el._id === navigationElementId
+            (el) => el.element_id === navigationElementId
           )
           const controlElementProps = editorState.properties.filter(
             (prop) =>
-              prop.element_id === controlElement?._id ||
+              prop.element_id === controlElement?.element_id ||
               (prop.template_id === controlElement?.template_id &&
                 prop.prop_name !== 'items')
           )
@@ -190,7 +190,7 @@ export const ItemPropsFormFactory = (
             }
           }, {})
           const navItemOptions =
-            controlElement?._type === 'Button'
+            controlElement?.element_type === 'Button'
               ? [
                   { value: true, label: 'true' },
                   { value: false, label: 'false' },
@@ -202,7 +202,7 @@ export const ItemPropsFormFactory = (
         childId: () => {
           const selectedNavContainerId = editorState?.ui?.selected?.element
           const navigationContainer = currentViewportElements?.find(
-            (el) => el._id === selectedNavContainerId
+            (el) => el.element_id === selectedNavContainerId
           )
           const navContainerProps = editorState.properties.filter(
             (prop) =>
@@ -221,11 +221,11 @@ export const ItemPropsFormFactory = (
             navContainerPropsObject?.navigationElementId
 
           const controlElement = currentViewportElements?.find(
-            (el) => el._id === navigationElementId
+            (el) => el.element_id === navigationElementId
           )
           const controlElementProps = editorState.properties.filter(
             (prop) =>
-              prop.element_id === controlElement?._id ||
+              prop.element_id === controlElement?.element_id ||
               prop.template_id === controlElement?.template_id
           )
           const controlElementPropsObject = controlElementProps.reduce<
@@ -247,17 +247,17 @@ export const ItemPropsFormFactory = (
           }))
           const children =
             currentViewportElements
-              ?.filter((el) => el._parentId === selectedNavContainerId)
+              ?.filter((el) => el.parent_id === selectedNavContainerId)
               ?.map((child) => ({
-                value: child?._id,
-                label: child?._type,
+                value: child?.element_id,
+                label: child?.element_type,
                 stateValue: navTabs?.find(
                   (tab) =>
                     tab.value ===
                     (Array.isArray(navContainerPropsObject?.items)
                       ? navContainerPropsObject?.items
                       : []
-                    )?.find((item) => item.childId === child?._id)?.value
+                    )?.find((item) => item.childId === child?.element_id)?.value
                 )?.value,
               })) ?? []
           return children ?? []

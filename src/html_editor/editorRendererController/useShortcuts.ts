@@ -9,12 +9,12 @@ const getRecursiveChildren = (
   allElements: Element[],
   parentId: string
 ): Element[] => {
-  const children = allElements.filter((el) => el._parentId === parentId)
+  const children = allElements.filter((el) => el.parent_id === parentId)
   return children
     .map(
       (child) =>
-        child._id
-          ? [child, ...getRecursiveChildren(allElements, child._id)]
+        child.element_id
+          ? [child, ...getRecursiveChildren(allElements, child.element_id)]
           : (null as unknown as Element) // filter later
     )
     .filter((val) => val)
@@ -45,13 +45,15 @@ export const useShortcuts = (params: {
 
   const selectedElement = useMemo(() => {
     const id = editorState?.ui.selected.element
-    return currentViewportElements?.find((el) => el._id === id && id) ?? null
+    return currentViewportElements?.find((el) => el.element_id === id && id) ?? null
   }, [editorState.ui.selected.element, currentViewportElements])
 
   const selectedPageElements = useMemo(() => {
     const selectedPage = editorState.ui.selected.page
     return (
-      currentViewportElements?.filter((el) => el._page === selectedPage) ?? []
+      currentViewportElements?.filter(
+        (el) => el.element_page === selectedPage
+      ) ?? []
     )
   }, [editorState.ui.selected.page, currentViewportElements])
 
@@ -122,7 +124,7 @@ export const useShortcuts = (params: {
       const selectedImageId = imageId ?? editorState.ui.selected.image
       const selectedImage =
         editorState.assets.images.find(
-          (image) => image._id === selectedImageId
+          (image) => image.asset_id === selectedImageId
         ) ?? null
       return { ...selectedImage, imageSrcId: imageId ?? '' }
     },
@@ -137,8 +139,8 @@ export const useShortcuts = (params: {
   const imageSrcOptions = useMemo(() => {
     return editorState.assets.images?.map((image) => ({
       ...image,
-      value: image._id,
-      label: image?.fileName ?? '',
+      value: image.asset_id,
+      label: image?.asset_filename ?? '',
       src: image?.src,
     }))
   }, [editorState?.assets?.images])
@@ -148,8 +150,8 @@ export const useShortcuts = (params: {
       ?.filter((img) => img.type === 'favicons')
       ?.map?.((image) => ({
         ...image,
-        value: image._id,
-        label: image?.fileName ?? '',
+        value: image.asset_id,
+        label: image?.asset_filename ?? '',
         src: image?.src,
       }))
   }, [editorState?.assets?.images])

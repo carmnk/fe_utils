@@ -24,7 +24,7 @@ export type AppState = {
       filters: { filterKey: string; value: string }[]
     }
   }
-  // tables: { [key: string]: Record<string, any> }
+  currentThemeName: string
 }
 
 export type AppActions = ReturnType<typeof useAppController>['actions']
@@ -56,5 +56,6 @@ export type AppController = {
         filters: { filterKey: string; value: string }[]
       }
     }) => void
+    updateCurrentTheme: (themeName: string) => void
   }
 }

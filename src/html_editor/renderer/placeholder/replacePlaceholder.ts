@@ -142,7 +142,7 @@ export const replacePlaceholdersInString = (
           (prop) =>
             prop.component_id === propDef?.component_id &&
             prop.prop_name === key &&
-            (prop.element_id === currentElement?._id ||
+            (prop.element_id === currentElement?.element_id ||
               prop.element_id === elementId) // HERE IS THE BUG SOMEWHERE
         )
 
@@ -150,12 +150,12 @@ export const replacePlaceholdersInString = (
           (attr) =>
             attr.component_id === propDef?.component_id &&
             attr.attr_name === key &&
-            (attr.element_id === currentElement?._id ||
+            (attr.element_id === currentElement?.element_id ||
               attr.element_id === elementId)
         )
         // const styleAttributeInstanceValue = attributes.find(
         //   (attr) =>
-        //     (attr.element_id === currentElement?._id ||
+        //     (attr.element_id === currentElement?.element_id ||
         //       attr.element_id === elementId) &&
         //     attr.attr_name === 'style'
         // )?.attr_value?.[key]

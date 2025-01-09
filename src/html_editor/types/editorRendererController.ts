@@ -13,7 +13,7 @@ export type EditorRendererControllerType =
     getRecursiveChildren: (elements: Element[], parentId: string) => Element[]
     getSelectedImage: (imageId?: string) => {
       image: typeof Image
-      fileName: string
+      asset_filename: string
       src: string
       imageSrcId: string
     } | null

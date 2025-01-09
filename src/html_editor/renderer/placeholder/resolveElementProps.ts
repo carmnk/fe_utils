@@ -43,7 +43,7 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
             editorState.properties,
             editorState.attributes,
             element,
-            element._id,
+            element.element_id,
             rootCompositeElementId,
             undefined,
             icons
@@ -52,7 +52,7 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
 
       const isFormularInput = keyValue !== keyValueAdj
       const transformerStr = editorState.transformers.find(
-        (tr) => tr.prop_id === cur.prop_id && tr.element_id === element._id
+        (tr) => tr.prop_id === cur.prop_id && tr.element_id === element.element_id
       )?.transformer_string
       const transformerFn =
         isFormularInput && transformerStr
@@ -63,7 +63,7 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
               editorState.properties,
               editorState.attributes,
               element,
-              element._id,
+              element.element_id,
               rootCompositeElementId,
               true,
               icons,
@@ -73,7 +73,7 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
 
       // if (
       //   transformerFn &&
-      //   element?._type?.toLowerCase().includes('treeview')
+      //   element?.element_type?.toLowerCase().includes('treeview')
       // ) {
       //   console.log('transformerFn', transformerFn, transformerStr, icons)
       // }

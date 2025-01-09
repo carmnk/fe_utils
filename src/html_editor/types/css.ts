@@ -7,7 +7,7 @@ export type CssSelector = CSSProperties & {
   css_selector_id: string
   // _userId: string
   // _userId: string
-  // _page?: string
+  // element_page?: string
   // _type?: string
   css_selector_value: string
   css_selector_name?: string

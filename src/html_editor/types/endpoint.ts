@@ -7,8 +7,8 @@ export type Endpoint = {
   name: string
   url: string
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
-  responseType: 'json' | 'text' | 'blob'
-  useCookies: boolean
+  response_type: 'json' | 'text' | 'blob'
+  use_cookies: boolean
   headers: Header[] // -> subtable
   params: Param[] // -> subtable
   body: BodyParam[] // -> subtable
@@ -20,14 +20,13 @@ export type Endpoint = {
 
 export type EndpointDb = Omit<
   Endpoint,
-  'headers' | 'params' | 'body' | 'auth' | 'useCookies' | 'responseType'
+  'headers' | 'params' | 'body' | 'auth'
 > & {
-  response_type: 'json' | 'text' | 'blob' //XXX
-  use_cookies: boolean //XXX
   auth_type: 'basic' | 'bearer' | 'none'
   auth_basic_username: string | null
   auth_basic_password: string | null
   auth_bearer_token: string | null
+
   api_id: string
   project_id: string
 }

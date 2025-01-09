@@ -11,6 +11,7 @@ export type Project = {
   html_pages_title: string
   html_pages_description: string
   html_pages_favicon: string | null
+  github_updated_datetime?: string | null
   github_updated_version_edited_datetime?: string | null
   use_github: boolean
   use_github_pages: boolean
@@ -32,7 +33,5 @@ export type ProjectDb = Project & {
   default_theme?: string
   selected_entity?: string | null
   selected_entity_element?: 'fields' | 'lists' | 'values' | 'joinings' | null
-  github_updated_datetime?: string | null
-  github_updated_version_edited_datetime?: string | null
   active_menu: string | null
 }
