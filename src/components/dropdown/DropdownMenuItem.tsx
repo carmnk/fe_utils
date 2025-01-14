@@ -18,7 +18,7 @@ export type DropDownMenuItemProps = MenuItemProps & {
   id: string
   disabled?: boolean
   loading?: boolean
-  label: string
+  label: ReactNode
   onPointerDown?: PointerEventHandler<HTMLLIElement>
   onKeyDown?: KeyboardEventHandler<HTMLLIElement>
   sx?: MenuItemProps['sx']

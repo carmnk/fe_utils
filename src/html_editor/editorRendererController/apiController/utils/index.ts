@@ -5,7 +5,6 @@ export * from "./deserializeProject";
 export * from "./deserializeProperties";
 export * from "./deserializeServerExternalApis";
 export * from "./deserializeTheme";
-export * from "./deserializeThemes";
 export * from "./serializeAttributes";
 export * from "./serializeElements";
 export * from "./serializeExternalApis";

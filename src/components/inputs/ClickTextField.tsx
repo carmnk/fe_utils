@@ -140,7 +140,6 @@ export const ClickTextFieldComponent = <
       ) : (
         <Typography
           color="text.primary"
-          // variant="h6"
           textOverflow="ellipsis"
           overflow="hidden"
           whiteSpace="nowrap"
@@ -188,7 +187,7 @@ export const ClickTextFieldComponent = <
               placeholder={placeholder}
               options={options}
               onChange={handleChangeTempSelectValue}
-              size={'small'}
+              size="small"
               sx={{ width: '140px' }}
               disableLabel={true}
               disableHelperText={true}
@@ -205,7 +204,7 @@ export const ClickTextFieldComponent = <
               size="small"
               onChange={(
                 newValue: string | number,
-                e?: ChangeEvent<HTMLInputElement>
+                e: ChangeEvent<HTMLInputElement>
               ) => {
                 handleChangeTempValue(e)
               }}
@@ -215,7 +214,7 @@ export const ClickTextFieldComponent = <
               disableLabel // ?
               disableHelperText={!inputHelperText}
               error={inputError}
-              {...fieldProps}
+              {...(fieldProps as any)}
             />
           )}
         </Box>
