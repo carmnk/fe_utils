@@ -2,7 +2,15 @@ import Icon from '@mdi/react'
 import { Box } from '@mui/material'
 
 export const IconComponentWrapper = (props: any) => {
-  const { rootInjection, sx, path, ...rest } = props
+  const {
+    rootInjection,
+    sx,
+    path,
+    appController,
+    editorStateUi,
+    isProduction,
+    ...rest
+  } = props
 
   const isVerticalPaddingSet =
     sx?.pt ||

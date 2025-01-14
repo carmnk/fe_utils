@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material'
-import { ThemeColorsEnum } from '../../utils/types'
-import { ThemeSingleColor } from './ThemeSingleColor'
+import { ThemeColorsEnum } from '../../../utils/types'
+import { ThemeSingleColor } from './ThemeSingleColorSelector'
 import { MouseEvent, useCallback } from 'react'
 
 export type ThemeColorsProps = {
@@ -9,7 +9,7 @@ export type ThemeColorsProps = {
   themeIn?: Theme
 }
 
-export const ThemeColors = (props: ThemeColorsProps) => {
+export const ThemeColorObjectSelector = (props: ThemeColorsProps) => {
   const { themeColorName, onChange, themeIn } = props
 
   const handleChangeThemeColor = useCallback(

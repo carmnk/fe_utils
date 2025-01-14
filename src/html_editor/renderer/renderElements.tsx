@@ -136,7 +136,9 @@ export const renderElements = (params: {
       (baseComponentId
         ? editorState.elements
         : currentViewportElements
-      )?.filter((el) => el.parent_id === element.element_id && element.element_id) ?? []
+      )?.filter(
+        (el) => el.parent_id === element.element_id && element.element_id
+      ) ?? []
 
     const renderedElementChildren = elementChildren?.length
       ? renderElements({
@@ -215,7 +217,7 @@ export const renderElements = (params: {
       (() => {
         return (
           <CurrentComponent
-            key={element.element_id}
+            key={element.element_id + '_component'}
             {...(elementPropsObject ?? {})}
             {...eventHandlerProps}
             {...injectedIconProps}
@@ -269,6 +271,8 @@ export const renderElements = (params: {
           {elementPropsObject?.children}
           {/* these dont have the rootInjection interface yet */}
           {['Paper', 'Dialog', 'AppBar'].includes(element.element_type) &&
+            !isProduction &&
+            !isPointerProduction &&
             rootInjectionOverlayComponent}
         </CurrentComponent>
       </>

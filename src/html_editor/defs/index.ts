@@ -28,7 +28,6 @@ export {
   CSS_FLEX_DIRECTION_OPTIONS,
   _CSS_DIRECTION_UI_VALUES,
 } from './CssFlexDirectionDict'
-export { SYSTEM_FONTS_NAMES, SYSTEM_FONTS_CSS_STRINGS } from './CssFontFamilies'
 
 export { HTML_FONT_STYLES, HTML_FONT_STYLES_OPTIONS } from './CssFontStyleDict'
 

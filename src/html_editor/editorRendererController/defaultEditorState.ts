@@ -1,12 +1,12 @@
-import { muiDarkSiteTheme, muiLightSiteTheme } from '../theme/muiTheme'
+import { muiLightSiteTheme } from '../theme/muiTheme'
 import { cloneDeep } from 'lodash'
-import { SYSTEM_FONTS_CSS_STRINGS } from '../defs/CssFontFamilies'
 import { UI_POINTER_MODE } from '../defs/uiPointerMode'
 import { v4 as uuid } from 'uuid'
 import { LeftMenuGlobalTabs } from '../defs/LeftMenuGlobalTabs'
 import { LeftMenuBackendTabs } from '../defs/LeftMenuBackendTabs'
 import { EditorStateType } from '../types/editorState'
 import { Element } from '../types'
+import { DEFAULT_THEMES_SERIALIZED } from '../theme/serializedMuiTheme'
 
 const baseHtmlDocument: Element[] = [
   {
@@ -68,7 +68,7 @@ export const defaultEditorState = (): EditorStateType => {
       images: [],
     },
     theme: muiLightSiteTheme,
-    themes: [muiLightSiteTheme, muiDarkSiteTheme],
+    themes: DEFAULT_THEMES_SERIALIZED,
     theme_typographys: [],
     ui: {
       isAutoSaveReady: false,
@@ -132,7 +132,7 @@ export const defaultEditorState = (): EditorStateType => {
         isDragging: false,
       },
     },
-    fonts: [...SYSTEM_FONTS_CSS_STRINGS, "'Roboto'"],
+    fonts: [],
     server: {
       config: {
         serve_frontend: true,

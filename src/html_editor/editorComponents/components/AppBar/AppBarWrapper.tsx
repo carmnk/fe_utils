@@ -12,7 +12,7 @@ export const AppBarWrapper = (props: AppBarWrapperProps) => {
     rootInjection,
     position,
     sx,
-    // appController,
+    appController,
     editorStateUi,
     isProduction,
     ...rest

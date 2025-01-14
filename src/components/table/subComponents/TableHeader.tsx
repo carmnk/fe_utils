@@ -24,6 +24,7 @@ export type TableHeaderProps = {
   onSelectAll?: TableProps['onSelectAllFilters']
   handleClickSelectAll?: () => void
   onSetFilters: TableProps['onSetFilters']
+  disableSelectAll?: boolean
 }
 
 export const TableHeader = (props: TableHeaderProps) => {
@@ -43,6 +44,7 @@ export const TableHeader = (props: TableHeaderProps) => {
     onSelectAll,
     handleClickSelectAll,
     onSetFilters,
+    disableSelectAll,
   } = props
 
   const theme = useTheme()
@@ -79,12 +81,12 @@ export const TableHeader = (props: TableHeaderProps) => {
                 // className={'hover:bg-gray-200 ' + col?.className || ''}
                 style={'style' in col ? (col.style as CSSProperties) : {}}
               >
-                {!disableTableHeader && (
+                {!disableTableHeader && !disableSelectAll && (
                   <Flex
                     // className="relative flex items-center justify-center cursor-pointer "
                     position="relative"
                     alignItems="center"
-                    // justifyContent="center"
+                    justifyContent="center"
                     // cursor="pointer"
                     sx={{ cursor: 'pointer' }}
                     onClick={handleClickSelectAll}

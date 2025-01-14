@@ -67,6 +67,13 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
       {itemsAdj?.map?.((item, bIdx) => {
         const isItemSelected =
           (item && isSelected?.(item.value, value)) ?? item?.value === value
+        console.log(
+          'isItemSelected',
+          isItemSelected,
+          item,
+          value,
+          item?.value && isSelected?.(item?.value, value)
+        )
         return item ? (
           <ButtonGroupButton
             slotProps={

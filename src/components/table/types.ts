@@ -102,4 +102,5 @@ export type TableProps<
   reorderRowId?: string
   sx?: BoxProps['sx']
   rootInjection?: ReactNode
+  disableSelectAll?: boolean
 }

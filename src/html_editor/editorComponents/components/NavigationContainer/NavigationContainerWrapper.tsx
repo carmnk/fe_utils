@@ -96,11 +96,6 @@ export const NavContainerWrapper = (
       })
     : []
 
-  console.log(
-    'navContainerChildren',
-    navContainerChildren,
-    renderedElementChildren
-  )
   return (
     <Box key={id} {...(rest ?? {})}>
       {renderedElementChildren}

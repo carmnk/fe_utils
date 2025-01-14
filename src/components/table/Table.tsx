@@ -14,6 +14,7 @@ import {
   Fragment,
   ReactNode,
 } from 'react'
+import { Flex } from '../_wrapper'
 
 const Tfoot = (props: BoxProps) => <Box component="tfoot" {...props} />
 const Tr = (props: BoxProps) => <Box component="tr" {...props} />
@@ -63,6 +64,7 @@ export const Table = (props: TableProps) => {
     onSetFilters,
     sx,
     rootInjection,
+    disableSelectAll,
   } = props
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -164,6 +166,7 @@ export const Table = (props: TableProps) => {
         onSelectAll={onSelectAllFilters}
         handleClickSelectAll={handleClickSelectAll}
         onSetFilters={onSetFilters}
+        disableSelectAll={disableSelectAll}
       />
 
       <tbody>
@@ -219,7 +222,11 @@ export const Table = (props: TableProps) => {
                           typeof col?.renderCell === 'function' ? (
                             col?.renderCell(row, cIdx, rIdx)
                           ) : typeof col?.renderCell === 'string' ? (
-                            <td>
+                            <Box
+                              component="td"
+                              key={cIdx}
+                              style={(col as any).style}
+                            >
                               {(row[col?.renderCell] ||
                                 row[col?.renderCell] === false) &&
                               ['object', 'boolean'].includes(
@@ -227,11 +234,11 @@ export const Table = (props: TableProps) => {
                               )
                                 ? row[col?.renderCell]?.toString()
                                 : (row[col?.renderCell] as ReactNode)}
-                            </td>
+                            </Box>
                           ) : null
                         return col?.isRowSelect ? (
                           <td key={cIdx}>
-                            <div>
+                            <Flex alignItems="center" justifyContent="center">
                               <Checkbox
                                 disabled={disableSelection}
                                 tabIndex={-1}
@@ -245,7 +252,7 @@ export const Table = (props: TableProps) => {
                                   !disableSelection && onSelectRow?.(row, rIdx)
                                 }}
                               />
-                            </div>
+                            </Flex>
                           </td>
                         ) : (
                           renderCell || <td key={cIdx} />

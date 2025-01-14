@@ -6,7 +6,7 @@ import { serializeElements } from './utils/serializeElements'
 import { serializeImages } from './utils/serializeImages'
 import { serializeProject } from './utils/serializeProject'
 import { serializeExternalApis } from './utils/serializeExternalApis'
-import { serializeThemes } from './utils/serializeThemes'
+import { serializeFonts } from './utils/serializeFonts'
 
 export const serializeEditorState = (
   payload: EditorStateType
@@ -35,14 +35,12 @@ export const serializeEditorState = (
   const properties = serializeProperties(payload.properties)
   const attributes = serializeAttributes(payload?.attributes)
   // seperate handling! -> must be multipart form data!!!!
-  const { images, /*imageFiles*/ } = serializeImages(
+  const { images /*imageFiles*/ } = serializeImages(
     payload.assets.images,
     project_id
   )
-  const themes: EditorStateDbDataType['themes'] = serializeThemes(
-    payload.themes,
-    project_id
-  )
+  const themes: EditorStateDbDataType['themes'] = payload.themes
+
   const { bodyParams, params, headers, endpoints, externalApis } =
     serializeExternalApis(payload.externalApis, project_id)
 
@@ -70,5 +68,6 @@ export const serializeEditorState = (
     transformers: payload.transformers,
     components: payload.components,
     theme_typographys: payload.theme_typographys,
+    fonts: serializeFonts(payload.fonts, project_id),
   }
 }

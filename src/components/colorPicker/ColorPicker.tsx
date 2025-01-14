@@ -1,15 +1,11 @@
 import { CSSProperties, useCallback, useEffect } from 'react'
 import { useState, useRef, useMemo, MouseEvent } from 'react'
-import { Box, BoxProps, Divider, Popover, PopoverProps } from '@mui/material'
-import { Theme, Typography, hexToRgb, useTheme } from '@mui/material'
+import { Box, BoxProps, Popover, PopoverProps } from '@mui/material'
+import { Theme, hexToRgb, useTheme } from '@mui/material'
 import { ColorChangeHandler, ColorResult, SketchPicker } from 'react-color'
 import { Button } from '../buttons/Button/Button'
 import { mdiCheck } from '@mdi/js'
-import { Flex } from '../_wrapper'
-import { ThemeColors } from './ThemeColors'
-import { ThemeActionColorsEnum, ThemeTextColorsEnum } from '../../utils/types'
-import { ThemeBackgroundColorsEnum, ThemeColorsEnum } from '../../utils/types'
-import { ThemeSingleColor } from './ThemeSingleColor'
+import { ThemeColorsSelector } from './ThemeColorsSelectors/ThemeColorsSelector'
 
 type GenericColorPickerProps = {
   value: CSSProperties['color']
@@ -17,6 +13,7 @@ type GenericColorPickerProps = {
   disableThemeColors?: boolean
   resolveThemeColors?: boolean
   themeIn: Theme
+  highlightedThemeColor?: string
 }
 type DisabledColorPickerProps = GenericColorPickerProps & {
   disabled: true
@@ -92,6 +89,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
     disableThemeColors,
     resolveThemeColors,
     themeIn,
+    highlightedThemeColor,
     ...rest
   } = props
   const theme = useTheme()
@@ -117,8 +115,15 @@ export const ColorPicker = (props: ColorPickerProps) => {
   )
 
   const handleTakeover = useCallback(() => {
+    console.log(
+      'unchangedColor',
+      unchangedColor,
+      isThemeColor,
+      resolveThemeColors
+    )
     if (isThemeColor && !resolveThemeColors) {
       onChange?.(unchangedColor as string)
+      setDisplayColorPicker(false)
       return
     }
     const defaultObjectColor =
@@ -137,6 +142,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
     // const colorCss = `rgba(${color?.r ?? 0}, ${color?.g ?? 0}, ${
     //   color?.b ?? 0
     // }, ${color?.a ?? 1})`;
+    console.log('handleTakeover, ', colorAdj)
     onChange?.(colorAdj)
     setDisplayColorPicker(false)
   }, [onChange, color, isThemeColor, unchangedColor, resolveThemeColors])
@@ -222,6 +228,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
           : null
       if (!colorRgba) return
 
+      console.log('handleChangeThemeColor, ', colorRgba, colorName, colorPath)
       setColor?.(rgbaToObj(colorRgba))
       setUnchangedColor(colorName)
       setIsThemeColor(true)
@@ -250,118 +257,13 @@ export const ColorPicker = (props: ColorPickerProps) => {
           <SketchPicker color={color} onChange={handleChangeColor} />
 
           {!disableThemeColors && (
-            <Box bgcolor="#fff" position="relative" top={-6}>
-              <Divider sx={{ borderColor: 'rgb(238, 238, 238)' }} />
-
-              <Box ml="10px" mt="10px">
-                <Typography variant="caption">Theme Colors</Typography>
-                <Flex gap={'10px'} mt="10px">
-                  <ThemeColors
-                    themeColorName={ThemeColorsEnum.primary}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeColors
-                    themeColorName={ThemeColorsEnum.secondary}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                </Flex>
-                <Flex gap={'10px'} mt="10px">
-                  <ThemeColors
-                    themeColorName={ThemeColorsEnum.success}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeColors
-                    themeColorName={ThemeColorsEnum.warning}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                </Flex>
-                <Flex gap={'10px'} mt="10px">
-                  <ThemeColors
-                    themeColorName={ThemeColorsEnum.error}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeColors
-                    themeColorName={ThemeColorsEnum.info}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                </Flex>
-                {/* single colors */}
-
-                <Flex gap={'10px'} mt="10px">
-                  <ThemeSingleColor
-                    color={ThemeActionColorsEnum.active}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeActionColorsEnum.disabled}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeActionColorsEnum.disabledBackground}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeActionColorsEnum.focus}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeActionColorsEnum.hover}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeActionColorsEnum.selected}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                </Flex>
-                <Flex gap={'10px'} mt="10px">
-                  <ThemeSingleColor
-                    color={ThemeTextColorsEnum.disabled}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeTextColorsEnum.primary}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeTextColorsEnum.secondary}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeBackgroundColorsEnum.default}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeBackgroundColorsEnum.paper}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                  <ThemeSingleColor
-                    color={ThemeBackgroundColorsEnum.paper}
-                    hidden={true}
-                    onChange={handleChangeThemeColor}
-                    themeIn={themeIn}
-                  />
-                </Flex>
-              </Box>
-            </Box>
+            <ThemeColorsSelector
+              handleChangeThemeColor={handleChangeThemeColor}
+              themeIn={themeAdj}
+              highlightedThemeColor={highlightedThemeColor}
+            />
           )}
-          <Box position="absolute" bottom={4} right={4}>
+          <Box position="absolute" bottom={8} right={4}>
             <Button
               iconButton={true}
               icon={mdiCheck}

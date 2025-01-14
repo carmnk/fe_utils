@@ -6,10 +6,11 @@ export type ThemeSingleColorProps = {
   hidden?: boolean
   onChange?: (e: MouseEvent<HTMLDivElement>, color: string) => void
   themeIn?: Theme
+  borderColor?: string
 }
 
 export const ThemeSingleColor = (props: ThemeSingleColorProps) => {
-  const { color, hidden, onChange, themeIn } = props
+  const { color, hidden, onChange, themeIn, borderColor } = props
   const handleClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       onChange?.(e, color)
@@ -27,6 +28,7 @@ export const ThemeSingleColor = (props: ThemeSingleColorProps) => {
       : //   : themeIn && colorCategory
         //     ? themeIn?.palette?.[colorCategory]
         undefined
+  const borderColorAdj = borderColor ? borderColor : '#999'
   return (
     <Tooltip title={hidden ? undefined : color} placement="top" arrow>
       <Box
@@ -34,7 +36,7 @@ export const ThemeSingleColor = (props: ThemeSingleColorProps) => {
         borderRadius={'3px'}
         height={16}
         width={16}
-        border="1px solid #999"
+        border={`1px solid ${borderColorAdj}`}
         visibility={hidden ? 'hidden' : 'visible'}
         onClick={handleClick}
       />

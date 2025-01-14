@@ -16,7 +16,7 @@ export const TypographyWrapper = (props: TypographyWrapperProps) => {
     isProduction,
     ...rest
   } = props
-  console.log('TypographyWrapper', props, children, rootInjection, rest)
+  
   return (
     <Typography {...rest}>
       {children}

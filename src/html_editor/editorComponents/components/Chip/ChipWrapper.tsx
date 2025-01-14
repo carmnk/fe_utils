@@ -1,15 +1,19 @@
 import { ReactNode } from 'react'
 
-
 import Icon from '@mdi/react'
 import { Chip, ChipProps } from '@mui/material'
+import { CommonComponentPropertys } from '../../componentProperty'
 
-export type CChipProps = ChipProps & { icon?: string }
+export type CChipProps = ChipProps & {
+  icon?: string
+} & CommonComponentPropertys
 
 export const CChip = (props: CChipProps) => {
+  const { children, appController, editorStateUi, id, isProduction, ...rest } =
+    props
   return (
     <Chip
-      {...props}
+      {...rest}
       icon={
         props?.icon ? (
           <Icon
@@ -22,7 +26,6 @@ export const CChip = (props: CChipProps) => {
     />
   )
 }
-
 
 export type ChipWrapperProps = CChipProps & {
   rootInjection: ReactNode

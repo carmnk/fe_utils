@@ -9,6 +9,7 @@ import { deserializeServerExternalApis } from './utils/deserializeServerExternal
 import { deserializeImages } from './utils/deserializeImages'
 import { deserializeProject } from './utils/deserializeProject'
 import { deserializeTheme } from './utils/deserializeTheme'
+import { deserializeThemeTypographys } from './utils/deserializeThemeTypographys'
 
 export const deserializeEditorState = (
   data: EditorStateDbDataType,
@@ -35,11 +36,13 @@ export const deserializeEditorState = (
   const themes =
     disableThemeReload || !data.themes?.length
       ? currentEditorState.themes
-      : deserializeTheme(
-          data.themes,
-          currentEditorState?.themes,
-          data.theme_typographys
-        )
+      : data.themes
+  // ony editorstate.theme will be non-serialized theme
+  // : deserializeTheme(
+  //     data.themes,
+  //     currentEditorState?.themes,
+  //     data.theme_typographys
+  //   )
   const externalApis = deserializeServerExternalApis(
     data?.externalApis,
     data?.endpoints,
@@ -47,6 +50,15 @@ export const deserializeEditorState = (
     data?.params,
     data?.bodyParams
   )
+
+  const newTheme = themes?.find?.(
+    (theme) => theme.mode === currentEditorState.theme.name
+  )
+  const theme_typographys =
+    deserializeThemeTypographys(data?.theme_typographys) ?? []
+  const theme = newTheme
+    ? deserializeTheme(newTheme, theme_typographys)
+    : currentEditorState?.theme
 
   return {
     ...currentEditorState,
@@ -62,16 +74,14 @@ export const deserializeEditorState = (
     ui,
     assets,
     themes,
-    theme:
-      themes?.find?.(
-        (theme) => theme.palette.mode === currentEditorState.theme.name
-      ) || currentEditorState?.theme,
+    theme,
     externalApis,
     actions:
       data?.actions?.sort((a, b) => (a.action_id > b.action_id ? 1 : -1)) ?? [],
     elementTemplates: data?.templates ?? [],
     composite_component_props: data?.composite_component_props ?? [],
     action_params: data?.action_params ?? [],
-    theme_typographys: data?.theme_typographys ?? [],
+    theme_typographys,
+    fonts: data?.fonts ?? [],
   }
 }

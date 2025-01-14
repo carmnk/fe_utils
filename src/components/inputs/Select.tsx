@@ -112,16 +112,16 @@ export const Select = forwardRef((props: CSelectProps, ref: any) => {
 
   const formHelperTextStyles = useMemo(() => {
     return {
-      ...(props?.sx ?? {}),
+      // ...(props?.sx ?? {}),
       ...(error ? errorTextStyle : {}),
     }
-  }, [props?.sx, error])
+  }, [ error])
   const containerPropsAdj = useMemo<Partial<FormControlProps>>(() => {
     return {
       ...(rootContainer ?? {}),
       sx: {
         width: '100%',
-        minWidth: '240px',
+        minWidth: '220px',
         ...(rootContainer?.sx ?? {}),
       },
     }

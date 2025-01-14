@@ -4,3 +4,8 @@ export type * from '../types'
 export { useAppController } from './appController'
 export { useEditorRendererController } from './editorRendererController'
 export * from './apiController'
+export {
+  resolveTypographyThemeColors,
+  resolveThemeTypographyThemeColors,
+} from '../resolveThemeColors'
+export { DEFAULT_FONTS } from './defaultFontsState'

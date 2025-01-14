@@ -17,6 +17,8 @@ import { Ui } from './ui'
 import { Element } from './element'
 import { Transformer } from './transformer'
 import { ThemeTypography } from './themeTypographys'
+import { SerializedThemeType } from './serializedTheme'
+import { Font } from './Font'
 
 export type EditorStateType = {
   components: Component[]
@@ -37,8 +39,8 @@ export type EditorStateType = {
   }
   defaultTheme: 'light' | 'dark'
   theme: ExtendedTheme
-  themes: ExtendedTheme[]
-  fonts: string[] // currently const
+  themes: SerializedThemeType[]
+  fonts: Font[] // currently const
   attributes: Attribute[]
   properties: Property[]
   transformers: Transformer[]
