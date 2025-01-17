@@ -14,7 +14,7 @@ export const createAppAction = (params: {
   eventName: string
   editorState: EditorStateType
   currentViewportElements: EditorRendererController['currentViewportElements']
-  COMPONENT_MODELS: EditorRendererController['COMPONENT_MODELS']
+  ELEMENT_MODELS: EditorRendererController['ELEMENT_MODELS']
   appController: EditorRendererController['appController']
   icons?: Record<string, string>
   navigate: NavigateFunction
@@ -25,7 +25,7 @@ export const createAppAction = (params: {
     element,
     editorState,
     currentViewportElements,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     appController,
     eventName,
     icons,
@@ -122,7 +122,7 @@ export const createAppAction = (params: {
                   [cur.param_name]: cur.param_value,
                 }
               }, {})
-            const componentModel = COMPONENT_MODELS.find(
+            const componentModel = ELEMENT_MODELS.find(
               (mod) => mod.type === element.element_type
             )
             const isItemEvent =

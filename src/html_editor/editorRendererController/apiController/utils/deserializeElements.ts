@@ -5,7 +5,7 @@ import { isComponentType } from '../../../utils'
 
 export const deserializeElements = (
   elementsIn: ElementDb[],
-  COMPONENT_MODELS: ComponentDefType[]
+  ELEMENT_MODELS: ComponentDefType[]
 ): {
   elements: Element[]
   alternativeViewports: {
@@ -18,7 +18,7 @@ export const deserializeElements = (
   const allElements: ElementDb[] =
     elementsIn?.map?.((el) => ({
       ...(isComponentType(el.element_type)
-        ? COMPONENT_MODELS.find((bc) => bc.type === el.element_type)
+        ? ELEMENT_MODELS.find((bc) => bc.type === el.element_type)
         : {}),
       element_id: el.element_id,
       element_html_id: el.element_html_id,

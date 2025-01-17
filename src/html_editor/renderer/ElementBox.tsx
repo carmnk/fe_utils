@@ -16,7 +16,7 @@ export type ElementBoxProps = {
   appController: EditorRendererControllerType['appController']
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   selectedElement: Element | null
   uiActions?: unknown
   //
@@ -43,7 +43,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
     appController,
     currentViewportElements,
     selectedPageElements,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     selectedElement,
     uiActions,
     OverlayComponent,
@@ -360,7 +360,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
       appController={appController}
       currentViewportElements={currentViewportElements}
       selectedPageElements={selectedPageElements}
-      COMPONENT_MODELS={COMPONENT_MODELS}
+      ELEMENT_MODELS={ELEMENT_MODELS}
       selectedElement={selectedElement}
       uiActions={uiActions}
       isProduction={!!isProduction}

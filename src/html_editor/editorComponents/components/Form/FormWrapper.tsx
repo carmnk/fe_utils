@@ -20,7 +20,7 @@ export const a = 1
 //         eventName: 'onChangeFormData',
 //         editorState,
 //         currentViewportElements,
-//         COMPONENT_MODELS,
+//         ELEMENT_MODELS,
 //         appController,
 //         icons,
 //         navigate,

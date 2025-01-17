@@ -6,12 +6,12 @@ import { isComponentType } from '../../../utils'
 export const deserializeProperties = (
   properties: Property[],
   elements: Element[],
-  COMPONENT_MODELS: ComponentDefType[]
+  ELEMENT_MODELS: ComponentDefType[]
 ) => {
   return (
     properties?.map((prop) => {
       const element = elements.find((el) => el.element_id === prop.element_id)
-      const baseComponent = COMPONENT_MODELS.find(
+      const baseComponent = ELEMENT_MODELS.find(
         (comp) => comp.type === element?.element_type
       )
       const baseComponentSchema = baseComponent?.schema

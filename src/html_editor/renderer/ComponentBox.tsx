@@ -12,7 +12,7 @@ export type ComponentElementBoxProps = {
   appController: EditorRendererControllerType['appController']
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   selectedElement: Element | null
   uiActions?: unknown
   //
@@ -30,7 +30,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     currentViewportElements,
     uiActions,
     selectedPageElements,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     isProduction,
     OverlayComponent,
     navigate,
@@ -74,7 +74,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
         appController,
         currentViewportElements,
         selectedPageElements,
-        COMPONENT_MODELS,
+        ELEMENT_MODELS,
         uiActions,
         onSelectElement: () => {},
         theme: editorState.theme,
@@ -94,7 +94,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
       appController,
       currentViewportElements,
       selectedPageElements,
-      COMPONENT_MODELS,
+      ELEMENT_MODELS,
       uiActions,
       isProduction,
       OverlayComponent,

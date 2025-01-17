@@ -16,7 +16,7 @@ export type GetElementEventHandlersParams = {
   appController: AppController
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   icons?: Record<string, string>
   elementProps: Property[]
   navigate: NavigateFunction
@@ -31,7 +31,7 @@ export const getElementEventHandlerProps = (
     appController,
     currentViewportElements,
     selectedPageElements,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     icons,
     elementProps,
     navigate,
@@ -83,7 +83,7 @@ export const getElementEventHandlerProps = (
             eventName: currentEventName,
             editorState,
             currentViewportElements,
-            COMPONENT_MODELS,
+            ELEMENT_MODELS,
             appController,
             icons,
             navigate,
@@ -95,7 +95,7 @@ export const getElementEventHandlerProps = (
               eventName: currentEventName,
               editorState,
               currentViewportElements,
-              COMPONENT_MODELS,
+              ELEMENT_MODELS,
               appController,
               icons,
               navigate,
@@ -108,7 +108,7 @@ export const getElementEventHandlerProps = (
   // Special render case for renderType = Form
   const baseComponent =
     isComponentType(element.element_type) &&
-    COMPONENT_MODELS.find((comp) => comp.type === element.element_type)
+    ELEMENT_MODELS.find((comp) => comp.type === element.element_type)
   if (
     baseComponent &&
     'renderType' in baseComponent &&
@@ -124,7 +124,7 @@ export const getElementEventHandlerProps = (
             eventName: 'onChangeFormData',
             editorState,
             currentViewportElements,
-            COMPONENT_MODELS,
+            ELEMENT_MODELS,
             appController,
             icons,
             navigate,

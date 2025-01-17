@@ -24,7 +24,7 @@ export const renderElements = (params: {
   appController: EditorRendererControllerType['appController']
   currentViewportElements: Element[]
   selectedPageElements: Element[]
-  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   uiActions?: unknown
   //
   onSelectElement: (element: Element, isHovering: boolean) => void
@@ -46,7 +46,7 @@ export const renderElements = (params: {
     appController,
     currentViewportElements,
     selectedPageElements,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     uiActions,
     onSelectElement,
     theme,
@@ -88,7 +88,7 @@ export const renderElements = (params: {
 
     const schemaProps =
       (element as unknown as ComponentDefType)?.schema?.properties ?? {}
-    const baseComponent = COMPONENT_MODELS?.find(
+    const baseComponent = ELEMENT_MODELS?.find(
       (com) => com.type === element?.element_type
     )
     const CurrentComponentIn =
@@ -147,7 +147,7 @@ export const renderElements = (params: {
           appController,
           currentViewportElements,
           selectedPageElements,
-          COMPONENT_MODELS,
+          ELEMENT_MODELS,
           uiActions,
           onSelectElement,
           theme,
@@ -170,7 +170,7 @@ export const renderElements = (params: {
       appController,
       currentViewportElements,
       selectedPageElements,
-      COMPONENT_MODELS,
+      ELEMENT_MODELS,
       icons,
       elementProps: allElementProps,
       navigate,
@@ -200,7 +200,7 @@ export const renderElements = (params: {
         currentViewportElements={currentViewportElements}
         selectedPageElements={selectedPageElements}
         selectedElement={element}
-        COMPONENT_MODELS={COMPONENT_MODELS}
+        ELEMENT_MODELS={ELEMENT_MODELS}
         isProduction={isProduction}
         isPointerProduction={isPointerProduction}
         OverlayComponent={OverlayComponent}
@@ -227,7 +227,7 @@ export const renderElements = (params: {
             editorStateUi={editorState.ui}
             editorState={editorState}
             currentViewportElements={currentViewportElements}
-            COMPONENT_MODELS={COMPONENT_MODELS}
+            ELEMENT_MODELS={ELEMENT_MODELS}
             uiActions={uiActions}
             onSelectElement={onSelectElement}
             theme={theme}

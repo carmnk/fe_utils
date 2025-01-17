@@ -131,7 +131,7 @@ export const useShortcuts = (params: {
     [editorState?.assets.images, editorState.ui.selected.image]
   )
 
-  const COMPONENT_MODELS = useMemo(
+  const ELEMENT_MODELS = useMemo(
     () => [...baseComponents, ...(customComponents ?? [])],
     [customComponents]
   )
@@ -163,7 +163,7 @@ export const useShortcuts = (params: {
       selectedPageElements,
       selectedElementStyleAttributes,
       getSelectedImage,
-      COMPONENT_MODELS,
+      ELEMENT_MODELS,
       getRecursiveChildren,
       getStyleAttributesDictByElementId,
       imageSrcOptions,
@@ -177,7 +177,7 @@ export const useShortcuts = (params: {
     selectedPageElements,
     selectedElementStyleAttributes,
     getSelectedImage,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     getStyleAttributesDictByElementId,
     imageSrcOptions,
     faviconSrcOptions,

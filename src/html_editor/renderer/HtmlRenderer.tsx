@@ -21,7 +21,7 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   currentViewportElements: Element[]
   selectedPageElements: Element[]
   uiActions?: UiActionsType
-  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   appController: EditorRendererControllerType['appController']
   pageName: string //const pageName = location.pathname.slice(1) || 'index'
   navigate: NavigateFunction
@@ -47,7 +47,7 @@ export const HtmlRendererComponent = <
     currentViewportElements,
     selectedPageElements,
     uiActions,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     appController,
     pageName,
     navigate,
@@ -64,7 +64,7 @@ export const HtmlRendererComponent = <
 
   const [icons] = useMdiIcons(
     selectedPageElements,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     editorState.properties,
     importIconByName
   )
@@ -91,7 +91,7 @@ export const HtmlRendererComponent = <
         appController,
         currentViewportElements,
         selectedPageElements,
-        COMPONENT_MODELS,
+        ELEMENT_MODELS,
         uiActions: uiActions,
         onSelectElement: handleSelectElement,
         theme: themeAdj,
@@ -110,7 +110,7 @@ export const HtmlRendererComponent = <
       appController,
       currentViewportElements,
       selectedPageElements,
-      COMPONENT_MODELS,
+      ELEMENT_MODELS,
       handleSelectElement,
       icons,
       themeAdj,

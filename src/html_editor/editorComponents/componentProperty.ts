@@ -17,7 +17,7 @@ export type CommonComponentPropertys = {
 export type NavContainerComponentPropertys = CommonComponentPropertys & {
   editorState: EditorStateType
   currentViewportElements: EditorRendererControllerType['currentViewportElements']
-  COMPONENT_MODELS: EditorRendererControllerType['COMPONENT_MODELS']
+  ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   OverlayComponent?: FC<{ element: Element }>
   isPointerProduction: boolean
   icons: Record<string, string>

@@ -24,7 +24,7 @@ export const NavContainerWrapper = (
     //
     editorState,
     currentViewportElements,
-    COMPONENT_MODELS,
+    ELEMENT_MODELS,
     OverlayComponent,
     isPointerProduction,
     icons,
@@ -79,7 +79,7 @@ export const NavContainerWrapper = (
         appController,
         currentViewportElements,
         selectedPageElements,
-        COMPONENT_MODELS,
+        ELEMENT_MODELS,
         uiActions,
         onSelectElement,
         theme,

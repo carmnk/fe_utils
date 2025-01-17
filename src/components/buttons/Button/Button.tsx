@@ -28,7 +28,7 @@ export type CButtonProps = Omit<
   dropdown?: ButtonDropdown
   iconButton?: boolean
   disableHover?: boolean
-  tooltip?: string
+  tooltip?: ReactNode
   color?: ButtonProps['color']
   iconColor?: string
   fontColor?: string
@@ -41,12 +41,12 @@ export type CButtonProps = Omit<
   disableInteractiveTooltip?: boolean // will directly close not wait for hover
   // typographyProps?: TypographyProps // props for the typography component inside the button
   slotProps?: {
-    typography?: TypographyProps
-    tooltip?: TooltipProps
-    startIcon?: IconProps
-    endIcon?: IconProps
-    loadingIconContainer?: StackProps
-    loadingProgress?: CircularProgressProps
+    typography?: Partial<TypographyProps>
+    tooltip?: Partial<TooltipProps>
+    startIcon?: Partial<IconProps>
+    endIcon?: Partial<IconProps>
+    loadingIconContainer?: Partial<StackProps>
+    loadingProgress?: Partial<CircularProgressProps>
   }
   borderRadius?: CSSProperties['borderRadius']
   rootInjection?: ReactNode
