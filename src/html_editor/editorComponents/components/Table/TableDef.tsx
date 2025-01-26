@@ -58,7 +58,6 @@ export const tableEditorComponentDef = {
 
       dynamicKeysDict: {
         data: (f: Record<string, unknown>) => {
-          console.debug('DATA dynamicKeysDict', f)
           if (!f?.columns) return []
           const columnHeaders = (
             Array.isArray(f?.columns) ? f?.columns : []

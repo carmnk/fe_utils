@@ -31,6 +31,8 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   injectElementAtEnd?: React.ReactNode
   injectElementInContainerStart?: React.ReactNode
   importIconByName: (name: string) => Promise<string>
+  hoveredElementSide: string | null
+  dragging: unknown
 }
 
 export const HtmlRendererComponent = <
@@ -57,6 +59,8 @@ export const HtmlRendererComponent = <
     injectElementAtEnd,
     injectElementInContainerStart,
     importIconByName,
+    hoveredElementSide,
+    dragging,
   } = props
 
   const selectElement = uiActions?.selectElement
@@ -100,7 +104,7 @@ export const HtmlRendererComponent = <
         isPointerProduction: isProduction
           ? undefined
           : editorState.ui.pointerMode === 'production',
-        OverlayComponent: OverlayComponent,
+        OverlayComponent,
         navigate,
       })
     },
@@ -146,17 +150,13 @@ export const HtmlRendererComponent = <
       overflowY: 'auto',
       overflowX: editorState.ui.viewportLimitsMode ? 'hidden' : 'auto',
       cursor:
-        editorState?.ui?.dragging && editorState.ui.dragMode === 'reorder'
+        dragging && editorState.ui.dragMode === 'reorder'
           ? 'grabbing'
           : ['margin', 'padding'].includes(editorState.ui.dragMode) &&
-              ['top', 'bottom'].includes(
-                editorState.ui.selected.hoveredElementSide ?? ''
-              )
+              ['top', 'bottom'].includes(hoveredElementSide ?? '')
             ? 'ns-resize'
             : ['margin', 'padding'].includes(editorState.ui.dragMode) &&
-                ['left', 'right'].includes(
-                  editorState.ui.selected.hoveredElementSide ?? ''
-                )
+                ['left', 'right'].includes(hoveredElementSide ?? '')
               ? 'ew-resize'
               : 'default',
       border: isInHelpMode
@@ -174,9 +174,9 @@ export const HtmlRendererComponent = <
       //   : (containerStyles.background as any),
     }
   }, [
-    editorState?.ui?.dragging,
+    dragging,
     editorState.ui?.dragMode,
-    editorState.ui?.selected?.hoveredElementSide,
+    hoveredElementSide,
     isInHelpMode,
     editorState.ui.rulerMode,
     editorState.ui.viewportLimitsMode,

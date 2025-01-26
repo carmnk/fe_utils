@@ -10,7 +10,6 @@ export type EditorRendererControllerType =
     editorState: EditorStateType
     appController: AppController
     setEditorState: Dispatch<SetStateAction<EditorStateType>>
-    getRecursiveChildren: (elements: Element[], parentId: string) => Element[]
     getSelectedImage: (imageId?: string) => {
       image: typeof Image
       asset_filename: string

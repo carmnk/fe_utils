@@ -123,9 +123,7 @@ export const renderElements = (params: {
           appController.state,
           editorState.composite_component_props,
           editorState.properties,
-          editorState.attributes,
           element,
-          element.element_id,
           rootCompositeElementId,
           undefined,
           icons
@@ -217,7 +215,6 @@ export const renderElements = (params: {
       (() => {
         return (
           <CurrentComponent
-            key={element.element_id + '_component'}
             {...(elementPropsObject ?? {})}
             {...eventHandlerProps}
             {...injectedIconProps}
@@ -238,44 +235,43 @@ export const renderElements = (params: {
             disableOverlay={disableOverlay}
             rootCompositeElementId={rootCompositeElementId}
             OverlayComponent={OverlayComponent}
+            key={element.element_id + '_component'}
           ></CurrentComponent>
         )
       })()
     ) : CurrentComponent ? (
-      <>
-        <CurrentComponent
-          key={element.element_id}
-          {...(elementPropsObject ?? {})}
-          {...injectedIconProps}
-          // rootInjection={rootInjectionOverlayComponent}
-          sx={
-            !isProduction
-              ? {
-                  ...(elementPropsObject?.sx ?? {}),
-                  position: 'relative',
-                }
-              : (elementPropsObject?.sx as BoxProps['sx'])
-          }
-          {...(['Paper', 'Dialog', 'AppBar'].includes(element.element_type)
-            ? {}
-            : {
-                rootInjection: rootInjectionOverlayComponent,
-              })}
-          {...eventHandlerProps}
-          appController={appController}
-          id={element.element_id}
-          isProduction={isProduction}
-          editorStateUi={editorState.ui}
-        >
-          {renderedElementChildren}
-          {elementPropsObject?.children}
-          {/* these dont have the rootInjection interface yet */}
-          {['Paper', 'Dialog', 'AppBar'].includes(element.element_type) &&
-            !isProduction &&
-            !isPointerProduction &&
-            rootInjectionOverlayComponent}
-        </CurrentComponent>
-      </>
+      <CurrentComponent
+        {...(elementPropsObject ?? {})}
+        {...injectedIconProps}
+        // rootInjection={rootInjectionOverlayComponent}
+        sx={
+          !isProduction
+            ? {
+                ...(elementPropsObject?.sx ?? {}),
+                position: 'relative',
+              }
+            : (elementPropsObject?.sx as BoxProps['sx'])
+        }
+        {...(['Paper', 'Dialog', 'AppBar'].includes(element.element_type)
+          ? {}
+          : {
+              rootInjection: rootInjectionOverlayComponent,
+            })}
+        {...eventHandlerProps}
+        appController={appController}
+        id={element.element_id}
+        isProduction={isProduction}
+        editorStateUi={editorState.ui}
+        key={element.element_id}
+      >
+        {renderedElementChildren}
+        {elementPropsObject?.children}
+        {/* these dont have the rootInjection interface yet */}
+        {['Paper', 'Dialog', 'AppBar'].includes(element.element_type) &&
+          !isProduction &&
+          !isPointerProduction &&
+          rootInjectionOverlayComponent}
+      </CurrentComponent>
     ) : null
   })
   return renderedElements

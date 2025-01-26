@@ -41,9 +41,7 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
             appController.state,
             editorState.composite_component_props,
             editorState.properties,
-            editorState.attributes,
             element,
-            element.element_id,
             rootCompositeElementId,
             undefined,
             icons
@@ -52,7 +50,8 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
 
       const isFormularInput = keyValue !== keyValueAdj
       const transformerStr = editorState.transformers.find(
-        (tr) => tr.prop_id === cur.prop_id && tr.element_id === element.element_id
+        (tr) =>
+          tr.prop_id === cur.prop_id && tr.element_id === element.element_id
       )?.transformer_string
       const transformerFn =
         isFormularInput && transformerStr
@@ -61,9 +60,7 @@ export const resolveElementProps = (params: ResolveElementPropsParams) => {
               appController.state,
               editorState.composite_component_props,
               editorState.properties,
-              editorState.attributes,
               element,
-              element.element_id,
               rootCompositeElementId,
               true,
               icons,

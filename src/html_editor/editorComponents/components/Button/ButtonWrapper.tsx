@@ -10,7 +10,6 @@ export const ButtonWrapper = (
 
   const handleOnClick = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => {
-      console.log('ButtonWrapper onClick', id)
       appController.actions.changeButtonState(id)
 
       if (onClick && typeof onClick === 'function') {
@@ -19,7 +18,6 @@ export const ButtonWrapper = (
     },
     [onClick, appController, id]
   )
-  //   console.log('ButtonWrapper', props)
 
   return <Button {...rest} onClick={handleOnClick} />
 }

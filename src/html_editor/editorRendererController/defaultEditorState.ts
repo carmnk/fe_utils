@@ -72,7 +72,6 @@ export const defaultEditorState = (): EditorStateType => {
     theme_typographys: [],
     ui: {
       isAutoSaveReady: false,
-      initializeProjectModal: true,
       isProjectInited: false,
       previewMode: false,
       pointerMode: UI_POINTER_MODE.mixed,
@@ -80,14 +79,10 @@ export const defaultEditorState = (): EditorStateType => {
       editDragMode: null,
       rulerMode: false,
       viewportLimitsMode: false,
-      editorDragStartState: null,
-      dragging: null,
       selected: {
         viewport: 'xs',
         page: 'index',
         element: null,
-        hoveredElement: null,
-        hoveredElementSide: null,
         cssSelector: null,
         image: null,
         font: null,
@@ -99,26 +94,12 @@ export const defaultEditorState = (): EditorStateType => {
         template: null,
         component: null,
       },
-      copyPasteMode: null,
-      copied: {
-        elements: null,
-      },
-      cut: {
-        elements: null,
-      },
       detailsMenu: {
         width: 365,
-        ruleName: '',
-        ruleValue: '',
-        addRuleName: '',
-        addRuleValue: '',
         htmlElement: {
-          editCssRuleName: null,
-          editCssRuleValue: null,
           cssRulesFilter: 'all',
           activeStylesTab: 'attributes',
           activeCssStyleTab: 'css_rules',
-          classEditMode: false,
         },
       },
       navigationMenu: {
@@ -126,7 +107,6 @@ export const defaultEditorState = (): EditorStateType => {
         activeMenu: LeftMenuGlobalTabs.App,
         expandedTreeItems: [],
         activeTab: null,
-        elementAddComponentMode: null,
         selectedTheme: null,
         activeBackendTab: LeftMenuBackendTabs.SERVER,
         isDragging: false,

@@ -44,21 +44,22 @@ export const createAppAction = (params: {
   )
 
   const allElementProps = [...(elementProps ?? []), ...(templateProps ?? [])]
-  const getPropByName = (key: string) =>
-    allElementProps?.find((prop) => prop.prop_name === key)?.prop_value
-
-  const eventProps = getPropByName(eventName) as string[]
-  return !eventProps?.length
+  const getPropActionIdsByName = (key: string) =>
+    allElementProps?.find((prop) => prop.prop_name === key)?.action_ids ?? []
+  const actionIds = getPropActionIdsByName(eventName)
+  // const eventProps = getPropByName(eventName) as string[]
+  return !actionIds?.length
     ? undefined
     : async (...fnParams: unknown[]) => {
         console.debug('app action called', eventName, fnParams)
         // click actions are currently assosiacted with endpoint events only!
-        const actionIds: string[] = eventProps
+        // const actionIds: string[] = eventProps
 
         const navigationActionElements = actionIds
           .map(
             (actId) =>
-              currentViewportElements.find((el) => el.element_id === actId) ?? null
+              currentViewportElements.find((el) => el.element_id === actId) ??
+              null
           )
           .filter((el) => el)
         const navigationActionElementIds = navigationActionElements.map(
@@ -153,9 +154,7 @@ export const createAppAction = (params: {
                         appController.state,
                         editorState.composite_component_props,
                         editorState.properties,
-                        editorState.attributes,
                         element,
-                        element.element_id,
                         undefined,
                         undefined,
                         icons,

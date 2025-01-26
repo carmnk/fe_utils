@@ -36,18 +36,13 @@ export const deserializeProperties = (
         isSchemaPropJson ||
         isSchemaPropEventHandler ||
         [
-          'items',
-          'slotProps',
-          'columns',
-          'fields',
-          'filters',
-          'buttonProps',
-
-          // 'sx',
-          // 'data',
-          'footerData',
-          // 'fields',
-          // 'onClick',
+          'items', // array
+          'slotProps', // object
+          'columns', // array?
+          'fields', // array?
+          'filters', // array?
+          'buttonProps', // object
+          'footerData', //json
         ].includes(prop.prop_name) ||
         (['children'].includes(prop.prop_name) &&
           element?.element_type !== 'Typography')
@@ -64,7 +59,7 @@ export const deserializeProperties = (
                 }
                 return propValue
               } catch (e) {
-                // console.error(e, prop)
+                console.error(e, prop)
                 return prop.prop_value
               }
             })()

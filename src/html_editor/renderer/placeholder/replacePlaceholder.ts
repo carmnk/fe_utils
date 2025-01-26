@@ -33,9 +33,7 @@ export const replacePlaceholdersInString = (
   appState: EditorRendererControllerType['appController']['state'],
   componentPropertyDefinitions: EditorStateType['composite_component_props'],
   properties: EditorStateType['properties'],
-  attributes: EditorStateType['attributes'],
   currentElement: EditorRendererControllerType['selectedElement'],
-  elementId: string | null,
   rootCompositeElementId?: string,
   forceEval?: boolean,
   icons?: Record<string, string>,
@@ -142,17 +140,16 @@ export const replacePlaceholdersInString = (
           (prop) =>
             prop.component_id === propDef?.component_id &&
             prop.prop_name === key &&
-            (prop.element_id === currentElement?.element_id ||
-              prop.element_id === elementId) // HERE IS THE BUG SOMEWHERE
+            prop.element_id === currentElement?.element_id // HERE IS THE BUG SOMEWHERE
         )
 
-        const instanceValueAttribute = attributes.find(
-          (attr) =>
-            attr.component_id === propDef?.component_id &&
-            attr.attr_name === key &&
-            (attr.element_id === currentElement?.element_id ||
-              attr.element_id === elementId)
-        )
+        // const instanceValueAttribute = attributes.find(
+        //   (attr) =>
+        //     attr.component_id === propDef?.component_id &&
+        //     attr.attr_name === key &&
+        //     (attr.element_id === currentElement?.element_id ||
+        //       attr.element_id === elementId)
+        // )
         // const styleAttributeInstanceValue = attributes.find(
         //   (attr) =>
         //     (attr.element_id === currentElement?.element_id ||
@@ -167,29 +164,6 @@ export const replacePlaceholdersInString = (
             prop.element_id === rootCompositeElementId
         )?.prop_value
 
-        console.debug(
-          'PROPS render',
-          key,
-          keyRaw,
-          propDef,
-          'instance prop value',
-          instanceValueProp,
-          'instanceValueAttribute',
-          instanceValueAttribute,
-          '////',
-          '---------',
-          rootCompositeElementPropValue,
-          properties?.filter(
-            (prop) =>
-              prop.component_id === propDef?.component_id &&
-              prop.prop_name === key
-          ),
-          'elements?',
-          elementId,
-          currentElement,
-          'ROOT',
-          rootCompositeElementId
-        )
         return {
           type: 'props',
           placeholder: key,
@@ -244,14 +218,6 @@ export const replacePlaceholdersInString = (
   let newText = text
   const templates = typeof text === 'string' ? getTemplates(text) : []
 
-  console.debug(
-    'TEMPLATes',
-    templates,
-    componentPropertyDefinitions,
-    properties,
-    rootCompositeElementId
-  )
-
   const undefinedPlaceholders = []
   for (const template of templates) {
     if (['string', 'number', 'boolean'].includes(typeof template.value)) {
@@ -294,7 +260,6 @@ export const replacePlaceholdersInString = (
           .replaceAll('{_data.', '')
           .replaceAll('{formData.', '')
           .replaceAll('{treeviews.', '')
-
           .replaceAll('}', '')
         continue
       }

@@ -203,14 +203,7 @@ export const useAppController = (
         appState,
         [],
         properties,
-        attributes,
-        treeViewElement,
-        treeViewElementId,
-        undefined,
-        undefined,
-        undefined, // icons
-        undefined,
-        undefined
+        treeViewElement
       )
       const transformer = transformers.find(
         (trans) => trans.element_id === treeViewElementId

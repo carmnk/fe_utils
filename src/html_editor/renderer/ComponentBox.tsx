@@ -37,24 +37,6 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     // rootCompositeElementId,
   } = props
 
-  // console.debug(
-  //   'COMPONENT ELEMENTS',
-  //   editorState.elements.filter(
-  //     (el) =>
-  //       (el.element_type !== 'composite' &&
-  //         el.component_id === element.component_id) ||
-  //       (el.component_id === element.ref_component_id &&
-  //         element?.ref_component_id &&
-  //         element.component_id &&
-  //         (el?.element_type !== 'composite' ||
-  //           (el.element_type === 'composite' &&
-  //             el.component_id !== el.ref_component_id)) &&
-  //         !el?.parent_id)
-  //   ),
-  //   'component_id',
-  //   element?.ref_component_id ?? element?.component_id ?? undefined,
-  //   isProduction
-  // )
   const renderedComponentElements = useMemo(
     () =>
       renderElements({
@@ -64,7 +46,6 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
               el.component_id === element.component_id) ||
             (el.component_id === element.ref_component_id &&
               element?.ref_component_id &&
-              element.component_id &&
               (el?.element_type !== 'composite' ||
                 (el.element_type === 'composite' &&
                   el.component_id !== el.ref_component_id)) &&
@@ -103,9 +84,11 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     ]
   )
   return (
-    <Box position="relative" onLoadStart={() => {}}>
+    <Box position="relative">
       {renderedComponentElements}
-      {OverlayComponent && <OverlayComponent element={element} />}
+      {OverlayComponent && !isProduction && (
+        <OverlayComponent element={element} />
+      )}
     </Box>
   )
 }

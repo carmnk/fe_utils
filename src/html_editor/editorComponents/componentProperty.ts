@@ -6,6 +6,7 @@ import {
   Element,
 } from '../editorRendererController'
 import { NavigateFunction } from 'react-router-dom'
+import { ExtendedTheme } from '../theme/muiTheme'
 
 export type CommonComponentPropertys = {
   appController: AppController
@@ -30,4 +31,6 @@ export type NavContainerComponentPropertys = CommonComponentPropertys & {
   uiActions?: any
   items: any[]
   navigationElementId: string
+  parentId: string
+  theme: ExtendedTheme
 }

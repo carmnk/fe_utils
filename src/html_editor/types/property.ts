@@ -6,4 +6,5 @@ export type Property = {
   project_id: string
   prop_id: string
   component_id: string | null
+  action_ids?: string[]
 }

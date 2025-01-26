@@ -9,12 +9,10 @@ import { GenericOptionsType } from '../table/types'
 const requiredFieldText = 'This field is required'
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
+const paperProps = {
+  sx: {
+    maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    width: 250,
   },
 }
 export type CMultiAutocompleteProps = AutocompleteProps<
@@ -123,7 +121,6 @@ export const MultiAutocomplete = (props: MultiAutocompleteProps) => {
       multiple: true,
       value: (value ?? '') as unknown as CMultiAutocompleteProps['value'],
       onChange: handleChange as unknown as CMultiAutocompleteProps['onChange'],
-      error: !!error,
       size: 'small',
       disabled,
       renderTags: (
@@ -137,6 +134,7 @@ export const MultiAutocomplete = (props: MultiAutocompleteProps) => {
             <Tooltip
               title={options?.find((opt) => opt.value === option)?.label}
               disableInteractive
+              key={index}
             >
               <Chip
                 key={key}
@@ -155,17 +153,26 @@ export const MultiAutocomplete = (props: MultiAutocompleteProps) => {
         width: '100%',
         ...(props?.sx ?? {}),
       },
-      inputProps: {
-        title: name,
-        name: name,
-        placeholder: placeholder,
-      },
+
       renderInput: (params: TextFieldProps) => (
-        <TextField {...params} variant="outlined" />
+        <TextField
+          {...params}
+          variant="outlined"
+          error={!!error}
+          inputProps={{
+            title: name,
+            name: name,
+            placeholder: placeholder,
+            ...(params?.inputProps ?? {}),
+          }}
+        />
       ),
       options: (options as unknown as CMultiAutocompleteProps['options']) ?? [],
-      displayEmpty: true,
-      MenuProps,
+      // MenuProps,
+      slotProps: {
+        paper: paperProps,
+        ...props?.slotProps,
+      },
       defaultValue:
         props?.defaultValue as CMultiAutocompleteProps['defaultValue'],
     }
@@ -180,6 +187,7 @@ export const MultiAutocomplete = (props: MultiAutocompleteProps) => {
     props.sx,
     rest,
     props?.defaultValue,
+    props?.slotProps,
   ])
 
   return (

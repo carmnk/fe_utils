@@ -52,7 +52,9 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
     rootCompositeElementId,
   } = props
 
-  const isOverheadHtmlElement = ['html', 'head', 'body'].includes(element.element_type)
+  const isOverheadHtmlElement = ['html', 'head', 'body'].includes(
+    element.element_type
+  )
   const elementRef = useRef<HTMLDivElement>(null)
 
   const elementAttributsDict = useMemo(
@@ -77,12 +79,8 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
                     appController.state,
                     editorState.composite_component_props,
                     editorState.properties,
-                    editorState.attributes,
                     element,
-                    element?.element_id,
-                    rootCompositeElementId,
-                    undefined,
-                    undefined // icons
+                    rootCompositeElementId
                   )
                 : valueRaw &&
                     typeof valueRaw === 'object' &&
@@ -100,12 +98,8 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
                               appController.state,
                               editorState.composite_component_props,
                               editorState.properties,
-                              editorState.attributes,
                               element,
-                              element?.element_id,
-                              rootCompositeElementId,
-                              undefined,
-                              undefined // icons
+                              rootCompositeElementId
                             )
                           : valueRawSingle
 
@@ -135,35 +129,6 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
       rootCompositeElementId,
     ]
   )
-  // if (
-  //   element?.element_type === 'composite' ||
-  //   element?.element_type === 'svg' ||
-  //   element?.element_type === 'polygon' ||
-  //   element?.component_id
-  // ) {
-  //   console.debug(
-  //     'elementAttributsDict',
-  //     element.element_id,
-  //     element?.element_type,
-  //     element?.component_id,
-  //     elementAttributsDict,
-  //     editorState.attributes.filter(
-  //       (attr) =>
-  //         (attr.element_id === element.element_id && element?.element_id) ||
-  //         (attr.component_id === element.component_id && element.component_id)
-  //     ),
-  //     'attrsRaw',
-  //     editorState.attributes.filter((attr) => {
-  //       return (
-  //         attr.element_id === element.element_id &&
-  //         element?.element_id &&
-  //         attr.attr_name === 'style'
-  //       )
-  //     }),
-  //     'children',
-  //     children
-  //   )
-  // }
   const className = elementAttributsDict?.className as string
 
   const stylesFromClasses = useMemo(
@@ -213,12 +178,8 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
               appController.state,
               editorState.composite_component_props,
               editorState.properties,
-              editorState.attributes,
               element,
-              element?.element_id,
-              rootCompositeElementId,
-              undefined,
-              undefined // icons
+              rootCompositeElementId
             ) as string)
           : valueRaw
       if (value) {
@@ -344,7 +305,9 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
       ),
     [elementAttributsDict, editorState.assets.images]
   )
-  const prodFilenameExtension = prodImageAsset?.asset_filename?.split('.')?.pop()
+  const prodFilenameExtension = prodImageAsset?.asset_filename
+    ?.split('.')
+    ?.pop()
   const imageSrc =
     isProduction && !isPointerProduction && elementAttributsDict?.src
       ? // this will only work for gh pages with project in subfolder (rel. to root)!!!

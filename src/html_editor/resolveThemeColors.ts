@@ -53,13 +53,6 @@ export const resolveThemeTypographyThemeColors = (
     )
   })
 
-  console.log(
-    'resolveThemeTypographyThemeColors 0 - themesin',
-    themeId,
-    typographyColorsWithTheme,
-    themeTypographys
-  )
-
   const palette = newPalette
   const typography = newTypography
 
@@ -70,26 +63,13 @@ export const resolveThemeTypographyThemeColors = (
   const adjPartialTypography = typographyColorsWithThemeKeys.reduce(
     (acc, key) => {
       const variant = typography[key as keyof typeof typography]
-      console.log(
-        'resolveThemeTypographyThemeColors -1 - variant',
-        key,
-        variant,
-        typographyColorsWithThemeKeys
-      )
       if (!variant) {
         return acc
       }
       const themeTypographyDb = typographyColorsWithTheme.find?.(
         (tt) => tt.theme_id === themeId && tt.name === key
       )
-      console.log('resolveThemeTypographyThemeColors OK -2 - variant')
       if (!themeTypographyDb) {
-        console.log(
-          'resolveThemeTypographyThemeColors -2 - variant',
-          key,
-          themeTypographyDb,
-          typographyColorsWithThemeKeys
-        )
         return acc
       }
       const fullColor = themeTypographyDb?.font_color

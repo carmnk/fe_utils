@@ -41,7 +41,6 @@ export const useEditorRendererController = (
     selectedPageElements,
     getSelectedImage,
     ELEMENT_MODELS,
-    getRecursiveChildren,
     selectedElementAttributes,
   } = useShortcuts({ editorState, customComponents: injections?.components })
 
@@ -72,12 +71,7 @@ export const useEditorRendererController = (
                 appController.state,
                 editorState.composite_component_props,
                 editorState.properties,
-                editorState.attributes,
-                selectedElement,
-                selectedElement?.element_id ?? null,
-                undefined,
-                undefined,
-                undefined // icons
+                selectedElement
               )
             : valueRaw
         const valueAdj = typeof value === 'string' ? value : value?.toString?.()
@@ -104,7 +98,6 @@ export const useEditorRendererController = (
       appController,
       setEditorState,
       getSelectedImage,
-      getRecursiveChildren,
       getStyleAttributesDictByElementId,
       selectedElementAttributes,
       selectedElementAttributesResolved,
@@ -119,7 +112,6 @@ export const useEditorRendererController = (
     appController,
     setEditorState,
     getSelectedImage,
-    getRecursiveChildren,
     getStyleAttributesDictByElementId,
     selectedElementAttributes,
     selectedElementAttributesResolved,

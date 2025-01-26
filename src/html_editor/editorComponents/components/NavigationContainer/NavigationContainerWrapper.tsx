@@ -35,6 +35,8 @@ export const NavContainerWrapper = (
     baseComponentId,
     uiActions,
     rootCompositeElementId,
+    theme: t_,
+    parentId,
 
     ...rest
   } = props

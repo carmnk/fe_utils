@@ -27,14 +27,6 @@ const replacePlaceholders = (
       // currently a number placeholder can only be replaced alone
       break
     }
-    if (debug) {
-      console.debug(
-        'replacePlaceholders' + debug,
-        key,
-        placeholders[key],
-        result
-      )
-    }
   }
   if (debug) {
     console.debug('replacePlaceholders out' + debug, result, placeholders)

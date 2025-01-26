@@ -1,25 +1,9 @@
 import { useMemo, useCallback } from 'react'
 import { getStylesFromClasses } from '../renderer/classes/getStylesFromClasses'
 import { getInitialStyles } from '../utils'
-import { EditorStateType, Element } from '../types'
+import { EditorStateType } from '../types'
 import { baseComponents } from '../editorComponents/baseComponents'
 import { ComponentDefType } from '../editorComponents'
-
-const getRecursiveChildren = (
-  allElements: Element[],
-  parentId: string
-): Element[] => {
-  const children = allElements.filter((el) => el.parent_id === parentId)
-  return children
-    .map(
-      (child) =>
-        child.element_id
-          ? [child, ...getRecursiveChildren(allElements, child.element_id)]
-          : (null as unknown as Element) // filter later
-    )
-    .filter((val) => val)
-    .flat()
-}
 
 export const useShortcuts = (params: {
   editorState: EditorStateType
@@ -45,7 +29,9 @@ export const useShortcuts = (params: {
 
   const selectedElement = useMemo(() => {
     const id = editorState?.ui.selected.element
-    return currentViewportElements?.find((el) => el.element_id === id && id) ?? null
+    return (
+      currentViewportElements?.find((el) => el.element_id === id && id) ?? null
+    )
   }, [editorState.ui.selected.element, currentViewportElements])
 
   const selectedPageElements = useMemo(() => {
@@ -164,7 +150,6 @@ export const useShortcuts = (params: {
       selectedElementStyleAttributes,
       getSelectedImage,
       ELEMENT_MODELS,
-      getRecursiveChildren,
       getStyleAttributesDictByElementId,
       imageSrcOptions,
       faviconSrcOptions,

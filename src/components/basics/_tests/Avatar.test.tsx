@@ -52,7 +52,6 @@ describe('Avatar', () => {
         })
       )
     })
-    console.debug(avt)
     const tooltip = await findByText(testTooltip)
     expect(tooltip).toBeInTheDocument()
   })
