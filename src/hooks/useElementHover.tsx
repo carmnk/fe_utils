@@ -17,7 +17,7 @@ export const useElementHover = (params: UseElementHoverParams) => {
     setIsHovering(false)
   }, [])
 
-  const nodeRef = useRef<HTMLElement>()
+  const nodeRef = useRef<HTMLElement>(undefined)
 
   const callbackRef = useCallback(
     (node: HTMLElement) => {

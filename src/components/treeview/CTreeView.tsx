@@ -5,7 +5,7 @@ import Icon from '@mdi/react'
 import { StyledTreeItem, StyledTreeItemProps } from './CTreeItem'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback, useEffect, ReactNode } from 'react'
 
 declare module 'react' {
   interface CSSProperties {
@@ -31,7 +31,7 @@ const recursiveMap = (
   disableBorderLeft?: boolean,
   toggleExpand?: (id: string) => void,
   parentId?: string
-): JSX.Element[] => {
+): ReactNode[] => {
   const relevantElements = parentId
     ? items?.filter((el) => el._parentId === parentId)
     : items?.filter((el) => !el._parentId)

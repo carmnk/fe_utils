@@ -90,7 +90,7 @@ export const FileUploader = (props: FileUploaderProps) => {
   const { ref: HiddenInputRef } = getInputProps<
     DropzoneInputProps & { ref: { current: HTMLInputElement } }
   >()
-  const uploadFileIdx = useRef<undefined | number>()
+  const uploadFileIdx = useRef<undefined | number>(undefined)
 
   const errorBorderStyle = {
     border: '1px solid ' + theme.palette.error.main,
