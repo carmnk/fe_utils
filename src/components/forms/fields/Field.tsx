@@ -19,6 +19,10 @@ type InputFieldLayoutProps = {
     | { xs: Width12; sm?: Width12; md?: Width12; lg?: Width12; xl?: Width12 }
   fillWidth?: boolean
   _prop_type?: string
+  form?: {
+    defaultValue?: unknown
+    showInArrayList?: boolean
+  }
 }
 type ArrayInputFieldProps = {
   type: 'array'
@@ -230,9 +234,7 @@ export const Field = (props: FieldProps) => {
       value={
         useChangeCompleted
           ? innerValue
-          : (formData?.[field?.name ?? ''] ??
-            (field as any)?.form?.defaultValue ??
-            '')
+          : (formData?.[field?.name ?? ''] ?? field?.form?.defaultValue ?? '')
       }
       onChange={
         useChangeCompleted &&

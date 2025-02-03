@@ -1,4 +1,9 @@
-import { ChangeEvent, KeyboardEvent, MouseEvent } from 'react'
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  MouseEvent,
+  useImperativeHandle,
+} from 'react'
 import { forwardRef, useCallback } from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Popover, Stack } from '@mui/material'
@@ -30,7 +35,7 @@ export interface FilteredTableHeaderCellProps
 }
 
 export const FilteredTableHeaderCell = forwardRef(
-  (props: FilteredTableHeaderCellProps, ref: unknown) => {
+  (props: FilteredTableHeaderCellProps, ref) => {
     const {
       onOpen,
       onClose,
@@ -53,9 +58,13 @@ export const FilteredTableHeaderCell = forwardRef(
       disableTableHeader,
     } = props
 
+    const anchor = useRef(null)
     const [searchValue, setSearchValue] = useState('')
     const initialFilters = useRef(selectedFilter)
     const initialAllFilters = useRef(filters)
+
+    useImperativeHandle(ref, () => anchor.current)
+
     const filteredOptions = useMemo(() => {
       return !searchValue
         ? filterOptions
@@ -118,8 +127,6 @@ export const FilteredTableHeaderCell = forwardRef(
       initialAllFilters.current = filters
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]) // only when open changes!
-
-    const anchor = useRef(null)
 
     const handleToggleOpen = useCallback(() => {
       if (isFilterLocked) return

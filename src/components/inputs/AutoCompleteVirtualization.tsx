@@ -9,7 +9,13 @@ const OuterElementContext = createContext({})
 
 function renderRow(props: ListChildComponentProps) {
   const { data, index, style } = props
-  const dataSet = data[index] as any // [Record<string, any>, any, string]
+  const dataSet = data[index] as {
+    value: string
+    label: string
+    textLabel: string
+    group: string
+    key: string
+  }
   const inlineStyle = {
     ...style,
     top: (style.top as number) + LISTBOX_PADDING,
@@ -23,7 +29,8 @@ function renderRow(props: ListChildComponentProps) {
       </ListSubheader>
     )
   }
-  const { key, ...optionProps } = dataSet[0]
+  // TODO: BUG ?
+  const { key, ...optionProps } = (dataSet as any)[0]
 
   return (
     <Typography
@@ -33,7 +40,7 @@ function renderRow(props: ListChildComponentProps) {
       noWrap
       style={inlineStyle}
     >
-      {dataSet?.[1]?.value || ''}
+      {(dataSet as any)?.[1]?.value || ''}
     </Typography>
   )
 }

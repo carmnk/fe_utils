@@ -1,6 +1,5 @@
 import { ExtendedTheme } from '../../../theme/muiTheme'
 import { SerializedThemeType } from '../../../types/serializedTheme'
-import { v4 as uuid } from 'uuid'
 import { serializeTheme } from './serializeTheme'
 
 export const serializeThemes = (

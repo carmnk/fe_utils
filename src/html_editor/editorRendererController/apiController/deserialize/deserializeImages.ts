@@ -6,7 +6,7 @@ export const deserializeImages = (
   project_id: string
 ): Image[] => {
   const imagesOut = imagesIn?.map?.((image) => ({
-    image: null as any,
+    image: null as unknown as Image['image'],
     src: '',
     project_id: project_id,
     ...(editorStateImages?.find?.((img) => img.asset_id === image.asset_id) ??

@@ -12,6 +12,7 @@ export const AppBarWrapper = (props: AppBarWrapperProps) => {
     rootInjection,
     position,
     sx,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     appController,
     editorStateUi,
     isProduction,

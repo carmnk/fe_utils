@@ -5,8 +5,6 @@ import { replacePlaceholdersInString } from '../renderer'
 import { EditorRendererControllerType } from '../types/editorRendererController'
 
 export type EditorControllerAppStateParams = {
-  // editorState: EditorStateType
-  // setEditorState: Dispatch<SetStateAction<EditorStateType>>
   properties: EditorStateType['properties']
   attributes: EditorStateType['attributes']
   transformers: EditorStateType['transformers']
@@ -16,7 +14,7 @@ export type EditorControllerAppStateParams = {
 export const useAppController = (
   params: EditorControllerAppStateParams
 ): AppController => {
-  const { properties, attributes, currentViewportElements, transformers } =
+  const { properties, currentViewportElements, transformers } =
     params
 
   const [appState, setAppState] = useState<AppState>({

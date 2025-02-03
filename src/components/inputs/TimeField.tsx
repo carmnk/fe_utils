@@ -10,7 +10,7 @@ import { CTextField, CTextFieldProps } from './TextField'
 import { TimeField, TimeFieldProps } from '@mui/x-date-pickers/TimeField'
 import { TextFieldProps } from '@mui/material'
 import { FieldChangeHandler } from '@mui/x-date-pickers/internals'
-import { TimeValidationError } from '@mui/x-date-pickers'
+import type { TimeValidationError } from '@mui/x-date-pickers/models'
 
 export type CTimeFieldProps = Omit<GenericInputFieldProps<'time'>, 'value'> &
   TimeFieldProps<Moment> &
@@ -122,6 +122,7 @@ export const CTimeField = (props: CTimeFieldProps) => {
           icon={mdiCalendar}
           variant="text"
           {...props}
+          loading={!!props?.loading as boolean}
           color={props.color === 'default' ? undefined : props.color}
         />
       ),

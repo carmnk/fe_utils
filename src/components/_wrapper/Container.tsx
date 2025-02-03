@@ -4,7 +4,7 @@ import {
   ContainerProps,
   styled,
 } from '@mui/material'
-import { CSSProperties } from 'react'
+import { CSSProperties, FC } from 'react'
 
 export type CContainerProps = ContainerProps &
   Partial<
@@ -57,4 +57,4 @@ export const Container = styled((props: CContainerProps) => {
     position,
     zIndex,
   })
-)
+) as FC<ContainerProps>

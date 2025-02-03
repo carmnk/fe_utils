@@ -5,7 +5,10 @@ export const serializeFont = (font: Font, project_id: string): Font => {
     project_id,
     family: font.family,
     category: font.category,
-    lastmodified: font?.lastmodified ?? (font as any)?.lastModified ?? null,
+    lastmodified:
+      font?.lastmodified ??
+      (font as unknown as { lastModified: string })?.lastModified ??
+      null,
     version: font.version,
     font_id: font.font_id,
   }

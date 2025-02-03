@@ -39,7 +39,14 @@ export type Ui = {
     activeMenu: LeftMenuGlobalTabs
     activeTab: LeftMenuTabs | null
     activeBackendTab: LeftMenuBackendTabs | null
-    expandedTreeItems: string[] // -> only elements!
+    expanded: {
+      elements: string[]
+      components: string[]
+      templates: string[]
+      images: string[]
+      state: string[]
+      externalApis: string[]
+    }
     // dont sync rest yet
     selectedTheme: string | null // change?
     isDragging: boolean

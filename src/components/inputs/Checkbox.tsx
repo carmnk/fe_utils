@@ -57,8 +57,10 @@ export const Checkbox = (props: CheckboxProps) => {
     color,
     slotProps,
     disableHelperText,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     disableLabel,
     onChangeCompleted,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     error,
     ...restCheckBoxProps
   } = props

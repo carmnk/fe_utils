@@ -1,5 +1,5 @@
-import Box, { BoxProps } from '@mui/material/Box'
-import { styled } from '@mui/material'
+import { BoxProps, styled, Box } from '@mui/material'
+import { FC } from 'react'
 
 export type GridProps = Omit<BoxProps, 'display'>
 
@@ -11,7 +11,9 @@ export const Grid = styled((props: BoxProps) => {
     children,
     ...restProps
   } = props
-  return <Box {...restProps}>{children}</Box>
-})<GridProps>({
-  display: 'grid',
-})
+  return (
+    <Box {...restProps} display="grid">
+      {children}
+    </Box>
+  )
+})() as FC<BoxProps>

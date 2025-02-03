@@ -52,6 +52,7 @@ export interface FilteredTableHeaderCellProps<
   isFilterLocked?: boolean
   renderFilterKey?: (key: string, value: unknown) => string
   selectedFilters?: string[]
+  style?: BoxProps['sx']
 }
 export type TableColumnType<
   TableDataType = Record<string, unknown>,

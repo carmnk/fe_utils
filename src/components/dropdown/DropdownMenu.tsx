@@ -1,12 +1,12 @@
 import { Menu, MenuProps, PaperProps } from '@mui/material'
 import { DropDownMenuItemProps, DropdownMenuItem } from './DropdownMenuItem'
-import { PropsWithChildren, useMemo } from 'react'
+import { MouseEvent, PropsWithChildren, useMemo } from 'react'
 
 export type DropdownMenuProps = Omit<MenuProps, 'slotProps'> & {
   id?: string
   anchorEl: HTMLElement | null
   open: boolean
-  onClose: (e?: unknown) => void
+  onClose: (e?: MouseEvent) => void
   items?: DropDownMenuItemProps[] // Dropdown menu items - precendence over children (but children can by any ReactNode, though consider the <DropwdownMenu/> css styles)
   slotProps?: Omit<MenuProps['slotProps'], 'paper'> & {
     transitionContainer?: MenuProps['TransitionProps']

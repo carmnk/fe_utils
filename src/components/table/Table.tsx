@@ -13,6 +13,7 @@ import {
   useCallback,
   Fragment,
   ReactNode,
+  CSSProperties,
 } from 'react'
 import { Flex } from '../_wrapper'
 
@@ -225,7 +226,7 @@ export const Table = (props: TableProps) => {
                             <Box
                               component="td"
                               key={cIdx}
-                              style={(col as any).style}
+                              style={col?.style as CSSProperties}
                             >
                               {(row[col?.renderCell] ||
                                 row[col?.renderCell] === false) &&

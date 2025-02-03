@@ -2,14 +2,14 @@ import { defaultEditorState } from '../defaultEditorState'
 import { EditorStateType } from '../../types'
 import { EditorStateDbDataType } from './editorDbStateType'
 import { ComponentDefType } from '../../editorComponents'
-import { deserializeAttributes } from './utils/deserializeAttributes'
-import { deserializeProperties } from './utils/deserializeProperties'
-import { deserializeElements } from './utils/deserializeElements'
-import { deserializeServerExternalApis } from './utils/deserializeServerExternalApis'
-import { deserializeImages } from './utils/deserializeImages'
-import { deserializeProject } from './utils/deserializeProject'
-import { deserializeTheme } from './utils/deserializeTheme'
-import { deserializeThemeTypographys } from './utils/deserializeThemeTypographys'
+import { deserializeAttributes } from './deserialize/deserializeAttributes'
+import { deserializeProperties } from './deserialize/deserializeProperties'
+import { deserializeElements } from './deserialize/deserializeElements'
+import { deserializeServerExternalApis } from './deserialize/deserializeServerExternalApis'
+import { deserializeImages } from './deserialize/deserializeImages'
+import { deserializeProject } from './deserialize/deserializeProject'
+import { deserializeTheme } from './deserialize/deserializeTheme'
+import { deserializeThemeTypographys } from './deserialize/deserializeThemeTypographys'
 
 export const deserializeEditorState = (
   data: EditorStateDbDataType,
@@ -33,16 +33,12 @@ export const deserializeEditorState = (
     componentsIn
   )
 
+  // ony editorstate.theme will be non-serialized theme
   const themes =
     disableThemeReload || !data.themes?.length
       ? currentEditorState.themes
       : data.themes
-  // ony editorstate.theme will be non-serialized theme
-  // : deserializeTheme(
-  //     data.themes,
-  //     currentEditorState?.themes,
-  //     data.theme_typographys
-  //   )
+
   const externalApis = deserializeServerExternalApis(
     data?.externalApis,
     data?.endpoints,

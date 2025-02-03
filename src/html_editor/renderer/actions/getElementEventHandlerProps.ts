@@ -70,9 +70,14 @@ export const getElementEventHandlerProps = (
     }
   })()
 
-  const eventHandlerProps = componentEventNames?.reduce<
-    Record<string, ((...fnParams: unknown[]) => void) | undefined>
-  >((acc, currentEventName: string) => {
+  const eventHandlerProps = componentEventNames?.reduce<{
+    [key: string]:
+      | ((...fnParams: unknown[]) => void)
+      | ((newFormData: Record<string, unknown>) => void)
+      | Record<string, unknown>
+      | undefined
+    onChangeFormData?: (newFormData: Record<string, unknown>) => void
+  }>((acc, currentEventName: string) => {
     const eventProps = getPropByName(currentEventName)
     if (!eventProps) return acc
     return {
@@ -115,10 +120,10 @@ export const getElementEventHandlerProps = (
     baseComponent.renderType === 'form'
   ) {
     eventHandlerProps.formData =
-      (getPropByName('formData') as any) ??
-      (appController.actions.getFormData(element.element_id) as any)
+      (getPropByName('formData') as Record<string, unknown>) ??
+      appController.actions.getFormData(element.element_id)
     eventHandlerProps.onChangeFormData = eventHandlerProps?.onChangeFormData
-      ? (((newFormData: Record<string, unknown>) =>
+      ? (newFormData: Record<string, unknown>) =>
           createAppAction?.({
             element,
             eventName: 'onChangeFormData',
@@ -129,7 +134,7 @@ export const getElementEventHandlerProps = (
             icons,
             navigate,
             isProduction,
-          })?.(null, newFormData)) as any)
+          })?.(null, newFormData)
       : (
           newFormData: Record<string, unknown>
           // propertyKey: string,

@@ -1,7 +1,15 @@
 import { mdiChevronDown, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js'
 import { styled, Box, Stack, Typography, useTheme, alpha } from '@mui/material'
 import { TreeItemProps, TreeItem, treeItemClasses } from '@mui/x-tree-view'
-import { ReactNode, forwardRef } from 'react'
+import {
+  ForwardedRef,
+  KeyboardEvent,
+  MouseEvent,
+  PointerEvent,
+  ReactNode,
+  forwardRef,
+  useImperativeHandle,
+} from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
 import { DropdownMenu } from '../dropdown/DropdownMenu'
@@ -71,7 +79,7 @@ const StyledTreeItemRoot = styled(TreeItem)<TreeItemProps & { nodeId: string }>(
         color: 'inherit',
       },
     },
-    [`& .${treeItemClasses.group}`]: {
+    [`& .${treeItemClasses.groupTransition}`]: {
       marginLeft: 0,
       paddingLeft: 8,
       [`& .${treeItemClasses.content}`]: {
@@ -82,11 +90,11 @@ const StyledTreeItemRoot = styled(TreeItem)<TreeItemProps & { nodeId: string }>(
       marginLeft: '16px !important',
     },
   })
-) as any
+)
 
 export const StyledTreeItem = forwardRef(function StyledTreeItem(
   props: StyledTreeItemProps,
-  ref: unknown
+  ref?: ForwardedRef<HTMLElement>
 ) {
   const theme = useTheme()
   const {
@@ -103,6 +111,8 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
     useDraggable: doUseDraggable,
     actions,
     toggleExpand,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    children: _c,
     ...other
   } = props
 
@@ -122,6 +132,15 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
     disabled: !!transform,
     data: props,
   })
+  const itemRef = useRef<HTMLElement | null>(null)
+  const handleSetNodeRef = useCallback(
+    (element: HTMLElement | null) => {
+      setNodeRef(element)
+      itemRef.current = element
+    },
+    [setNodeRef]
+  )
+  useImperativeHandle(ref, () => itemRef.current as HTMLElement)
 
   const moreActionsButtonRef = useRef<HTMLButtonElement>(null)
   const [ui, setUi] = useState({ moreActionsOpen: false })
@@ -148,7 +167,7 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
     ]
   )
 
-  const handleMoreActionsClick = useCallback((e: any) => {
+  const handleMoreActionsClick = useCallback((e?: MouseEvent) => {
     e?.stopPropagation?.()
     setUi((current) => ({
       ...current,
@@ -156,17 +175,24 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
     }))
   }, [])
 
-  const stopPropagation = useCallback((e: any) => e.stopPropagation(), [])
-  const stopPropagationPreventDefault = useCallback((e: any) => {
-    e.stopPropagation()
-    e.preventDefault()
-  }, [])
+  const stopPropagation = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (e: any) => e.stopPropagation(),
+    []
+  )
+  const stopPropagationPreventDefault = useCallback(
+    (e: PointerEvent<HTMLButtonElement> & KeyboardEvent<HTMLButtonElement>) => {
+      e.stopPropagation()
+      e.preventDefault()
+    },
+    []
+  )
 
   const preventTreeItemClickWhenDraggin = useMemo(
     () =>
       isDragActive
         ? {
-            onClick: (e: any) => {
+            onClick: (e: MouseEvent) => {
               e.stopPropagation()
               e.preventDefault()
             },
@@ -191,27 +217,29 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
       <StyledTreeItemRoot
         {...attributes}
         {...listeners}
-        collapseIcon={
-          <Button
-            iconButton={true}
-            icon={mdiChevronDown}
-            variant="text"
-            onPointerDown={stopPropagationPreventDefault}
-            onKeyDown={stopPropagationPreventDefault}
-            onClick={() => toggleExpand?.(nodeId as string)}
-          />
-        }
-        expandIcon={
-          <Button
-            iconButton={true}
-            icon={mdiChevronRight}
-            variant="text"
-            onPointerDown={stopPropagation}
-            onKeyDown={stopPropagation}
-            onClick={() => toggleExpand?.(nodeId as string)}
-          />
-        }
-        ref={setNodeRef}
+        slots={{
+          collapseIcon: () => (
+            <Button
+              iconButton={true}
+              icon={mdiChevronDown}
+              variant="text"
+              onPointerDown={stopPropagationPreventDefault}
+              onKeyDown={stopPropagationPreventDefault}
+              onClick={() => toggleExpand?.(nodeId as string)}
+            />
+          ),
+          expandIcon: () => (
+            <Button
+              iconButton={true}
+              icon={mdiChevronRight}
+              variant="text"
+              onPointerDown={stopPropagationPreventDefault}
+              onKeyDown={stopPropagationPreventDefault}
+              onClick={() => toggleExpand?.(nodeId as string)}
+            />
+          ),
+        }}
+        ref={handleSetNodeRef}
         nodeId={nodeId as string}
         label={
           <Box
@@ -236,6 +264,7 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
               alignItems="center"
             >
               <Box
+                component="div"
                 color="inherit"
                 sx={{
                   mr: 1,
@@ -311,14 +340,16 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
         }
         style={styleProps}
         {...other}
-      />
+      >
+        {/* {children} */}
+      </StyledTreeItemRoot>
       <DropdownMenu
         // usePortal={true}
         anchorEl={moreActionsButtonRef.current}
         open={ui?.moreActionsOpen}
         // onPointerDown={stopPropagation}
         // onKeyDown={stopPropagation}
-        onClose={handleMoreActionsClick}
+        onClose={() => handleMoreActionsClick()}
       >
         {additionalActionsInt?.map((action, aIdx) => (
           <DropdownMenuItem
@@ -328,7 +359,7 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
             icon={action.icon}
             onPointerDown={stopPropagation}
             onKeyDown={stopPropagation}
-            onClick={(e: any) => {
+            onClick={(e: MouseEvent) => {
               e.stopPropagation()
               action.action(nodeId, e)
               handleMoreActionsClick(e)

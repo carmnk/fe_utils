@@ -10,13 +10,15 @@ export const TypographyWrapper = (props: TypographyWrapperProps) => {
   const {
     children,
     rootInjection,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     appController,
     editorStateUi,
     id,
     isProduction,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     ...rest
   } = props
-  
+
   return (
     <Typography {...rest}>
       {children}

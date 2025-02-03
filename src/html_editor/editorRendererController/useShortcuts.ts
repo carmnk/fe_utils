@@ -1,9 +1,6 @@
-import { useMemo, useCallback } from 'react'
-import { getStylesFromClasses } from '../renderer/classes/getStylesFromClasses'
-import { getInitialStyles } from '../utils'
+import { useMemo } from 'react'
 import { EditorStateType } from '../types'
-import { baseComponents } from '../editorComponents/baseComponents'
-import { ComponentDefType } from '../editorComponents'
+import { ComponentDefType, baseComponents } from '../editorComponents'
 
 export const useShortcuts = (params: {
   editorState: EditorStateType
@@ -43,129 +40,23 @@ export const useShortcuts = (params: {
     )
   }, [editorState.ui.selected.page, currentViewportElements])
 
-  const getStyleAttributesDictByElementId = useCallback(
-    (elementId: string) => {
-      const elementAttributes = editorState.attributes.filter(
-        (attr) => attr.element_id === elementId
-      )
-      const elementAttributesDict = elementAttributes.reduce<
-        Record<string, unknown>
-      >((acc, attr) => {
-        return {
-          ...acc,
-          [attr.attr_name]: attr.attr_value,
-        }
-      }, {})
-      return {
-        ...getInitialStyles(),
-        // ...getStylesFromClasses(className ?? '', editorState?.cssSelectors),
-        ...(elementAttributesDict?.style ?? {}),
-      }
-    },
-    [editorState.attributes]
-  )
-
-  const selectedElementStyleAttributes = useMemo(() => {
-    const elementAttributes = editorState.attributes.filter(
-      (attr) => attr.element_id === editorState.ui.selected.element
-    )
-    const elementAttributesDict = elementAttributes.reduce<
-      Record<string, unknown>
-    >((acc, attr) => {
-      return {
-        ...acc,
-        [attr.attr_name]: attr.attr_value,
-      }
-    }, {})
-    const className = elementAttributesDict?.className as string | undefined
-    return {
-      ...getInitialStyles(),
-      ...getStylesFromClasses(className ?? '', editorState?.cssSelectors),
-      ...(elementAttributesDict?.style ?? {}),
-    }
-  }, [
-    editorState.cssSelectors,
-    editorState.ui.selected.element,
-    editorState.attributes,
-  ])
-
-  const selectedElementAttributes = useMemo(() => {
-    const elementAttributes = editorState.attributes.filter(
-      (attr) => attr.element_id === editorState.ui.selected.element
-    )
-    const elementAttributesDict = elementAttributes.reduce<
-      Record<string, unknown>
-    >((acc, attr) => {
-      return {
-        ...acc,
-        [attr.attr_name]: attr.attr_value,
-      }
-    }, {})
-
-    return elementAttributesDict
-  }, [editorState.ui.selected.element, editorState.attributes])
-
-  const getSelectedImage = useCallback(
-    (imageId?: string) => {
-      const selectedImageId = imageId ?? editorState.ui.selected.image
-      const selectedImage =
-        editorState.assets.images.find(
-          (image) => image.asset_id === selectedImageId
-        ) ?? null
-      return { ...selectedImage, imageSrcId: imageId ?? '' }
-    },
-    [editorState?.assets.images, editorState.ui.selected.image]
-  )
-
   const ELEMENT_MODELS = useMemo(
     () => [...baseComponents, ...(customComponents ?? [])],
     [customComponents]
   )
 
-  const imageSrcOptions = useMemo(() => {
-    return editorState.assets.images?.map((image) => ({
-      ...image,
-      value: image.asset_id,
-      label: image?.asset_filename ?? '',
-      src: image?.src,
-    }))
-  }, [editorState?.assets?.images])
-
-  const faviconSrcOptions = useMemo(() => {
-    return editorState.assets.images
-      ?.filter((img) => img.type === 'favicons')
-      ?.map?.((image) => ({
-        ...image,
-        value: image.asset_id,
-        label: image?.asset_filename ?? '',
-        src: image?.src,
-      }))
-  }, [editorState?.assets?.images])
-
   const shortcuts = useMemo(() => {
     return {
       currentViewportElements,
-      selectedElement,
       selectedPageElements,
-      selectedElementStyleAttributes,
-      getSelectedImage,
+      selectedElement,
       ELEMENT_MODELS,
-      getStyleAttributesDictByElementId,
-      imageSrcOptions,
-      faviconSrcOptions,
-      selectedElementAttributes,
     }
   }, [
-    selectedElementAttributes,
     currentViewportElements,
     selectedElement,
     selectedPageElements,
-    selectedElementStyleAttributes,
-    getSelectedImage,
     ELEMENT_MODELS,
-    getStyleAttributesDictByElementId,
-    imageSrcOptions,
-    faviconSrcOptions,
   ])
 
   return shortcuts

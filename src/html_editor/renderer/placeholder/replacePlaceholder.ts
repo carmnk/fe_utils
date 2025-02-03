@@ -215,7 +215,7 @@ export const replacePlaceholdersInString = (
     return templatesOut
   }
 
-  let newText = text
+  let newText: string | object = text
   const templates = typeof text === 'string' ? getTemplates(text) : []
 
   const undefinedPlaceholders = []
@@ -245,7 +245,7 @@ export const replacePlaceholdersInString = (
         const value = getDeepPropertyByPath(template.value, path)
         console.debug('PATH', template, path, value)
         if (value && typeof value === 'object') {
-          newText = value as any
+          newText = value
           break
         }
         newText = newText
@@ -288,13 +288,17 @@ export const replacePlaceholdersInString = (
       (newText === text || typeof newText !== 'string') && !forceEval,
       forceEval
     )
-    if (newText?.match?.(REGEX_RESOLUTION_FAILED)) {
+    if (
+      typeof newText === 'string' &&
+      newText.match?.(REGEX_RESOLUTION_FAILED)
+    ) {
       console.warn('Resolution failed', newText, text, templates)
       return newText
     }
     // this will though prevent calculations without placeholders
     const evalText =
-      (newText === text || typeof newText !== 'string') && !forceEval
+      ((newText === text || typeof newText !== 'string') && !forceEval) ||
+      typeof newText === 'object'
         ? newText
         : eval(newText)
     console.debug('AFTER EVAL', evalText)

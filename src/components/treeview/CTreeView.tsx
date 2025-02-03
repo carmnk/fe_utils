@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { TreeView } from '@mui/x-tree-view/TreeView'
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView'
 import Icon from '@mdi/react'
 import { StyledTreeItem, StyledTreeItemProps } from './CTreeItem'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
@@ -36,7 +36,7 @@ const recursiveMap = (
     ? items?.filter((el) => el._parentId === parentId)
     : items?.filter((el) => !el._parentId)
   return (
-    relevantElements?.map?.(({ icon, ...item }) => {
+    relevantElements?.map?.(({ labelIcon, ...item }) => {
       const additionalActions =
         typeof events?.additionalActions === 'function'
           ? events?.additionalActions(item)
@@ -53,7 +53,13 @@ const recursiveMap = (
         <StyledTreeItem
           key={item.nodeId}
           {...props}
-          icon={typeof icon === 'string' ? <Icon path={icon} size={1} /> : icon}
+          labelIcon={
+            typeof labelIcon === 'string' ? (
+              <Icon path={labelIcon} size={1} />
+            ) : (
+              labelIcon
+            )
+          }
           disableBorderLeft={disableBorderLeft}
           additionalActions={additionalActions}
           actions={actions}
@@ -96,7 +102,7 @@ export type CTreeViewProps = {
   onDragging?: (event: any, active: boolean, draggedItem: any) => void
   expandedItems?: string[]
   defaultExpanded?: string[]
-  onToggleExpand?: (id: string, e: any) => void
+  onToggleExpand?: (id: string, e?: any) => void
   enableNullSelection?: boolean
   disableItemsFocusable?: boolean
   maxWidth?: number
@@ -246,15 +252,15 @@ export const CTreeView = (props: CTreeViewProps) => {
         onDragEnd={handleDragEnd}
         // sensors={sensors}
       >
-        <TreeView
+        <SimpleTreeView
           ref={treeViewRef}
-          defaultExpanded={defaultExpanded}
+          defaultExpandedItems={defaultExpanded}
           disabledItemsFocusable={disableItemsFocusable}
           aria-label="tree-view"
-          expanded={expandedItems as any}
-          onNodeSelect={(e, value) => {
+          expandedItems={expandedItems as any}
+          onSelectedItemsChange={(e, value) => {
             if (!onToggleSelect) return
-            onToggleSelect?.(value, e)
+            onToggleSelect?.(value as string, e)
             // treeViewRef.current.focus()
           }}
           // onNodeToggle={(e, value) => {
@@ -271,7 +277,7 @@ export const CTreeView = (props: CTreeViewProps) => {
           //     onToggleExpand(t, e);
           //   });
           // }}
-          selected={selectedItems?.[0]}
+          selectedItems={selectedItems?.[0]}
           // multiSelect={true}
 
           sx={{
@@ -292,7 +298,7 @@ export const CTreeView = (props: CTreeViewProps) => {
               handleExpandNode
             )
           )}
-        </TreeView>
+        </SimpleTreeView>
 
         <DragOverlay modifiers={[restrictToVerticalAxis]}>
           {overlay && <StyledTreeItem key="overlay" {...overlay} />}

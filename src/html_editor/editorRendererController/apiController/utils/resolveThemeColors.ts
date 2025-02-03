@@ -1,5 +1,6 @@
-import { Theme } from '@mui/material'
-import { EditorStateType } from './editorRendererController'
+import { Palette, PaletteColor } from '@mui/material'
+import { EditorStateType } from '../..'
+import { Typography } from '@mui/material/styles/createTypography'
 
 const muiPaletteColors = [
   'primary.main',
@@ -39,11 +40,12 @@ const muiPaletteColors = [
   'action.focus',
 ]
 
+/** unused */
 export const resolveThemeTypographyThemeColors = (
   themeTypographys: EditorStateType['theme_typographys'],
   themeId: string,
-  newPalette: any,
-  newTypography: any
+  newPalette: Palette,
+  newTypography: Typography
   // themeIn: any
 ) => {
   const typographyColorsWithTheme = themeTypographys.filter?.((tt) => {
@@ -88,7 +90,9 @@ export const resolveThemeTypographyThemeColors = (
         if (!colorObj || typeof colorObj !== 'object') {
           return { ...acc, [key]: variant }
         }
-        const adjColor = (colorObj as any)[subvariant]
+        const adjColor = (colorObj as PaletteColor)[
+          subvariant as keyof PaletteColor
+        ]
         const typographyWithAdjColor = {
           ...(variant as Record<string, unknown>),
           color: adjColor,
@@ -104,7 +108,7 @@ export const resolveThemeTypographyThemeColors = (
 
 export const resolveTypographyThemeColors = (
   fullColor: string,
-  palette: { [key in keyof Theme['palette']]: Theme['palette']['primary'] }
+  palette: Palette
 ) => {
   if (!fullColor) return null
   if (!palette) return null
@@ -112,7 +116,9 @@ export const resolveTypographyThemeColors = (
     const [color, subvariant] = fullColor.split('.')
     const colorObj = palette[color as keyof typeof palette]
     if (!colorObj || typeof colorObj !== 'object') return null
-    const adjColor = (colorObj as any)[subvariant] as string
+    const adjColor = (colorObj as PaletteColor)[
+      subvariant as keyof PaletteColor
+    ]
     return adjColor
   }
   return null

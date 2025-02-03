@@ -1,5 +1,5 @@
 import { muiLightSiteTheme } from '../theme/muiTheme'
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import { UI_POINTER_MODE } from '../defs/uiPointerMode'
 import { v4 as uuid } from 'uuid'
 import { LeftMenuGlobalTabs } from '../defs/LeftMenuGlobalTabs'
@@ -105,11 +105,18 @@ export const defaultEditorState = (): EditorStateType => {
       navigationMenu: {
         width: 320,
         activeMenu: LeftMenuGlobalTabs.App,
-        expandedTreeItems: [],
         activeTab: null,
         selectedTheme: null,
         activeBackendTab: LeftMenuBackendTabs.SERVER,
         isDragging: false,
+        expanded: {
+          elements: [],
+          components: [],
+          templates: [],
+          images: [],
+          state: [],
+          externalApis: [],
+        },
       },
     },
     fonts: [],

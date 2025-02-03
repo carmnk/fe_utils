@@ -1,12 +1,12 @@
-import { EditorStateType } from '../../types'
+import { EditorStateType, Image } from '../../types'
 import { EditorStateDbDataType } from './editorDbStateType'
-import { serializeAttributes } from './utils/serializeAttributes'
-import { serializeProperties } from './utils/serializeProperties'
-import { serializeElements } from './utils/serializeElements'
-import { serializeImages } from './utils/serializeImages'
-import { serializeProject } from './utils/serializeProject'
-import { serializeExternalApis } from './utils/serializeExternalApis'
-import { serializeFonts } from './utils/serializeFonts'
+import { serializeAttributes } from './serialize/serializeAttributes'
+import { serializeProperties } from './serialize/serializeProperties'
+import { serializeElements } from './serialize/serializeElements'
+import { serializeImages } from './serialize/serializeImages'
+import { serializeProject } from './serialize/serializeProject'
+import { serializeExternalApis } from './serialize/serializeExternalApis'
+import { serializeFonts } from './serialize/serializeFonts'
 
 export const serializeEditorState = (
   payload: EditorStateType
@@ -50,7 +50,7 @@ export const serializeEditorState = (
 
     attributes,
     cssSelectors: [],
-    images,
+    images: images as Image[],
     // imageFiles,
     themes,
     externalApis,

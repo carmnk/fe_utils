@@ -1,6 +1,6 @@
 export type Image = {
   asset_id: string
-  image?: typeof Image
+  image: typeof Image
   src?: string
   asset_filename: string
   project_id: string

@@ -264,7 +264,7 @@ export const propertyFormFactory = (
       if (!addedProp.includes('&')) {
         return newFormData
       }
-      const newSxValueAdj = { ...changedValue }
+      const newSxValueAdj = { ...(changedValue as any) }
       newSxValueAdj[addedProp] = {}
       return { ...newFormData, sx: newSxValueAdj }
     },
@@ -351,9 +351,10 @@ export const propertyFormFactory = (
               undefined,
               eventKeysDict
             ),
+            fields: [],
           },
         },
-      } as any)
+      } as GenericFormProps['subforms'])
     : {}
   const arraySubforms = arrays?.reduce(
     (acc, cur) => ({

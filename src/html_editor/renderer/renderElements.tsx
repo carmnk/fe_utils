@@ -7,7 +7,7 @@ import {
   checkForPlaceholders,
   replacePlaceholdersInString,
 } from './placeholder/replacePlaceholder'
-import { FC, ReactNode } from 'react'
+import { FC, PropsWithChildren, ReactNode } from 'react'
 import { getInjectedElementIconProps } from './icons/getInjectedElementIconProps'
 import { NavigateFunction } from 'react-router-dom'
 import { resolveElementProps } from './placeholder/resolveElementProps'
@@ -37,7 +37,7 @@ export const renderElements = (params: {
   disableOverlay?: boolean
   rootCompositeElementId?: string
   OverlayComponent?: FC<{ element: Element }>
-  debug?: unknown
+  // debug?: unknown
   navigate: NavigateFunction
 }): ReactNode => {
   const {
@@ -59,7 +59,6 @@ export const renderElements = (params: {
     rootCompositeElementId,
     OverlayComponent,
     navigate,
-    debug,
   } = params
 
   const relevantElements = (
@@ -96,7 +95,9 @@ export const renderElements = (params: {
         'component' in baseComponent &&
         baseComponent.component) ||
       Box
-    const CurrentComponent = CurrentComponentIn as FC<any> | undefined
+    const CurrentComponent = CurrentComponentIn as
+      | FC<PropsWithChildren<Record<string, unknown>>>
+      | undefined
 
     // icon injections
     const injectedIconProps = getInjectedElementIconProps({
@@ -158,7 +159,6 @@ export const renderElements = (params: {
           rootCompositeElementId,
           OverlayComponent,
           navigate,
-          debug: true,
         })
       : []
 
@@ -203,7 +203,11 @@ export const renderElements = (params: {
         isPointerProduction={isPointerProduction}
         OverlayComponent={OverlayComponent}
         navigate={navigate}
-        events={eventHandlerProps}
+        events={
+          eventHandlerProps as {
+            [key: string]: ((...fnParams: unknown[]) => void) | undefined
+          }
+        }
         rootCompositeElementId={rootCompositeElementId}
       >
         {rootInjectionOverlayComponent}
@@ -265,7 +269,7 @@ export const renderElements = (params: {
         key={element.element_id}
       >
         {renderedElementChildren}
-        {elementPropsObject?.children}
+        {elementPropsObject?.children as ReactNode}
         {/* these dont have the rootInjection interface yet */}
         {['Paper', 'Dialog', 'AppBar'].includes(element.element_type) &&
           !isProduction &&

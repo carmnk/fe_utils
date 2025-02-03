@@ -242,8 +242,6 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
     appController.state,
     editorState.composite_component_props,
     editorState.properties,
-    // selectedElement,
-    editorState.attributes,
     rootCompositeElementId,
   ])
 

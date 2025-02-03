@@ -4,7 +4,7 @@ import { ClickAwayListener, TypographyProps, Chip } from '@mui/material'
 import { ChangeEvent, KeyboardEvent, ReactNode } from 'react'
 import { memo, useCallback, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
-import { CAutoComplete, CAutoCompleteProps } from './AutoComplete'
+import { CAutoComplete, CAutoCompleteProps, DefaultGenericValueType } from './AutoComplete'
 import {
   GenericInputField,
   type GGenericInputFieldProps,
@@ -49,7 +49,7 @@ export type ClickTextFieldProps<T extends InputFieldType = InputFieldType> =
     variant?: T
     fieldProps?: GGenericInputFieldProps<T>
   } & (T extends 'autocomplete' | 'select' | 'multiselect'
-      ? { options: { value: string; label: string }[] }
+      ? { options: DefaultGenericValueType[] }
       : object)
 
 export const ClickTextFieldComponent = <
@@ -119,7 +119,7 @@ export const ClickTextFieldComponent = <
   )
 
   const handleOnKeyUp = useCallback(
-    (e?: KeyboardEvent<HTMLInputElement>) => {
+    (e?: KeyboardEvent<HTMLDivElement>) => {
       if (variant === 'textarea') return
       if (e?.key === 'Enter') {
         handleTakeover()
@@ -199,22 +199,24 @@ export const ClickTextFieldComponent = <
             />
           ) : (
             <GenericInputField
-              type={variant ?? 'text'}
               placeholder={placeholder}
               size="small"
-              onChange={(
-                newValue: string | number,
-                e: ChangeEvent<HTMLInputElement>
-              ) => {
-                handleChangeTempValue(e)
-              }}
-              value={ui?.tempValue ?? ''}
               onKeyUp={handleOnKeyUp}
               helperText={inputHelperText}
               disableLabel // ?
               disableHelperText={!inputHelperText}
               error={inputError}
-              {...(fieldProps as any)}
+              type={(variant as 'text') ?? 'text'}
+              onChange={(
+                newValue: string | number,
+                e?: ChangeEvent<HTMLInputElement>
+              ): void => {
+                handleChangeTempValue(e)
+              }}
+              value={ui?.tempValue ?? ''}
+              // {...(fieldProps as unknown as GGenericInputFieldProps<
+              //   typeof variant
+              // >)}
             />
           )}
         </Box>

@@ -1,5 +1,5 @@
 import { Box, Theme, ThemeProvider } from '@mui/material'
-import { SetStateAction, Dispatch, FC, memo } from 'react'
+import { SetStateAction, Dispatch, FC, memo, ReactNode } from 'react'
 import { useEffect, useMemo, useCallback } from 'react'
 import { renderElements } from './renderElements'
 import { useMdiIcons } from './icons/useMdiIcons'
@@ -28,8 +28,8 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   isInHelpMode?: boolean
   isInHelpModeSelected?: boolean
   id?: string
-  injectElementAtEnd?: React.ReactNode
-  injectElementInContainerStart?: React.ReactNode
+  injectElementAtEnd?: ReactNode
+  injectElementInContainerStart?: ReactNode
   importIconByName: (name: string) => Promise<string>
   hoveredElementSide: string | null
   dragging: unknown

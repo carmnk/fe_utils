@@ -1,4 +1,6 @@
-import { isObject, transform, isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
+import transform from 'lodash/transform'
+import isObject from 'lodash/isObject'
 
 export function getDeepDifference(
   object: Record<string, unknown>,

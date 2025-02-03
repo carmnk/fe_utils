@@ -247,11 +247,7 @@ export const FileUploader = (props: FileUploaderProps) => {
                 textAlign={'center'}
                 sx={{ cursor: 'pointer' }}
               >
-                {'filename' in file
-                  ? file.filename
-                  : 'file' in file
-                    ? (file as any).file?.name
-                    : ''}
+                {'filename' in file ? file.filename : ''}
               </Typography>
             </Box>
 

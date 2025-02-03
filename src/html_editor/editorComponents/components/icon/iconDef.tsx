@@ -3,8 +3,9 @@ import { propertyFormFactory } from '../../propertiesFormFactory'
 import { IconPropsSchema } from './iconPropsRawSchema'
 import { ComponentDefType } from '../../componentDefType'
 import { IconComponentWrapper } from './IconComponentWrapper'
+import { IconComponentWrapperProps } from './IconComponentWrapper'
 
-export const IconComponentDef: ComponentDefType = {
+export const IconComponentDef: ComponentDefType<IconComponentWrapperProps> = {
   type: 'Icon' as const,
   props: {
     size: '1rem',

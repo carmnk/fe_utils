@@ -6,16 +6,16 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker'
 import { DesktopDatePickerProps } from '@mui/x-date-pickers/DesktopDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { GenericInputFieldProps } from './types'
-import { Button } from '../buttons'
+import { Button, CButtonProps } from '../buttons'
 import { mdiCalendar } from '@mdi/js'
 import { CTextField, CTextFieldProps } from './TextField'
-import { isEqual } from 'lodash'
-import { ButtonProps, TextFieldProps } from '@mui/material'
+import isEqual from 'lodash/isEqual'
+import { TextFieldProps } from '@mui/material'
 
 type MDatePickerExTextfieldProps = Omit<
   DesktopDatePickerProps<Moment>,
   keyof CTextFieldProps
->
+> & { slots?: DesktopDatePickerProps<Moment>['slots'] }
 
 export type DatePickerProps = GenericInputFieldProps<'date'> & {
   datePickerProps?: MDatePickerExTextfieldProps
@@ -26,8 +26,6 @@ export type DatePickerProps = GenericInputFieldProps<'date'> & {
       CTextFieldProps['slotProps']
     outputFormat?: 'ISO_UTC'
   }
-
-// const datePickerProps = []
 
 export const DatePicker = (props: DatePickerProps) => {
   const {
@@ -106,7 +104,7 @@ export const DatePicker = (props: DatePickerProps) => {
           iconButton
           icon={mdiCalendar}
           variant="text"
-          {...(props as ButtonProps)}
+          {...(props as CButtonProps)}
         />
       ),
       textField: (propsFromDateField: TextFieldProps) => {
@@ -190,7 +188,7 @@ export const DatePicker = (props: DatePickerProps) => {
       helperText,
       label,
       name,
-      datePickerProps?.slots,
+      datePickerProps,
       slotProps,
       required,
       sx,

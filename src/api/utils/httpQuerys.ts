@@ -11,6 +11,7 @@ export enum QUERY_METHOD {
   DELETE = 'DELETE',
   GET_FILE = 'GET_FILE', // GET with responseType: 'blob'
   POST_GET_FILE = 'POST_GET_FILE', // POST with responseType: 'blob'
+  PATCH = 'PATCH',
 }
 
 /** initial timeouts per method */
@@ -21,6 +22,7 @@ enum QUERY_TIMEOUT {
   GET_FILE = 1000 * 60 * 5,
   PUT = 1000 * 60 * 2,
   DELETE = 1000 * 60 * 2,
+  PATCH = 1000 * 60 * 2,
 }
 
 /** Unknown Query Payload */
@@ -104,7 +106,9 @@ const makeAxiosQueryConfig = <PayloadType>(
         ? 'put'
         : methodLower.includes('delete')
           ? 'delete'
-          : 'get'
+          : methodLower.includes('patch')
+            ? 'patch'
+            : 'get'
 
   const axiosQueryConfig: AxiosRequestConfig = {
     timeout: QUERY_TIMEOUT[method],

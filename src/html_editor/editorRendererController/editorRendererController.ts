@@ -3,8 +3,8 @@ import { defaultEditorState } from './defaultEditorState'
 import { useAppController } from './appController'
 import { useShortcuts } from './useShortcuts'
 import { EditorStateType } from '../types'
-import { replacePlaceholdersInString } from '../renderer'
 import { ComponentDefType } from '../editorComponents'
+import { EditorRendererControllerType } from '../types/editorRendererController'
 
 export type EditorRendererControllerParams = {
   initialEditorState?: Pick<
@@ -24,7 +24,7 @@ export type EditorRendererControllerParams = {
 
 export const useEditorRendererController = (
   params?: EditorRendererControllerParams
-) => {
+): EditorRendererControllerType => {
   // load initial state if provided
   const { initialEditorState, injections } = params ?? {}
   const initialEditorStateAdj = {
@@ -36,12 +36,8 @@ export const useEditorRendererController = (
   const {
     currentViewportElements,
     selectedElement,
-    selectedElementStyleAttributes,
-    getStyleAttributesDictByElementId,
     selectedPageElements,
-    getSelectedImage,
     ELEMENT_MODELS,
-    selectedElementAttributes,
   } = useShortcuts({ editorState, customComponents: injections?.components })
 
   const appController = useAppController({
@@ -51,70 +47,24 @@ export const useEditorRendererController = (
     attributes: editorState.attributes,
   })
 
-  // needs appcontroller for placeholders
-  const selectedElementAttributesResolved = useMemo(() => {
-    const elementAttributes = editorState.attributes.filter(
-      (attr) => attr.element_id === editorState.ui.selected.element
-    )
-    const elementAttributesDict =
-      elementAttributes.reduce<Record<string, string>>((acc, attr) => {
-        const key = attr.attr_name
-        if (key === 'style') {
-          return acc
-        }
-        const valueRaw = attr.attr_value as string
-        const regex = /{(.*?)}/
-        const value =
-          typeof valueRaw === 'string' && valueRaw.match(regex)
-            ? replacePlaceholdersInString(
-                valueRaw,
-                appController.state,
-                editorState.composite_component_props,
-                editorState.properties,
-                selectedElement
-              )
-            : valueRaw
-        const valueAdj = typeof value === 'string' ? value : value?.toString?.()
-        return { ...acc, [key]: valueAdj }
-      }, {}) ?? {}
-    return elementAttributesDict
-  }, [
-    editorState.ui.selected.element,
-    editorState.attributes,
-    appController.state,
-    editorState.composite_component_props,
-    editorState.properties,
-    selectedElement,
-  ])
-
   const rendererController = useMemo(() => {
     return {
       selectedElement,
       selectedPageElements,
-      selectedElementStyleAttributes,
       currentViewportElements,
-      ELEMENT_MODELS,
       editorState,
       appController,
       setEditorState,
-      getSelectedImage,
-      getStyleAttributesDictByElementId,
-      selectedElementAttributes,
-      selectedElementAttributesResolved,
+      ELEMENT_MODELS: ELEMENT_MODELS as ComponentDefType[],
     }
   }, [
     selectedElement,
     selectedPageElements,
-    selectedElementStyleAttributes,
     currentViewportElements,
-    ELEMENT_MODELS,
     editorState,
     appController,
     setEditorState,
-    getSelectedImage,
-    getStyleAttributesDictByElementId,
-    selectedElementAttributes,
-    selectedElementAttributesResolved,
+    ELEMENT_MODELS,
   ])
   return rendererController
 }

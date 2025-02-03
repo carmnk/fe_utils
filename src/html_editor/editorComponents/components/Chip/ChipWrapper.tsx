@@ -9,8 +9,16 @@ export type CChipProps = ChipProps & {
 } & CommonComponentPropertys
 
 export const CChip = (props: CChipProps) => {
-  const { children, appController, editorStateUi, id, isProduction, ...rest } =
-    props
+  const {
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    children,
+    appController,
+    editorStateUi,
+    id,
+    isProduction,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    ...rest
+  } = props
   return (
     <Chip
       {...rest}

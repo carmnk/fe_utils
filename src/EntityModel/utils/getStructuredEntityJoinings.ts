@@ -1,4 +1,4 @@
-import { uniqBy } from 'lodash'
+import uniqBy from 'lodash/uniqBy'
 import { EntityFieldType } from '../entitiy_fields'
 import { ENRICHED_ENTITY_JOININGS_MODEL_TYPE } from '../entityDataModel'
 import { enrichEntityJoiningsWithPath } from '..'

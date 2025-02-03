@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   FormEventHandler,
+  ForwardedRef,
   KeyboardEventHandler,
   forwardRef,
 } from 'react'
@@ -73,158 +74,160 @@ const errorTextStyle = {
   fontWeight: 700,
 }
 
-export const Select = forwardRef((props: CSelectProps, ref: any) => {
-  const {
-    disableTopPadding,
-    value,
-    onChange,
-    options,
-    error,
-    disabled,
-    required,
-    label,
-    disableHelperText,
-    disableLabel,
-    labelSx,
-    name,
-    locked,
-    helperText,
-    // disableHelperTextTheming,
-    size,
-    slotProps,
-    ...rest
-  } = props
-  const isDisabledAdj = disabled || locked
-
-  const {
-    inputCombobox,
-    inputContainer,
-    input: inputProps,
-    selectDisplay,
-    menu: menuProps,
-    rootContainer,
-    formHelperText,
-    label: typography,
-    menuItem: menuItemProps,
-  } = slotProps ?? {}
-
-  const theme = useTheme()
-
-  const formHelperTextStyles = useMemo(() => {
-    return {
-      // ...(props?.sx ?? {}),
-      ...(error ? errorTextStyle : {}),
-    }
-  }, [ error])
-  const containerPropsAdj = useMemo<Partial<FormControlProps>>(() => {
-    return {
-      ...(rootContainer ?? {}),
-      sx: {
-        width: '100%',
-        minWidth: '220px',
-        ...(rootContainer?.sx ?? {}),
-      },
-    }
-  }, [rootContainer])
-  const labelSxAdj = useMemo(() => {
-    return {
-      pb: 0.5,
-      ...labelSx,
-    }
-  }, [labelSx])
-
-  const muiSelectProps: SelectProps = useMemo(
-    () => ({
-      value: value ?? '',
-      onChange: (e: SelectChangeEvent<unknown>) => {
-        const value = e?.target?.value
-        onChange?.(value as string, e as ChangeEvent<HTMLInputElement>, name)
-      },
-      error: !!error,
-      size: size as SelectProps['size'],
-      disabled: isDisabledAdj,
-      sx: {
-        height: size === 'small' ? 32 : 40,
-        pt: !disableTopPadding ? 1 : 0,
-        width: '100%',
-        fontSize: 14,
-        lineHeight: '16px',
-        ...(props?.sx ?? {}),
-      },
-      fullWidth: true,
-      inputProps: { title: name, name: name, ...inputProps },
-      SelectDisplayProps: selectDisplay,
-      MenuProps: menuProps,
-
-      slotProps: {
-        // ...(slotProps ?? {}),
-        ...(inputCombobox ? { input: inputCombobox } : {}),
-        ...(inputContainer ? { root: inputContainer } : {}),
-      },
-      variant: rest?.variant,
-      defaultValue: rest?.defaultValue,
-      ...rest,
-      onInvalid: rest?.onInvalid as
-        | FormEventHandler<HTMLInputElement | HTMLTextAreaElement>
-        | undefined,
-      margin: rest?.margin as 'none' | 'dense' | undefined,
-      onKeyUp: rest?.onKeyUp as KeyboardEventHandler<HTMLInputElement>,
-      onKeyDown: rest?.onKeyDown as KeyboardEventHandler<HTMLInputElement>,
-    }),
-    [
+export const Select = forwardRef(
+  (props: CSelectProps, ref: ForwardedRef<HTMLInputElement>) => {
+    const {
+      disableTopPadding,
       value,
       onChange,
+      options,
       error,
-      size,
-      isDisabledAdj,
+      disabled,
+      required,
+      label,
+      disableHelperText,
+      disableLabel,
+      labelSx,
       name,
-      inputProps,
-      selectDisplay,
-      menuProps,
+      locked,
+      helperText,
+      // disableHelperTextTheming,
+      size,
+      slotProps,
+      ...rest
+    } = props
+    const isDisabledAdj = disabled || locked
+
+    const {
       inputCombobox,
       inputContainer,
-      disableTopPadding,
-      props?.sx,
-      rest,
-    ]
-  )
+      input: inputProps,
+      selectDisplay,
+      menu: menuProps,
+      rootContainer,
+      formHelperText,
+      label: typography,
+      menuItem: menuItemProps,
+    } = slotProps ?? {}
 
-  return (
-    <FormControl {...containerPropsAdj}>
-      {!disableLabel && (
-        <Typography
-          variant="caption"
-          component="label"
-          style={error ? { color: theme.palette.error.main } : {}}
-          sx={labelSxAdj}
-          {...typography}
-        >
-          {label}
-          {required && (
-            <Box component="strong" sx={errorTextStyle}>
-              {' '}
-              *
-            </Box>
-          )}
-        </Typography>
-      )}
-      <MSelect {...muiSelectProps} ref={ref}>
-        {options?.map((opt, oIdx) => (
-          <MenuItem
-            value={opt?.value as string}
-            key={oIdx}
-            sx={menuItemStyles}
-            {...menuItemProps}
+    const theme = useTheme()
+
+    const formHelperTextStyles = useMemo(() => {
+      return {
+        // ...(props?.sx ?? {}),
+        ...(error ? errorTextStyle : {}),
+      }
+    }, [error])
+    const containerPropsAdj = useMemo<Partial<FormControlProps>>(() => {
+      return {
+        ...(rootContainer ?? {}),
+        sx: {
+          width: '100%',
+          minWidth: '220px',
+          ...(rootContainer?.sx ?? {}),
+        },
+      }
+    }, [rootContainer])
+    const labelSxAdj = useMemo(() => {
+      return {
+        pb: 0.5,
+        ...labelSx,
+      }
+    }, [labelSx])
+
+    const muiSelectProps: SelectProps = useMemo(
+      () => ({
+        value: value ?? '',
+        onChange: (e: SelectChangeEvent<unknown>) => {
+          const value = e?.target?.value
+          onChange?.(value as string, e as ChangeEvent<HTMLInputElement>, name)
+        },
+        error: !!error,
+        size: size as SelectProps['size'],
+        disabled: isDisabledAdj,
+        sx: {
+          height: size === 'small' ? 32 : 40,
+          pt: !disableTopPadding ? 1 : 0,
+          width: '100%',
+          fontSize: 14,
+          lineHeight: '16px',
+          ...(props?.sx ?? {}),
+        },
+        fullWidth: true,
+        inputProps: { title: name, name: name, ...inputProps },
+        SelectDisplayProps: selectDisplay,
+        MenuProps: menuProps,
+
+        slotProps: {
+          // ...(slotProps ?? {}),
+          ...(inputCombobox ? { input: inputCombobox } : {}),
+          ...(inputContainer ? { root: inputContainer } : {}),
+        },
+        variant: rest?.variant,
+        defaultValue: rest?.defaultValue,
+        ...rest,
+        onInvalid: rest?.onInvalid as
+          | FormEventHandler<HTMLInputElement | HTMLTextAreaElement>
+          | undefined,
+        margin: rest?.margin as 'none' | 'dense' | undefined,
+        onKeyUp: rest?.onKeyUp as KeyboardEventHandler<HTMLInputElement>,
+        onKeyDown: rest?.onKeyDown as KeyboardEventHandler<HTMLInputElement>,
+      }),
+      [
+        value,
+        onChange,
+        error,
+        size,
+        isDisabledAdj,
+        name,
+        inputProps,
+        selectDisplay,
+        menuProps,
+        inputCombobox,
+        inputContainer,
+        disableTopPadding,
+        props?.sx,
+        rest,
+      ]
+    )
+
+    return (
+      <FormControl {...containerPropsAdj}>
+        {!disableLabel && (
+          <Typography
+            variant="caption"
+            component="label"
+            style={error ? { color: theme.palette.error.main } : {}}
+            sx={labelSxAdj}
+            {...typography}
           >
-            {opt.label}
-          </MenuItem>
-        ))}
-      </MSelect>
-      {!disableHelperText && (
-        <FormHelperText sx={formHelperTextStyles} {...formHelperText}>
-          {helperText ?? (error ? requiredFieldText : ' ')}
-        </FormHelperText>
-      )}
-    </FormControl>
-  )
-})
+            {label}
+            {required && (
+              <Box component="strong" sx={errorTextStyle}>
+                {' '}
+                *
+              </Box>
+            )}
+          </Typography>
+        )}
+        <MSelect {...muiSelectProps} ref={ref}>
+          {options?.map((opt, oIdx) => (
+            <MenuItem
+              value={opt?.value as string}
+              key={oIdx}
+              sx={menuItemStyles}
+              {...menuItemProps}
+            >
+              {opt.label}
+            </MenuItem>
+          ))}
+        </MSelect>
+        {!disableHelperText && (
+          <FormHelperText sx={formHelperTextStyles} {...formHelperText}>
+            {helperText ?? (error ? requiredFieldText : ' ')}
+          </FormHelperText>
+        )}
+      </FormControl>
+    )
+  }
+)

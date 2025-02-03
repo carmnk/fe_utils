@@ -320,7 +320,7 @@ export const SubformField = (props: SubformFieldProps) => {
           } //?? subforms?.[fieldName]?.injections?.initialFormData ?? {}}
           onChangeFormData={onChangeObjectSub}
           rootFormData={formData}
-          onChangeFormDataRoot={onChangeFormData as any}
+          onChangeFormDataRoot={onChangeFormData}
           _path={[...(_path ?? []), field.name]}
           showError={showError}
           subforms={subform?.subforms}

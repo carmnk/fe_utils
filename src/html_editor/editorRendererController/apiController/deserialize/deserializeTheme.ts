@@ -4,8 +4,8 @@ import { SerializedThemeType } from '../../../types/serializedTheme'
 import { ThemeTypography } from '../../../types/themeTypographys'
 import { CSSProperties } from 'react'
 import { Typography } from '@mui/material/styles/createTypography'
-import { PaletteMode, Theme } from '@mui/material'
-import { resolveTypographyThemeColors } from '../../../resolveThemeColors'
+import { PaletteMode, Theme, Palette } from '@mui/material'
+import { resolveTypographyThemeColors } from '../utils/resolveThemeColors'
 
 export const deserializeThemePalette = (themeIn: SerializedThemeType) => {
   return {
@@ -97,7 +97,7 @@ export const deserializeThemeTypography = (
         if (color) {
           const colorResolved = resolveTypographyThemeColors(
             color,
-            newPalette as any
+            newPalette as Palette
           )
           const colorAdj = colorResolved ?? color
           subTypography.color = colorAdj
@@ -116,11 +116,11 @@ export const deserializeTheme = (
   const themeTypographys =
     theme_typographys?.filter?.((tt) => tt.theme_id === themeIn.id) ?? []
 
-  const newPalette = deserializeThemePalette(themeIn)
+  const newPalette = deserializeThemePalette(themeIn) as Palette
   const newThemeStatic: {
     // name: string
     // id: string
-    palette: any
+    palette: Palette
     typography?: Theme['typography']
   } = {
     palette: newPalette,
@@ -128,7 +128,6 @@ export const deserializeTheme = (
 
   if (themeTypographys.length > 0) {
     newThemeStatic.typography = {
-      // ...currentThemeProps?.typography,
       ...(themeTypographys.reduce((acc, tt) => {
         const name = tt.name
         const fontSize = tt.font_size
@@ -152,10 +151,7 @@ export const deserializeTheme = (
           subTypography.fontFamily = fontFamily
         }
         if (color) {
-          const colorResolved = resolveTypographyThemeColors(
-            color,
-            newPalette as any
-          )
+          const colorResolved = resolveTypographyThemeColors(color, newPalette)
           const colorAdj = colorResolved ?? color
           subTypography.color = colorAdj
         }

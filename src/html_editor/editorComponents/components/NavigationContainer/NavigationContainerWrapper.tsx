@@ -4,7 +4,7 @@ import { renderElements } from '../../../renderer'
 import { PropsWithChildren } from 'react'
 
 export type NavContainerWrapperProps = {
-  items: any[]
+  items: { value: string; childId: string }[]
   navigationElementId: string
 }
 
@@ -15,13 +15,15 @@ export const NavContainerWrapper = (
 ) => {
   const {
     children,
+    editorStateUi,
+    theme: t_,
+    parentId,
+
     appController,
     isProduction,
-    editorStateUi,
     id,
     items,
     navigationElementId,
-    //
     editorState,
     currentViewportElements,
     ELEMENT_MODELS,
@@ -35,9 +37,6 @@ export const NavContainerWrapper = (
     baseComponentId,
     uiActions,
     rootCompositeElementId,
-    theme: t_,
-    parentId,
-
     ...rest
   } = props
 
@@ -64,7 +63,7 @@ export const NavContainerWrapper = (
         : appController?.state?.[sourceControlElementId as string]
     const itemsValue = items
     const activeId = (Array.isArray(itemsValue) ? itemsValue : [])?.find(
-      (item: { value: string; childId: string }) => item.value === activeTab
+      (item) => item.value === activeTab
     )?.childId
     const activeChild = elementChildren?.find?.(
       (child) => child.element_id === activeId
@@ -94,7 +93,6 @@ export const NavContainerWrapper = (
         rootCompositeElementId,
         OverlayComponent,
         navigate,
-        debug: true,
       })
     : []
 

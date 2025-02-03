@@ -1,6 +1,7 @@
 import { mdiDelete, mdiMinus, mdiPlus } from '@mdi/js'
 import { Box, Typography, ClickAwayListener, Tooltip } from '@mui/material'
-import { cloneDeep, isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
+import cloneDeep from 'lodash/cloneDeep'
 import {
   ChangeEvent,
   Dispatch,

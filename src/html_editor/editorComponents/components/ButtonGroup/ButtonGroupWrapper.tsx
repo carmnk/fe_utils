@@ -5,11 +5,19 @@ import { CommonComponentPropertys } from '../../componentProperty'
 export const ButtonGroupWrapper = (
   props: ButtonGroupProps & CommonComponentPropertys
 ) => {
-  const { appController, editorStateUi, isProduction, id, ...rest } = props
+  const {
+    appController,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    editorStateUi,
+    isProduction,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    id,
+    ...rest
+  } = props
 
   const navValueState = (appController?.state?.[id] as string) ?? ''
   const handleChange = useCallback(
-    (tabValue: any) => {
+    (tabValue: string) => {
       appController.actions.updateProperty(id, tabValue)
     },
     [appController, id]

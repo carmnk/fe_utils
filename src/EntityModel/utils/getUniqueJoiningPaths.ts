@@ -1,5 +1,5 @@
 import { ENRICHED_ENTITY_JOININGS_MODEL_TYPE } from '../entityDataModel'
-import { isEqual as isDeepEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
 
 /**
  * @returns all unique paths from base entity to all sub entities sequenced be pathlength descending
@@ -34,7 +34,7 @@ export const getUniquePaths = <
   const preFilteredPaths = sortedPaths?.map((path, pIdx) => {
     const previousJoinings = sortedPaths?.slice(0, pIdx)
     const filteredPath = previousJoinings?.map((pathArr) =>
-      isDeepEqual(pathArr.slice(0, path.length), path) ? null : path
+      isEqual(pathArr.slice(0, path.length), path) ? null : path
     )
     const isDuplicate = !!filteredPath?.includes?.(null)
     const adjFilteredPath = !filteredPath?.length

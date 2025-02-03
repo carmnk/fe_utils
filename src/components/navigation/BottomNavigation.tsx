@@ -8,7 +8,10 @@ import { BottomNavigationProps as MBottomNavigationProps } from '@mui/material'
 import Icon from '@mdi/react'
 import { mdiInformation } from '@mdi/js'
 
-export type CBottomNavigationProps = MBottomNavigationProps & {
+export type CBottomNavigationProps = Omit<
+  MBottomNavigationProps,
+  'onChange'
+> & {
   value: string
   onChange: (value: string) => void
   items: {

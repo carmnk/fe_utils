@@ -18,7 +18,9 @@ type GenerateFormPropsType = {
   optionsDict: GenerateOptionsDictType
   initialFormData: { [key: string]: unknown }
   fields: GenerateFieldProps[]
-  subforms?: { [key: string]: GenericFormProps }
+  subforms?: {
+    [key: string]: Omit<GenericFormProps, 'formData' | 'onChangeFormData'>
+  }
   injections?: {
     options?: Record<string, { label: string; value: unknown }[]>
     disabled?: Record<string, boolean>
@@ -115,7 +117,7 @@ export const NavContainerComponentPropsFormFactory = (prarams: {
       //   },
     },
     subforms: {
-      items: ItemPropsFormFactory(editorState, currentViewportElements) as any,
+      items: ItemPropsFormFactory(editorState, currentViewportElements),
     },
   })
 }
@@ -123,7 +125,7 @@ export const NavContainerComponentPropsFormFactory = (prarams: {
 export const ItemPropsFormFactory = (
   editorState: EditorStateType,
   currentViewportElements: EditorRendererControllerType['currentViewportElements']
-) => {
+): Omit<GenericFormProps, 'formData' | 'onChangeFormData'> => {
   // const tabsValues =
   return {
     fields: [
@@ -195,7 +197,10 @@ export const ItemPropsFormFactory = (
                   { value: true, label: 'true' },
                   { value: false, label: 'false' },
                 ]
-              : controlElementPropsObject?.items
+              : (controlElementPropsObject?.items as {
+                  value: boolean
+                  label: string
+                }[])
 
           return navItemOptions ?? []
         },

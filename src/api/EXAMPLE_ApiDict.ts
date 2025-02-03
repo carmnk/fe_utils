@@ -10,5 +10,4 @@ import { makeApi } from './EXAMPLE_makeAppApiQuery'
 export const API_DICT_EXAMPLE = {
   login: () =>
     makeApi<{ log: string }, { success: true }>('/auth/code', 'POST'),
-  // alibaba: '40 thiefs',
 }

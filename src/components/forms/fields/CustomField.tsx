@@ -6,7 +6,8 @@ export type CustomFieldDefinition<F, P> = {
   type: 'inject'
   name: string
   component: FC<CustomFieldComponentProps<F, P>>
-  params?: P
+  params: P
+  key?: string
 }
 
 /** the properties which are passed to the react component, partly from the generic form */
@@ -15,16 +16,16 @@ export type CustomFieldComponentProps<F, P> = {
   onChangeFormData: (
     newFormData: F,
     changedPropertyName: keyof F & string,
-    changedPropertyValue: any,
+    changedPropertyValue: unknown,
     prevFormData: F
   ) => void
   onBeforeChange?: (
     newFormData: F,
     changedPropertyName: keyof F & string,
-    changedPropertyValue: any,
+    changedPropertyValue: unknown,
     prevFormData: F
   ) => void
-  params?: P
+  params: P
   rootFormData?: any
   onChangeFormDataRoot?: (newFormData: any) => void
   _path?: (string | number)[]
@@ -46,7 +47,6 @@ export const CustomField = <
     onChangeFormData,
     onChangeFormDataRoot,
     _path,
-    // showError,
     onBeforeChange,
     rootFormData,
     field,
@@ -68,7 +68,6 @@ export const CustomField = <
         onChangeFormDataRoot={onChangeFormDataRoot}
         _path={_path}
         onBeforeChange={onBeforeChange}
-        // showError={showError}
         files={files}
         onFileChange={onFileChange}
         field={field}

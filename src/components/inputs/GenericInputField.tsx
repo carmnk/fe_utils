@@ -1,4 +1,8 @@
-import { CAutoComplete, CAutoCompleteProps } from './AutoComplete'
+import {
+  CAutoComplete,
+  CAutoCompleteProps,
+  DefaultGenericValueType,
+} from './AutoComplete'
 import { MultiSelect, MultiSelectProps } from './MultiSelect'
 import { CNumberFieldProps, NumberField } from './NumberField'
 import { CSelectProps } from './Select'
@@ -310,7 +314,7 @@ export const GenericInputField = <
       value={(value as string) ?? ''}
       name={name}
       required={required}
-      options={(options as StringValueOption[]) ?? []}
+      options={(options as DefaultGenericValueType[]) ?? []}
       sx={sxAdj}
       error={error}
       {...rest}

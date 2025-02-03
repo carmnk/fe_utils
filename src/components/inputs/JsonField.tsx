@@ -163,7 +163,9 @@ export const RawJsonField = (props: JsonFieldProps) => {
                       disabled={disabled}
                       name={name}
                       // TODO: bug ?
-                      keysDict={keysDict?.[0] as any} 
+                      keysDict={
+                        keysDict?.[0] as unknown as Record<string, string>
+                      }
                       value={item}
                       _path={newPath}
                       editing={editing}

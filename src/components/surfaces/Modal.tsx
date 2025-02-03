@@ -240,9 +240,9 @@ export const Modal = (props: CModalProps) => {
       </Flex>
       <DialogContent {...dialogContent}>
         {typeof contentComponent === 'string' ? (
-          <DialogContentText component="div" {...dialogContentText}>
+          <Box component="div" {...dialogContentText}>
             {contentComponent}
-          </DialogContentText>
+          </Box>
         ) : (
           contentComponent
         )}

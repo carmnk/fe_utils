@@ -1,8 +1,6 @@
-// import { CSS_RULE_NAMES_DICT_FULL } from '@cmk/fe_utils'
 import { ICON_NAMES } from '../../../defs/iconNames'
 import { PropertyType, ExtendedObjectSchemaType } from '../..'
 
-// raw schema to use until schema can be generated reliably from typescript parser/checker
 export const IconPropsSchema: ExtendedObjectSchemaType = {
   type: PropertyType.Object,
   required: true,
@@ -43,6 +41,6 @@ export const IconPropsSchema: ExtendedObjectSchemaType = {
         defaultValue: {},
       },
       category: 'customize',
-    } as any,
+    },
   },
 }

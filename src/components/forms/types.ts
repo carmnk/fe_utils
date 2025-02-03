@@ -48,7 +48,7 @@ export type GenericFormProps<F extends FormDataType = FormDataType> = {
       newFormData: F,
       prevFormData: F,
       changedPropertyName: keyof F & string,
-      changedPropertyValue: any
+      changedPropertyValue: unknown
     ) => F
     onBeforeRemoveArrayItem?: (
       newFormData: F,
@@ -67,12 +67,18 @@ export type GenericFormProps<F extends FormDataType = FormDataType> = {
   onChangeFormData: (
     newFormData: F,
     changedPropertyName: keyof F & string,
-    changedPropertyValue: any,
+    changedPropertyValue: unknown,
     prevFormData: F,
     subformName?: string // better path?
   ) => void
   rootFormData?: FormDataType
-  onChangeFormDataRoot?: (newFormData: FormDataType) => void
+  onChangeFormDataRoot?: (
+    newFormData: F,
+    changedPropertyName: keyof F & string,
+    changedPropertyValue: unknown,
+    prevFormData: F,
+    subformName?: string // better path?
+  ) => void
 
   files?: { [key: string]: { file: File; filename: string }[] }
   onFileChange?: (name: string, files: File[]) => void

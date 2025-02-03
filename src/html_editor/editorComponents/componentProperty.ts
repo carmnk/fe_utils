@@ -28,8 +28,8 @@ export type NavContainerComponentPropertys = CommonComponentPropertys & {
   onSelectElement: (element: Element, isHovering: boolean) => void
   disableOverlay?: boolean
   baseComponentId?: string
-  uiActions?: any
-  items: any[]
+  uiActions?: unknown
+  items: { value: string; childId: string }[]
   navigationElementId: string
   parentId: string
   theme: ExtendedTheme
