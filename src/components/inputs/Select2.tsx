@@ -1,6 +1,6 @@
 import { ListSubheader, MenuItem, MenuItemProps } from '@mui/material'
 import { CTextField, CTextFieldProps } from './TextField'
-import { ForwardedRef, forwardRef, useMemo } from 'react'
+import { Ref, useMemo } from 'react'
 import uniq from 'lodash/uniq'
 
 type SelectOption = { value: string | number | boolean; label: string }
@@ -12,47 +12,46 @@ export type CSelect2Props = CTextFieldProps & {
   slotProps?: CTextFieldProps['slotProps'] & {
     menuItem?: MenuItemProps
   }
+  ref?: Ref<HTMLInputElement>
 }
 
-export const CSelect2 = forwardRef(
-  (props: CSelect2Props, ref: ForwardedRef<HTMLInputElement>) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { options, endIcon: _e, groupBy, ...rest } = props
-    const menuItemProps = rest?.slotProps?.menuItem
+export const CSelect2 = (props: CSelect2Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { options, endIcon: _e, groupBy, ref, ...rest } = props
+  const menuItemProps = rest?.slotProps?.menuItem
 
-    const optionGroupNames = useMemo(() => {
-      return groupBy ? uniq(options?.map?.((opt) => groupBy(opt)) ?? []) : null
-    }, [groupBy, options])
+  const optionGroupNames = useMemo(() => {
+    return groupBy ? uniq(options?.map?.((opt) => groupBy(opt)) ?? []) : null
+  }, [groupBy, options])
 
-    return (
-      <CTextField {...rest} select ref={ref}>
-        {optionGroupNames?.length && groupBy
-          ? optionGroupNames.map((groupName, gIdx) => [
-              <ListSubheader key={gIdx + '_list_header'}>
-                {groupName}
-              </ListSubheader>,
-              options
-                ?.filter((opt) => groupBy(opt) === groupName)
-                .map((opt, oIdx) => (
-                  <MenuItem
-                    value={opt?.value as string}
-                    {...menuItemProps}
-                    key={oIdx}
-                  >
-                    {opt.label}
-                  </MenuItem>
-                )),
-            ])
-          : options?.map((opt, oIdx) => (
-              <MenuItem
-                value={opt?.value as string}
-                {...menuItemProps}
-                key={oIdx}
-              >
-                {opt.label}
-              </MenuItem>
-            ))}
-      </CTextField>
-    )
-  }
-)
+  return (
+    <CTextField {...rest} select ref={ref}>
+      {optionGroupNames?.length && groupBy
+        ? optionGroupNames.map((groupName, gIdx) => [
+            <ListSubheader key={gIdx + '_list_header'}>
+              {groupName}
+            </ListSubheader>,
+            options
+              ?.filter((opt) => groupBy(opt) === groupName)
+              .map((opt, oIdx) => (
+                <MenuItem
+                  value={opt?.value as string}
+                  {...menuItemProps}
+                  key={oIdx}
+                >
+                  {opt.label}
+                </MenuItem>
+              )),
+          ])
+        : options?.map((opt, oIdx) => (
+            <MenuItem
+              value={opt?.value as string}
+              {...menuItemProps}
+              key={oIdx}
+            >
+              {opt.label}
+            </MenuItem>
+          ))}
+    </CTextField>
+  )
+}

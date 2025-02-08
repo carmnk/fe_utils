@@ -2,7 +2,7 @@ import { mdiListBoxOutline } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { formPropsSchema } from './formPropsRawSchema'
 import { GenericForm } from '../../../../components/forms/GenericForm'
-import { ComponentDefType } from '../../componentDefType'
+import { ElementModel } from '../../componentDefType'
 import { GenericFormProps } from '../../../../components'
 
 export const formEditorComponentDef = {
@@ -57,4 +57,4 @@ export const formEditorComponentDef = {
   category: 'data',
   schema: formPropsSchema,
   renderType: 'form',
-} satisfies ComponentDefType<GenericFormProps>
+} satisfies ElementModel<GenericFormProps>

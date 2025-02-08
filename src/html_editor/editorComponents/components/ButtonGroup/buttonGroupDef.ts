@@ -2,7 +2,7 @@ import { mdiCheckboxMultipleBlank } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ButtonGroupPropsSchema } from './buttonGroupPropsRawSchema'
 import { ButtonGroupProps } from '../../../../components/buttons/ButtonGroup'
-import { ComponentDefType } from '../../componentDefType'
+import { ElementModel } from '../../componentDefType'
 import { ButtonGroupWrapper } from './ButtonGroupWrapper'
 import { CommonComponentPropertys } from '../../componentProperty'
 
@@ -22,4 +22,4 @@ export const buttonGroupEditorComponentDef = {
   component: ButtonGroupWrapper,
   schema: ButtonGroupPropsSchema,
   renderType: 'navigation',
-} satisfies ComponentDefType<ButtonGroupProps & CommonComponentPropertys>
+} satisfies ElementModel<ButtonGroupProps & CommonComponentPropertys>

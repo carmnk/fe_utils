@@ -1,4 +1,4 @@
-import { ComponentDefType } from '../../editorComponents'
+import { ElementModel } from '../../editorComponents'
 import {
   AppController,
   EditorRendererControllerType,
@@ -8,7 +8,6 @@ import { Element, Property } from '../../editorRendererController'
 import { isComponentType } from '../../utils'
 import { createAppAction } from './createAppAction'
 import { htmlEventCategories } from './htmlElementEvents'
-import { NavigateFunction } from 'react-router-dom'
 
 export type GetElementEventHandlersParams = {
   element: Element
@@ -19,7 +18,7 @@ export type GetElementEventHandlersParams = {
   ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   icons?: Record<string, string>
   elementProps: Property[]
-  navigate: NavigateFunction
+  navigate: (to: string) => void
   isProduction?: boolean
 }
 export const getElementEventHandlerProps = (
@@ -44,7 +43,7 @@ export const getElementEventHandlerProps = (
 
   const componentEventNames = (() => {
     if (isReactElement) {
-      const componentDef = element as unknown as ComponentDefType
+      const componentDef = element as unknown as ElementModel
       const fieldsRaw = componentDef?.formGen?.({
         editorState,
         appController,

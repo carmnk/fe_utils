@@ -2,7 +2,7 @@ import { mdiFormatText } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { typographyPropsSchema } from './typographyPropsRawSchema'
 import { TypographyWrapper, TypographyWrapperProps } from './TypographyWrapper'
-import { ComponentDefType } from '../../componentDefType'
+import { ElementModel } from '../../componentDefType'
 import { FC } from 'react'
 
 export const typographyEditorComponentDef = {
@@ -21,4 +21,4 @@ export const typographyEditorComponentDef = {
   category: 'basic',
   component: TypographyWrapper as FC<TypographyWrapperProps>,
   schema: typographyPropsSchema,
-} satisfies ComponentDefType<TypographyWrapperProps>
+} satisfies ElementModel<TypographyWrapperProps>

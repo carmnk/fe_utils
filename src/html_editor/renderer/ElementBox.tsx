@@ -6,7 +6,6 @@ import { getStylesFromClasses } from './classes/getStylesFromClasses'
 import { EditorRendererControllerType } from '../types/editorRendererController'
 import { ComponentBox } from './ComponentBox'
 import { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
-import { NavigateFunction } from 'react-router-dom'
 
 const regexAnyPlaceholder = /{(.*?)}/
 
@@ -24,7 +23,7 @@ export type ElementBoxProps = {
   isProduction?: boolean
   isPointerProduction?: boolean
   OverlayComponent?: FC<{ element: Element }>
-  navigate: NavigateFunction
+  navigate: (to: string) => void
   events: { [key: string]: ((...fnParams: unknown[]) => void) | undefined }
   rootCompositeElementId?: string
 }
@@ -259,7 +258,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
               elementAttributsDict?.href === '/index'
                 ? '/'
                 : elementAttributsDict?.href
-            navigate(href ?? '')
+            navigate((href as string) ?? '')
           }
         },
       }

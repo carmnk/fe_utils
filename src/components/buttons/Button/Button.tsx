@@ -1,6 +1,5 @@
-import { CSSProperties, ForwardedRef, ReactNode } from 'react'
-import { forwardRef, useMemo } from 'react'
-// eslint-disable-next-line no-restricted-imports
+import { CSSProperties, ReactNode, Ref } from 'react'
+import { useMemo } from 'react'
 import {
   useTheme,
   Button as MuiButton,
@@ -50,248 +49,247 @@ export type CButtonProps = Omit<
   }
   borderRadius?: CSSProperties['borderRadius']
   rootInjection?: ReactNode
+  ref?: Ref<HTMLButtonElement>
 }
 
-export const Button = forwardRef(
-  (props: CButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
-    const {
+export const Button = (props: CButtonProps) => {
+  const {
+    icon,
+    variant,
+    label,
+    disableHover,
+    children,
+    endIcon: endIconIn,
+    loading,
+    dropdown,
+    disabled: disabledIn,
+    iconButton,
+    iconSize,
+    color,
+    iconColor,
+    fontColor,
+    disableTabstop,
+    disableInteractiveTooltip,
+    disableTooltipWhenDisabled,
+    slotProps,
+    borderRadius,
+    rootInjection,
+    ref,
+    ...rest
+  } = props
+  const {
+    typography,
+    startIcon,
+    endIcon,
+    loadingIconContainer,
+    loadingProgress,
+    tooltip,
+  } = slotProps ?? {}
+  const theme = useTheme()
+  const disabled = disabledIn || loading
+
+  const startIconComponent = useMemo(
+    () => (
+      <ButtonStartIcon
+        icon={icon}
+        iconColor={iconColor}
+        iconSize={iconSize}
+        disabled={disabled}
+        loading={loading}
+        variant={variant}
+        startIconProps={startIcon}
+        loadingIconContainerProps={loadingIconContainer}
+        loadingProgressProps={loadingProgress}
+        iconButton={iconButton}
+      />
+    ),
+    [
       icon,
-      variant,
-      label,
-      disableHover,
-      children,
-      endIcon: endIconIn,
-      loading,
-      dropdown,
-      disabled: disabledIn,
-      iconButton,
-      iconSize,
-      color,
       iconColor,
-      fontColor,
-      disableTabstop,
-      disableInteractiveTooltip,
-      disableTooltipWhenDisabled,
-      slotProps,
-      borderRadius,
-      rootInjection,
-      ...rest
-    } = props
-    const {
-      typography,
+      iconSize,
+      disabled,
+      loading,
+      variant,
       startIcon,
-      endIcon,
       loadingIconContainer,
       loadingProgress,
-      tooltip,
-    } = slotProps ?? {}
-    const theme = useTheme()
-    const disabled = disabledIn || loading
-
-    const startIconComponent = useMemo(
-      () => (
-        <ButtonStartIcon
-          icon={icon}
-          iconColor={iconColor}
-          iconSize={iconSize}
+      iconButton,
+    ]
+  )
+  const endIconComponent = useMemo(
+    () => ({
+      endIcon: (
+        <ButtonEndIcon
           disabled={disabled}
-          loading={loading}
+          endIcon={endIconIn}
+          iconColor={iconColor}
           variant={variant}
-          startIconProps={startIcon}
-          loadingIconContainerProps={loadingIconContainer}
-          loadingProgressProps={loadingProgress}
-          iconButton={iconButton}
+          dropdown={dropdown}
+          endIconProps={endIcon}
         />
       ),
-      [
-        icon,
-        iconColor,
-        iconSize,
-        disabled,
-        loading,
-        variant,
-        startIcon,
-        loadingIconContainer,
-        loadingProgress,
-        iconButton,
-      ]
-    )
-    const endIconComponent = useMemo(
-      () => ({
-        endIcon: (
-          <ButtonEndIcon
-            disabled={disabled}
-            endIcon={endIconIn}
-            iconColor={iconColor}
-            variant={variant}
-            dropdown={dropdown}
-            endIconProps={endIcon}
-          />
-        ),
-      }),
-      [disabled, endIconIn, iconColor, variant, dropdown, endIcon]
-    )
+    }),
+    [disabled, endIconIn, iconColor, variant, dropdown, endIcon]
+  )
 
-    const buttonStyles = useMemo(
-      () =>
-        makeButtonStyles({
-          theme,
-          variant,
-          disableHover,
-          disabled,
-          icon,
-          iconButton,
-          sx: rest?.sx,
-          dropdown: dropdown,
-          endIcon: endIconIn,
-          borderRadius,
-          fullWidth: props?.fullWidth,
-        }),
-      [
+  const buttonStyles = useMemo(
+    () =>
+      makeButtonStyles({
         theme,
         variant,
         disableHover,
         disabled,
         icon,
         iconButton,
-        rest?.sx,
-        dropdown,
-        endIconIn,
+        sx: rest?.sx,
+        dropdown: dropdown,
+        endIcon: endIconIn,
         borderRadius,
-        props?.fullWidth,
-      ]
-    )
+        fullWidth: props?.fullWidth,
+      }),
+    [
+      theme,
+      variant,
+      disableHover,
+      disabled,
+      icon,
+      iconButton,
+      rest?.sx,
+      dropdown,
+      endIconIn,
+      borderRadius,
+      props?.fullWidth,
+    ]
+  )
 
-    const Button = useMemo(
-      () =>
-        variant === 'outlined' ? (
-          <MuiButton
-            color={color}
-            ref={ref}
-            variant="outlined"
-            disableElevation
-            startIcon={startIconComponent}
-            {...endIconComponent}
-            disabled={disabled}
-            {...rest}
-            tabIndex={disableTabstop ? -1 : 0}
-            sx={buttonStyles}
-          >
-            {!iconButton && (
-              <Typography
-                variant="body2"
-                color={
-                  disabled ? 'action.disabled' : (fontColor ?? 'text.primary')
-                }
-                fontWeight={700}
-                {...typography}
-              >
-                {label ?? children}
-              </Typography>
-            )}
-            {rootInjection}
-          </MuiButton>
-        ) : variant === 'text' ? (
-          <MuiButton
-            color={color}
-            ref={ref}
-            size="small"
-            variant="text"
-            startIcon={startIconComponent}
-            {...endIconComponent}
-            disabled={disabled}
-            {...rest}
-            tabIndex={disableTabstop ? -1 : 0}
-            sx={buttonStyles}
-          >
-            {!iconButton && (
-              <Typography
-                variant="body2"
-                color={
-                  disabled ? 'action.disabled' : (fontColor ?? 'text.primary')
-                }
-                fontWeight={700}
-                {...typography}
-              >
-                {label ?? children}
-              </Typography>
-            )}
-            {rootInjection}
-          </MuiButton>
-        ) : (
-          <MuiButton
-            color={color}
-            ref={ref}
-            variant="contained"
-            disableElevation
-            startIcon={startIconComponent}
-            {...endIconComponent}
-            disabled={disabled}
-            {...rest}
-            tabIndex={disableTabstop ? -1 : 0}
-            sx={buttonStyles}
-          >
-            {!iconButton && (
-              <Typography
-                variant="body2"
-                color={
-                  disabled
-                    ? 'action.disabled'
-                    : (fontColor ?? 'primary.contrastText')
-                }
-                fontWeight={700}
-                {...typography}
-              >
-                {label ?? children}
-              </Typography>
-            )}
-            {rootInjection}
-          </MuiButton>
-        ),
-      [
-        color,
-        disableTabstop,
-        iconButton,
-        children,
-        disabled,
-        endIconComponent,
-        fontColor,
-        label,
-        startIconComponent,
-        variant,
-        buttonStyles,
-        ref,
-        typography,
-        rest, // could be a problem
-        rootInjection,
-      ]
-    )
+  const Button = useMemo(
+    () =>
+      variant === 'outlined' ? (
+        <MuiButton
+          color={color}
+          ref={ref}
+          variant="outlined"
+          disableElevation
+          startIcon={startIconComponent}
+          {...endIconComponent}
+          disabled={disabled}
+          {...rest}
+          tabIndex={disableTabstop ? -1 : 0}
+          sx={buttonStyles}
+        >
+          {!iconButton && (
+            <Typography
+              variant="body2"
+              color={
+                disabled ? 'action.disabled' : (fontColor ?? 'text.primary')
+              }
+              fontWeight={700}
+              {...typography}
+            >
+              {label ?? children}
+            </Typography>
+          )}
+          {rootInjection}
+        </MuiButton>
+      ) : variant === 'text' ? (
+        <MuiButton
+          color={color}
+          ref={ref}
+          size="small"
+          variant="text"
+          startIcon={startIconComponent}
+          {...endIconComponent}
+          disabled={disabled}
+          {...rest}
+          tabIndex={disableTabstop ? -1 : 0}
+          sx={buttonStyles}
+        >
+          {!iconButton && (
+            <Typography
+              variant="body2"
+              color={
+                disabled ? 'action.disabled' : (fontColor ?? 'text.primary')
+              }
+              fontWeight={700}
+              {...typography}
+            >
+              {label ?? children}
+            </Typography>
+          )}
+          {rootInjection}
+        </MuiButton>
+      ) : (
+        <MuiButton
+          color={color}
+          ref={ref}
+          variant="contained"
+          disableElevation
+          startIcon={startIconComponent}
+          {...endIconComponent}
+          disabled={disabled}
+          {...rest}
+          tabIndex={disableTabstop ? -1 : 0}
+          sx={buttonStyles}
+        >
+          {!iconButton && (
+            <Typography
+              variant="body2"
+              color={
+                disabled
+                  ? 'action.disabled'
+                  : (fontColor ?? 'primary.contrastText')
+              }
+              fontWeight={700}
+              {...typography}
+            >
+              {label ?? children}
+            </Typography>
+          )}
+          {rootInjection}
+        </MuiButton>
+      ),
+    [
+      color,
+      disableTabstop,
+      iconButton,
+      children,
+      disabled,
+      endIconComponent,
+      fontColor,
+      label,
+      startIconComponent,
+      variant,
+      buttonStyles,
+      ref,
+      typography,
+      rest, // could be a problem
+      rootInjection,
+    ]
+  )
 
-    const ButtonWithTooltip = useMemo(
-      () =>
-        props.tooltip ? (
-          <Tooltip
-            arrow={true}
-            placement={'top'}
-            title={disableTooltipWhenDisabled && disabled ? '' : props.tooltip}
-            disableInteractive={disableInteractiveTooltip}
-            {...tooltip}
-          >
-            <Box width="max-content">{Button}</Box>
-          </Tooltip>
-        ) : (
-          Button
-        ),
-      [
-        Button,
-        props.tooltip,
-        disableInteractiveTooltip,
-        disabled,
-        disableTooltipWhenDisabled,
-        tooltip,
-      ]
-    )
-    return ButtonWithTooltip
-  }
-)
-Button.displayName = 'Button'
+  const ButtonWithTooltip = useMemo(
+    () =>
+      props.tooltip ? (
+        <Tooltip
+          arrow={true}
+          placement={'top'}
+          title={disableTooltipWhenDisabled && disabled ? '' : props.tooltip}
+          disableInteractive={disableInteractiveTooltip}
+          {...tooltip}
+        >
+          <Box width="max-content">{Button}</Box>
+        </Tooltip>
+      ) : (
+        Button
+      ),
+    [
+      Button,
+      props.tooltip,
+      disableInteractiveTooltip,
+      disabled,
+      disableTooltipWhenDisabled,
+      tooltip,
+    ]
+  )
+  return ButtonWithTooltip
+}

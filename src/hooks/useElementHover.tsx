@@ -4,7 +4,7 @@ export type UseElementHoverParams = {
   disabled?: boolean
 }
 
-export const useElementHover = (params: UseElementHoverParams) => {
+export const useElementHover = (params?: UseElementHoverParams) => {
   const { disabled } = params ?? {}
   const [isHovering, setIsHovering] = useState(false)
 

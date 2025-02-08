@@ -148,7 +148,6 @@ export const Field = (props: FieldProps) => {
     setInnerValue(
       (formData?.[field?.name ?? ''] as string | number | boolean | null) ?? ''
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData?.[field?.name ?? '']])
 
   const handleChange = useCallback(

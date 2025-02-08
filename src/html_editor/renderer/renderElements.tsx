@@ -9,10 +9,9 @@ import {
 } from './placeholder/replacePlaceholder'
 import { FC, PropsWithChildren, ReactNode } from 'react'
 import { getInjectedElementIconProps } from './icons/getInjectedElementIconProps'
-import { NavigateFunction } from 'react-router-dom'
 import { resolveElementProps } from './placeholder/resolveElementProps'
 import { getElementEventHandlerProps } from './actions/getElementEventHandlerProps'
-import { ComponentDefType } from '../editorComponents'
+import { ElementModel } from '../editorComponents'
 
 // const ANY_PLACEHOLDER_REGEX =
 //   /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
@@ -23,7 +22,6 @@ export const renderElements = (params: {
   editorState: EditorStateType
   appController: EditorRendererControllerType['appController']
   currentViewportElements: Element[]
-  selectedPageElements: Element[]
   ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   uiActions?: unknown
   //
@@ -37,15 +35,14 @@ export const renderElements = (params: {
   disableOverlay?: boolean
   rootCompositeElementId?: string
   OverlayComponent?: FC<{ element: Element }>
-  // debug?: unknown
-  navigate: NavigateFunction
+  disableElementEvents?: boolean
+  navigate: (to: string) => void
 }): ReactNode => {
   const {
     elements,
     editorState,
     appController,
     currentViewportElements,
-    selectedPageElements,
     ELEMENT_MODELS,
     uiActions,
     onSelectElement,
@@ -58,8 +55,13 @@ export const renderElements = (params: {
     disableOverlay,
     rootCompositeElementId,
     OverlayComponent,
+    disableElementEvents,
     navigate,
   } = params
+
+  const currentPageViewportElements = currentViewportElements.filter(
+    (el) => el.element_page === editorState.ui.selected.page
+  )
 
   const relevantElements = (
     !parentId
@@ -86,7 +88,7 @@ export const renderElements = (params: {
     const allElementProps = [...(elementProps ?? []), ...(templateProps ?? [])]
 
     const schemaProps =
-      (element as unknown as ComponentDefType)?.schema?.properties ?? {}
+      (element as unknown as ElementModel)?.schema?.properties ?? {}
     const baseComponent = ELEMENT_MODELS?.find(
       (com) => com.type === element?.element_type
     )
@@ -145,7 +147,6 @@ export const renderElements = (params: {
           editorState,
           appController,
           currentViewportElements,
-          selectedPageElements,
           ELEMENT_MODELS,
           uiActions,
           onSelectElement,
@@ -162,18 +163,20 @@ export const renderElements = (params: {
         })
       : []
 
-    const eventHandlerProps = getElementEventHandlerProps({
-      element,
-      editorState,
-      appController,
-      currentViewportElements,
-      selectedPageElements,
-      ELEMENT_MODELS,
-      icons,
-      elementProps: allElementProps,
-      navigate,
-      isProduction,
-    })
+    const eventHandlerProps = disableElementEvents
+      ? {}
+      : getElementEventHandlerProps({
+          element,
+          editorState,
+          appController,
+          currentViewportElements,
+          selectedPageElements: currentPageViewportElements,
+          ELEMENT_MODELS,
+          icons,
+          elementProps: allElementProps,
+          navigate,
+          isProduction,
+        })
 
     const elementAdj2 = {
       ...element,
@@ -196,7 +199,7 @@ export const renderElements = (params: {
         uiActions={uiActions}
         appController={appController}
         currentViewportElements={currentViewportElements}
-        selectedPageElements={selectedPageElements}
+        selectedPageElements={currentPageViewportElements}
         selectedElement={element}
         ELEMENT_MODELS={ELEMENT_MODELS}
         isProduction={isProduction}

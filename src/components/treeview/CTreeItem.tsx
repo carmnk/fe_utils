@@ -2,13 +2,12 @@ import { mdiChevronDown, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js'
 import { styled, Box, Stack, Typography, useTheme, alpha } from '@mui/material'
 import { TreeItemProps, TreeItem, treeItemClasses } from '@mui/x-tree-view'
 import {
-  ForwardedRef,
   KeyboardEvent,
   MouseEvent,
   PointerEvent,
   ReactNode,
-  forwardRef,
   useImperativeHandle,
+  Ref,
 } from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
@@ -42,6 +41,7 @@ export type StyledTreeItemProps = Omit<TreeItemProps, 'nodeId' | 'children'> & {
   useDraggable?: boolean
   toggleExpand?: (id: string) => void
   _parentId: string | null
+  ref?: Ref<HTMLElement>
 }
 
 const StyledTreeItemRoot = styled(TreeItem)<TreeItemProps & { nodeId: string }>(
@@ -92,9 +92,8 @@ const StyledTreeItemRoot = styled(TreeItem)<TreeItemProps & { nodeId: string }>(
   })
 )
 
-export const StyledTreeItem = forwardRef(function StyledTreeItem(
-  props: StyledTreeItemProps,
-  ref?: ForwardedRef<HTMLElement>
+export const StyledTreeItem = function StyledTreeItem(
+  props: StyledTreeItemProps
 ) {
   const theme = useTheme()
   const {
@@ -113,6 +112,7 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
     toggleExpand,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     children: _c,
+    ref,
     ...other
   } = props
 
@@ -370,4 +370,4 @@ export const StyledTreeItem = forwardRef(function StyledTreeItem(
       </DropdownMenu>
     </>
   )
-})
+}

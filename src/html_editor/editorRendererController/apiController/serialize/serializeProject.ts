@@ -33,6 +33,21 @@ export const serializeProject = (
     pointer_mode: uiIn?.pointerMode ?? null,
     selected_entity: entity ?? null,
     selected_entity_element: entityElement ?? null,
+    expanded_elements: ui.navigationMenu.expanded.elements?.length
+      ? JSON.stringify(ui.navigationMenu.expanded.elements)
+      : null,
+    expanded_components: ui.navigationMenu.expanded.components?.length
+      ? JSON.stringify(ui.navigationMenu.expanded.components)
+      : null,
+    expanded_templates: ui.navigationMenu.expanded.templates?.length
+      ? JSON.stringify(ui.navigationMenu.expanded.templates)
+      : null,
+    expanded_external_apis: ui.navigationMenu.expanded.externalApis?.length
+      ? JSON.stringify(ui.navigationMenu.expanded.externalApis)
+      : null,
+    expanded_state: ui.navigationMenu.expanded.state?.length
+      ? JSON.stringify(ui.navigationMenu.expanded.state)
+      : null,
   }
   const projectOut = {
     ...project,

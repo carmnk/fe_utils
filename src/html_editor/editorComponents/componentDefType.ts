@@ -6,7 +6,7 @@ import {
 import { ExtendedObjectSchemaType } from './schemaTypes'
 import { GenericFormProps } from '../../components'
 
-export type ComponentDefType<ComponentProps extends object = object> = {
+export type ElementModel<ComponentProps extends object = object> = {
   type: string
   component?: FC<ComponentProps>
 

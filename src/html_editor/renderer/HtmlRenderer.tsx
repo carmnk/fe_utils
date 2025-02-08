@@ -6,7 +6,6 @@ import { useMdiIcons } from './icons/useMdiIcons'
 import { EditorStateType, Element } from '../types'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import { EditorRendererControllerType } from '../editorRendererController'
-import { NavigateFunction } from 'react-router-dom'
 
 type RendererUiActionsType = {
   selectElement?: (elementId: string, boundingRect: unknown) => void
@@ -17,22 +16,22 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   theme: Theme
   OverlayComponent?: FC<{ element: Element }>
   editorState: EditorStateType
-  setEditorState: Dispatch<SetStateAction<EditorStateType>>
+  setEditorState?: Dispatch<SetStateAction<EditorStateType>>
   currentViewportElements: Element[]
-  selectedPageElements: Element[]
   uiActions?: UiActionsType
   ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
   appController: EditorRendererControllerType['appController']
   pageName: string //const pageName = location.pathname.slice(1) || 'index'
-  navigate: NavigateFunction
+  navigate: (to: string) => void
   isInHelpMode?: boolean
   isInHelpModeSelected?: boolean
   id?: string
   injectElementAtEnd?: ReactNode
   injectElementInContainerStart?: ReactNode
   importIconByName: (name: string) => Promise<string>
-  hoveredElementSide: string | null
-  dragging: unknown
+  hoveredElementSide?: string | null
+  dragging?: unknown
+  disableElementEvents?: boolean
 }
 
 export const HtmlRendererComponent = <
@@ -47,7 +46,6 @@ export const HtmlRendererComponent = <
     editorState,
     setEditorState,
     currentViewportElements,
-    selectedPageElements,
     uiActions,
     ELEMENT_MODELS,
     appController,
@@ -61,13 +59,18 @@ export const HtmlRendererComponent = <
     importIconByName,
     hoveredElementSide,
     dragging,
+    disableElementEvents,
   } = props
 
   const selectElement = uiActions?.selectElement
   const themeAdj = theme ?? editorState.theme
 
+  const currentPageViewportElements = useMemo(() => {
+    return currentViewportElements.filter((el) => el.element_page === pageName)
+  }, [currentViewportElements, pageName])
+
   const [icons] = useMdiIcons(
-    selectedPageElements,
+    currentPageViewportElements,
     ELEMENT_MODELS,
     editorState.properties,
     importIconByName
@@ -94,7 +97,6 @@ export const HtmlRendererComponent = <
         editorState,
         appController,
         currentViewportElements,
-        selectedPageElements,
         ELEMENT_MODELS,
         uiActions: uiActions,
         onSelectElement: handleSelectElement,
@@ -106,6 +108,7 @@ export const HtmlRendererComponent = <
           : editorState.ui.pointerMode === 'production',
         OverlayComponent,
         navigate,
+        disableElementEvents,
       })
     },
     [
@@ -113,7 +116,6 @@ export const HtmlRendererComponent = <
       editorState,
       appController,
       currentViewportElements,
-      selectedPageElements,
       ELEMENT_MODELS,
       handleSelectElement,
       icons,
@@ -121,6 +123,7 @@ export const HtmlRendererComponent = <
       isProduction,
       OverlayComponent,
       navigate,
+      disableElementEvents,
     ]
   )
 
@@ -130,7 +133,7 @@ export const HtmlRendererComponent = <
       return
     }
 
-    setEditorState((current) => ({
+    setEditorState?.((current) => ({
       ...current,
       ui: {
         ...current.ui,
@@ -140,10 +143,8 @@ export const HtmlRendererComponent = <
   }, [isProduction, setEditorState, pageName])
 
   const renderedCurrentPageElements = useMemo(() => {
-    return isProduction || !editorState.ui.selected.page
-      ? null
-      : renderPage(editorState.ui.selected.page)
-  }, [editorState.ui.selected.page, isProduction, renderPage])
+    return isProduction || !pageName ? null : renderPage(pageName)
+  }, [pageName, isProduction, renderPage])
 
   const containerStyles = useMemo(() => {
     return {
@@ -200,7 +201,7 @@ export const HtmlRendererComponent = <
               ? 'lg'
               : 'xl'
 
-    setEditorState((current) => ({
+    setEditorState?.((current) => ({
       ...current,
       ui: {
         ...current.ui,

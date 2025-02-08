@@ -1,6 +1,12 @@
 import Icon from '@mdi/react'
 import { IconProps } from '@mdi/react/dist/IconProps'
-import { List, ListItem, ListItemButton, ListItemIcon } from '@mui/material'
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+} from '@mui/material'
 import { ListItemButtonProps, ListItemIconProps } from '@mui/material'
 import { ListItemProps, ListItemTextProps, ListProps } from '@mui/material'
 import { ListItemText, ListSubheader, alpha, useTheme } from '@mui/material'
@@ -12,13 +18,13 @@ export type ListNavigationProps = Omit<
 > & {
   value: string
   onChange: (value: string) => void
-  items: {
+  items: ({
     value: string
     label: ReactNode
     tooltip?: string
     disabled?: boolean
     icon?: ReactNode
-  }[]
+  } | null)[]
   dense?: boolean
   disablePadding?: boolean
   subheader?: ReactNode
@@ -71,6 +77,7 @@ export const ListNavigation = (props: ListNavigationProps) => {
 
   const handleClicks = useMemo(() => {
     return items.map((item) => () => {
+      if (!item) return
       onChange(item.value)
     })
   }, [items, onChange])
@@ -82,28 +89,36 @@ export const ListNavigation = (props: ListNavigationProps) => {
       subheader={subheaderComponent}
       {...others}
     >
-      {items?.map((item, iIdx) => (
-        <ListItem
-          disablePadding
-          style={item?.value === value ? activeBgColor : undefined}
-          key={iIdx}
-          {...listItem}
-        >
-          <ListItemButton onClick={handleClicks[iIdx]} {...listItemButton}>
-            {item?.icon && (
-              <ListItemIcon {...listItemIconRoot}>
-                <Icon path={item?.icon as string} size={1} {...listItemIcon} />
-              </ListItemIcon>
-            )}
-            <ListItemText
-              primary={item.label}
-              {...listItemTextRoot}
-              primaryTypographyProps={listItemTextPrimaryTypography}
-              secondaryTypographyProps={listItemTextSecondaryTypography}
-            />
-          </ListItemButton>
-        </ListItem>
-      ))}
+      {items?.map((item, iIdx) =>
+        item ? (
+          <ListItem
+            disablePadding
+            style={item?.value === value ? activeBgColor : undefined}
+            key={iIdx}
+            {...listItem}
+          >
+            <ListItemButton onClick={handleClicks[iIdx]} {...listItemButton}>
+              {item?.icon && (
+                <ListItemIcon {...listItemIconRoot}>
+                  <Icon
+                    path={item?.icon as string}
+                    size={1}
+                    {...listItemIcon}
+                  />
+                </ListItemIcon>
+              )}
+              <ListItemText
+                primary={item.label}
+                {...listItemTextRoot}
+                primaryTypographyProps={listItemTextPrimaryTypography}
+                secondaryTypographyProps={listItemTextSecondaryTypography}
+              />
+            </ListItemButton>
+          </ListItem>
+        ) : (
+          <Divider key={iIdx} />
+        )
+      )}
       {rootInjection}
     </List>
   )

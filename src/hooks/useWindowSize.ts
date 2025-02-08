@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useState } from 'react'
 
 export const useWindowSize = () => {
@@ -5,11 +6,14 @@ export const useWindowSize = () => {
     width: number
     height: number
   }>({
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
   })
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
     const onResize = () => {
       setWindowSize({
         width: window.innerWidth,
@@ -18,6 +22,9 @@ export const useWindowSize = () => {
     }
     window.addEventListener('resize', onResize)
     return () => {
+      if (typeof window === 'undefined') {
+        return
+      }
       window.removeEventListener('resize', onResize)
     }
   }, [])

@@ -2,7 +2,7 @@ import { mdiTable } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { tablePropsSchema } from './tablePropsRawSchema'
 import uniq from 'lodash/uniq'
-import { ComponentDefType } from '../../componentDefType'
+import { ElementModel } from '../../componentDefType'
 import { TableProps } from '../../../../components'
 import { TableWrapper } from './TableWrapper'
 import { CommonComponentPropertys } from '../../componentProperty'
@@ -104,4 +104,4 @@ export const tableEditorComponentDef = {
   icon: mdiTable,
   category: 'data',
   schema: tablePropsSchema,
-} satisfies ComponentDefType<TableProps & CommonComponentPropertys>
+} satisfies ElementModel<TableProps & CommonComponentPropertys>

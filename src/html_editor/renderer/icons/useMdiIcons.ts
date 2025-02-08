@@ -1,15 +1,15 @@
 import { EditorStateType, Element } from '../../types'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { ArraySchemaType, ComponentDefType } from '../../editorComponents'
+import { ArraySchemaType, ElementModel } from '../../editorComponents'
 
 /** extracts a component's icon keys (properties of type 'icon') */
 export const getIconKeys = (
   elementType: string,
-  components: ComponentDefType[]
+  components: ElementModel[]
 ) => {
   const baseComponent = components.find((com) => com.type === elementType)
   if (!baseComponent) return { directIconKeys: [], arrayOfObjectProperties: [] }
-  const properties: ComponentDefType['schema']['properties'] =
+  const properties: ElementModel['schema']['properties'] =
     ('schema' in baseComponent && baseComponent?.schema?.properties) || {}
   const directIconKeys = Object.keys(properties).filter(
     (key) => properties[key].type === 'icon'
@@ -46,7 +46,7 @@ type Icons = { [key: string]: string }
 
 export const useMdiIcons = (
   selectedPageElements: Element[],
-  components: ComponentDefType[],
+  components: ElementModel[],
   properties: EditorStateType['properties'],
   importIconByName: (name: string) => Promise<string>
 ): [{ [key: string]: string }, Dispatch<SetStateAction<Icons>>] => {

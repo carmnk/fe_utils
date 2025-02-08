@@ -24,6 +24,21 @@ export const SESSIONS_MODEL_FIELD_DEFS = [
     data_type: 'varchar',
     required: true,
   } as const,
+  {
+    name: 'google_token',
+    data_type: 'varchar',
+    required: true,
+  } as const,
+  {
+    name: 'google_id_token',
+    data_type: 'varchar',
+    required: true,
+  } as const,
+  {
+    name: 'user_id',
+    data_type: 'int',
+    required: true,
+  } as const,
 ]
 type SESSIONS_MODEL_FIELD_DEFS_TYPE = typeof SESSIONS_MODEL_FIELD_DEFS
 export type USERS_MODEL_FIELDNAME_TYPE =

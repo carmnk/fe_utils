@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 import { EditorStateType } from '../types'
-import { ComponentDefType, baseComponents } from '../editorComponents'
+import { ElementModel, BASE_ELEMENT_MODELS } from '../editorComponents'
 
 export const useShortcuts = (params: {
   editorState: EditorStateType
-  customComponents?: ComponentDefType[]
+  customComponents?: ElementModel[]
 }) => {
   const { editorState, customComponents } = params
 
@@ -41,7 +41,7 @@ export const useShortcuts = (params: {
   }, [editorState.ui.selected.page, currentViewportElements])
 
   const ELEMENT_MODELS = useMemo(
-    () => [...baseComponents, ...(customComponents ?? [])],
+    () => [...BASE_ELEMENT_MODELS, ...(customComponents ?? [])],
     [customComponents]
   )
 

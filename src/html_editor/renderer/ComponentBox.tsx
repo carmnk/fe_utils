@@ -3,7 +3,6 @@ import { EditorRendererControllerType } from '../types/editorRendererController'
 import { EditorStateType, Element } from '../types'
 import { renderElements } from './renderElements'
 import { FC, useMemo } from 'react'
-import { NavigateFunction } from 'react-router-dom'
 
 export type ComponentElementBoxProps = {
   element: Element
@@ -18,7 +17,7 @@ export type ComponentElementBoxProps = {
   //
   isProduction: boolean
   OverlayComponent?: FC<{ element: Element }>
-  navigate: NavigateFunction
+  navigate: (to: string) => void
   rootCompositeElementId?: string
 }
 
@@ -29,7 +28,6 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     appController,
     currentViewportElements,
     uiActions,
-    selectedPageElements,
     ELEMENT_MODELS,
     isProduction,
     OverlayComponent,
@@ -54,7 +52,6 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
         editorState,
         appController,
         currentViewportElements,
-        selectedPageElements,
         ELEMENT_MODELS,
         uiActions,
         onSelectElement: () => {},
@@ -74,7 +71,6 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
       editorState,
       appController,
       currentViewportElements,
-      selectedPageElements,
       ELEMENT_MODELS,
       uiActions,
       isProduction,

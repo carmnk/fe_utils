@@ -1,3 +1,4 @@
+
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
@@ -9,8 +10,9 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs', 'stories', 'storybook-static', "**.test.tsx"],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'eslint-plugin-react-compiler'],
   rules: {
+    'react-compiler/react-compiler': 'off',
     'no-restricted-imports': [
       'error',
       {

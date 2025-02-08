@@ -8,12 +8,12 @@ import { chipEditorComponentDef } from './components/Chip/chipDef'
 import { typographyEditorComponentDef } from './components/Typography/typographyDef'
 import { tableEditorComponentDef } from './components/Table/TableDef'
 import { formEditorComponentDef } from './components/Form/formDef'
-import { ComponentDefType } from './componentDefType'
+import { ElementModel } from './componentDefType'
 import { navigationContainerDef } from './components/NavigationContainer/navigationContainerDef'
 import { paperDef } from './components/Paper/paperDef'
 import { IconComponentDef } from './components/icon/iconDef'
 
-export const baseComponents = [
+export const BASE_ELEMENT_MODELS = [
   typographyEditorComponentDef,
   chipEditorComponentDef,
   // surface components
@@ -34,7 +34,7 @@ export const baseComponents = [
   // Navigation container, currently treated specially/hardcoded (use for generic?)
   navigationContainerDef,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-] satisfies ComponentDefType<any>[]
+] satisfies ElementModel<any>[]
 
-export type BaseComponentsType = typeof baseComponents
+export type BaseComponentsType = typeof BASE_ELEMENT_MODELS
 export type BaseComponentType = BaseComponentsType[number]

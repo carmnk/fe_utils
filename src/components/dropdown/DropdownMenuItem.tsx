@@ -12,7 +12,7 @@ import { useTheme, Divider, Typography } from '@mui/material'
 import Icon from '@mdi/react'
 
 export type DropDownMenuItemProps = MenuItemProps & {
-  onClick: (e: MouseEvent) => void
+  onClick?: (e: MouseEvent) => void
   tooltip?: ReactNode
   icon?: ReactNode
   id: string
@@ -22,6 +22,7 @@ export type DropDownMenuItemProps = MenuItemProps & {
   onPointerDown?: PointerEventHandler<HTMLLIElement>
   onKeyDown?: KeyboardEventHandler<HTMLLIElement>
   sx?: MenuItemProps['sx']
+  iconGap?: number
 }
 
 const SlimDivider = (props: { id: string }) => (
@@ -43,13 +44,14 @@ export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
     label,
     onPointerDown,
     onKeyDown,
+    iconGap,
     sx,
   } = props
   const theme = useTheme()
   const handleOnClick = useCallback(
     (e: MouseEvent) => {
       if (disabled || loading) return
-      onClick(e)
+      onClick?.(e)
     },
     [disabled, loading, onClick]
   )
@@ -71,7 +73,7 @@ export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
             direction="row"
             justifyItems="center"
             alignItems="center"
-            gap={loading || icon ? 2 : 0}
+            gap={loading || icon ? (iconGap ?? 2) : 0}
             width={'100%'}
           >
             <Stack

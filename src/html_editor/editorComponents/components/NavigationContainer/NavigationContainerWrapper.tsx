@@ -79,7 +79,6 @@ export const NavContainerWrapper = (
         editorState,
         appController,
         currentViewportElements,
-        selectedPageElements,
         ELEMENT_MODELS,
         uiActions,
         onSelectElement,

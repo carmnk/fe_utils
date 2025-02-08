@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import { AppController, EditorStateType, Element } from '.'
-import { ComponentDefType } from '../editorComponents'
+import { ElementModel } from '../editorComponents'
 
 export type EditorRendererControllerType = {
   editorState: EditorStateType
@@ -9,5 +9,5 @@ export type EditorRendererControllerType = {
   selectedElement: Element | null
   selectedPageElements: Element[]
   currentViewportElements: Element[]
-  ELEMENT_MODELS: ComponentDefType[]
+  ELEMENT_MODELS: ElementModel[]
 }

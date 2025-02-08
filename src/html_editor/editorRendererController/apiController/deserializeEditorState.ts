@@ -1,7 +1,7 @@
 import { defaultEditorState } from '../defaultEditorState'
 import { EditorStateType } from '../../types'
 import { EditorStateDbDataType } from './editorDbStateType'
-import { ComponentDefType } from '../../editorComponents'
+import { ElementModel } from '../../editorComponents'
 import { deserializeAttributes } from './deserialize/deserializeAttributes'
 import { deserializeProperties } from './deserialize/deserializeProperties'
 import { deserializeElements } from './deserialize/deserializeElements'
@@ -14,7 +14,7 @@ import { deserializeThemeTypographys } from './deserialize/deserializeThemeTypog
 export const deserializeEditorState = (
   data: EditorStateDbDataType,
   currentEditorState = defaultEditorState(),
-  componentsIn: ComponentDefType[],
+  componentsIn: ElementModel[],
   disableThemeReload = false
 ): EditorStateType => {
   const { project, ui, defaultTheme } = deserializeProject(

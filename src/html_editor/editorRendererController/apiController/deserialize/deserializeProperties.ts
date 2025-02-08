@@ -1,4 +1,4 @@
-import { ComponentDefType, PropertyType } from '../../../editorComponents/index'
+import { ElementModel, PropertyType } from '../../../editorComponents/index'
 import { checkForPlaceholders } from '../../../renderer/index'
 import { Element, Property } from '../../../types/index'
 import { isComponentType } from '../../../utils'
@@ -6,7 +6,7 @@ import { isComponentType } from '../../../utils'
 export const deserializeProperties = (
   properties: Property[],
   elements: Element[],
-  ELEMENT_MODELS: ComponentDefType[]
+  ELEMENT_MODELS: ElementModel[]
 ) => {
   return (
     properties?.map((prop) => {

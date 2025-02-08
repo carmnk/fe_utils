@@ -26,10 +26,15 @@ export const deserializeProject = (
     pointer_mode,
     active_menu,
     default_theme: defaultTheme,
+    expanded_elements,
+    expanded_components,
+    expanded_templates,
+    expanded_external_apis,
+    expanded_state,
     ...project
   } = projectIn ?? {}
 
-  const ui = {
+  const ui: Ui = {
     ...(editorStateUi ?? {}),
     selected: {
       ...(editorStateUi?.selected ?? {}),
@@ -49,6 +54,16 @@ export const deserializeProject = (
       activeBackendTab: (active_backend_tab ?? null) as LeftMenuBackendTabs,
       activeMenu: (active_menu ??
         editorStateUi?.navigationMenu?.activeMenu) as LeftMenuGlobalTabs,
+      expanded: {
+        ...(editorStateUi?.navigationMenu?.expanded ?? {}),
+        elements: expanded_elements ? JSON.parse(expanded_elements) : [],
+        components: expanded_components ? JSON.parse(expanded_components) : [],
+        templates: expanded_templates ? JSON.parse(expanded_templates) : [],
+        externalApis: expanded_external_apis
+          ? JSON.parse(expanded_external_apis)
+          : [],
+        state: expanded_state ? JSON.parse(expanded_state) : [],
+      },
     },
     pointerMode: (pointer_mode as UI_POINTER_MODE) ?? UI_POINTER_MODE.mixed,
   }

@@ -2,7 +2,7 @@ import { mdiDockBottom } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { BottomNavPropsSchema } from './bottomNavPropsRawSchema'
 import { CBottomNavigationProps } from '../../../../components/navigation/BottomNavigation'
-import { ComponentDefType } from '../../componentDefType'
+import { ElementModel } from '../../componentDefType'
 import { BottomNavigationWrapper } from './BottomNavigationWrapper'
 import { CommonComponentPropertys } from '../../componentProperty'
 
@@ -26,4 +26,4 @@ export const BottomNavComponentDef = {
   component: BottomNavigationWrapper,
   schema: BottomNavPropsSchema,
   renderType: 'navigation',
-} satisfies ComponentDefType<CBottomNavigationProps & CommonComponentPropertys>
+} satisfies ElementModel<CBottomNavigationProps & CommonComponentPropertys>

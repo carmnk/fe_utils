@@ -2,7 +2,7 @@ import { mdiDockTop } from '@mdi/js'
 import { propertyFormFactory } from '../../propertiesFormFactory'
 import { appBarPropsSchema } from './appBarPropsRawSchema'
 import { AppBarWrapper, AppBarWrapperProps } from './AppBarWrapper'
-import { ComponentDefType } from '../../componentDefType'
+import { ElementModel } from '../../componentDefType'
 
 export const appBarDef = {
   type: 'AppBar' as const,
@@ -20,4 +20,4 @@ export const appBarDef = {
   category: 'surface',
   schema: appBarPropsSchema,
   component: AppBarWrapper,
-} satisfies ComponentDefType<AppBarWrapperProps>
+} satisfies ElementModel<AppBarWrapperProps>

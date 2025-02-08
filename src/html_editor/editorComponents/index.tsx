@@ -1,6 +1,6 @@
-export { baseComponents } from './baseComponents'
+export { BASE_ELEMENT_MODELS } from './baseComponents'
 export type { BaseComponentsType, BaseComponentType } from './baseComponents'
-export type { ComponentDefType } from './componentDefType'
+export type { ElementModel } from './componentDefType'
 export type {
   ArraySchemaType,
   ExtendedArraySchemaType,

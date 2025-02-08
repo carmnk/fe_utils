@@ -42,3 +42,4 @@ export {
 export { ENTITY_TYPE_OPTIONS } from './values/entityTypes'
 export { USERS_MODEL_FIELD_DEFS } from './_users'
 export type { USER_TYPE, USERS_MODEL_FIELDNAME_TYPE } from './_users'
+export { SESSIONS_MODEL_FIELD_DEFS } from './_sessions'

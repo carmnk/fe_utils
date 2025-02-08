@@ -53,7 +53,10 @@ const parseIcon = (lineText: string, icons?: Record<string, string>) => {
   )
 }
 
-const inlineFormat = (lineText: string, icons?: Record<string, string>) => {
+const inlineFormat = (
+  lineText: string,
+  icons?: Record<string, string>
+): ReactNode => {
   const boldMarkDown = /\*\*(.*?)\*\*/g
   // const boldMarkdownWithUnderScore = /__(.*?)__/g;
   const boldMarkDownMatches = lineText.match(boldMarkDown)

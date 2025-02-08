@@ -34,4 +34,9 @@ export type ProjectDb = Project & {
   selected_entity?: string | null
   selected_entity_element?: 'fields' | 'lists' | 'values' | 'joinings' | null
   active_menu: string | null
+  expanded_elements?: string | null
+  expanded_components?: string | null
+  expanded_templates?: string | null
+  expanded_external_apis?: string | null
+  expanded_state?: string | null
 }

@@ -6,14 +6,18 @@ import { ColorChangeHandler, ColorResult, SketchPicker } from 'react-color'
 import { Button } from '../buttons/Button/Button'
 import { mdiCheck } from '@mdi/js'
 import { ThemeColorsSelector } from './ThemeColorsSelectors/ThemeColorsSelector'
+import { PresetColor } from 'react-color/lib/components/sketch/Sketch'
 
 type GenericColorPickerProps = {
   value: CSSProperties['color']
   selectorSize?: string | number
   disableThemeColors?: boolean
   resolveThemeColors?: boolean
-  themeIn: Theme
+  themeIn?: Theme
   highlightedThemeColor?: string
+  presetColors?: PresetColor[]
+  name?: string
+  disableColorTransformations?: boolean
 }
 type DisabledColorPickerProps = GenericColorPickerProps & {
   disabled: true
@@ -90,6 +94,8 @@ export const ColorPicker = (props: ColorPickerProps) => {
     resolveThemeColors,
     themeIn,
     highlightedThemeColor,
+    presetColors,
+    disableColorTransformations,
     ...rest
   } = props
   const theme = useTheme()
@@ -121,8 +127,12 @@ export const ColorPicker = (props: ColorPickerProps) => {
       isThemeColor,
       resolveThemeColors
     )
-    if (isThemeColor && !resolveThemeColors) {
-      onChange?.(unchangedColor as string)
+    if ((isThemeColor && !resolveThemeColors) || disableColorTransformations) {
+      onChange?.(
+        disableColorTransformations
+          ? `rgba(${color.r},${color.g},${color.b},${color.a})`
+          : (unchangedColor as string)
+      )
       setDisplayColorPicker(false)
       return
     }
@@ -145,7 +155,14 @@ export const ColorPicker = (props: ColorPickerProps) => {
     console.log('handleTakeover, ', colorAdj)
     onChange?.(colorAdj)
     setDisplayColorPicker(false)
-  }, [onChange, color, isThemeColor, unchangedColor, resolveThemeColors])
+  }, [
+    onChange,
+    color,
+    isThemeColor,
+    unchangedColor,
+    resolveThemeColors,
+    disableColorTransformations,
+  ])
 
   const indicatorRef = useRef<HTMLDivElement>(null)
 
@@ -254,7 +271,11 @@ export const ColorPicker = (props: ColorPickerProps) => {
           onClose={handleToggleColorPicker}
         >
           <div onClick={handleToggleColorPicker} />
-          <SketchPicker color={color} onChange={handleChangeColor} />
+          <SketchPicker
+            color={color}
+            onChange={handleChangeColor}
+            presetColors={presetColors}
+          />
 
           {!disableThemeColors && (
             <ThemeColorsSelector

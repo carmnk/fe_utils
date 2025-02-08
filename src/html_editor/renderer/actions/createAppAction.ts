@@ -5,7 +5,6 @@ import {
 } from '../../editorRendererController'
 import { replacePlaceholdersInString } from '../placeholder/replacePlaceholder'
 import { queryAction } from './queryAction'
-import { NavigateFunction } from 'react-router-dom'
 
 type EditorRendererController = EditorRendererControllerType
 
@@ -17,7 +16,7 @@ export const createAppAction = (params: {
   ELEMENT_MODELS: EditorRendererController['ELEMENT_MODELS']
   appController: EditorRendererController['appController']
   icons?: Record<string, string>
-  navigate: NavigateFunction
+  navigate: (to: string) => void
   isProduction?: boolean
   // formData?: Record<string, any>
 }): ((...fnParams: unknown[]) => Promise<void>) | undefined => {

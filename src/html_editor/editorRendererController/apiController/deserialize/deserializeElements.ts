@@ -1,11 +1,11 @@
 import { Element } from '../../index'
-import { ComponentDefType } from '../../../editorComponents/index'
+import { ElementModel } from '../../../editorComponents/index'
 import { ElementDb } from '../../../types/element'
 import { isComponentType } from '../../../utils'
 
 export const deserializeElements = (
   elementsIn: ElementDb[],
-  ELEMENT_MODELS: ComponentDefType[]
+  ELEMENT_MODELS: ElementModel[]
 ): {
   elements: Element[]
   alternativeViewports: {

@@ -1,7 +1,7 @@
 import { ListSubheader, Typography, useTheme } from '@mui/material'
 import { useMediaQuery } from '@mui/material'
-import { HTMLAttributes, ReactElement, createContext } from 'react'
-import { forwardRef, useContext, useEffect, useRef } from 'react'
+import { ReactElement, createContext } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { VariableSizeList, ListChildComponentProps } from 'react-window'
 
 const LISTBOX_PADDING = 8 // px
@@ -54,15 +54,12 @@ function useResetCache(data: unknown) {
   return ref
 }
 
-const OuterElementType = forwardRef<HTMLDivElement>((props, ref) => {
+const OuterElementType = (props: any) => {
   const outerProps = useContext<Record<string, unknown>>(OuterElementContext)
-  return <div ref={ref} {...props} {...outerProps} />
-})
+  return <div ref={props?.ref} {...props} {...outerProps} />
+}
 // Adapter for react-window
-export const ListboxComponent = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLElement>
->(function ListboxComponent(props, ref) {
+export const ListboxComponent = function ListboxComponent(props: any) {
   const { children, ...other } = props
   const itemData: ReactElement[] = []
   ;(children as ReactElement[]).forEach(
@@ -97,8 +94,8 @@ export const ListboxComponent = forwardRef<
   const gridRef = useResetCache(itemCount)
 
   return (
-    <div ref={ref}>
-      <OuterElementContext.Provider value={other}>
+    <div ref={props?.ref}>
+      <OuterElementContext value={other}>
         <VariableSizeList
           itemData={itemData}
           height={getHeight() + 2 * LISTBOX_PADDING}
@@ -112,7 +109,7 @@ export const ListboxComponent = forwardRef<
         >
           {renderRow}
         </VariableSizeList>
-      </OuterElementContext.Provider>
+      </OuterElementContext>
     </div>
   )
-})
+}

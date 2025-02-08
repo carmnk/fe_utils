@@ -2,7 +2,7 @@ import { mdiNoteOutline } from '@mdi/js'
 import { appBarDef } from '../AppBar/appBarDef'
 import { paperPropsSchema } from './paperPropsRawSchema'
 import { propertyFormFactory } from '../../propertiesFormFactory'
-import { ComponentDefType } from '../../componentDefType'
+import { ElementModel } from '../../componentDefType'
 import { PaperWrapper, PaperWrapperProps } from './PaperWrapper'
 
 export const paperDef = {
@@ -19,4 +19,4 @@ export const paperDef = {
   category: 'surface',
   schema: paperPropsSchema,
   component: PaperWrapper,
-} satisfies ComponentDefType<PaperWrapperProps>
+} satisfies ElementModel<PaperWrapperProps>

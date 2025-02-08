@@ -3,7 +3,7 @@ import { defaultEditorState } from './defaultEditorState'
 import { useAppController } from './appController'
 import { useShortcuts } from './useShortcuts'
 import { EditorStateType } from '../types'
-import { ComponentDefType } from '../editorComponents'
+import { ElementModel } from '../editorComponents'
 import { EditorRendererControllerType } from '../types/editorRendererController'
 
 export type EditorRendererControllerParams = {
@@ -16,9 +16,10 @@ export type EditorRendererControllerParams = {
     | 'fonts'
     | 'project'
     | 'themes'
+    | 'ui'
   >
   injections?: {
-    components?: ComponentDefType[]
+    elementModels?: ElementModel[]
   }
 }
 
@@ -27,10 +28,24 @@ export const useEditorRendererController = (
 ): EditorRendererControllerType => {
   // load initial state if provided
   const { initialEditorState, injections } = params ?? {}
-  const initialEditorStateAdj = {
-    ...defaultEditorState(),
+  const initDefaultState = defaultEditorState()
+  const initialEditorStateAdj: EditorStateType = {
+    ...initDefaultState,
     ...(initialEditorState ?? {}),
+    ui: {
+      ...initDefaultState.ui,
+      ...(initialEditorState?.ui ?? {}),
+      navigationMenu: {
+        ...initDefaultState.ui.navigationMenu,
+        ...(initialEditorState?.ui.navigationMenu ?? {}),
+      },
+      detailsMenu: {
+        ...initDefaultState.ui.detailsMenu,
+        ...(initialEditorState?.ui.detailsMenu ?? {}),
+      },
+    },
   }
+
   const [editorState, setEditorState] = useState(initialEditorStateAdj)
 
   const {
@@ -38,7 +53,7 @@ export const useEditorRendererController = (
     selectedElement,
     selectedPageElements,
     ELEMENT_MODELS,
-  } = useShortcuts({ editorState, customComponents: injections?.components })
+  } = useShortcuts({ editorState, customComponents: injections?.elementModels })
 
   const appController = useAppController({
     properties: editorState.properties,
@@ -55,7 +70,7 @@ export const useEditorRendererController = (
       editorState,
       appController,
       setEditorState,
-      ELEMENT_MODELS: ELEMENT_MODELS as ComponentDefType[],
+      ELEMENT_MODELS: ELEMENT_MODELS as ElementModel[],
     }
   }, [
     selectedElement,
