@@ -149,6 +149,7 @@ export const ItemPropsFormFactory = (
     injections: {
       options: {
         value: () => {
+          // TODO: Why is here the selected Element ?
           const selectedElementId = editorState?.ui?.selected?.element
           const selectedElement = currentViewportElements?.find(
             (el) => el.element_id === selectedElementId

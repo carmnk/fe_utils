@@ -22,7 +22,6 @@ export type NavContainerComponentPropertys = CommonComponentPropertys & {
   OverlayComponent?: FC<{ element: Element }>
   isPointerProduction: boolean
   icons: Record<string, string>
-  selectedPageElements: EditorRendererControllerType['selectedPageElements']
   navigate: NavigateFunction
   rootCompositeElementId?: string
   onSelectElement: (element: Element, isHovering: boolean) => void

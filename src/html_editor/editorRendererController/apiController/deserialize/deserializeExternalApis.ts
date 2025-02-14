@@ -1,4 +1,4 @@
-import { ExternalApi } from '../../../types'
+import { ExternalApi } from '../../../types/index'
 import { Header } from '../../../types/Header'
 import { BodyParam } from '../../../types/bodyParam'
 import { EndpointDb } from '../../../types/endpoint'
@@ -54,17 +54,17 @@ export const deserializeServerExternalApis = (
                         token: ep.auth_bearer_token as string,
                       }
                     : { type: ep.auth_type },
-                    response_type: ep.response_type,
+              response_type: ep.response_type,
               use_cookies: ep.use_cookies,
               headers: headers
                 ?.filter(
                   (header) =>
                     header.endpoint_id === ep.endpoint_id && header.endpoint_id
-                )
-                ?.map((header) => ({
-                  ...header,
-                  name: header.key,
-                })),
+                ),
+                // ?.map((header) => ({
+                //   ...header,
+                //   name: header.key,
+                // })),
               params: params.filter(
                 (param) => param.endpoint_id === ep.endpoint_id
               ),
@@ -80,10 +80,10 @@ export const deserializeServerExternalApis = (
               header.api_id === api.external_api_id &&
               !header.endpoint_id
           )
-          ?.map((header) => ({
-            ...header,
-            name: header.key,
-          })),
+          // ?.map((header) => ({
+          //   ...header,
+          //   name: header.key,
+          // })),
       }
     }) ?? []
   return externalApis

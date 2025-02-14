@@ -41,6 +41,7 @@ export type EditorStateDbDataType = Pick<
     image: File
   }[]
   data_changes: DataChange[] // in FastEditorState
+  editor_settings: any[]
 
   // transformers: EditorStateType['transformers']
   // actions: EditorStateType['actions']

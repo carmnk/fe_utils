@@ -8,16 +8,16 @@ import { UI_POINTER_MODE } from '../defs'
 export type Ui = {
   isProjectInited: boolean
   isAutoSaveReady: boolean
-  pointerMode: UI_POINTER_MODE.mixed | UI_POINTER_MODE.production
+  pointerMode: UI_POINTER_MODE.mixed | UI_POINTER_MODE.production // autosaved ???
   previewMode: boolean
   rulerMode: boolean
   viewportLimitsMode: boolean
-
   // currently not used
   editDragMode: null | 'leftMenu' | 'rightMenu'
 
   dragMode: 'reorder' | 'margin' | 'padding'
   selected: {
+    // autosaved
     page: string | null
     element: string | null
     cssSelector: string | null
@@ -29,7 +29,6 @@ export type Ui = {
     serverSetting: 'ssl' | 'cors'
     entity: string | null
     entityElement: 'fields' | 'lists' | 'values' | 'joinings'
-    //
     template: string | null
     component: string | null
   }
@@ -37,9 +36,10 @@ export type Ui = {
   navigationMenu: {
     width: number
     activeMenu: LeftMenuGlobalTabs
-    activeTab: LeftMenuTabs | null
-    activeBackendTab: LeftMenuBackendTabs | null
+    activeTab: LeftMenuTabs | null // autosaved
+    activeBackendTab: LeftMenuBackendTabs | null // autosaved
     expanded: {
+      // autosaved
       elements: string[]
       components: string[]
       templates: string[]

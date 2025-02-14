@@ -7,9 +7,11 @@ import { serializeImages } from './serialize/serializeImages'
 import { serializeProject } from './serialize/serializeProject'
 import { serializeExternalApis } from './serialize/serializeExternalApis'
 import { serializeFonts } from './serialize/serializeFonts'
+import { serializeEditorSetting } from './serialize/serializeEditorSettings'
 
 export const serializeEditorState = (
-  payload: EditorStateType
+  payload: EditorStateType,
+  editorSettings: any[]
 ): Omit<EditorStateDbDataType, 'data_changes'> | null => {
   const projectIn = payload?.project ?? {}
   const project_id = projectIn.project_id
@@ -69,5 +71,6 @@ export const serializeEditorState = (
     components: payload.components,
     theme_typographys: payload.theme_typographys,
     fonts: serializeFonts(payload.fonts, project_id),
+    editor_settings: serializeEditorSetting(editorSettings),
   }
 }

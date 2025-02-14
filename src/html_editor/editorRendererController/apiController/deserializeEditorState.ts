@@ -5,18 +5,19 @@ import { ElementModel } from '../../editorComponents'
 import { deserializeAttributes } from './deserialize/deserializeAttributes'
 import { deserializeProperties } from './deserialize/deserializeProperties'
 import { deserializeElements } from './deserialize/deserializeElements'
-import { deserializeServerExternalApis } from './deserialize/deserializeServerExternalApis'
+import { deserializeServerExternalApis } from './deserialize/deserializeExternalApis'
 import { deserializeImages } from './deserialize/deserializeImages'
 import { deserializeProject } from './deserialize/deserializeProject'
 import { deserializeTheme } from './deserialize/deserializeTheme'
 import { deserializeThemeTypographys } from './deserialize/deserializeThemeTypographys'
+import { deserializeEditorSettings } from './deserialize/deserializeEditorSettings'
 
 export const deserializeEditorState = (
   data: EditorStateDbDataType,
   currentEditorState = defaultEditorState(),
   componentsIn: ElementModel[],
   disableThemeReload = false
-): EditorStateType => {
+): EditorStateType & { editor_settings: any[] } => {
   const { project, ui, defaultTheme } = deserializeProject(
     data?.project,
     currentEditorState.ui
@@ -79,5 +80,6 @@ export const deserializeEditorState = (
     action_params: data?.action_params ?? [],
     theme_typographys,
     fonts: data?.fonts ?? [],
+    editor_settings: deserializeEditorSettings(data?.editor_settings),
   }
 }

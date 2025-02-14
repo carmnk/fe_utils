@@ -21,37 +21,38 @@ import { SerializedThemeType } from './serializedTheme'
 import { Font } from './Font'
 
 export type EditorStateType = {
-  components: Component[]
-  composite_component_props: ComponentPropertyDefinition[]
+  actions: Action[]
   action_params: ActionsParams[]
-  elementTemplates: Template[]
-  project: Project
-  elements: Element[]
   alternativeViewports: {
     sm: Element[]
     md: Element[]
     lg: Element[]
     xl: Element[]
   }
-  cssSelectors: CssSelectorDb[]
   assets: {
     images: Image[]
   }
-  defaultTheme: 'light' | 'dark'
-  theme: ExtendedTheme
-  themes: SerializedThemeType[]
-  fonts: Font[] // currently const
   attributes: Attribute[]
+  components: Component[]
+  composite_component_props: ComponentPropertyDefinition[]
+  defaultTheme: 'light' | 'dark'
+  elements: Element[]
+  elementTemplates: Template[]
+  externalApis: ExternalApi[]
+  endpoints: Endpoint[]
+  fonts: Font[] // currently const
+  project: Project
   properties: Property[]
-  transformers: Transformer[]
-  ui: Ui
   server: {
     config: ServerConfig
     entityDataModel: EntityDataModel
   }
-  externalApis: ExternalApi[]
-  endpoints: Endpoint[]
-  // events: ElementEvent[]
-  actions: Action[]
+  themes: SerializedThemeType[]
+  transformers: Transformer[]
   theme_typographys: ThemeTypography[]
+
+  // not autosaved
+  theme: ExtendedTheme
+  cssSelectors: CssSelectorDb[]
+  ui: Ui // partly autosaved
 }

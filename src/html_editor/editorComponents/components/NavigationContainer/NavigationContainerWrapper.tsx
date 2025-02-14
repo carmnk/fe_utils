@@ -15,10 +15,8 @@ export const NavContainerWrapper = (
 ) => {
   const {
     children,
-    editorStateUi,
     theme: t_,
     parentId,
-
     appController,
     isProduction,
     id,
@@ -30,7 +28,6 @@ export const NavContainerWrapper = (
     OverlayComponent,
     isPointerProduction,
     icons,
-    selectedPageElements,
     navigate,
     onSelectElement,
     disableOverlay,
