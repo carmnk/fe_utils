@@ -119,7 +119,7 @@ export const SubformField = (props: SubformFieldProps) => {
           (Array.isArray(formData?.[fieldName])
             ? formData[fieldName]
             : []) as unknown[]
-        )?.filter((f: unknown, fIdx2: number) => fIdx2 !== removeIdx),
+        )?.filter((_f: unknown, fIdx2: number) => fIdx2 !== removeIdx),
       }
 
       const AdjNewFormData = injections?.onBeforeChange?.(
@@ -140,7 +140,7 @@ export const SubformField = (props: SubformFieldProps) => {
 
   const arrayTableProps = useMemo(
     () => ({
-      getTrProps: (item: unknown, rIdx: number) =>
+      getTrProps: (_item: unknown, rIdx: number) =>
         rIdx === ui.open
           ? {
               sx: { bgcolor: theme.palette.action.selected + ' !important' },
@@ -167,8 +167,14 @@ export const SubformField = (props: SubformFieldProps) => {
               }}
             />
           ),
-          renderCell: (item: unknown, cIdx: number, rIdx: number) => (
-            <Box component="td" display="flex" alignItems="center" gap={1}>
+          renderCell: (_item: unknown, cIdx: number, rIdx: number) => (
+            <Box
+              component="td"
+              display="flex"
+              alignItems="center"
+              gap={1}
+              key={'row_' + rIdx + '_col' + cIdx}
+            >
               <Button
                 icon={mdiPencil}
                 iconButton

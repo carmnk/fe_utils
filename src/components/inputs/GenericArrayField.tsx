@@ -48,8 +48,8 @@ export const GenericArrayField = <
   }, [])
 
   const handleAddItem = useCallback(
-    (newValue: any) => {
-      onChange([...value, newValue] as never, name as any) // TODO: Event ?!
+    (newValue: unknown) => {
+      onChange?.([...value, newValue] as never, name as any) // TODO: Event ?!
     },
     [name, onChange, value]
   )
@@ -65,7 +65,7 @@ export const GenericArrayField = <
 
   const handleRemoveItem = useCallback(
     (idx: number) => {
-      onChange(value.filter((_, vIdx) => vIdx !== idx) as never, name as any)
+      onChange?.(value.filter((_, vIdx) => vIdx !== idx) as never, name as any)
     },
     [name, onChange, value]
   )

@@ -13,6 +13,8 @@ export type CommonComponentPropertys = {
   id: string
   isProduction: boolean
   editorStateUi: EditorStateType['ui']
+  assets: EditorStateType['assets']
+  icons: Record<string, string>
 }
 
 export type NavContainerComponentPropertys = CommonComponentPropertys & {

@@ -1,7 +1,6 @@
 import { mdiNoteOutline } from '@mdi/js'
 import { appBarDef } from '../AppBar/appBarDef'
 import { paperPropsSchema } from './paperPropsRawSchema'
-import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ElementModel } from '../../componentDefType'
 import { PaperWrapper, PaperWrapperProps } from './PaperWrapper'
 
@@ -13,9 +12,6 @@ export const paperDef = {
     sx: {},
     children: [],
   },
-
-  formGen: ({ editorState }) =>
-    propertyFormFactory(paperPropsSchema, editorState),
   category: 'surface',
   schema: paperPropsSchema,
   component: PaperWrapper,

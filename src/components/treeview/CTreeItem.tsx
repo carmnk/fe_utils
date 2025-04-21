@@ -22,6 +22,7 @@ export type StyledTreeItemProps = Omit<TreeItemProps, 'nodeId' | 'children'> & {
   color?: string
   colorForDarkMode?: string
   labelIcon?: ReactNode
+  icon?: ReactNode
   labelInfo?: string
   labelText: string
   nodeId: number | string
@@ -42,55 +43,54 @@ export type StyledTreeItemProps = Omit<TreeItemProps, 'nodeId' | 'children'> & {
   toggleExpand?: (id: string) => void
   _parentId: string | null
   ref?: Ref<HTMLElement>
+  onToggleSelect?: (id: string) => void
 }
 
-const StyledTreeItemRoot = styled(TreeItem)<TreeItemProps & { nodeId: string }>(
-  ({ theme }) => ({
+const StyledTreeItemRoot = styled(TreeItem)<TreeItemProps>(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  [`& .${treeItemClasses.content}`]: {
     color: theme.palette.text.secondary,
+    borderTopRightRadius: theme.spacing(0.5),
+    borderBottomRightRadius: theme.spacing(0.5),
+    paddingLeft: '4px !important',
+    paddingRight: '4px !important',
+    fontWeight: theme.typography.fontWeightMedium,
+    '&.Mui-expanded': {
+      fontWeight: theme.typography.fontWeightRegular,
+    },
+    // '&:hover': {
+    //   backgroundColor: theme.palette.action.hover + " !important",
+    // },
+    // '&:focused': {
+    //   backgroundColor: "transparent",
+    // },
+    '&.Mui-selected': {
+      // backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      color: 'var(--tree-view-color)',
+    },
+    '&.Mui-focused': {
+      '&:not(.Mui-selected)': {
+        background: 'none',
+      },
+      // backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      // color: 'var(--tree-view-color)',
+    },
+    [`& .${treeItemClasses.label}`]: {
+      fontWeight: 'inherit',
+      color: 'inherit',
+    },
+  },
+  [`& .${treeItemClasses.groupTransition}`]: {
+    marginLeft: 0,
+    paddingLeft: 8,
     [`& .${treeItemClasses.content}`]: {
-      color: theme.palette.text.secondary,
-      borderTopRightRadius: theme.spacing(0.5),
-      borderBottomRightRadius: theme.spacing(0.5),
-      paddingLeft: '4px !important',
-      paddingRight: '4px !important',
-      fontWeight: theme.typography.fontWeightMedium,
-      '&.Mui-expanded': {
-        fontWeight: theme.typography.fontWeightRegular,
-      },
-      // '&:hover': {
-      //   backgroundColor: theme.palette.action.hover + " !important",
-      // },
-      // '&:focused': {
-      //   backgroundColor: "transparent",
-      // },
-      '&.Mui-selected': {
-        // backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
-        color: 'var(--tree-view-color)',
-      },
-      '&.Mui-focused': {
-        '&:not(.Mui-selected)': {
-          background: 'none',
-        },
-        // backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
-        // color: 'var(--tree-view-color)',
-      },
-      [`& .${treeItemClasses.label}`]: {
-        fontWeight: 'inherit',
-        color: 'inherit',
-      },
+      paddingLeft: theme.spacing(2),
     },
-    [`& .${treeItemClasses.groupTransition}`]: {
-      marginLeft: 0,
-      paddingLeft: 8,
-      [`& .${treeItemClasses.content}`]: {
-        paddingLeft: theme.spacing(2),
-      },
-    },
-    '&.MuiTreeItem-group, &.MuiCollapse-root': {
-      marginLeft: '16px !important',
-    },
-  })
-)
+  },
+  '&.MuiTreeItem-group, &.MuiCollapse-root': {
+    marginLeft: '16px !important',
+  },
+}))
 
 export const StyledTreeItem = function StyledTreeItem(
   props: StyledTreeItemProps
@@ -99,7 +99,8 @@ export const StyledTreeItem = function StyledTreeItem(
   const {
     bgColor,
     color,
-    labelIcon: LabelIcon,
+    icon,
+    labelIcon,
     labelInfo,
     labelText,
     colorForDarkMode,
@@ -113,8 +114,11 @@ export const StyledTreeItem = function StyledTreeItem(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     children: _c,
     ref,
+    _parentId,
+    onToggleSelect,
     ...other
   } = props
+  const LabelIcon = labelIcon ?? icon
 
   const {
     attributes,
@@ -167,13 +171,17 @@ export const StyledTreeItem = function StyledTreeItem(
     ]
   )
 
-  const handleMoreActionsClick = useCallback((e?: MouseEvent) => {
-    e?.stopPropagation?.()
-    setUi((current) => ({
-      ...current,
-      moreActionsOpen: !current?.moreActionsOpen,
-    }))
-  }, [])
+  const handleMoreActionsClick = useCallback(
+    (e?: MouseEvent) => {
+      e?.stopPropagation?.()
+      onToggleSelect?.(props?.itemId)
+      setUi((current) => ({
+        ...current,
+        moreActionsOpen: !current?.moreActionsOpen,
+      }))
+    },
+    [onToggleSelect, props?.itemId]
+  )
 
   const stopPropagation = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -240,7 +248,7 @@ export const StyledTreeItem = function StyledTreeItem(
           ),
         }}
         ref={handleSetNodeRef}
-        nodeId={nodeId as string}
+        // nodeId={nodeId as string}
         label={
           <Box
             ref={setNodeDropRef}
@@ -340,6 +348,7 @@ export const StyledTreeItem = function StyledTreeItem(
         }
         style={styleProps}
         {...other}
+        itemId={(nodeId ?? other.itemId) as any}
       >
         {/* {children} */}
       </StyledTreeItemRoot>
@@ -365,6 +374,7 @@ export const StyledTreeItem = function StyledTreeItem(
               handleMoreActionsClick(e)
             }}
             disabled={action.disabled}
+            sourceAnchorEl={moreActionsButtonRef.current as HTMLElement}
           ></DropdownMenuItem>
         ))}
       </DropdownMenu>

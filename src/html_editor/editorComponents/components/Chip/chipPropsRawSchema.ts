@@ -1,13 +1,14 @@
+import { HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS } from '../../../defs'
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
 import { ICON_NAMES } from '../../../defs/iconNames'
 import { MuiSize } from '../../../defs/muiSizeDict'
-import { BASE_POINTER_EVENTS } from '../../eventSchemas/basePointerEvents'
-import { CLIPBOARD_EVENTS } from '../../eventSchemas/clipboardEvents'
-import { FOCUS_EVENTS } from '../../eventSchemas/focusEvents'
-import { KEYBOARD_EVENTS } from '../../eventSchemas/keyboardEvents'
-import { MOUSE_EVENTS } from '../../eventSchemas/mouseEvents'
-import { POINTER_EVENTS } from '../../eventSchemas/pointerEvents'
-import { TOUCH_EVENTS } from '../../eventSchemas/touchEvents'
+import { BASE_POINTER_EVENTS } from '../../commonEventSchemas/basePointerEvents'
+import { CLIPBOARD_EVENTS } from '../../commonEventSchemas/clipboardEvents'
+import { FOCUS_EVENTS } from '../../commonEventSchemas/focusEvents'
+import { KEYBOARD_EVENTS } from '../../commonEventSchemas/keyboardEvents'
+import { MOUSE_EVENTS } from '../../commonEventSchemas/mouseEvents'
+import { POINTER_EVENTS } from '../../commonEventSchemas/pointerEvents'
+import { TOUCH_EVENTS } from '../../commonEventSchemas/touchEvents'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 
 export const muiBaseColors = [
@@ -27,28 +28,65 @@ export const chipPropsSchema: ExtendedObjectSchemaType = {
   type: PropertyType.Object,
   required: true,
   properties: {
-    component: {
-      type: PropertyType.String,
-      form: {},
-      enum: [],
-      groupBy: (item) =>
-        item && typeof item === 'object' && 'category' in item
-          ? (item?.category as string)
-          : undefined,
-      category: 'shortcut',
-    },
-    icon: {
-      type: PropertyType.icon,
-      required: false,
-      enum: ICON_NAMES,
-      category: 'shortcut',
-    },
     label: {
       type: PropertyType.String,
       form: {
         defaultValue: 'Test Chip',
       },
       category: 'content',
+    },
+    icon: {
+      type: PropertyType.icon,
+      required: false,
+      enum: ICON_NAMES,
+      category: 'content',
+    },
+    iconColor: {
+      type: PropertyType.color,
+      required: false,
+      category: 'content',
+      form: {
+        defaultValue: 'inherit',
+      },
+    },
+    avatarInitials: {
+      type: PropertyType.String,
+      // form: {
+      //   defaultValue: 'Test Chip',
+      // },
+      category: 'content',
+    },
+    avatarBgColor: {
+      type: PropertyType.color,
+      form: {
+        defaultValue: 'inherit',
+      },
+      category: 'content',
+    },
+    avatarImage: {
+      type: PropertyType.imageSrc,
+      // form: {
+      //   defaultValue: 'inherit',
+      // },
+      category: 'content',
+    },
+    deleteIcon: {
+      type: PropertyType.icon,
+      required: false,
+      enum: ICON_NAMES,
+      category: 'content',
+    },
+    component: {
+      type: PropertyType.String,
+      enum: HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS,
+      groupBy: (item) =>
+        item && typeof item === 'object' && 'category' in item
+          ? (item?.category as string)
+          : undefined,
+      category: 'shortcut',
+      form: {
+        defaultValue: 'div',
+      },
     },
     size: {
       type: PropertyType.String,
@@ -73,7 +111,7 @@ export const chipPropsSchema: ExtendedObjectSchemaType = {
       // },
       type: PropertyType.String,
       required: false,
-      enum: muiBaseColors,
+      enum: [...muiBaseColors, 'default'],
       form: {
         defaultValue: muiBaseColors[0],
       },
@@ -127,7 +165,12 @@ export const chipPropsSchema: ExtendedObjectSchemaType = {
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
     },
-
+    onDelete: {
+      type: PropertyType.eventHandler,
+      required: false,
+      category: 'events',
+      eventType: 'chipEvent',
+    },
     ...BASE_POINTER_EVENTS,
     ...MOUSE_EVENTS,
     ...POINTER_EVENTS,

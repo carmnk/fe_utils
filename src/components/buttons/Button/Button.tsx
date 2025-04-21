@@ -1,19 +1,13 @@
 import { CSSProperties, ReactNode, Ref } from 'react'
 import { useMemo } from 'react'
-import {
-  useTheme,
-  Button as MuiButton,
-  Box,
-  StackProps,
-  CircularProgressProps,
-  TooltipProps,
-} from '@mui/material'
-import { Tooltip, Typography, TypographyProps } from '@mui/material'
+import { useTheme, Button as MuiButton, Box, TooltipProps } from '@mui/material'
+import { Tooltip } from '@mui/material'
 import { ButtonProps } from '@mui/material'
 import type { ButtonDropdown } from './defs'
 import { ButtonEndIcon, ButtonStartIcon } from './ButtonIcons'
 import { makeButtonStyles } from './buttonStyles'
 import { IconProps } from '@mdi/react/dist/IconProps'
+import { mdiMinus } from '@mdi/js'
 
 export type CButtonProps = Omit<
   ButtonProps,
@@ -22,6 +16,7 @@ export type CButtonProps = Omit<
   label?: ReactNode // label for the button - precedence over children!
   children?: ReactNode // label for the button - if label is not provided
   loading?: boolean // loading state (show spinner instead of icon)
+  loadingMode?: 'auto' | 'leftPlaceholder' | 'rightPlaceholder'
   icon?: ReactNode
   endIcon?: ReactNode
   dropdown?: ButtonDropdown
@@ -33,19 +28,14 @@ export type CButtonProps = Omit<
   fontColor?: string
   iconSize?: CSSProperties['fontSize']
   disableTabstop?: boolean // if true, the button will not be focusable/tabable (tabindex=-1)
-  title?: string // title attribute (html)
-  name?: string // name attribute (html)
   disabled?: boolean // disabled attribute
   disableTooltipWhenDisabled?: boolean
   disableInteractiveTooltip?: boolean // will directly close not wait for hover
   // typographyProps?: TypographyProps // props for the typography component inside the button
   slotProps?: {
-    typography?: Partial<TypographyProps>
     tooltip?: Partial<TooltipProps>
     startIcon?: Partial<IconProps>
     endIcon?: Partial<IconProps>
-    loadingIconContainer?: Partial<StackProps>
-    loadingProgress?: Partial<CircularProgressProps>
   }
   borderRadius?: CSSProperties['borderRadius']
   rootInjection?: ReactNode
@@ -61,6 +51,7 @@ export const Button = (props: CButtonProps) => {
     children,
     endIcon: endIconIn,
     loading,
+    loadingMode,
     dropdown,
     disabled: disabledIn,
     iconButton,
@@ -74,62 +65,68 @@ export const Button = (props: CButtonProps) => {
     slotProps,
     borderRadius,
     rootInjection,
+    disableElevation = true,
     ref,
     ...rest
   } = props
-  const {
-    typography,
-    startIcon,
-    endIcon,
-    loadingIconContainer,
-    loadingProgress,
-    tooltip,
-  } = slotProps ?? {}
+
+  const { startIcon, endIcon, tooltip } = slotProps ?? {}
+
   const theme = useTheme()
   const disabled = disabledIn || loading
 
   const startIconComponent = useMemo(
-    () => (
-      <ButtonStartIcon
-        icon={icon}
-        iconColor={iconColor}
-        iconSize={iconSize}
-        disabled={disabled}
-        loading={loading}
-        variant={variant}
-        startIconProps={startIcon}
-        loadingIconContainerProps={loadingIconContainer}
-        loadingProgressProps={loadingProgress}
-        iconButton={iconButton}
-      />
-    ),
+    () =>
+      (icon ||
+        (loading && ['leftPlaceholder'].includes(loadingMode ?? ''))) && (
+        <ButtonStartIcon
+          icon={!icon ? mdiMinus : icon}
+          iconColor={iconColor}
+          iconSize={iconSize}
+          disabled={disabled}
+          variant={variant}
+          startIconProps={startIcon}
+          color={color}
+          // iconButton={iconButton}
+        />
+      ),
     [
       icon,
       iconColor,
       iconSize,
       disabled,
-      loading,
       variant,
       startIcon,
-      loadingIconContainer,
-      loadingProgress,
-      iconButton,
+      loadingMode,
+      loading,
+      color,
     ]
   )
   const endIconComponent = useMemo(
-    () => ({
-      endIcon: (
+    () =>
+      (endIconIn ||
+        (loading && ['rightPlaceholder'].includes(loadingMode ?? ''))) && (
         <ButtonEndIcon
           disabled={disabled}
-          endIcon={endIconIn}
+          endIcon={!endIconIn ? mdiMinus : endIconIn}
           iconColor={iconColor}
           variant={variant}
           dropdown={dropdown}
           endIconProps={endIcon}
+          color={color}
         />
       ),
-    }),
-    [disabled, endIconIn, iconColor, variant, dropdown, endIcon]
+    [
+      disabled,
+      endIconIn,
+      iconColor,
+      variant,
+      dropdown,
+      endIcon,
+      color,
+      loading,
+      loadingMode,
+    ]
   )
 
   const buttonStyles = useMemo(
@@ -138,27 +135,29 @@ export const Button = (props: CButtonProps) => {
         theme,
         variant,
         disableHover,
-        disabled,
-        icon,
         iconButton,
         sx: rest?.sx,
         dropdown: dropdown,
         endIcon: endIconIn,
         borderRadius,
         fullWidth: props?.fullWidth,
+        size: props?.size ?? 'medium',
+        fontColor,
+        color,
       }),
     [
       theme,
       variant,
       disableHover,
-      disabled,
-      icon,
       iconButton,
       rest?.sx,
       dropdown,
       endIconIn,
       borderRadius,
       props?.fullWidth,
+      props?.size,
+      fontColor,
+      color,
     ]
   )
 
@@ -169,53 +168,55 @@ export const Button = (props: CButtonProps) => {
           color={color}
           ref={ref}
           variant="outlined"
-          disableElevation
           startIcon={startIconComponent}
-          {...endIconComponent}
+          endIcon={endIconComponent}
           disabled={disabled}
           {...rest}
-          tabIndex={disableTabstop ? -1 : 0}
+          tabIndex={disableTabstop ? -1 : undefined}
           sx={buttonStyles}
+          loading={loading}
+          loadingPosition={
+            startIconComponent && loadingMode !== 'rightPlaceholder'
+              ? 'start'
+              : endIconComponent && loadingMode !== 'leftPlaceholder'
+                ? 'end'
+                : loadingMode === 'leftPlaceholder'
+                  ? 'start'
+                  : loadingMode === 'rightPlaceholder'
+                    ? 'end'
+                    : 'center'
+          }
+          disableElevation={disableElevation}
         >
-          {!iconButton && (
-            <Typography
-              variant="body2"
-              color={
-                disabled ? 'action.disabled' : (fontColor ?? 'text.primary')
-              }
-              fontWeight={700}
-              {...typography}
-            >
-              {label ?? children}
-            </Typography>
-          )}
+          {!iconButton && (label ?? children)}
           {rootInjection}
         </MuiButton>
       ) : variant === 'text' ? (
         <MuiButton
           color={color}
           ref={ref}
-          size="small"
           variant="text"
           startIcon={startIconComponent}
-          {...endIconComponent}
+          endIcon={endIconComponent}
           disabled={disabled}
           {...rest}
-          tabIndex={disableTabstop ? -1 : 0}
+          tabIndex={disableTabstop ? -1 : undefined}
           sx={buttonStyles}
+          loading={loading}
+          loadingPosition={
+            startIconComponent && loadingMode !== 'rightPlaceholder'
+              ? 'start'
+              : endIconComponent && loadingMode !== 'leftPlaceholder'
+                ? 'end'
+                : loadingMode === 'leftPlaceholder'
+                  ? 'start'
+                  : loadingMode === 'rightPlaceholder'
+                    ? 'end'
+                    : 'center'
+          }
+          disableElevation={disableElevation}
         >
-          {!iconButton && (
-            <Typography
-              variant="body2"
-              color={
-                disabled ? 'action.disabled' : (fontColor ?? 'text.primary')
-              }
-              fontWeight={700}
-              {...typography}
-            >
-              {label ?? children}
-            </Typography>
-          )}
+          {!iconButton && (label ?? children)}
           {rootInjection}
         </MuiButton>
       ) : (
@@ -223,28 +224,27 @@ export const Button = (props: CButtonProps) => {
           color={color}
           ref={ref}
           variant="contained"
-          disableElevation
           startIcon={startIconComponent}
-          {...endIconComponent}
+          endIcon={endIconComponent}
           disabled={disabled}
           {...rest}
-          tabIndex={disableTabstop ? -1 : 0}
+          tabIndex={disableTabstop ? -1 : undefined}
           sx={buttonStyles}
+          loading={loading}
+          loadingPosition={
+            startIconComponent && loadingMode !== 'rightPlaceholder'
+              ? 'start'
+              : endIconComponent && loadingMode !== 'leftPlaceholder'
+                ? 'end'
+                : loadingMode === 'leftPlaceholder'
+                  ? 'start'
+                  : loadingMode === 'rightPlaceholder'
+                    ? 'end'
+                    : 'center'
+          }
+          disableElevation={disableElevation}
         >
-          {!iconButton && (
-            <Typography
-              variant="body2"
-              color={
-                disabled
-                  ? 'action.disabled'
-                  : (fontColor ?? 'primary.contrastText')
-              }
-              fontWeight={700}
-              {...typography}
-            >
-              {label ?? children}
-            </Typography>
-          )}
+          {!iconButton && (label ?? children)}
           {rootInjection}
         </MuiButton>
       ),
@@ -255,15 +255,16 @@ export const Button = (props: CButtonProps) => {
       children,
       disabled,
       endIconComponent,
-      fontColor,
       label,
       startIconComponent,
       variant,
       buttonStyles,
       ref,
-      typography,
       rest, // could be a problem
       rootInjection,
+      loading,
+      loadingMode,
+      disableElevation,
     ]
   )
 
@@ -277,7 +278,7 @@ export const Button = (props: CButtonProps) => {
           disableInteractive={disableInteractiveTooltip}
           {...tooltip}
         >
-          <Box width="max-content">{Button}</Box>
+          <Box width={rest?.fullWidth ? '100%' : 'max-content'}>{Button}</Box>
         </Tooltip>
       ) : (
         Button
@@ -289,6 +290,7 @@ export const Button = (props: CButtonProps) => {
       disabled,
       disableTooltipWhenDisabled,
       tooltip,
+      rest?.fullWidth,
     ]
   )
   return ButtonWithTooltip

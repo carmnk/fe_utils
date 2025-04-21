@@ -12,6 +12,8 @@ export const REGEX_MDIICON_PLACEHOLDER = /{mdi\w*}/g
 export const REGEX_RESOLUTION_FAILED =
   /(({_data)|({formData)|({treeviews)|({props)|({buttonStates))\.[^}]*'[^}]*'[^}]*/g
 
+export const REGEX_TEXT_HAS_BRACKETS = /({|}|\[|\])/g
+
 export const REGEX_PLACEHOLDERS = [
   REGEX_DATA_PLACEHOLDER,
   REGEX_TREEVIEW_PLACEHOLDER,
@@ -23,6 +25,10 @@ export const checkForPlaceholders = (text: string) => {
   return !!REGEX_PLACEHOLDERS.map((regex) => text.match(regex)).filter(
     (match) => match
   )?.length
+}
+
+export const checkForParsableJson = (text: string) => {
+  return text.match(REGEX_TEXT_HAS_BRACKETS)
 }
 
 /**  replaces the placeholders AND EVALs the string if it contains any placeholders, static calculations are skipped!
@@ -292,7 +298,7 @@ export const replacePlaceholdersInString = (
       typeof newText === 'string' &&
       newText.match?.(REGEX_RESOLUTION_FAILED)
     ) {
-      console.warn('Resolution failed', newText, text, templates)
+      console.debug('Resolution failed', newText, text, templates)
       return newText
     }
     // this will though prevent calculations without placeholders

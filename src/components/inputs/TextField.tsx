@@ -1,4 +1,4 @@
-import { useState, useCallback, ReactNode, Ref } from 'react'
+import { useState, useCallback, ReactNode, Ref, CSSProperties } from 'react'
 import { useMemo, ChangeEvent } from 'react'
 import { InputAdornment, Box, TooltipProps } from '@mui/material'
 import { TextField as MTextField } from '@mui/material'
@@ -37,7 +37,9 @@ export type CustomTextFieldProps = {
   startIcon?: ReactNode
   injectComponent?: ReactNode
   slotProps?: {
-    rootContainer?: BoxProps
+    rootContainer?: Omit<BoxProps, 'sx'> & {
+      sx: BoxProps['sx'] & CSSProperties
+    }
     inputContainer?: MTextFieldProps['InputProps']
     input?: MTextFieldProps['inputProps']
     tooltip?: TooltipProps
@@ -78,6 +80,7 @@ export const CTextField = (props: CTextFieldProps) => {
     slotProps,
     labelRightInfo,
     ref,
+    defaultValue,
     ...rest
   } = props
 
@@ -129,7 +132,7 @@ export const CTextField = (props: CTextFieldProps) => {
     return {
       type,
       value: value ?? '',
-      size: 'small',
+
       disabled: disabled,
       name,
       onChange: handleChange,
@@ -173,7 +176,7 @@ export const CTextField = (props: CTextFieldProps) => {
         ) : undefined,
         sx: {
           ...defaultInputContainerTextFieldStyles,
-          height: props?.multiline ? undefined : 42,
+          // height: props?.multiline ? undefined : 42,
           borderRadius,
           ...(inputContainer?.sx ?? {}),
         },
@@ -225,7 +228,7 @@ export const CTextField = (props: CTextFieldProps) => {
     borderRadius,
     notchedLabelBgColor,
     notchedLabelMarginLeft,
-    props?.multiline,
+    // props?.multiline,
     formHelperText,
     inputContainer,
     input,
@@ -262,7 +265,7 @@ export const CTextField = (props: CTextFieldProps) => {
               </Box>
             )}
           </Typography>
-          {labelRightInfo && (
+          {labelRightInfo && rootContainer?.sx?.flexDirection === 'column' && (
             <Button
               variant="outlined"
               iconButton
@@ -272,7 +275,20 @@ export const CTextField = (props: CTextFieldProps) => {
           )}
         </Flex>
       )}
-      <MTextField {...textFieldProps} ref={ref} />
+      {rootContainer?.sx?.flexDirection === 'row' && labelRightInfo ? (
+        <Flex alignItems="center" gap={1}>
+          <MTextField {...textFieldProps} ref={ref} />
+          <Button
+            variant="outlined"
+            iconButton
+            icon={mdiInformation}
+            tooltip={labelRightInfoTooltip}
+          />
+        </Flex>
+      ) : (
+        <MTextField {...textFieldProps} ref={ref} />
+      )}
+
       {injectComponent}
     </Box>
   )

@@ -1,5 +1,4 @@
 import { mdiButtonCursor } from '@mdi/js'
-import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ButtonPropsSchema } from './buttonPropsRawSchema'
 import { ElementModel } from '../../componentDefType'
 import { ButtonWrapper } from './ButtonWrapper'
@@ -9,15 +8,9 @@ export const buttonEditorComponentDef = {
   type: 'Button' as const,
 
   component: ButtonWrapper,
-  formGen: ({ editorState }) =>
-    propertyFormFactory(ButtonPropsSchema, editorState),
   props: {
-    type: 'primary',
     label: 'Test-Label',
-    disabled: false,
-    loading: false,
-    iconButton: false,
-    size: 'medium',
+    disableElevation: true,
     sx: {},
     slotProps: {
       typography: {},
@@ -30,4 +23,4 @@ export const buttonEditorComponentDef = {
   icon: mdiButtonCursor,
   category: 'basic',
   schema: ButtonPropsSchema,
-} satisfies ElementModel<CommonComponentPropertys>
+} satisfies ElementModel<CommonComponentPropertys & { html_id: string }>

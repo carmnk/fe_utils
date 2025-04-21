@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
   Ref,
+  useRef,
 } from 'react'
 import { CTextField, CTextFieldProps } from './TextField'
 
@@ -15,18 +16,18 @@ const formatGermanNumberString = (
   disableNumberSeparator?: boolean,
   minDigits?: number
 ) => {
-  return new Intl.NumberFormat('de-DE', {
+  return new Intl.NumberFormat('en-uk', {
     minimumFractionDigits: minDigits ?? 0,
     maximumFractionDigits: digits || undefined,
   })
     .format(number)
-    ?.replaceAll(disableNumberSeparator ? '.' : '', '')
+    ?.replaceAll(disableNumberSeparator ? ',' : '', '')
 }
 
 export type CNumberFieldProps = Omit<CTextFieldProps, 'value'> & {
   value?: number | '' | null
   isInt?: boolean
-  disableNumberSeparator?: boolean
+  // disableNumberSeparator?: boolean
   maxDecimalDigits?: number
   onChange?: (newValue: number, e: ChangeEvent<HTMLInputElement>) => void
   ref?: Ref<HTMLInputElement>
@@ -45,7 +46,7 @@ export const NumberField = (props: CNumberFieldProps) => {
     onChangeCompleted,
     maxLength,
     defaultValue,
-    disableNumberSeparator,
+
     isInt,
     maxDecimalDigits = 3,
     slotProps,
@@ -53,16 +54,20 @@ export const NumberField = (props: CNumberFieldProps) => {
     ...rest
   } = props
 
-  const [innerValue, setInnerValue] = useState<string | undefined>(undefined)
-  const [valueStarted, setValueStarted] = useState('')
+  const disableNumberSeparator = true
+
+  const [innerValue, setInnerValue] = useState<string | undefined>(
+    defaultValue?.toString() as string
+  )
+  const defaultValueSet = useRef(false)
+  const [valueStarted, setValueStarted] = useState(defaultValue ?? '')
 
   useEffect(() => {
-    const isLastCharComma = innerValue?.slice?.(-1) === ','
+    const isLastCharComma = innerValue?.slice?.(-1) === '.'
     const innerValueString = (
       isLastCharComma ? innerValue.slice(0, -1) : innerValue
-    )
-      ?.replaceAll('.', '')
-      ?.replaceAll(',', '.')
+    )?.replaceAll(',', '')
+    // ?.replaceAll('.', '.')
     const innerValueNumber = innerValueString
       ? parseFloat(innerValueString)
       : null
@@ -76,8 +81,11 @@ export const NumberField = (props: CNumberFieldProps) => {
                 : undefined,
               disableNumberSeparator
             )
-          : ''
+          : !defaultValueSet.current
+            ? (defaultValue as string)
+            : ''
       )
+      defaultValueSet.current = true
     }
 
     if (innerValue === undefined && value !== defaultValue && value !== '') {
@@ -89,24 +97,40 @@ export const NumberField = (props: CNumberFieldProps) => {
                 ? maxDecimalDigits
                 : undefined
             )
-          : ''
+          : !defaultValueSet
+            ? (defaultValue as string)
+            : ''
       )
+      defaultValueSet.current = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   const handleChangeCompleted = useCallback(
     (e: FocusEvent<HTMLInputElement>) => {
+      const valueAdjIn = e?.target?.value
+      const regexOnlyNumbers = /^[0-9.,]*$/
+      const valueAdj = valueAdjIn.match(regexOnlyNumbers)
+        ? parseFloat(valueAdjIn)
+        : valueAdjIn
+      // console.log(
+      //   'handleChangeCompleted',
+      //   e?.target?.value,
+      //   value,
+      //   innerValue,
+      //   '-> ',
+      //   valueAdj
+      // )
       //dont trigger if value has not changed
       if (
-        typeof value === 'undefined' ||
-        value === null ||
-        value.toString() === valueStarted
+        typeof valueAdj === 'undefined' ||
+        valueAdj === null ||
+        valueAdj.toString() === valueStarted
       )
         return
-      onChangeCompleted?.(value as string, e, name)
+      onChangeCompleted?.(valueAdj as string, e, name)
     },
-    [onChangeCompleted, value, valueStarted, name]
+    [onChangeCompleted, valueStarted, name]
   )
 
   const handleChangeStarted = useCallback(() => {
@@ -121,7 +145,7 @@ export const NumberField = (props: CNumberFieldProps) => {
       // nameIn?: string
     ) => {
       // const { name, value: valueIn } = e.target
-      let valueInAdj = newValue.replaceAll('.', '')
+      let valueInAdj = newValue.replaceAll(',', '')
       let isNumeric = true
       for (let i = 0; i < valueInAdj?.length || 0; i++) {
         const allowedPureNumberChars = [
@@ -137,7 +161,7 @@ export const NumberField = (props: CNumberFieldProps) => {
           '9',
           '0',
         ]
-        const allowedDecimalChars = [...allowedPureNumberChars, ',']
+        const allowedDecimalChars = [...allowedPureNumberChars, '.']
         const allowedChars = isInt
           ? allowedPureNumberChars
           : allowedDecimalChars
@@ -148,7 +172,7 @@ export const NumberField = (props: CNumberFieldProps) => {
       const amtCommas = valueInAdj?.match(/,/g)
       if ((amtCommas?.length || 0) > 1) return
 
-      const posComma = valueInAdj.lastIndexOf(',')
+      const posComma = valueInAdj.lastIndexOf('.')
       if (posComma !== -1) {
         if (posComma < valueInAdj.length - 1 - maxDecimalDigits) {
           valueInAdj = valueInAdj.slice(0, posComma + 1 + maxDecimalDigits)
@@ -170,7 +194,7 @@ export const NumberField = (props: CNumberFieldProps) => {
         )
         setInnerValue('')
       } else {
-        const posComma = valueInAdj.indexOf(',')
+        const posComma = valueInAdj.indexOf('.')
         const checkString =
           posComma !== -1 ? valueInAdj.slice(0, posComma) : valueInAdj
         if (
@@ -181,15 +205,15 @@ export const NumberField = (props: CNumberFieldProps) => {
         ) {
           return
         }
-        const value = parseFloat(valueInAdj?.replaceAll(',', '.'))
+        const value = parseFloat(valueInAdj?.replaceAll('.', '.'))
         const charsAfterComma = valueInAdj.slice(posComma + 1)
 
-        const isLastCharComma = valueInAdj.slice(-1) === ','
+        const isLastCharComma = valueInAdj.slice(-1) === '.'
         const newInnerValueRaw = isLastCharComma
           ? valueInAdj.slice(0, -1)
           : valueInAdj
         const newInnerValueNumber = parseFloat(
-          newInnerValueRaw?.replaceAll(',', '.')
+          newInnerValueRaw //?.replaceAll(',', '.')
         )
         const newInnerValue =
           formatGermanNumberString(
@@ -201,7 +225,7 @@ export const NumberField = (props: CNumberFieldProps) => {
             posComma !== -1 && charsAfterComma?.length
               ? Math.min(charsAfterComma?.length, maxDecimalDigits)
               : undefined
-          ) + (isLastCharComma ? ',' : '')
+          ) + (isLastCharComma ? '.' : '')
         setInnerValue(newInnerValue)
         onChange?.(
           value as unknown as string,
@@ -226,6 +250,12 @@ export const NumberField = (props: CNumberFieldProps) => {
       onChange: handleChangeNumber,
       onBlur: handleChangeCompleted,
       onFocus: handleChangeStarted,
+      // onKeyDown: (e) => {
+      //   e?.stopPropagation()
+      //   if (e.key === 'Enter') {
+      //     handleChangeCompleted(e as any)
+      //   }
+      // },
       ...rest,
       slotProps,
     }

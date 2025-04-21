@@ -10,6 +10,10 @@ export const IconPropsSchema: ExtendedObjectSchemaType = {
       category: 'shortcut',
       enum: ICON_NAMES,
     },
+    color: {
+      type: PropertyType.color,
+      category: 'shortcut',
+    },
     size: {
       type: PropertyType.String,
       category: 'shortcut',
@@ -23,17 +27,19 @@ export const IconPropsSchema: ExtendedObjectSchemaType = {
       category: 'shortcut',
     },
     rotate: {
-      type: PropertyType.Number,
-      category: 'shortcut',
-    },
-    spin: {
-      type: PropertyType.Number,
-      category: 'shortcut',
-    },
-    title: {
       type: PropertyType.String,
       category: 'shortcut',
     },
+    // title: {
+    //   type: PropertyType.String,
+    //   category: 'shortcut',
+    //   label: 'title (A11y)',
+    // },
+    // description: {
+    //   type: PropertyType.String,
+    //   category: 'shortcut',
+    //   label: 'description (A11y)',
+    // },
 
     sx: {
       type: PropertyType.json,

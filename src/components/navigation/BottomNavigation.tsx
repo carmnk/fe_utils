@@ -21,6 +21,7 @@ export type CBottomNavigationProps = Omit<
     disabled?: boolean
     icon?: string
     sx?: BottomNavigationActionProps['sx']
+    isInitialValue?: boolean
   }[]
   showLabels?: boolean
   slotProps?: {
@@ -33,10 +34,11 @@ export type CBottomNavigationProps = Omit<
 }
 
 export const BottomNavigation = (props: CBottomNavigationProps) => {
-  const { value, onChange, items, showLabels, rootInjection, sx } = props
+  const { value, onChange, items, showLabels, rootInjection, sx, component } =
+    props
 
   const handleChangeItem = useCallback(
-    (e: unknown, newValue: string) => {
+    (_e: unknown, newValue: string) => {
       onChange(newValue)
     },
     [onChange]
@@ -47,9 +49,10 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
       value={value}
       onChange={handleChangeItem}
       sx={sx}
+      component={component}
       {...(props.slotProps?.bottomNavigation ?? {})}
     >
-      {items?.map((item) => {
+      {items?.map?.((item) => {
         return (
           <BottomNavigationAction
             key={item.value}
@@ -59,6 +62,7 @@ export const BottomNavigation = (props: CBottomNavigationProps) => {
             {...(item.value === value
               ? props.slotProps?.bottomNavigationSelectedAction
               : (props.slotProps?.bottomNavigationAction ?? {}))}
+            showLabel={showLabels}
           />
         )
       })}

@@ -7,7 +7,7 @@ export type DropdownMenuProps = Omit<MenuProps, 'slotProps'> & {
   anchorEl: HTMLElement | null
   open: boolean
   onClose: (e?: MouseEvent) => void
-  items?: DropDownMenuItemProps[] // Dropdown menu items - precendence over children (but children can by any ReactNode, though consider the <DropwdownMenu/> css styles)
+  items?: Omit<DropDownMenuItemProps, 'sourceAnchorEl'>[] // Dropdown menu items - precendence over children (but children can by any ReactNode, though consider the <DropwdownMenu/> css styles)
   slotProps?: Omit<MenuProps['slotProps'], 'paper'> & {
     transitionContainer?: MenuProps['TransitionProps']
     menuList?: MenuProps['MenuListProps']
@@ -82,6 +82,7 @@ export const DropdownMenu = (props: PropsWithChildren<DropdownMenuProps>) => {
             key={iIdx}
             {...(slotPropsIn?.dropDownMenuItem ?? {})}
             {...item}
+            sourceAnchorEl={anchorEl as HTMLElement}
           />
         )) ?? children}
       </Menu>

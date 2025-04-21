@@ -120,7 +120,7 @@ export const Table = (props: TableProps) => {
 
   const handleOpenFilters = useMemo(() => {
     return (
-      columns?.map?.((col, cIdx) => () => {
+      columns?.map?.((_col, cIdx) => () => {
         setOpenFilters((current) => [
           ...current.slice(0, cIdx),
           true,
@@ -131,7 +131,7 @@ export const Table = (props: TableProps) => {
   }, [columns])
   const handleCloseFilters = useMemo(
     () =>
-      columns?.map?.((col, cIdx) => () => {
+      columns?.map?.((_col, cIdx) => () => {
         setOpenFilters((current) => [
           ...current.slice(0, cIdx),
           false,
@@ -172,10 +172,10 @@ export const Table = (props: TableProps) => {
 
       <tbody>
         {loading ? (
-          new Array(loadingRows ?? 10).fill(0).map((x, xIdx) => (
+          new Array(loadingRows ?? 10).fill(0).map((_x, xIdx) => (
             <Tr key={xIdx}>
               {(columns?.length ? columns : new Array(5).fill(0))?.map(
-                (y, yIdx) => (
+                (_y, yIdx) => (
                   <td key={`${xIdx}-${yIdx}`} style={{ height: '48px' }}>
                     <Skeleton variant="text" height="36px" />
                   </td>
@@ -186,7 +186,7 @@ export const Table = (props: TableProps) => {
         ) : (
           <>
             {draggedRows?.length ? (
-              draggedRows?.map((row, rIdx) => {
+              draggedRows?.map?.((row, rIdx) => {
                 const selectedItemId =
                   typeof getSelectedRow === 'function'
                     ? getSelectedRow(row, rIdx)
@@ -199,6 +199,7 @@ export const Table = (props: TableProps) => {
                 return (
                   <Fragment key={rIdx}>
                     <RowComponent
+                      key={rIdx}
                       enableDrag={!!reorderRowId}
                       isDragged={
                         row?.[(reorderRowId as keyof typeof row) ?? ''] ===
@@ -237,6 +238,7 @@ export const Table = (props: TableProps) => {
                                 : (row[col?.renderCell] as ReactNode)}
                             </Box>
                           ) : null
+
                         return col?.isRowSelect ? (
                           <td key={cIdx}>
                             <Flex alignItems="center" justifyContent="center">

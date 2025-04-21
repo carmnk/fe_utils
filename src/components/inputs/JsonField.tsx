@@ -27,11 +27,12 @@ export type JsonFieldProps = Omit<
   _index?: number
   hideLineNumbers?: boolean
   onChange: (newValue: JsonFieldValue, e: { target: { name: string } }) => void
+  fontSize?: number
 }
 
-const buttonSlotProps = {
-  typography: { variant: 'caption' as const },
-}
+// const buttonSlotProps = {
+//   typography: { variant: 'caption' as const },
+// }
 const miniButtonStyles = { width: 'max-content' as const, m: 0 }
 
 export const RawJsonField = (props: JsonFieldProps) => {
@@ -53,6 +54,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
     hideLineNumbers = true,
     itemsWindowStartIndex,
     itemsWindowEndIndex,
+    fontSize,
     _index,
   } = props
 
@@ -121,7 +123,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
                 icon={isCurrentFieldExpanded ? mdiMinus : mdiPlus}
                 iconButton
                 variant="text"
-                slotProps={buttonSlotProps}
+                // slotProps={buttonSlotProps}
                 label={isCurrentFieldExpanded ? 'Collapse' : 'Expand'}
                 onClick={() => {
                   _setCollapsedPaths?.((current) =>
@@ -135,7 +137,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
             {isCurrentFieldExpanded &&
               value.map((item, arrIdx) => {
                 const handleDeleteItem = () => {
-                  onChange(value?.filter((v, vIdx) => vIdx !== arrIdx) || [], {
+                  onChange(value?.filter((__v, vIdx) => vIdx !== arrIdx) || [], {
                     target: { name: name ?? '' },
                   })
                 }
@@ -175,12 +177,13 @@ export const RawJsonField = (props: JsonFieldProps) => {
                       hideLineNumbers={hideLineNumbers}
                       itemsWindowStartIndex={itemsWindowStartIndex}
                       itemsWindowEndIndex={itemsWindowEndIndex}
+                      fontSize={fontSize}
                     />
                     {!disabled && (
                       <Button
                         icon={mdiDelete}
                         variant="text"
-                        slotProps={buttonSlotProps}
+                        // slotProps={buttonSlotProps}
                         sx={{ position: 'absolute', bottom: 0, left: '16px' }}
                         label="Delete Item"
                         onClick={handleDeleteItem}
@@ -193,7 +196,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
               <Button
                 icon={mdiPlus}
                 variant="text"
-                slotProps={buttonSlotProps}
+                // slotProps={buttonSlotProps}
                 sx={miniButtonStyles}
                 onClick={handleAddItem}
               >
@@ -219,7 +222,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
               <Button
                 icon={mdiPlus}
                 variant="text"
-                slotProps={buttonSlotProps}
+                // slotProps={buttonSlotProps}
                 sx={miniButtonStyles}
                 onClick={handleAddItem}
               >
@@ -246,6 +249,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
           hideLineNumbers={hideLineNumbers}
           itemsWindowStartIndex={itemsWindowStartIndex}
           itemsWindowEndIndex={itemsWindowEndIndex}
+          fontSize={fontSize}
         />
       )}
     </Box>

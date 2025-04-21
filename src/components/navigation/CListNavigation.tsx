@@ -6,6 +6,9 @@ import {
   ListItem,
   ListItemButton,
   ListItemIcon,
+  SxProps,
+  TypographyProps,
+  TypographyVariant,
 } from '@mui/material'
 import { ListItemButtonProps, ListItemIconProps } from '@mui/material'
 import { ListItemProps, ListItemTextProps, ListProps } from '@mui/material'
@@ -20,10 +23,12 @@ export type ListNavigationProps = Omit<
   onChange: (value: string) => void
   items: ({
     value: string
+    secondaryLabel?: string
     label: ReactNode
     tooltip?: string
     disabled?: boolean
     icon?: ReactNode
+    isInitialValue?: boolean
   } | null)[]
   dense?: boolean
   disablePadding?: boolean
@@ -33,12 +38,20 @@ export type ListNavigationProps = Omit<
     listItemButton?: ListItemButtonProps
     listItemIconRoot?: ListItemIconProps
     listItemIcon?: IconProps
-    listItemTextRoot?: ListItemTextProps
+    listItemTextContainer?: ListItemTextProps
     listItemTextPrimaryTypography?: ListItemTextProps['primaryTypographyProps']
     listItemTextSecondaryTypography?: ListItemTextProps['secondaryTypographyProps']
     touchRipple?: ListItemButtonProps['TouchRippleProps']
   }
+  primaryTypographyVariant?: TypographyVariant
+  secondaryTypographyVariant?: TypographyVariant
+  primaryTypographyColor?: TypographyProps['color']
+  secondaryTypographyColor?: TypographyProps['color']
+  itemHoverBgColor?: string
+  activeItemBgColor?: string
+  activeItemHoverBgColor?: string
   rootInjection?: ReactNode
+  background?: string
 }
 
 export const ListNavigation = (props: ListNavigationProps) => {
@@ -51,6 +64,14 @@ export const ListNavigation = (props: ListNavigationProps) => {
     subheader,
     slotProps,
     rootInjection,
+    primaryTypographyVariant,
+    secondaryTypographyVariant,
+    primaryTypographyColor,
+    secondaryTypographyColor,
+    itemHoverBgColor,
+    activeItemBgColor,
+    activeItemHoverBgColor,
+    background,
     ...others
   } = props
 
@@ -59,7 +80,7 @@ export const ListNavigation = (props: ListNavigationProps) => {
     listItemButton,
     listItemIconRoot,
     listItemIcon,
-    listItemTextRoot,
+    listItemTextContainer,
     listItemTextPrimaryTypography,
     listItemTextSecondaryTypography,
   } = slotProps ?? {}
@@ -76,28 +97,98 @@ export const ListNavigation = (props: ListNavigationProps) => {
   }, [subheader])
 
   const handleClicks = useMemo(() => {
-    return items.map((item) => () => {
-      if (!item) return
-      onChange(item.value)
-    })
+    return (
+      items?.map?.((item) => () => {
+        if (!item) return
+        onChange(item.value)
+      }) ?? []
+    )
   }, [items, onChange])
 
+  const listProps = useMemo(() => {
+    return {
+      dense,
+      disablePadding,
+      subheader: subheaderComponent,
+      ...others,
+      sx: {
+        ...(others?.sx ?? {}),
+        ...(background ? { backgroundColor: background } : {}),
+      },
+    }
+  }, [dense, disablePadding, others, subheaderComponent, background])
+
+  const listItemTextSlotProps = useMemo(() => {
+    return {
+      primary: {
+        ...(listItemTextPrimaryTypography ?? {}),
+        variant: primaryTypographyVariant,
+        color: primaryTypographyColor,
+      },
+      secondary: {
+        ...(listItemTextSecondaryTypography ?? {}),
+        variant: secondaryTypographyVariant,
+        color: secondaryTypographyColor,
+      },
+    }
+  }, [
+    listItemTextPrimaryTypography,
+    listItemTextSecondaryTypography,
+    primaryTypographyVariant,
+    secondaryTypographyVariant,
+    primaryTypographyColor,
+    secondaryTypographyColor,
+  ])
+
   return (
-    <List
-      dense={dense}
-      disablePadding={disablePadding}
-      subheader={subheaderComponent}
-      {...others}
-    >
-      {items?.map((item, iIdx) =>
-        item ? (
-          <ListItem
-            disablePadding
-            style={item?.value === value ? activeBgColor : undefined}
-            key={iIdx}
-            {...listItem}
-          >
-            <ListItemButton onClick={handleClicks[iIdx]} {...listItemButton}>
+    <List {...listProps}>
+      {items?.map?.((item, iIdx) => {
+        const itemHoverBgColorSx = itemHoverBgColor
+          ? {
+              '&:hover': {
+                ...(listItem?.sx?.['&:hover' as keyof SxProps] ?? {}),
+                backgroundColor: itemHoverBgColor,
+              },
+            }
+          : {}
+        const activeListItemSx =
+          (activeItemBgColor || activeItemHoverBgColor) && item?.value === value
+            ? {
+                bgcolor: activeItemBgColor
+                  ? activeItemBgColor + ' !important'
+                  : undefined,
+                '&:hover': {
+                  ...(listItem?.sx?.['&:hover' as keyof SxProps] ?? {}),
+                  backgroundColor: activeItemHoverBgColor
+                    ? activeItemHoverBgColor + ' !important'
+                    : undefined,
+                },
+              }
+            : {}
+        const listItemProps = {
+          disablePadding,
+          style: item?.value === value ? activeBgColor : undefined,
+          ...listItem,
+          sx: {
+            ...(listItem?.sx ?? {}),
+            ...(itemHoverBgColorSx ?? {}),
+            ...(activeListItemSx ?? {}),
+          },
+        }
+        const listItemButtonProps = {
+          onClick: handleClicks[iIdx],
+          ...listItemButton,
+          sx: {
+            ...(listItemButton?.sx ?? {}),
+            '&:hover': {
+              ...(listItemButton?.sx?.['&:hover' as keyof SxProps] ?? {}),
+              backgroundColor: 'transparent !important',
+            },
+          },
+        }
+        return item ? (
+          <ListItem {...listItemProps} key={iIdx}>
+            <ListItemButton {...listItemButtonProps}>
               {item?.icon && (
                 <ListItemIcon {...listItemIconRoot}>
                   <Icon
@@ -109,16 +200,16 @@ export const ListNavigation = (props: ListNavigationProps) => {
               )}
               <ListItemText
                 primary={item.label}
-                {...listItemTextRoot}
-                primaryTypographyProps={listItemTextPrimaryTypography}
-                secondaryTypographyProps={listItemTextSecondaryTypography}
+                secondary={item?.secondaryLabel}
+                {...listItemTextContainer}
+                slotProps={listItemTextSlotProps}
               />
             </ListItemButton>
           </ListItem>
         ) : (
           <Divider key={iIdx} />
         )
-      )}
+      })}
       {rootInjection}
     </List>
   )

@@ -11,8 +11,8 @@ import { CircularProgress, MenuItemProps } from '@mui/material'
 import { useTheme, Divider, Typography } from '@mui/material'
 import Icon from '@mdi/react'
 
-export type DropDownMenuItemProps = MenuItemProps & {
-  onClick?: (e: MouseEvent) => void
+export type DropDownMenuItemProps = Omit<MenuItemProps, 'onClick'> & {
+  onClick?: (e: MouseEvent, sourceAnchorEl?: HTMLElement) => void
   tooltip?: ReactNode
   icon?: ReactNode
   id: string
@@ -23,6 +23,7 @@ export type DropDownMenuItemProps = MenuItemProps & {
   onKeyDown?: KeyboardEventHandler<HTMLLIElement>
   sx?: MenuItemProps['sx']
   iconGap?: number
+  sourceAnchorEl?: HTMLElement
 }
 
 const SlimDivider = (props: { id: string }) => (
@@ -46,14 +47,15 @@ export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
     onKeyDown,
     iconGap,
     sx,
+    sourceAnchorEl,
   } = props
   const theme = useTheme()
   const handleOnClick = useCallback(
     (e: MouseEvent) => {
       if (disabled || loading) return
-      onClick?.(e)
+      onClick?.(e, sourceAnchorEl)
     },
-    [disabled, loading, onClick]
+    [disabled, loading, onClick, sourceAnchorEl]
   )
 
   const itemStylesAdj = useMemo(() => ({ ...itemStyles, ...sx }), [sx])

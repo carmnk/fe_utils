@@ -3,7 +3,15 @@ import { Table, TableProps } from '../../../../components'
 import { CommonComponentPropertys } from '../../componentProperty'
 
 export const TableWrapper = (props: TableProps & CommonComponentPropertys) => {
-  const { appController, id, data, ...rest } = props
+  const {
+    appController,
+    id,
+    data,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    icons,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    ...rest
+  } = props
 
   const tableUis = appController?.state?.tableUis
   const updateTableUi = appController?.actions?.updateTableUi

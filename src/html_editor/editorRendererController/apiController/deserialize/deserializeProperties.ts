@@ -1,18 +1,24 @@
 import { ElementModel, PropertyType } from '../../../editorComponents/index'
 import { checkForPlaceholders } from '../../../renderer/index'
-import { Element, Property } from '../../../types/index'
+import { checkForParsableJson } from '../../../renderer/placeholder/replacePlaceholder'
+import { Element, Property, Template } from '../../../types/index'
 import { isComponentType } from '../../../utils'
 
 export const deserializeProperties = (
   properties: Property[],
   elements: Element[],
-  ELEMENT_MODELS: ElementModel[]
+  ELEMENT_MODELS: ElementModel[],
+  templates: Template[]
 ) => {
   return (
     properties?.map((prop) => {
       const element = elements.find((el) => el.element_id === prop.element_id)
+      const template = templates.find(
+        (temp) => temp.template_id === prop?.template_id
+      )
+      const elementType = element?.element_type ?? template?.element_type
       const baseComponent = ELEMENT_MODELS.find(
-        (comp) => comp.type === element?.element_type
+        (comp) => comp.type === elementType
       )
       const baseComponentSchema = baseComponent?.schema
       const baseComponentSchemaProps = baseComponentSchema?.properties
@@ -28,9 +34,20 @@ export const deserializeProperties = (
         baseComponentSchemaPropType === PropertyType.eventHandler
 
       const isHtmlEvent =
-        prop.prop_name?.startsWith('on') &&
-        !isComponentType(element?.element_type ?? '')
+        prop.prop_name?.startsWith('on') && !isComponentType(elementType ?? '')
 
+      // console.log(
+      //   'properties',
+      //   elementType,
+      //   element,
+      //   template,
+      //   prop,
+      //   isHtmlEvent,
+      //   isSchemaPropJson,
+      //   isSchemaPropEventHandler,
+      //   isSchemaPropInt,
+      //   isSchemaPropNumeric
+      // )
       const value =
         isHtmlEvent ||
         isSchemaPropJson ||
@@ -55,8 +72,18 @@ export const deserializeProperties = (
                   if (matches) {
                     return propValue
                   }
+                  console.debug(
+                    'propValue before JSON.parse',
+                    propValue,
+                    matches
+                  )
+                  if (!checkForParsableJson(propValue)) {
+                    return propValue
+                  }
+
                   return JSON.parse(propValue)
                 }
+
                 return propValue
               } catch (e) {
                 console.error(e, prop)

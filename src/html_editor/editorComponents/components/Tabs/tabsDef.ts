@@ -1,5 +1,4 @@
 import { mdiTab } from '@mdi/js'
-import { propertyFormFactory } from '../../propertiesFormFactory'
 import { TabsPropsSchema } from './tabsPropsRawSchema'
 import { CTabsProps } from '../../../../components/navigation/CTabs'
 import { ElementModel } from '../../componentDefType'
@@ -9,10 +8,10 @@ import { CommonComponentPropertys } from '../../componentProperty'
 export const TabsComponentDef = {
   type: 'Tabs' as const,
   props: {
-    // children: "test",
-    // noWrap: false,
-    // align: "inherit",
-    items: [{ value: 'test', label: 'test' }],
+    items: [
+      { value: 'item1', label: 'Item 1', isInitialValue: true },
+      { value: 'item2', label: 'Item 2' },
+    ],
     sx: {},
     slotProps: {
       activeTab: {},
@@ -23,9 +22,7 @@ export const TabsComponentDef = {
       typography: {},
     },
   },
-  state: 'test',
-  formGen: ({ editorState }) =>
-    propertyFormFactory(TabsPropsSchema, editorState),
+  state: 'item1',
   icon: mdiTab,
   category: 'navigation',
   component: TabsWrapper,

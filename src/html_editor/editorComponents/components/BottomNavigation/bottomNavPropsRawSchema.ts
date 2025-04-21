@@ -1,3 +1,4 @@
+import { HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS } from '../../../defs'
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
 import { ICON_NAMES } from '../../../defs/iconNames'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
@@ -22,29 +23,38 @@ export const BottomNavPropsSchema: ExtendedObjectSchemaType = {
               form: { showInArrayList: true },
             },
             icon: { type: PropertyType.icon, enum: ICON_NAMES },
+            isInitialValue: {
+              type: PropertyType.Boolean,
+              form: { showInArrayList: true },
+            },
           },
         },
       ],
       form: {
-        defaultValue: [{ value: 'test', label: 'test' }],
+        defaultValue: [
+          { value: 'item1', label: 'Item 1', isInitialValue: true },
+          { value: 'item2', label: 'Item 2' },
+        ],
       },
       category: 'items',
     },
     component: {
       type: PropertyType.String,
-      form: {},
-      enum: [],
+      enum: HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS,
       groupBy: (item) =>
         item && typeof item === 'object' && 'category' in item
           ? (item?.category as string)
           : undefined,
       category: 'shortcut',
+      form: {
+        defaultValue: 'div',
+      },
     },
     showLabels: {
       type: PropertyType.Boolean,
       required: false,
       form: {
-        defaultValue: false,
+        defaultValue: true,
       },
       category: 'shortcut',
     },
@@ -65,9 +75,17 @@ export const BottomNavPropsSchema: ExtendedObjectSchemaType = {
         defaultValue: {},
         // label: 'sx',
       },
-      category: 'customize',
+      category: 'slots',
       properties: {
         bottomNavigationAction: {
+          type: PropertyType.json,
+          form: {
+            defaultValue: {},
+            // label: 'sx',
+          },
+          label: 'sx',
+        },
+        bottomNavigationSelectedAction: {
           type: PropertyType.json,
           form: {
             defaultValue: {},

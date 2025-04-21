@@ -14,9 +14,12 @@ export const NavContainerWrapper = (
   >
 ) => {
   const {
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     children,
     theme: t_,
     parentId,
+    editorStateUi: e_,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     appController,
     isProduction,
     id,

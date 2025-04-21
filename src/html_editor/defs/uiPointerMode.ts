@@ -1,23 +1,23 @@
 export enum UI_POINTER_MODE {
-  mixed = "mixed",
+  mixed = 'mixed',
   //   design = "design",
-  production = "production",
+  production = 'production',
 }
 
 export const UI_POINTER_MODE_OPTIONS: {
-  value: string;
-  label: string;
-  tooltip: string;
+  value: string
+  label: string
+  tooltip: string
 }[] = [
   {
     value: UI_POINTER_MODE.mixed,
-    label: "Mixed",
+    label: 'Editor',
     tooltip:
-      "Enables all pointer features of the editor and limited pointer features of the app",
+      'Enables all pointer features of the editor and limited pointer features of the app',
   },
   {
     value: UI_POINTER_MODE.production,
-    label: "Production",
-    tooltip: "Enables all pointer features of the app",
+    label: 'Production',
+    tooltip: 'Enables all pointer features of the app',
   },
-];
+]

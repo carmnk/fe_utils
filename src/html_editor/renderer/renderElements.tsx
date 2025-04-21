@@ -12,6 +12,7 @@ import { getInjectedElementIconProps } from './icons/getInjectedElementIconProps
 import { resolveElementProps } from './placeholder/resolveElementProps'
 import { getElementEventHandlerProps } from './actions/getElementEventHandlerProps'
 import { ElementModel } from '../editorComponents'
+import { ComponentBox } from './ComponentBox'
 
 // const ANY_PLACEHOLDER_REGEX =
 //   /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
@@ -190,21 +191,30 @@ export const renderElements = (params: {
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />
 
-    return isHtmlElement ? (
+    return element?.element_type === 'composite' ? (
+      <ComponentBox
+        element={element}
+        editorState={editorState}
+        appController={appController}
+        currentViewportElements={currentViewportElements}
+        selectedPageElements={currentPageViewportElements}
+        ELEMENT_MODELS={ELEMENT_MODELS}
+        selectedElement={element}
+        uiActions={uiActions}
+        isProduction={!!isProduction}
+        OverlayComponent={OverlayComponent}
+        navigate={navigate}
+        rootCompositeElementId={rootCompositeElementId}
+      />
+    ) : isHtmlElement ? (
       <ElementBox
         key={element.element_id}
         element={elementAdj2}
         onSelectElement={onSelectElement}
         editorState={editorState}
-        uiActions={uiActions}
         appController={appController}
-        currentViewportElements={currentViewportElements}
-        selectedPageElements={currentPageViewportElements}
-        selectedElement={element}
-        ELEMENT_MODELS={ELEMENT_MODELS}
         isProduction={isProduction}
         isPointerProduction={isPointerProduction}
-        OverlayComponent={OverlayComponent}
         navigate={navigate}
         events={
           eventHandlerProps as {
@@ -252,7 +262,10 @@ export const renderElements = (params: {
         {...injectedIconProps}
         // rootInjection={rootInjectionOverlayComponent}
         sx={
-          !isProduction
+          !isProduction &&
+          !['Dialog', 'AppBar'].includes(element.element_type) &&
+          (!elementPropsObject?.position ||
+            elementPropsObject?.position === 'relative')
             ? {
                 ...(elementPropsObject?.sx ?? {}),
                 position: 'relative',
@@ -270,6 +283,8 @@ export const renderElements = (params: {
         isProduction={isProduction}
         editorStateUi={editorState.ui}
         key={element.element_id}
+        assets={editorState.assets}
+        icons={icons}
       >
         {renderedElementChildren}
         {elementPropsObject?.children as ReactNode}

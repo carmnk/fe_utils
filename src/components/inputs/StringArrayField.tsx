@@ -34,7 +34,7 @@ export const StringArrayField = (props: StringArrayFieldProps) => {
   const valueAdjusted = value?.length ? value : ['']
 
   const handleChange = useCallback(
-    (newValue: string, e?: ChangeEvent<HTMLInputElement>) => {
+    (_newValue: string, e?: ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e?.target ?? {}
       if (!value) return
       onChangeArray(value, name)

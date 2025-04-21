@@ -1,9 +1,20 @@
-import { ListSubheader, MenuItem, MenuItemProps } from '@mui/material'
+import {
+  ListItemIcon,
+  ListSubheader,
+  MenuItem,
+  MenuItemProps,
+} from '@mui/material'
 import { CTextField, CTextFieldProps } from './TextField'
 import { Ref, useMemo } from 'react'
 import uniq from 'lodash/uniq'
+import Icon from '@mdi/react'
 
-type SelectOption = { value: string | number | boolean; label: string }
+type SelectOption = {
+  value: string | number | boolean
+  label: string
+  icon?: string
+  iconRotate?: number
+}
 
 export type CSelect2Props = CTextFieldProps & {
   options: SelectOption[]
@@ -49,6 +60,11 @@ export const CSelect2 = (props: CSelect2Props) => {
               {...menuItemProps}
               key={oIdx}
             >
+              {opt?.icon && (
+                <ListItemIcon sx={{ minWidth: 0, mr: 1 }}>
+                  <Icon path={opt.icon} size={0.7} rotate={opt?.iconRotate} />
+                </ListItemIcon>
+              )}
               {opt.label}
             </MenuItem>
           ))}

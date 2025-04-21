@@ -1,6 +1,7 @@
 import { ICON_NAMES } from '../../../defs/iconNames'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 import { buttonEditorComponentDef } from '../Button/buttonDef'
+import { muiBaseColors } from '../Chip/chipPropsRawSchema'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const {
@@ -44,19 +45,66 @@ export const ButtonGroupPropsSchema: ExtendedObjectSchemaType = {
         },
       ],
       form: {
-        defaultValue: [{ value: 'test', label: 'test' }],
+        defaultValue: [
+          {
+            value: 'item1',
+            label: 'Item 1',
+            isInitialValue: true,
+          },
+          { value: 'item2', label: 'Item 2' },
+        ],
       },
       category: 'items',
     },
-    buttonProps: {
-      type: PropertyType.Object,
-      properties: buttonSchema,
+    color: {
+      type: PropertyType.String,
+      enum: muiBaseColors,
+      form: {
+        defaultValue: 'primary',
+      },
       category: 'shortcut',
     },
-    selectedButtonProps: {
+    slotProps: {
       type: PropertyType.Object,
-      properties: buttonSchema,
-      category: 'shortcut',
+      form: {
+        defaultValue: {},
+        // label: 'sx',
+      },
+      category: 'slots',
+      properties: {
+        flexContainer: {
+          type: PropertyType.json,
+          form: {
+            defaultValue: {},
+            // label: 'sx',
+          },
+          label: 'flexContainer',
+        },
+        buttonSlotProps: {
+          type: PropertyType.json,
+          form: {
+            defaultValue: {},
+            // label: 'sx',
+          },
+          label: 'buttonSlotProps',
+        },
+        selectedButtonSlotProps: {
+          type: PropertyType.json,
+          form: {
+            defaultValue: {},
+            // label: 'sx',
+          },
+          label: 'selectedButtonSlotProps',
+        },
+        divider: {
+          type: PropertyType.json,
+          form: {
+            defaultValue: {},
+            // label: 'sx',
+          },
+          label: 'divider',
+        },
+      },
     },
   },
 }

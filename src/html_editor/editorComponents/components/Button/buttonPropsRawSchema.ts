@@ -1,13 +1,14 @@
+import { HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS } from '../../../defs'
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
 import { ICON_NAMES } from '../../../defs/iconNames'
 import { MuiSize } from '../../../defs/muiSizeDict'
-import { BASE_POINTER_EVENTS } from '../../eventSchemas/basePointerEvents'
-import { DRAG_EVENTS } from '../../eventSchemas/dragEvents'
-import { FOCUS_EVENTS } from '../../eventSchemas/focusEvents'
-import { KEYBOARD_EVENTS } from '../../eventSchemas/keyboardEvents'
-import { MOUSE_EVENTS } from '../../eventSchemas/mouseEvents'
-import { POINTER_EVENTS } from '../../eventSchemas/pointerEvents'
-import { TOUCH_EVENTS } from '../../eventSchemas/touchEvents'
+import { BASE_POINTER_EVENTS } from '../../commonEventSchemas/basePointerEvents'
+import { DRAG_EVENTS } from '../../commonEventSchemas/dragEvents'
+import { FOCUS_EVENTS } from '../../commonEventSchemas/focusEvents'
+import { KEYBOARD_EVENTS } from '../../commonEventSchemas/keyboardEvents'
+import { MOUSE_EVENTS } from '../../commonEventSchemas/mouseEvents'
+import { POINTER_EVENTS } from '../../commonEventSchemas/pointerEvents'
+import { TOUCH_EVENTS } from '../../commonEventSchemas/touchEvents'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 import { muiBaseColors, muiBaseColorsOptions } from '../Chip/chipPropsRawSchema'
 
@@ -18,8 +19,10 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
   properties: {
     component: {
       type: PropertyType.String,
-      form: {},
-      enum: [],
+      form: {
+        defaultValue: 'button',
+      },
+      enum: HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS,
       groupBy: (item) =>
         item && typeof item === 'object' && 'category' in item
           ? (item?.category as string)
@@ -91,18 +94,27 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       category: 'shortcut',
     },
     iconColor: {
-      type: PropertyType.String,
+      type: PropertyType.color,
       required: false,
       category: 'shortcut',
     },
     fontColor: {
+      type: PropertyType.color,
+      required: false,
+      category: 'shortcut',
+    },
+    html_id: {
       type: PropertyType.String,
       required: false,
       category: 'shortcut',
     },
-    id: {
+    loadingMode: {
       type: PropertyType.String,
       required: false,
+      enum: ['auto', 'leftPlaceholder', 'rightPlaceholder'],
+      form: {
+        defaultValue: 'auto',
+      },
       category: 'shortcut',
     },
     iconButton: {
@@ -129,7 +141,7 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       },
       category: 'shortcut',
     },
-    disableTabStop: {
+    disableTabstop: {
       type: PropertyType.Boolean,
       required: false,
       form: {
@@ -166,7 +178,7 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.Boolean,
       required: false,
       form: {
-        defaultValue: false,
+        defaultValue: true,
       },
       category: 'shortcut',
     },
@@ -212,16 +224,8 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
         defaultValue: {},
         // label: 'sx',
       },
-      category: 'customize',
+      category: 'slots',
       properties: {
-        typography: {
-          type: PropertyType.json,
-          form: {
-            defaultValue: {},
-            // label: 'sx',
-          },
-          label: 'sx',
-        },
         startIcon: {
           type: PropertyType.json,
           form: {
@@ -231,22 +235,6 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
           label: 'sx',
         },
         endIcon: {
-          type: PropertyType.json,
-          form: {
-            defaultValue: {},
-            // label: 'sx',
-          },
-          label: 'sx',
-        },
-        loadingIconContainer: {
-          type: PropertyType.json,
-          form: {
-            defaultValue: {},
-            // label: 'sx',
-          },
-          label: 'sx',
-        },
-        loadingProgress: {
           type: PropertyType.json,
           form: {
             defaultValue: {},

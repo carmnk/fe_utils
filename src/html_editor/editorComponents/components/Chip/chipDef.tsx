@@ -1,5 +1,4 @@
 import { mdiInformation } from '@mdi/js'
-import { propertyFormFactory } from '../../propertiesFormFactory'
 import { chipPropsSchema } from './chipPropsRawSchema'
 import { ChipWrapper, ChipWrapperProps } from './ChipWrapper'
 import { ElementModel } from '../../componentDefType'
@@ -15,19 +14,6 @@ export const chipEditorComponentDef = {
     disabled: false,
     sx: {},
   },
-  formGen: ({ editorState }) =>
-    propertyFormFactory(
-      chipPropsSchema,
-      editorState
-      //   {
-      //   dynamicOptionsDict: {
-      //     component: [
-      //       { value: undefined, label: 'Default (depends on variant)' },
-      //       ...HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS,
-      //     ],
-      //   },
-      // }
-    ),
   icon: mdiInformation,
   category: 'basic',
   component: ChipWrapper,

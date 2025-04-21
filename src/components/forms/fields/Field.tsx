@@ -23,6 +23,7 @@ type InputFieldLayoutProps = {
     defaultValue?: unknown
     showInArrayList?: boolean
   }
+  valueTransformer?: (formData: Record<string, unknown>) => unknown
 }
 type ArrayInputFieldProps = {
   type: 'array'
@@ -138,6 +139,7 @@ export const Field = (props: FieldProps) => {
   const [innerValue, setInnerValue] = useState<
     string | number | boolean | null
   >(formData?.[field?.name ?? ''] ?? (field as any)?.form?.defaultValue ?? '')
+
   const handleChangeInnerValue = useCallback(
     (newValue: string | number | boolean | null) => {
       setInnerValue(newValue)
@@ -148,6 +150,7 @@ export const Field = (props: FieldProps) => {
     setInnerValue(
       (formData?.[field?.name ?? ''] as string | number | boolean | null) ?? ''
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData?.[field?.name ?? '']])
 
   const handleChange = useCallback(
@@ -189,6 +192,9 @@ export const Field = (props: FieldProps) => {
       : field?.required
   const fieldValue = formData?.[field?.name ?? '']
 
+  // eslint-disable-next-line
+  const { keysDict, ...fieldAdj } = { ...field, keysDict: null }
+
   return field.type === 'inject' ? (
     <CustomField
       formData={formData}
@@ -210,7 +216,7 @@ export const Field = (props: FieldProps) => {
     />
   ) : ['array', 'object', 'string-array'].includes(field.type) ? null : (
     <GenericInputField
-      {...field}
+      {...fieldAdj}
       options={fieldOptions}
       error={
         fieldError ??
@@ -233,7 +239,11 @@ export const Field = (props: FieldProps) => {
       value={
         useChangeCompleted
           ? innerValue
-          : (formData?.[field?.name ?? ''] ?? field?.form?.defaultValue ?? '')
+          : field?.valueTransformer
+            ? (field?.valueTransformer?.(formData) ??
+              field?.form?.defaultValue ??
+              '')
+            : (formData?.[field?.name ?? ''] ?? field?.form?.defaultValue ?? '')
       }
       onChange={
         useChangeCompleted &&
@@ -278,6 +288,7 @@ export const Field = (props: FieldProps) => {
           : undefined
       }
       {...fieldProps}
+      // type={fieldAdj.field.}
       // onFileChange={onFileChange}
       // files={files}
     />

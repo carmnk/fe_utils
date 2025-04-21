@@ -111,6 +111,12 @@ export const GenericInputField = <
     ...rest
   } = props
 
+  const {
+    enableVirtualization: _eOut,
+    keysDict: _kOut,
+    ...restSelect
+  } = rest as typeof rest & { enableVirtualization: boolean; keysDict: unknown }
+
   const options = 'options' in props ? props.options : undefined
 
   const sxAdj = useMemo(() => {
@@ -205,6 +211,7 @@ export const GenericInputField = <
       label={label as string}
       {...rest}
       onChange={rest.onChange as JsonFieldProps['onChange']}
+      fontSize={12}
     />
   ) : //
   // : type === 'file' ? (
@@ -304,7 +311,7 @@ export const GenericInputField = <
       options={(options as GenericInputFieldOption[]) ?? []}
       sx={sxAdj}
       error={error}
-      {...rest}
+      {...restSelect}
       color={rest?.color === 'default' ? undefined : rest?.color}
       onChange={rest.onChange as CTextFieldProps['onChange']}
     />

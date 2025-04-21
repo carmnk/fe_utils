@@ -5,6 +5,7 @@ import {
   FormControlLabelProps,
   FormHelperTextProps,
   TypographyProps,
+  Box,
 } from '@mui/material'
 import { Checkbox as MCheckbox, FormControlLabel, Tooltip } from '@mui/material'
 import { GenericInputFieldProps } from './types'
@@ -90,7 +91,7 @@ export const Checkbox = (props: CheckboxProps) => {
   const handleChangeCheckbox = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const checked = e.target.checked
-      onChange(checked, e, name)
+      onChange?.(checked, e, name)
     },
     [name, onChange]
   )
@@ -101,12 +102,12 @@ export const Checkbox = (props: CheckboxProps) => {
       disableHoverListener={!tooltip}
       disableTouchListener={!tooltip}
       disableInteractive={!tooltip}
-      title={tooltip}
       placement="top"
       arrow
-      {...tooltipProps}
+      {...(tooltipProps ?? {})}
+      title={tooltip}
     >
-      <>
+      <Box>
         <FormControlLabel
           slotProps={formControlLabelSlotProps}
           control={
@@ -129,7 +130,7 @@ export const Checkbox = (props: CheckboxProps) => {
           </FormHelperText>
         )}
         {/* </Box> */}
-      </>
+      </Box>
     </Tooltip>
   )
 }

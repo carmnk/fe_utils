@@ -114,7 +114,7 @@ export const FilteredTableHeaderCell = (
   )
 
   const handleSearchValueChange = useCallback(
-    (newValue: string, e?: ChangeEvent<HTMLInputElement>) => {
+    (__newValue: string, e?: ChangeEvent<HTMLInputElement>) => {
       const value = e?.target?.value as string | number
       if (!value && value !== '' && value !== 0) return
       setSearchValue(value as string)

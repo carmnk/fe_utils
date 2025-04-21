@@ -1,5 +1,4 @@
 import { mdiFormatListNumbered } from '@mdi/js'
-import { propertyFormFactory } from '../../propertiesFormFactory'
 import { ListNavPropsSchema } from './listNavPropsRawSchema'
 import { ListNavigationProps } from '../../../../components/navigation/CListNavigation'
 import { ElementModel } from '../../componentDefType'
@@ -9,10 +8,15 @@ import { CommonComponentPropertys } from '../../componentProperty'
 export const listNavEditorComponentDef = {
   type: 'ListNavigation' as const,
   props: {
-    // children: "test",
-    // noWrap: false,
-    // align: "inherit",
-    items: [{ value: 'test', label: 'test' }],
+    items: [
+      {
+        value: 'item1',
+        label: 'Item 1',
+        secondaryLabel: 'add a secondaryLabel',
+        isInitialValue: true,
+      },
+      { value: 'item2', label: 'Item 2' },
+    ],
     sx: {},
     slotProps: {
       listItem: {},
@@ -22,10 +26,7 @@ export const listNavEditorComponentDef = {
       icon: {},
     },
   },
-  state: 'test',
-  formGen: ({ editorState }) =>
-    propertyFormFactory(ListNavPropsSchema, editorState),
-
+  state: 'item1',
   icon: mdiFormatListNumbered,
   category: 'navigation',
   component: ListNavWrapper,

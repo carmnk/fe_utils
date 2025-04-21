@@ -1,10 +1,9 @@
-import { useMemo, useRef, FC } from 'react'
+import { useMemo, useRef } from 'react'
 import { CSSProperties, PropsWithChildren, MouseEvent } from 'react'
 import { EditorStateType, Element } from '../types'
 import { Box } from '@mui/material'
 import { getStylesFromClasses } from './classes/getStylesFromClasses'
 import { EditorRendererControllerType } from '../types/editorRendererController'
-import { ComponentBox } from './ComponentBox'
 import { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
 
 const regexAnyPlaceholder = /{(.*?)}/
@@ -13,16 +12,9 @@ export type ElementBoxProps = {
   element: Element
   editorState: EditorStateType
   appController: EditorRendererControllerType['appController']
-  currentViewportElements: Element[]
-  selectedPageElements: Element[]
-  ELEMENT_MODELS: EditorRendererControllerType['ELEMENT_MODELS']
-  selectedElement: Element | null
-  uiActions?: unknown
-  //
   onSelectElement: (element: Element, isHovering: boolean) => void
   isProduction?: boolean
   isPointerProduction?: boolean
-  OverlayComponent?: FC<{ element: Element }>
   navigate: (to: string) => void
   events: { [key: string]: ((...fnParams: unknown[]) => void) | undefined }
   rootCompositeElementId?: string
@@ -40,12 +32,6 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
     isProduction,
     isPointerProduction,
     appController,
-    currentViewportElements,
-    selectedPageElements,
-    ELEMENT_MODELS,
-    selectedElement,
-    uiActions,
-    OverlayComponent,
     navigate,
     events,
     rootCompositeElementId,
@@ -114,7 +100,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
 
             return {
               ...acc,
-              [key]: key !== 'style' ? value.toString() : value, // react-html attributes must be strings (in contrast to react 'elements')
+              [key]: key !== 'style' ? value?.toString?.() : value, // react-html attributes must be strings (in contrast to react 'elements')
             }
           },
           {}
@@ -313,22 +299,7 @@ export const ElementBox = (props: PropsWithChildren<ElementBoxProps>) => {
         ? URL.createObjectURL(imageFile)
         : undefined
 
-  return element?.element_type === 'composite' ? (
-    <ComponentBox
-      element={element}
-      editorState={editorState}
-      appController={appController}
-      currentViewportElements={currentViewportElements}
-      selectedPageElements={selectedPageElements}
-      ELEMENT_MODELS={ELEMENT_MODELS}
-      selectedElement={selectedElement}
-      uiActions={uiActions}
-      isProduction={!!isProduction}
-      OverlayComponent={OverlayComponent}
-      navigate={navigate}
-      rootCompositeElementId={rootCompositeElementId}
-    />
-  ) : ['br', 'hr', 'img'].includes(element?.element_type) ? ( // null
+  return ['br', 'hr', 'img'].includes(element?.element_type) ? ( // null
     <Box
       {...boxProps}
       src={imageSrc}

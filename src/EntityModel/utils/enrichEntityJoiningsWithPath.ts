@@ -14,7 +14,7 @@ export const enrichEntityJoiningsWithPath = (
           path:
             new Array(lIdx)
               .fill(0)
-              ?.map((v, idx) => {
+              ?.map((__v, idx) => {
                 const idxInLevel = lIdx - idx - 1
                 const lowerLevelEntityJoinings =
                   structuredEntityJoinings?.[idxInLevel]

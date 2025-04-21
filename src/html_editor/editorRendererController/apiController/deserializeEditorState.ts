@@ -1,5 +1,5 @@
 import { defaultEditorState } from '../defaultEditorState'
-import { EditorStateType } from '../../types'
+import { EditorSetting, EditorStateType } from '../../types'
 import { EditorStateDbDataType } from './editorDbStateType'
 import { ElementModel } from '../../editorComponents'
 import { deserializeAttributes } from './deserialize/deserializeAttributes'
@@ -17,7 +17,7 @@ export const deserializeEditorState = (
   currentEditorState = defaultEditorState(),
   componentsIn: ElementModel[],
   disableThemeReload = false
-): EditorStateType & { editor_settings: any[] } => {
+): EditorStateType & { editor_settings: EditorSetting[] } => {
   const { project, ui, defaultTheme } = deserializeProject(
     data?.project,
     currentEditorState.ui
@@ -49,7 +49,7 @@ export const deserializeEditorState = (
   )
 
   const newTheme = themes?.find?.(
-    (theme) => theme.mode === currentEditorState.theme.name
+    (theme) => theme.mode === (defaultTheme ?? currentEditorState.theme.name)
   )
   const theme_typographys =
     deserializeThemeTypographys(data?.theme_typographys) ?? []
@@ -60,7 +60,12 @@ export const deserializeEditorState = (
   return {
     ...currentEditorState,
     transformers: data?.transformers ?? [],
-    properties: deserializeProperties(data?.properties, elements, componentsIn),
+    properties: deserializeProperties(
+      data?.properties,
+      elements,
+      componentsIn,
+      data?.templates
+    ),
     attributes: deserializeAttributes(data?.attributes),
     defaultTheme: defaultTheme as 'light',
     alternativeViewports,

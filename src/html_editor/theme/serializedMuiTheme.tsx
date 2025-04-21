@@ -1,7 +1,8 @@
-export const DEFAULT_THEMES_SERIALIZED = [
+import { v4 as uuid } from 'uuid'
+export const DEFAULT_THEMES_SERIALIZED = (project_id: string) => [
   {
-    id: '34576eb7-be3e-42fb-bfc4-c9706d159905',
-    project_id: 'ed071773-f09a-47c0-8752-66f8bbf0b02d',
+    id: uuid(),
+    project_id,
     name: 'light',
     mode: 'light',
     primary_main: '#009688',
@@ -41,8 +42,8 @@ export const DEFAULT_THEMES_SERIALIZED = [
     action_focus: 'rgba(0, 0, 0, 0.12)',
   },
   {
-    id: 'ae400648-d2c9-4796-b1ca-cf8d732eb923',
-    project_id: 'ed071773-f09a-47c0-8752-66f8bbf0b02d',
+    id: uuid(),
+    project_id,
     name: 'dark',
     mode: 'dark',
     primary_main: '#009688',

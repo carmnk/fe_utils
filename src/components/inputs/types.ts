@@ -62,7 +62,7 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
     (T extends 'bool' | 'switch'
       ? {
           value: boolean
-          onChange: (
+          onChange?: (
             newValue: boolean,
             e?: ChangeEvent<HTMLInputElement>,
             name?: string
@@ -72,7 +72,7 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
       : T extends 'text' | 'textarea' | 'date' | 'time'
         ? {
             value: string
-            onChange: (
+            onChange?: (
               newValue: string,
               e?: ChangeEvent<HTMLInputElement>,
               name?: string
@@ -92,7 +92,7 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
         : T extends 'number' | 'int'
           ? {
               value: number | ''
-              onChange: (
+              onChange?: (
                 newValue: string,
                 e?: ChangeEvent<HTMLInputElement>,
                 name?: string
@@ -111,7 +111,7 @@ export type GenericInputFieldProps<T extends InputFieldType = InputFieldType> =
           : T extends 'select' | 'autocomplete'
             ? {
                 value: string | ''
-                onChange: (
+                onChange?: (
                   newValue: string,
                   e?: ChangeEvent<HTMLInputElement>,
                   name?: string

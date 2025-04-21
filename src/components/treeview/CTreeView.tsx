@@ -30,7 +30,8 @@ const recursiveMap = (
   },
   disableBorderLeft?: boolean,
   toggleExpand?: (id: string) => void,
-  parentId?: string
+  parentId?: string,
+  onToggleSelect?: (id: string, e?: any) => void
 ): ReactNode[] => {
   const relevantElements = parentId
     ? items?.filter((el) => el._parentId === parentId)
@@ -51,6 +52,7 @@ const recursiveMap = (
       const { children: _c, ...props } = item
       return (
         <StyledTreeItem
+          onToggleSelect={onToggleSelect}
           key={item.nodeId}
           {...props}
           labelIcon={
@@ -295,7 +297,9 @@ export const CTreeView = (props: CTreeViewProps) => {
                 actions,
               },
               true,
-              handleExpandNode
+              handleExpandNode,
+              undefined,
+              onToggleSelect
             )
           )}
         </SimpleTreeView>

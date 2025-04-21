@@ -21,6 +21,38 @@ const baseHtmlDocument: Element[] = [
   } as Element,
 ]
 
+export const makeNewProperty = (params: {
+  prop_id?: string
+  element_id: string
+  prop_name: string
+  prop_value: string
+  project_id: string
+  template_id?: string
+  component_id?: string
+  action_ids?: string[]
+}) => {
+  const {
+    prop_id,
+    element_id,
+    project_id,
+    prop_name,
+    prop_value,
+    template_id,
+    component_id,
+    action_ids,
+  } = params
+  return {
+    element_id,
+    prop_name,
+    prop_value,
+    project_id,
+    prop_id: prop_id ?? uuid(),
+    template_id: template_id ?? null,
+    component_id: component_id ?? null,
+    action_ids: action_ids ?? [],
+  }
+}
+
 export const defaultElements = (project_id: string) =>
   cloneDeep(baseHtmlDocument)?.map((el) => ({
     ...el,
@@ -31,10 +63,31 @@ export const defaultElements = (project_id: string) =>
     // element_type: el.element_type,
     // element_page: 'index',
   })) ?? []
+export const defaultProperties = (rootElementId: string, project_id: string) =>
+  makeNewProperty({
+    element_id: rootElementId,
+    project_id,
+    prop_name: 'height',
+    prop_value: '100%',
+  })
 
 /** ATTENTION - DUPLICATE IN THE TEMPLATE PROJECT */
-export const defaultEditorState = (): EditorStateType => {
-  const project_id = uuid()
+export const defaultEditorState = (
+  existingProjectId?: string
+): EditorStateType => {
+  const project_id = existingProjectId ?? uuid()
+  const rootElements = defaultElements(project_id)
+  const rootElementId = rootElements?.[0]?.element_id
+
+  const newAttribute = {
+    attr_id: uuid(),
+    element_id: rootElementId,
+    template_id: null,
+    component_id: null,
+    project_id,
+    attr_name: 'style',
+    attr_value: { height: '100%' },
+  }
   return {
     action_params: [],
     composite_component_props: [],
@@ -53,10 +106,10 @@ export const defaultEditorState = (): EditorStateType => {
       use_github_pages: false,
     },
     elementTemplates: [],
-    attributes: [],
+    attributes: [newAttribute],
     properties: [],
     transformers: [],
-    elements: defaultElements(project_id),
+    elements: rootElements,
     alternativeViewports: {
       sm: [],
       md: [],
@@ -68,7 +121,7 @@ export const defaultEditorState = (): EditorStateType => {
       images: [],
     },
     theme: muiLightSiteTheme,
-    themes: DEFAULT_THEMES_SERIALIZED,
+    themes: DEFAULT_THEMES_SERIALIZED(project_id),
     theme_typographys: [],
     ui: {
       isAutoSaveReady: false,

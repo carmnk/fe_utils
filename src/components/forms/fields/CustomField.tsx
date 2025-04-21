@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
 import { FC, useMemo } from 'react'
+import { GenericFormProps } from '../types'
 
 /** the properties/params to define a custom field in the generic form's -> fields property  */
 export type CustomFieldDefinition<F, P> = {
@@ -19,12 +20,7 @@ export type CustomFieldComponentProps<F, P> = {
     changedPropertyValue: unknown,
     prevFormData: F
   ) => void
-  onBeforeChange?: (
-    newFormData: F,
-    changedPropertyName: keyof F & string,
-    changedPropertyValue: unknown,
-    prevFormData: F
-  ) => void
+  onBeforeChange?: NonNullable<GenericFormProps['injections']>['onBeforeChange']
   params: P
   rootFormData?: any
   onChangeFormDataRoot?: (newFormData: any) => void

@@ -5,18 +5,18 @@ export const BASE_POINTER_EVENTS: ExtendedObjectSchemaType['properties'] = {
     type: PropertyType.eventHandler,
     required: false,
     category: 'events',
-    eventType: 'basePointer',
+    eventType: 'click',
   },
   onDoubleClick: {
     type: PropertyType.eventHandler,
     required: false,
     category: 'events',
-    eventType: 'basePointer',
+    eventType: 'click',
   },
   onContextMenu: {
     type: PropertyType.eventHandler,
     required: false,
     category: 'events',
-    eventType: 'basePointer',
+    eventType: 'click',
   },
 }

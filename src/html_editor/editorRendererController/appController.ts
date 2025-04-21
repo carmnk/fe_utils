@@ -14,8 +14,7 @@ export type EditorControllerAppStateParams = {
 export const useAppController = (
   params: EditorControllerAppStateParams
 ): AppController => {
-  const { properties, currentViewportElements, transformers } =
-    params
+  const { properties, currentViewportElements, transformers } = params
 
   const [appState, setAppState] = useState<AppState>({
     forms: {},
@@ -100,12 +99,17 @@ export const useAppController = (
     }
 
     const changeButtonState = (buttonElementId: string) => {
+
       setAppState((current) => {
+        console.log('changeButtonState', buttonElementId, current?.buttonStates?.[buttonElementId])
         return {
           ...current,
           buttonStates: {
             ...current.buttonStates,
-            [buttonElementId]: !current?.buttonStates?.[buttonElementId],
+            [buttonElementId]:
+              (current?.buttonStates?.[buttonElementId] as any) === ''
+                ? true
+                : !current?.buttonStates?.[buttonElementId],
           },
         }
       })

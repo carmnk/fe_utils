@@ -1,12 +1,17 @@
-import Icon from '@mdi/react'
-import { IconProps } from '@mdi/react/dist/IconProps'
-import { Box, BoxProps, SxProps } from '@mui/material'
+import { Box, BoxProps, SxProps, useTheme } from '@mui/material'
 import { CommonComponentPropertys } from '../../componentProperty'
-import { ReactNode } from 'react'
+import { CSSProperties, ReactNode, useMemo } from 'react'
+import { isThemeColor } from '../Typography/TypographyWrapper'
 
-export type IconComponentWrapperProps = IconProps & {
+export type IconComponentWrapperProps = {
   sx: SxProps & BoxProps
+  color?: string
+  path: string
   rootInjection: ReactNode
+  size?: string
+  horizontal?: boolean
+  vertical?: boolean
+  rotate?: string
 } & CommonComponentPropertys
 
 export const IconComponentWrapper = (props: IconComponentWrapperProps) => {
@@ -14,30 +19,57 @@ export const IconComponentWrapper = (props: IconComponentWrapperProps) => {
     rootInjection,
     sx,
     path,
+    color: colorRaw,
+    size = '1.5rem',
     /* eslint-disable @typescript-eslint/no-unused-vars */
     appController,
+    assets,
     editorStateUi,
     isProduction,
+    horizontal,
+    vertical,
+    icons,
     /* eslint-enable @typescript-eslint/no-unused-vars */
-    ...rest
+    rotate,
+    // ...rest
   } = props
+  const theme = useTheme()
+  const color = typeof colorRaw === 'string' ? colorRaw.trim() : colorRaw
+  const colorAdj =
+    typeof color === 'string' && isThemeColor(color)
+      ? theme?.palette[color.split('.')[0] as 'primary']?.[
+          color.split('.')[1] as 'main'
+        ]
+      : color
 
-  const isVerticalPaddingSet =
-    sx?.pt ||
-    sx?.pb ||
-    sx?.py ||
-    sx?.p ||
-    sx?.padding ||
-    sx?.py ||
-    sx?.paddingTop ||
-    sx?.paddingBottom
+  const sxAdj = useMemo(() => {
+    const transformValue =
+      horizontal && vertical
+        ? 'scaleX(-1) scaleY(-1)'
+        : horizontal
+          ? 'scaleX(-1)'
+          : vertical
+            ? 'scaleY(-1)'
+            : (sx as CSSProperties)?.transform
+    return {
+      ...(sx ?? {}),
+      rotate,
+      transform: transformValue,
+    }
+  }, [sx, rotate, horizontal, vertical])
+
   return (
     <Box
-      sx={sx}
-      width="max-content"
-      height={isVerticalPaddingSet ? undefined : (rest?.size ?? undefined)}
+      component={'svg'}
+      position="relative"
+      viewBox="0 0 24 24"
+      role="presentation"
+      sx={sxAdj}
+      color={colorAdj}
+      height={size}
+      width={size}
     >
-      <Icon path={path ?? ''} {...rest} />
+      <Box component="path" sx={{ fill: colorAdj }} d={path} />
       {rootInjection}
     </Box>
   )

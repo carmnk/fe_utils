@@ -4,7 +4,11 @@ import { ClickAwayListener, TypographyProps, Chip } from '@mui/material'
 import { ChangeEvent, KeyboardEvent, ReactNode } from 'react'
 import { memo, useCallback, useState } from 'react'
 import { Button } from '../buttons/Button/Button'
-import { CAutoComplete, CAutoCompleteProps, DefaultGenericValueType } from './AutoComplete'
+import {
+  CAutoComplete,
+  CAutoCompleteProps,
+  DefaultGenericValueType,
+} from './AutoComplete'
 import {
   GenericInputField,
   type GGenericInputFieldProps,
@@ -92,7 +96,7 @@ export const ClickTextFieldComponent = <
     setUi((current) => ({
       ...current,
       isEdit: !current.isEdit,
-      tempValue: current.isEdit ? '' : value,
+      tempValue: current.isEdit ? '' : (value ?? ''),
     }))
     if (ui?.isEdit) {
       onClickAway?.()
@@ -161,6 +165,11 @@ export const ClickTextFieldComponent = <
               iconButton={true}
               variant="outlined"
               onClick={handleToggleIsEdit}
+              iconColor="white"
+              sx={{
+                borderColor: '#cccccc99',
+                '&:hover': { borderColor: 'white' },
+              }}
             />
           </Box>
           {handleRemoveItem && (
@@ -171,6 +180,11 @@ export const ClickTextFieldComponent = <
                 iconButton={true}
                 variant="outlined"
                 onClick={handleRemoveItem}
+                iconColor="white"
+                sx={{
+                  borderColor: '#cccccc99',
+                  '&:hover': { borderColor: 'white' },
+                }}
               />
             </Box>
           )}
@@ -196,6 +210,11 @@ export const ClickTextFieldComponent = <
               helperText={inputHelperText}
               error={inputError}
               {...(fieldProps as Partial<CAutoCompleteProps>)}
+              // onKeyDown={(e) => {
+              //   if (e.key === 'Enter') {
+
+              //   }
+              // }}
             />
           ) : (
             <GenericInputField
@@ -208,7 +227,7 @@ export const ClickTextFieldComponent = <
               error={inputError}
               type={(variant as 'text') ?? 'text'}
               onChange={(
-                newValue: string | number,
+                _newValue: string | number,
                 e?: ChangeEvent<HTMLInputElement>
               ): void => {
                 handleChangeTempValue(e)
@@ -226,6 +245,11 @@ export const ClickTextFieldComponent = <
             iconButton={true}
             variant="text"
             onClick={handleTakeover}
+            iconColor="white"
+            sx={{
+              borderColor: '#cccccc99',
+              '&:hover': { borderColor: 'white' },
+            }}
           />
         </Box>
       </Stack>

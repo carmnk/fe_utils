@@ -70,7 +70,7 @@ export const Switch = (props: CSwitchProps) => {
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const checked = e.target.checked
-      onChange(checked, e, name)
+      onChange?.(checked, e, name)
     },
     [name, onChange]
   )

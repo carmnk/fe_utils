@@ -1,51 +1,32 @@
 import Icon from '@mdi/react'
 import { ButtonDropdown } from './defs'
 import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
-import { CircularProgress, Stack, useTheme } from '@mui/material'
+import { useTheme } from '@mui/material'
 import { CSSProperties, ReactNode } from 'react'
 import { CButtonProps } from './Button'
 
 type ButtonStartIconProps = {
-  loading?: boolean
+  color: string | undefined
   icon?: ReactNode
-  iconButton?: boolean
   iconSize?: CSSProperties['fontSize']
   iconColor?: string
   disabled?: boolean
   variant?: CButtonProps['variant']
   startIconProps?: NonNullable<CButtonProps['slotProps']>['startIcon']
-  loadingIconContainerProps?: NonNullable<
-    CButtonProps['slotProps']
-  >['loadingIconContainer']
-  loadingProgressProps?: NonNullable<
-    CButtonProps['slotProps']
-  >['loadingProgress']
 }
 export const ButtonStartIcon = (props: ButtonStartIconProps) => {
   const {
-    loading,
     icon,
     iconSize,
     iconColor,
     disabled,
     variant,
-    iconButton,
     startIconProps,
-    loadingIconContainerProps,
-    loadingProgressProps,
+    color,
   } = props
   const theme = useTheme()
-  return loading ? (
-    <Stack
-      direction="row"
-      alignItems="center"
-      width="17px"
-      mr={iconButton ? undefined : 1}
-      {...loadingIconContainerProps}
-    >
-      <CircularProgress color="inherit" size={17} {...loadingProgressProps} />
-    </Stack>
-  ) : typeof icon === 'string' ? (
+  const colorAdj = (color ?? 'primary') as 'primary'
+  return typeof icon === 'string' ? (
     <Icon
       path={icon}
       size={iconSize ?? '16px'}
@@ -54,8 +35,8 @@ export const ButtonStartIcon = (props: ButtonStartIconProps) => {
         (disabled
           ? theme.palette.action.disabled
           : variant === 'outlined' || variant === 'text'
-            ? theme.palette.text.primary
-            : theme.palette.primary.contrastText)
+            ? theme.palette?.[colorAdj]?.main
+            : theme.palette?.[colorAdj]?.contrastText)
       }
       {...startIconProps}
     />
@@ -69,11 +50,20 @@ export const ButtonEndIcon = (
     endIcon: ReactNode
     dropdown?: ButtonDropdown
     endIconProps?: NonNullable<CButtonProps['slotProps']>['endIcon']
+    color: string | undefined
   }
 ) => {
-  const { endIcon, iconColor, disabled, variant, dropdown, endIconProps } =
-    props
+  const {
+    endIcon,
+    iconColor,
+    disabled,
+    variant,
+    dropdown,
+    endIconProps,
+    color,
+  } = props
   const theme = useTheme()
+  const colorAdj = (color ?? 'primary') as 'primary'
   return dropdown ? (
     <Icon
       path={dropdown === 'closed' ? mdiChevronDown : mdiChevronUp}
@@ -83,8 +73,8 @@ export const ButtonEndIcon = (
         (disabled
           ? theme.palette.action.disabled
           : variant === 'outlined' || variant === 'text'
-            ? theme.palette.text.primary
-            : theme.palette.primary.contrastText)
+            ? theme.palette?.[colorAdj]?.main
+            : theme.palette?.[colorAdj]?.contrastText)
       }
       {...endIconProps}
     />
@@ -97,8 +87,8 @@ export const ButtonEndIcon = (
         (disabled
           ? theme.palette.action.disabled
           : variant === 'outlined' || variant === 'text'
-            ? theme.palette.text.primary
-            : theme.palette.primary.contrastText)
+            ? theme.palette?.[colorAdj]?.main
+            : theme.palette?.[colorAdj]?.contrastText)
       }
       {...endIconProps}
     />

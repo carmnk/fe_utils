@@ -1,17 +1,18 @@
-import { Divider, DividerProps, useTheme } from '@mui/material'
+import { BoxProps, Divider, DividerProps, useTheme } from '@mui/material'
 import { ReactNode, useCallback } from 'react'
-import { ButtonGroupButton, ButtonGroupButtonProps } from './ButtonGroupButton'
-import { CButtonProps } from '../Button/Button'
+import { Button, CButtonProps } from '../Button/Button'
 import { Flex, FlexProps } from '../../_wrapper'
 
 export type ButtonGroupProps = {
   items?: (
-    | (Omit<ButtonGroupButtonProps, 'selected'> & {
+    | (CButtonProps & {
         value: string
+        isInitialValue?: boolean
       })
     | null
   )[]
   value: string
+  gap?: BoxProps['gap']
   buttonProps?: Omit<CButtonProps, 'icon' | 'tooltip' | 'label'>
   selectedButtonProps?: CButtonProps
   onChange: (value: string) => void
@@ -20,12 +21,14 @@ export type ButtonGroupProps = {
   iconButtons?: boolean
   slotProps?: {
     flexContainer?: FlexProps
-    selectedButtonSlots?: CButtonProps['slotProps']
-    buttonSlots?: CButtonProps['slotProps']
+    selectedButtonSlotProps?: CButtonProps['slotProps'] & {
+      button: CButtonProps
+    }
+    buttonSlotProps?: CButtonProps['slotProps'] & { button: CButtonProps }
     divider?: DividerProps
   }
-  sx?: FlexProps['sx']
   rootInjection?: ReactNode
+  color?: CButtonProps['color']
 }
 
 export const ButtonGroup = (props: ButtonGroupProps) => {
@@ -40,7 +43,8 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
     iconButtons,
     slotProps,
     rootInjection,
-    sx,
+    gap,
+    color,
   } = props
   const itemsAdj = items
 
@@ -58,27 +62,34 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
   const theme = useTheme()
   return (
     <Flex
-      gap={0.25}
+      gap={gap}
       border={'1px solid ' + theme.palette.divider}
       width="max-content"
+      position="relative"
       {...(slotProps?.flexContainer ?? {})}
-      sx={sx}
     >
       {itemsAdj?.map?.((item, bIdx) => {
         const isItemSelected =
           (item && isSelected?.(item.value, value)) ?? item?.value === value
         return item ? (
-          <ButtonGroupButton
+          <Button
             slotProps={
               isItemSelected
-                ? slotProps?.selectedButtonSlots
-                : slotProps?.buttonSlots
+                ? slotProps?.selectedButtonSlotProps
+                : slotProps?.buttonSlotProps
             }
-            {...((isItemSelected ? selectedButtonProps : buttonProps) ?? {})}
+            variant={
+              isItemSelected ? 'contained' : (buttonProps?.variant ?? 'text')
+            }
+            color={color}
+            {...((isItemSelected
+              ? (selectedButtonProps ??
+                slotProps?.selectedButtonSlotProps?.button)
+              : (buttonProps ?? slotProps?.buttonSlotProps?.button)) ?? {})}
             {...(item ?? {})}
             iconButton={item?.iconButton ?? iconButtons}
             key={bIdx}
-            selected={isItemSelected}
+            // selected={isItemSelected}
             onClick={() => handleChange(item.value)}
           />
         ) : (

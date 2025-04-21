@@ -8,12 +8,13 @@ export const makeButtonStyles = (
     | 'variant'
     | 'disableHover'
     | 'iconButton'
-    | 'icon'
     | 'dropdown'
     | 'sx'
-    | 'disabled'
     | 'endIcon'
     | 'borderRadius'
+    | 'size'
+    | 'fontColor'
+    | 'color'
   > & {
     theme: Theme
   }
@@ -25,71 +26,78 @@ export const makeButtonStyles = (
     iconButton,
     dropdown,
     variant,
-    icon,
+    size,
     endIcon,
     borderRadius,
     fullWidth,
+    fontColor,
+    color,
   } = props
 
-  const padding = iconButton ? '4px' : variant === 'text' ? '4px 16px' : 'auto'
+  const iconButtonSizeRem =
+    size === 'medium'
+      ? '2rem'
+      : size === 'large'
+        ? '2.5rem'
+        : size === 'small'
+          ? '1.75rem'
+          : undefined
+
+  const padding = iconButton
+    ? '0.25rem'
+    : variant === 'text'
+      ? '0.25rem 1rem'
+      : 'auto'
   const commonStyles: Required<BoxProps['sx']> = {
+    color: fontColor,
     borderRadius,
     minWidth: 0,
     textTransform: 'none',
     display: 'flex',
     justifyContent: iconButton ? 'center' : 'flex-start',
-    height: iconButton ? 28 : 'auto',
+    height: iconButton ? iconButtonSizeRem : 'auto',
     padding,
-    boxShadow: 'none',
     '& .MuiButton-startIcon': {
-      ml: iconButton ? 'auto' : 0,
-      mr: !icon ? 0 : iconButton ? 'auto' : '8px',
+      mr: iconButton ? 'auto' : undefined,
+      ml: iconButton ? 'auto' : undefined,
     },
     '& .MuiButton-endIcon': {
-      display: !endIcon && !dropdown ? 'none' : 'inherit',
-      ml: 'auto',
-      pl: '5px',
+      ml: iconButton && endIcon ? '0px' : undefined,
     },
     width: fullWidth
       ? '100%'
       : iconButton && dropdown
         ? 53
         : iconButton
-          ? 28
+          ? iconButtonSizeRem
           : 'auto',
     pr: iconButton && dropdown ? 1 : undefined,
   }
-  // const secondaryBgColor =
-  //   theme.palette.mode === 'light'
-  //     ? !disabled
-  //       ? secondaryGrayColor.light.background
-  //       : secondaryGrayColor.light.disabled
-  //     : !disabled
-  //       ? secondaryGrayColor.dark.background
-  //       : secondaryGrayColor.dark.disabled
 
-  const disableHoverStyles = disableHover
-    ? {
-        background: 'transparent',
-        '&: hover': {
+  const disableHoverStyles =
+    disableHover && ['outlined', 'text'].includes(variant ?? '')
+      ? {
           background: 'transparent',
-        },
-      }
-    : {}
+          '&: hover': {
+            background: 'transparent',
+          },
+        }
+      : disableHover && (!variant || variant === 'contained')
+        ? {
+            // background: color ?? 'primary',
+            '&: hover': {
+              background:
+                theme.palette?.[(color ?? 'primary') as 'primary'].main +
+                ' !important',
+            },
+          }
+        : {}
 
   return variant === 'outlined'
     ? {
         ...commonStyles,
-        // border: '0px solid ' + theme.palette.primary.main + ' !important',
-        // background: secondaryBgColor,
-        // '&: hover': {
-        //   border: '0px solid ' + theme.palette.primary.main,
-        //   background:
-        //     theme.palette.mode === 'light'
-        //       ? secondaryGrayColor.light.hover
-        //       : secondaryGrayColor.dark.hover,
-        // },
         padding,
+        ...disableHoverStyles,
         ...(sx ?? {}),
       }
     : variant === 'text'
@@ -110,9 +118,7 @@ export const makeButtonStyles = (
         }
       : {
           ...commonStyles,
-          '&: hover': {
-            boxShadow: 'none',
-          },
+          ...disableHoverStyles,
           ...(sx ?? {}),
         }
 }

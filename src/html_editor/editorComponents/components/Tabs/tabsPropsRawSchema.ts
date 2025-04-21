@@ -1,3 +1,4 @@
+import { HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS } from '../../../defs'
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
 import { ICON_NAMES } from '../../../defs/iconNames'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
@@ -22,11 +23,18 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
               form: { showInArrayList: true },
             },
             icon: { type: PropertyType.icon, enum: ICON_NAMES },
+            isInitialValue: {
+              type: PropertyType.Boolean,
+              form: { showInArrayList: true },
+            },
           },
         },
       ],
       form: {
-        defaultValue: [{ value: 'test', label: 'test' }],
+        defaultValue: [
+          { value: 'item1', label: 'Item 1', isInitialValue: true },
+          { value: 'item2', label: 'Item 2' },
+        ],
       },
       category: 'items',
     },
@@ -35,16 +43,30 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
       required: false,
       enum: ['standard', 'scrollable', 'fullWidth'],
       category: 'shortcut',
+      form: {
+        defaultValue: 'standard',
+      },
+    },
+    tabVariant: {
+      type: PropertyType.String,
+      required: false,
+      enum: ['filled', 'outlined', 'text'],
+      category: 'shortcut',
+      form: {
+        defaultValue: 'filled',
+      },
     },
     component: {
       type: PropertyType.String,
-      form: {},
-      enum: [],
+      enum: HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS,
       groupBy: (item) =>
         item && typeof item === 'object' && 'category' in item
           ? (item?.category as string)
           : undefined,
       category: 'shortcut',
+      form: {
+        defaultValue: 'div',
+      },
     },
 
     // textColor: {
@@ -55,6 +77,15 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
     //     defaultValue: 'primary',
     //   },
     // },
+    textColor: {
+      type: PropertyType.String,
+      required: false,
+      enum: ['primary', 'secondary', 'inherit'],
+      form: {
+        defaultValue: 'inherit',
+      },
+      category: 'shortcut',
+    },
     indicatorColor: {
       type: PropertyType.String,
       required: false,
@@ -67,14 +98,20 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
     scrollButtons: {
       type: PropertyType.String,
       required: false,
-      enum: ['auto', false, true] as string[],
+      enum: ['auto', 'false', 'true'] as string[],
       category: 'shortcut',
+      form: {
+        defaultValue: 'auto',
+      },
     },
     orientation: {
       type: PropertyType.String,
       required: false,
       enum: ['horizontal', 'vertical'],
       category: 'shortcut',
+      form: {
+        defaultValue: 'horizontal',
+      },
     },
     disableIndicator: {
       type: PropertyType.Boolean,
@@ -106,11 +143,11 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
       required: false,
       category: 'shortcut',
     },
-    useTabBorders: {
-      type: PropertyType.Boolean,
-      required: false,
-      category: 'shortcut',
-    },
+    // useTabBorders: {
+    //   type: PropertyType.Boolean,
+    //   required: false,
+    //   category: 'shortcut',
+    // },
     allowScrollButtonsMobile: {
       type: PropertyType.Boolean,
       required: false,
@@ -138,7 +175,7 @@ export const TabsPropsSchema: ExtendedObjectSchemaType = {
         defaultValue: {},
         // label: 'sx',
       },
-      category: 'customize',
+      category: 'slots',
       properties: {
         typography: {
           type: PropertyType.json,

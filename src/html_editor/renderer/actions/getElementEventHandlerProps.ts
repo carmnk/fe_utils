@@ -29,7 +29,6 @@ export const getElementEventHandlerProps = (
     editorState,
     appController,
     currentViewportElements,
-    selectedPageElements,
     ELEMENT_MODELS,
     icons,
     elementProps,
@@ -40,26 +39,24 @@ export const getElementEventHandlerProps = (
   const isReactElement = isComponentType(element.element_type)
   const getPropByName = (key: string) =>
     elementProps?.find((prop) => prop.prop_name === key)?.prop_value
+  const getEventActionIdsByEventName = (key: string) =>
+    elementProps?.find((prop) => prop.prop_name === key)?.action_ids
 
   const componentEventNames = (() => {
     if (isReactElement) {
-      const componentDef = element as unknown as ElementModel
-      const fieldsRaw = componentDef?.formGen?.({
-        editorState,
-        appController,
-        currentViewportElements,
-        selectedPageElements,
-      })?.fields
-      const fields =
-        typeof fieldsRaw === 'function'
-          ? (componentDef.props &&
-              fieldsRaw(componentDef.props, componentDef.props)) ||
-            []
-          : fieldsRaw
-      const componentEvents = fields?.filter(
-        (field) => field._prop_type === 'eventHandler'
+      const elementModel = element as unknown as ElementModel
+      const elementModelSchema = elementModel?.schema
+      const elementModelSchemaProperties = elementModelSchema?.properties ?? {}
+      const elementModelSchemaPropertyKeys = Object.keys(
+        elementModelSchemaProperties
       )
-      return componentEvents?.map((ev) => ev.name) ?? []
+      const elementModelEventHandlerNames =
+        elementModelSchemaPropertyKeys.filter(
+          (propertyName) =>
+            elementModelSchemaProperties[propertyName].category === 'events'
+        )
+
+      return elementModelEventHandlerNames ?? []
     } else {
       return htmlEventCategories
         .map((category) => {
@@ -77,7 +74,8 @@ export const getElementEventHandlerProps = (
       | undefined
     onChangeFormData?: (newFormData: Record<string, unknown>) => void
   }>((acc, currentEventName: string) => {
-    const eventProps = getPropByName(currentEventName)
+    const eventProps = getEventActionIdsByEventName(currentEventName)
+
     if (!eventProps) return acc
     return {
       ...acc,

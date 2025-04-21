@@ -1,6 +1,8 @@
+import { HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS } from '../../../defs'
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
 import { ICON_NAMES } from '../../../defs/iconNames'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
+import { TYPOGRAPHY_VARIANTS } from '../Typography/typographyPropsRawSchema'
 
 // raw schema to use until schema can be generated reliably from typescript parser/checker
 export const ListNavPropsSchema: ExtendedObjectSchemaType = {
@@ -17,29 +19,96 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
               type: PropertyType.String,
               form: { showInArrayList: true },
             },
+            secondaryLabel: {
+              type: PropertyType.String,
+              form: { showInArrayList: false },
+            },
             value: {
               type: PropertyType.String,
               form: { showInArrayList: true },
             },
             icon: { type: PropertyType.icon, enum: ICON_NAMES },
+            isInitialValue: {
+              type: PropertyType.Boolean,
+              form: { showInArrayList: true },
+            },
           },
         },
       ],
       form: {
-        defaultValue: [{ value: 'test', label: 'test' }],
+        defaultValue: [
+          {
+            value: 'item1',
+            label: 'Item 1',
+            secondaryLabel: 'add a secondaryLabel',
+            isInitialValue: true,
+          },
+          { value: 'item2', label: 'Item 2' },
+        ],
       },
       category: 'items',
     },
     component: {
       type: PropertyType.String,
-      form: {},
-      enum: [],
+      enum: HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS,
       groupBy: (item) =>
         item && typeof item === 'object' && 'category' in item
           ? (item?.category as string)
           : undefined,
       category: 'shortcut',
+      form: {
+        defaultValue: 'ul',
+      },
     },
+    primaryTypographyVariant: {
+      type: PropertyType.String,
+      required: false,
+      enum: TYPOGRAPHY_VARIANTS,
+      category: 'shortcut',
+      form: {
+        defaultValue: 'body1',
+      },
+    },
+    secondaryTypographyVariant: {
+      type: PropertyType.String,
+      required: false,
+      enum: TYPOGRAPHY_VARIANTS,
+      category: 'shortcut',
+      form: {
+        defaultValue: 'body2',
+      },
+    },
+    primaryTypographyColor: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
+    secondaryTypographyColor: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
+    background: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
+    itemHoverBgColor: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
+    activeItemBgColor: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
+    activeItemHoverBgColor: {
+      type: PropertyType.String,
+      required: false,
+      category: 'shortcut',
+    },
+
     dense: {
       type: PropertyType.Boolean,
       required: false,
@@ -72,7 +141,7 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
         defaultValue: {},
         // label: 'sx',
       },
-      category: 'customize',
+      category: 'slots',
       properties: {
         listItem: {
           type: PropertyType.json,
@@ -90,6 +159,14 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
           },
           label: 'listItemButton',
         },
+        listItemIconRoot: {
+          type: PropertyType.json,
+          form: {
+            defaultValue: {},
+            // label: 'sx',
+          },
+          label: 'listItemIcon',
+        },
         listItemIcon: {
           type: PropertyType.json,
           form: {
@@ -98,7 +175,7 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
           },
           label: 'listItemIcon',
         },
-        listItemText: {
+        listItemTextContainer: {
           type: PropertyType.json,
           form: {
             defaultValue: {},
@@ -106,13 +183,21 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
           },
           label: 'listItemText',
         },
-        icon: {
+        listItemTextPrimaryTypography: {
           type: PropertyType.json,
           form: {
             defaultValue: {},
             // label: 'sx',
           },
-          label: 'icon',
+          label: 'listItemText',
+        },
+        listItemTextSecondaryTypography: {
+          type: PropertyType.json,
+          form: {
+            defaultValue: {},
+            // label: 'sx',
+          },
+          label: 'listItemText',
         },
       },
     },

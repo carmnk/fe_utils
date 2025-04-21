@@ -1,5 +1,4 @@
 import { mdiDockBottom } from '@mdi/js'
-import { propertyFormFactory } from '../../propertiesFormFactory'
 import { BottomNavPropsSchema } from './bottomNavPropsRawSchema'
 import { CBottomNavigationProps } from '../../../../components/navigation/BottomNavigation'
 import { ElementModel } from '../../componentDefType'
@@ -12,15 +11,16 @@ export const BottomNavComponentDef = {
     // children: "test",
     // noWrap: false,
     // align: "inherit",
-    items: [{ value: 'test', label: 'test' }],
+    items: [
+      { value: 'item1', label: 'Item 1', isInitialValue: true },
+      { value: 'item2', label: 'Item 2' },
+    ],
     sx: {},
     slotProps: {
       bottomNavigationAction: {},
     },
   },
-  state: 'test',
-  formGen: ({ editorState }) =>
-    propertyFormFactory(BottomNavPropsSchema, editorState),
+  state: 'item1',
   icon: mdiDockBottom,
   category: 'navigation',
   component: BottomNavigationWrapper,

@@ -12,30 +12,33 @@ export const AppBarWrapper = (props: AppBarWrapperProps) => {
     rootInjection,
     position,
     sx,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     appController,
     editorStateUi,
+    assets,
     isProduction,
+    icons,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     ...rest
   } = props
 
   const adjustedStyles = useMemo(
     () =>
+      // TODO: works only if appbar is not in a container ! -> additional adjustment needed
       (position === 'fixed' || !position) && !isProduction
         ? {
             ...(sx ?? {}),
-            top: 42,
-            left: editorStateUi.previewMode ? 0 : 364,
-            width: editorStateUi.previewMode
-              ? '100%'
-              : 'calc(100% - 364px - 350px)',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
           }
         : {},
-    [position, sx, editorStateUi.previewMode, isProduction]
+    [position, sx, isProduction]
   )
 
   return (
-    <AppBar {...rest} sx={adjustedStyles}>
+    <AppBar {...rest} position={position} sx={adjustedStyles}>
       {children}
       {rootInjection}
     </AppBar>

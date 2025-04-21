@@ -1,4 +1,9 @@
-import { mdiDelete, mdiMinus, mdiPlus } from '@mdi/js'
+import {
+  mdiArrowDownDropCircleOutline,
+  mdiDelete,
+  mdiMinus,
+  mdiPlus,
+} from '@mdi/js'
 import { Box, Typography, ClickAwayListener, Tooltip } from '@mui/material'
 import isEqual from 'lodash/isEqual'
 import cloneDeep from 'lodash/cloneDeep'
@@ -19,11 +24,10 @@ import { Button } from '../buttons'
 import { GenericInputField } from './GenericInputField'
 import { JsonField } from './JsonField'
 import { getAmountJsonChildren } from './getAmountJsonChildren'
+import { DropdownMenu } from '../dropdown'
 
 const tooltipSlotProps = { tooltip: { sx: { fontSize: 16 } } }
-const buttonSlotProps = {
-  typography: { variant: 'caption' as const },
-}
+
 const genericInputFieldProps = {
   sx: {
     width: '100%',
@@ -107,6 +111,7 @@ export type JsonObjectFieldProps = {
   hideLineNumbers?: boolean
   itemsWindowEndIndex?: number
   itemsWindowStartIndex?: number
+  fontSize?: number
 }
 
 export const JsonObjectField = (props: JsonObjectFieldProps) => {
@@ -127,10 +132,14 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
     hideLineNumbers,
     itemsWindowStartIndex,
     itemsWindowEndIndex,
+    fontSize,
   } = props
   const startCollapsedAdj = startObjectsCollapsed ?? startCollapsed
 
   const [editingInt, setEditingInt] = useState<EditPropertyType | null>(null)
+  const [openChangeTypeDialog, setOpenChangeTypeDialog] = useState<
+    string | null
+  >(null)
 
   const editing = editingIn ?? editingInt
   const setEditing = setEditingIn ?? setEditingInt
@@ -337,7 +346,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
               icon={isCurrentFieldExpanded ? mdiMinus : mdiPlus}
               iconButton
               variant="text"
-              slotProps={buttonSlotProps}
+              // slotProps={buttonSlotProps}
               label={isCurrentFieldExpanded ? 'Collapse' : 'Expand'}
               onClick={handleToggleExpandObject}
             />
@@ -441,6 +450,31 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                   const path = [..._path, key]
                   handleRemoveProperty(path)
                 }
+                const handlePropertyOpenChangeTypeDialog = (
+                  e: MouseEvent<HTMLButtonElement>
+                ) => {
+                  e.stopPropagation()
+                  // const path = [..._path, key]
+                  // handleRemoveProperty(path)
+                  // alert('change type dialog not yet implemented')
+                  setOpenChangeTypeDialog(key)
+                }
+                const handleChangePropValueType = (
+                  newValueType: string,
+                  e?: ChangeEvent<HTMLInputElement>
+                ) => {
+                  e?.stopPropagation()
+                  const newValue =
+                    newValueType === 'object'
+                      ? {}
+                      : newValueType === 'number'
+                        ? 0
+                        : newValueType === 'boolean'
+                          ? false
+                          : ''
+                  handleChangePropertyValue([..._path, key], newValue as string)
+                  setEditing(null)
+                }
 
                 const handleChangePropValue = (
                   newValue: string,
@@ -453,6 +487,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                   newValue: string
                   // e: any
                 ) => {
+                  console.log('handleChangeCompletedPropValue', newValue)
                   handleChangePropertyValue([..._path, key], newValue)
                 }
 
@@ -518,6 +553,88 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                 const isOutsideVirtualizationWindow =
                   currentLineIndex < (itemsWindowStartIndex ?? 0) - 10 ||
                   currentLineIndex > (itemsWindowEndIndex ?? 0) + 10
+
+                const adjGenericInputFieldProps = {
+                  ...genericInputFieldProps,
+                  sx: {
+                    ...genericInputFieldProps.sx,
+                    p: 0,
+                  },
+                  slotProps: {
+                    ...genericInputFieldProps.slotProps,
+                    input: {
+                      ...genericInputFieldProps.slotProps?.input,
+                      sx: {
+                        ...genericInputFieldProps.slotProps?.input?.sx,
+                        fontSize: fontSize ? fontSize : '1rem',
+                        p: 0.25,
+                      },
+                    },
+                    inputContainer: {
+                      ...genericInputFieldProps.slotProps?.input,
+                      sx: {
+                        ...genericInputFieldProps.slotProps?.input?.sx,
+                        height: 'auto',
+                        p: '0px !important',
+                        pt: '0px !important',
+                        pb: '0px !important',
+                        px: '0px !important',
+                        lineHeight: 0,
+                      },
+                    },
+                  },
+                }
+                const adjGenericInputFieldPropValueProps = {
+                  ...genericInputFieldPropValueProps,
+                  sx: {
+                    ...genericInputFieldPropValueProps.sx,
+                    p: 0,
+                  },
+                  slotProps: {
+                    input: {
+                      ...genericInputFieldPropValueProps.slotProps?.input,
+                      sx: {
+                        fontSize: fontSize ? fontSize : '1rem',
+                        p: 0.25,
+                      },
+                    },
+                    inputContainer: {
+                      ...genericInputFieldPropValueProps.slotProps
+                        ?.inputContainer,
+                      sx: {
+                        ...genericInputFieldPropValueProps.slotProps
+                          ?.inputContainer?.sx,
+                        p: '0px !important',
+                        pt: '0px !important',
+                        pb: '0px !important',
+                        px: '0px !important',
+                        height: 'auto',
+                      },
+                    },
+                  },
+                }
+                const changeTypes =
+                  typeof propertyValue === 'number'
+                    ? ['string', 'boolean', 'object']
+                    : typeof propertyValue === 'string'
+                      ? ['number', 'boolean', 'object']
+                      : typeof propertyValue === 'boolean'
+                        ? ['number', 'string', 'object']
+                        : typeof propertyValue === 'object'
+                          ? ['number', 'string', 'boolean']
+                          : ['number', 'string', 'boolean', 'object']
+                const changeTypeOptions = changeTypes.map((type) => ({
+                  id: type,
+                  label: type,
+                  onClick: (e: MouseEvent) => {
+                    e?.preventDefault?.()
+                    e?.stopPropagation?.()
+                    console.debug('change type to', type, e)
+                    setOpenChangeTypeDialog(null)
+                    handleChangePropValueType(type)
+                  },
+                }))
+
                 return (
                   <Fragment key={key}>
                     <Flex
@@ -526,7 +643,8 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                       onClick={handleClickPropName}
                       position="relative"
                       minWidth={0}
-                      maxWidth={200}
+                      alignItems={'flex-start'}
+                      // maxWidth={200}
                     >
                       {!disabled &&
                       editing?.type === 'name' &&
@@ -537,6 +655,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             minWidth={0}
                             width="100%"
                             height={35}
+                            fontSize={fontSize}
                           >
                             {!hideLineNumbers &&
                               currentLineIndex.toString() + ':'}
@@ -556,7 +675,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               }
                               onChangeCompleted={handleChangeCompletedPropName}
                               size={'small'}
-                              {...genericInputFieldProps}
+                              {...adjGenericInputFieldProps}
                               disableHelperText
                               disableLabel
                             />
@@ -580,6 +699,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                               overflow="hidden"
                               textOverflow="ellipsis"
                               color="inherit"
+                              fontSize={fontSize}
                             >
                               {!hideLineNumbers &&
                                 currentLineIndex.toString() + ':'}
@@ -587,13 +707,48 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             </Typography>
                           </Tooltip>
                           {!disabled && (
-                            <Button
-                              iconButton
-                              icon={mdiDelete}
-                              iconSize={0.5}
-                              sx={{ width: '1rem', height: '1rem', mt: 0.5 }}
-                              onClick={handleDeleteProperty}
-                            />
+                            <Flex alignItems={'center'} gap={0.5}>
+                              <Button
+                                iconButton
+                                icon={mdiDelete}
+                                iconSize={'100%'}
+                                sx={{
+                                  width: fontSize ? fontSize * 1.5 : '1rem',
+                                  height: fontSize ? fontSize * 1.5 : '1rem',
+                                  // mt: 0.5,
+                                }}
+                                onClick={handleDeleteProperty}
+                                tooltip={'Delete Property'}
+                              />
+                              <Button
+                                id={'changeTypeButton' + key}
+                                iconButton
+                                icon={mdiArrowDownDropCircleOutline}
+                                iconSize={'100%'}
+                                sx={{
+                                  width: fontSize ? fontSize * 1.5 : '1rem',
+                                  height: fontSize ? fontSize * 1.5 : '1rem',
+                                  // mt: 0.5,
+                                }}
+                                onClick={handlePropertyOpenChangeTypeDialog}
+                                tooltip={'Change Value Type'}
+                              />
+                              <DropdownMenu
+                                items={changeTypeOptions}
+                                open={openChangeTypeDialog === key}
+                                anchorEl={document.getElementById(
+                                  'changeTypeButton' + key
+                                )}
+                                onClose={(e: unknown) => {
+                                  if (e) {
+                                    const event = e as MouseEvent
+                                    event?.preventDefault?.()
+                                    event?.stopPropagation?.()
+                                  }
+                                  setOpenChangeTypeDialog(null)
+                                }}
+                              />
+                            </Flex>
                           )}
                         </>
                       )}
@@ -617,7 +772,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             onChangeCompleted={handleChangeCompletedPropValue}
                             onKeyUp={handleKeyUpPropValue}
                             size={'small'}
-                            {...genericInputFieldPropValueProps}
+                            {...adjGenericInputFieldPropValueProps}
                             disableHelperText
                             disableLabel
                           />
@@ -663,6 +818,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             _setCollapsedPaths={_setCollapsedPaths}
                             itemsWindowStartIndex={itemsWindowStartIndex}
                             itemsWindowEndIndex={itemsWindowEndIndex}
+                            fontSize={fontSize}
                           />
                         ) : ['object'].includes(typeof propertyValue) ? (
                           <JsonField
@@ -679,6 +835,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             _setCollapsedPaths={_setCollapsedPaths}
                             itemsWindowStartIndex={itemsWindowStartIndex}
                             itemsWindowEndIndex={itemsWindowEndIndex}
+                            fontSize={fontSize}
                           />
                         ) : isOutsideVirtualizationWindow ? (
                           <Box height={28.8} width="120px" visibility="hidden">
@@ -705,22 +862,24 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                             disableInteractive
                           >
                             <Typography
-                              width={200}
+                              // width={200}
                               whiteSpace="nowrap"
                               overflow="hidden"
                               textOverflow="ellipsis"
                               color="inherit"
+                              fontSize={fontSize}
                             >
                               {`"${propertyValue}"`}
                             </Typography>
                           </Tooltip>
                         ) : (
                           <Typography
-                            width={200}
+                            // width={200}
                             whiteSpace="nowrap"
                             overflow="hidden"
                             textOverflow="ellipsis"
                             color="inherit"
+                            fontSize={fontSize}
                           >
                             {propertyValue as number}
                           </Typography>
@@ -735,7 +894,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                 <Button
                   icon={mdiPlus}
                   variant="text"
-                  slotProps={buttonSlotProps}
+                  // slotProps={buttonSlotProps}
                   sx={miniButtonStyles}
                   onClick={handleAddObjectProperty}
                   disabled={valueIn['~new'] !== undefined}
@@ -758,7 +917,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
             <Button
               icon={mdiPlus}
               variant="text"
-              slotProps={buttonSlotProps}
+              // slotProps={buttonSlotProps}
               sx={miniButtonStyles}
               onClick={handleAddObjectProperty}
               disabled={valueIn['~new'] !== undefined}

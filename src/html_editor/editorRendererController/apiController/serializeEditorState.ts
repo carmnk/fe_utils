@@ -1,4 +1,4 @@
-import { EditorStateType, Image } from '../../types'
+import { EditorSetting, EditorStateType, Image } from '../../types'
 import { EditorStateDbDataType } from './editorDbStateType'
 import { serializeAttributes } from './serialize/serializeAttributes'
 import { serializeProperties } from './serialize/serializeProperties'
@@ -11,7 +11,7 @@ import { serializeEditorSetting } from './serialize/serializeEditorSettings'
 
 export const serializeEditorState = (
   payload: EditorStateType,
-  editorSettings: any[]
+  editorSettings?: EditorSetting[]
 ): Omit<EditorStateDbDataType, 'data_changes'> | null => {
   const projectIn = payload?.project ?? {}
   const project_id = projectIn.project_id
@@ -71,6 +71,6 @@ export const serializeEditorState = (
     components: payload.components,
     theme_typographys: payload.theme_typographys,
     fonts: serializeFonts(payload.fonts, project_id),
-    editor_settings: serializeEditorSetting(editorSettings),
+    editor_settings: serializeEditorSetting(editorSettings ?? []),
   }
 }

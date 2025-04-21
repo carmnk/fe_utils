@@ -1,11 +1,11 @@
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs'
-import { BASE_POINTER_EVENTS } from '../../eventSchemas/basePointerEvents'
-import { CLIPBOARD_EVENTS } from '../../eventSchemas/clipboardEvents'
-import { DRAG_EVENTS } from '../../eventSchemas/dragEvents'
-import { FOCUS_EVENTS } from '../../eventSchemas/focusEvents'
-import { MOUSE_EVENTS } from '../../eventSchemas/mouseEvents'
-import { POINTER_EVENTS } from '../../eventSchemas/pointerEvents'
-import { TOUCH_EVENTS } from '../../eventSchemas/touchEvents'
+import { BASE_POINTER_EVENTS } from '../../commonEventSchemas/basePointerEvents'
+import { CLIPBOARD_EVENTS } from '../../commonEventSchemas/clipboardEvents'
+import { DRAG_EVENTS } from '../../commonEventSchemas/dragEvents'
+import { FOCUS_EVENTS } from '../../commonEventSchemas/focusEvents'
+import { MOUSE_EVENTS } from '../../commonEventSchemas/mouseEvents'
+import { POINTER_EVENTS } from '../../commonEventSchemas/pointerEvents'
+import { TOUCH_EVENTS } from '../../commonEventSchemas/touchEvents'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 
 // raw schema to use until schema can be generated reliably from typescript parser/checker
@@ -21,7 +21,7 @@ export const paperPropsSchema: ExtendedObjectSchemaType = {
     square: {
       type: PropertyType.Boolean,
       form: {
-        defaultValue: false,
+        defaultValue: true,
       },
       category: 'shortcut',
     },

@@ -39,7 +39,7 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
       if (!fieldName) return null
       const onChangeObjectSub = (
         newValue: string,
-        name: string | undefined,
+        _name: string | undefined,
         arrayIdx: number | undefined
         // prevFormData: any
       ) => {
@@ -75,12 +75,12 @@ export const StringArrayFormField = (props: StringArrayFieldProps) => {
       }
 
       const removeItemArraySub = (
-        name: string | undefined,
+        _name: string | undefined,
         arrayIndex: number
       ) => {
         if (!field?.name) return
         const newValue = formData?.[field?.name]?.filter(
-          (dat: unknown, dIdx: number) => dIdx !== arrayIndex
+          (_dat: unknown, dIdx: number) => dIdx !== arrayIndex
         )
         const transformedNewFormData = {
           ...formData,

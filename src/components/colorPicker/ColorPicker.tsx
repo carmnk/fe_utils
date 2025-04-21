@@ -1,6 +1,6 @@
 import { CSSProperties, useCallback, useEffect } from 'react'
 import { useState, useRef, useMemo, MouseEvent } from 'react'
-import { Box, BoxProps, Popover, PopoverProps } from '@mui/material'
+import { Box, BoxProps, Popover, PopoverProps, Tooltip } from '@mui/material'
 import { Theme, hexToRgb, useTheme } from '@mui/material'
 import { ColorChangeHandler, ColorResult, SketchPicker } from 'react-color'
 import { Button } from '../buttons/Button/Button'
@@ -29,7 +29,7 @@ type EnabledColorPickerProps = GenericColorPickerProps & {
   onChange: (color: string) => void
 }
 
-export type ColorPickerProps = BoxProps &
+export type ColorPickerProps = Omit<BoxProps, 'onChange'> &
   (EnabledColorPickerProps | DisabledColorPickerProps)
 
 export type ColorObject = {
@@ -181,15 +181,15 @@ export const ColorPicker = (props: ColorPickerProps) => {
     setUnchangedColor(value)
     if (
       [
-        'primary.',
-        'secondary.',
-        'warning.',
-        'error.',
-        'success.',
-        'info.',
-        'text.',
-        'background.',
-        'action.',
+        'primary',
+        'secondary',
+        'warning',
+        'error',
+        'success',
+        'info',
+        'text',
+        'background',
+        'action',
       ].includes(value?.split?.('.')[0] ?? '')
     ) {
       setIsThemeColor(true)
@@ -210,24 +210,44 @@ export const ColorPicker = (props: ColorPickerProps) => {
     }),
     [selectorSize, disabled]
   )
+
+  const transparentBgColor = 'rgba(255,255,255,1)'
+  const transparentBgColor2 = 'rgba(255,255,255,0)'
   const inputStyles: BoxProps['sx'] = useMemo(
     () => ({
       width: selectorSize,
       borderRadius: '2px',
       border: '1px solid ' + theme.palette.divider,
       height: selectorSize,
-      backgroundColor:
-        'r' in color
-          ? `rgba(${color?.r ?? 0}, ${color?.g ?? 0}, ${color?.b ?? 0}, ${
-              color?.a ?? 1
-            })`
-          : '#fff',
+      backgroundColor: !value
+        ? undefined
+        : isThemeColor
+          ? value
+          : 'r' in color
+            ? `rgba(${color?.r ?? 0}, ${color?.g ?? 0}, ${color?.b ?? 0}, ${
+                color?.a ?? 1
+              })`
+            : '#fff',
+      background: !value
+        ? `linear-gradient(to top left,
+             ${transparentBgColor2} 0%,
+             ${transparentBgColor2} calc(50% - 0.8px),
+             rgba(255,0,0,0.9) 50%,
+             ${transparentBgColor2} calc(50% + 0.8px),
+             ${transparentBgColor2} 100%), 
+             linear-gradient(to top right,
+             ${transparentBgColor} 0%,
+             ${transparentBgColor} calc(50% - 0.8px),
+             rgba(255,0,0,0.9) 50%,
+             ${transparentBgColor} calc(50% + 0.8px),
+             ${transparentBgColor} 100%)`
+        : undefined,
     }),
-    [selectorSize, theme, color]
+    [selectorSize, theme, color, value, isThemeColor]
   )
 
   const handleChangeThemeColor = useCallback(
-    (e: MouseEvent<HTMLDivElement>, colorName: string) => {
+    (__e: MouseEvent<HTMLDivElement>, colorName: string) => {
       const colorPath = colorName.split('.')
       const themeColorNameMain = colorPath?.[0]
       const themeColorNameVariant = colorPath?.[1]
@@ -255,14 +275,16 @@ export const ColorPicker = (props: ColorPickerProps) => {
 
   return (
     <div style={{ height: selectorSize, width: selectorSize }}>
-      <Box
-        sx={inputContainerStyles}
-        onClick={handleToggleColorPicker}
-        ref={indicatorRef}
-        {...rest}
-      >
-        <Box sx={inputStyles} />
-      </Box>
+      <Tooltip title={value} placement="top" arrow>
+        <Box
+          sx={inputContainerStyles}
+          onClick={handleToggleColorPicker}
+          ref={indicatorRef}
+          {...rest}
+        >
+          <Box sx={inputStyles} />
+        </Box>
+      </Tooltip>
       {displayColorPicker ? (
         <Popover
           anchorEl={indicatorRef.current}

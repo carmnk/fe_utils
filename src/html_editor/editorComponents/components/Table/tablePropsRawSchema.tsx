@@ -9,7 +9,11 @@ export const tablePropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.Array,
       required: false,
       form: {
-        defaultValue: [],
+        defaultValue: [
+          { column1: 'Column1 Row1', column2: 'Column2 Row1' },
+          { column1: 'Column1 Row2', column2: 'Column2 Row2' },
+          { column1: 'Column1 Row3', column2: 'Column2 Row3' },
+        ],
       },
       items: [
         {
@@ -42,7 +46,22 @@ export const tablePropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.Array,
       required: false,
       form: {
-        defaultValue: [],
+        defaultValue: [
+          {
+            header: 'column1',
+            renderCell: (item: { column1: string }) => <td>{item?.column1}</td>,
+            sortKey: 'column1',
+            filterKey: 'column1',
+            // filterOptions: ['test', 'test2'],
+            getFilterValue: (opt: string) => opt,
+            getItemLabel: (opt: string) => opt,
+          },
+          {
+            header: 'column2',
+            renderCell: (item: { column2: string }) => <td>{item?.column2}</td>,
+            sortKey: 'column2',
+          },
+        ],
       },
       items: [
         {

@@ -11,7 +11,7 @@
     "allowImportingTsExtensions": false, // Allows importing TypeScript files with extensions.
     "resolveJsonModule": true, // Enables importing JSON modules.
     "isolatedModules": true, // Ensures each file is treated as a separate module.
-    "noEmit": false, // Prevents TypeScript from emitting output files.
+    "noEmit": true, // Prevents TypeScript from emitting output files.
     "jsx": "react-jsx", // Configures JSX support for React.
 
     /* Linting */
@@ -24,6 +24,7 @@
     "outDir": "./dist", // Specifies an output directxory for the generated files.
     "types": ["node", "jest", "@testing-library/jest-dom"] // Specifies the types that should be included in the compilation.
   },
+
   "include": ["src"], // Specifies the directory to include when searching for TypeScript files.
 
   "exclude": [
@@ -31,6 +32,7 @@
     "src/**/_tests",
     "src/**/**.test.tsx",
     "src/stories/**",
-    "dist/**/*"
+    "dist/**/*",
+    "./dist"
   ]
 }

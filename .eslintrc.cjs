@@ -1,4 +1,3 @@
-
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
@@ -8,7 +7,13 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:storybook/recommended',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs', 'stories', 'storybook-static', "**.test.tsx"],
+  ignorePatterns: [
+    'dist',
+    '.eslintrc.cjs',
+    'stories',
+    'storybook-static',
+    '**.test.tsx',
+  ],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh', 'eslint-plugin-react-compiler'],
   rules: {
@@ -105,7 +110,18 @@ module.exports = {
       { allowConstantExport: true },
     ],
     '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        args: 'all',
+        argsIgnorePattern: '^_',
+        caughtErrors: 'all',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
     'no-prototype-builtins': 'off',
     'react-refresh/only-export-components': 'off',
   },

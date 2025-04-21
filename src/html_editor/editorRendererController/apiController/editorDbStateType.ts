@@ -8,6 +8,7 @@ import { SerializedThemeType } from '../../types/serializedTheme'
 import { EditorStateType } from '../../types/editorState'
 import { DataChange } from '../../types/datachanges'
 import { ExternalApiDb } from '../../types/externalApi'
+import { EditorSetting } from '..'
 
 export type EditorStateDbDataType = Pick<
   EditorStateType,
@@ -41,7 +42,7 @@ export type EditorStateDbDataType = Pick<
     image: File
   }[]
   data_changes: DataChange[] // in FastEditorState
-  editor_settings: any[]
+  editor_settings: EditorSetting[]
 
   // transformers: EditorStateType['transformers']
   // actions: EditorStateType['actions']

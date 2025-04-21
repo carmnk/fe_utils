@@ -11,10 +11,12 @@ export const PaperWrapper = (props: PaperWrapperProps) => {
     children,
     rootInjection,
     /* eslint-disable @typescript-eslint/no-unused-vars */
-    sx,
+    // sx,
     appController,
+    assets,
     editorStateUi,
     isProduction,
+    icons,
     /* eslint-enable @typescript-eslint/no-unused-vars */
     ...rest
   } = props

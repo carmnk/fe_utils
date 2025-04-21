@@ -1,10 +1,11 @@
+import { HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS } from '../../../defs'
 import { CSS_RULE_NAMES_DICT_FULL } from '../../../defs/CssRulesNamesDictFull'
-import { BASE_POINTER_EVENTS } from '../../eventSchemas/basePointerEvents'
-import { CLIPBOARD_EVENTS } from '../../eventSchemas/clipboardEvents'
-import { DRAG_EVENTS } from '../../eventSchemas/dragEvents'
-import { MOUSE_EVENTS } from '../../eventSchemas/mouseEvents'
-import { POINTER_EVENTS } from '../../eventSchemas/pointerEvents'
-import { TOUCH_EVENTS } from '../../eventSchemas/touchEvents'
+import { BASE_POINTER_EVENTS } from '../../commonEventSchemas/basePointerEvents'
+import { CLIPBOARD_EVENTS } from '../../commonEventSchemas/clipboardEvents'
+import { DRAG_EVENTS } from '../../commonEventSchemas/dragEvents'
+import { MOUSE_EVENTS } from '../../commonEventSchemas/mouseEvents'
+import { POINTER_EVENTS } from '../../commonEventSchemas/pointerEvents'
+import { TOUCH_EVENTS } from '../../commonEventSchemas/touchEvents'
 import { PropertyType, ExtendedObjectSchemaType } from '../../schemaTypes'
 
 export const muiTypographyColors = [
@@ -24,7 +25,7 @@ export const muiTypographyColors = [
   // 'action.hover',
 ]
 
-const typographyVariants = [
+export const TYPOGRAPHY_VARIANTS = [
   'h1',
   'h2',
   'h3',
@@ -55,21 +56,32 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
         defaultValue: 'Test Typography',
       },
       category: 'content',
+      uiType: 'textarea',
     },
+
     component: {
       type: PropertyType.String,
       form: {},
-      enum: [],
+      enum: HTML_TAG_NAMES_STRUCTURED_NONVOID_OPTIONS,
       groupBy: (item) =>
         item && typeof item === 'object' && 'category' in item
           ? (item?.category as string)
           : undefined,
       category: 'shortcut',
     },
-    noWrap: {
-      type: PropertyType.Boolean,
+    variant: {
+      type: PropertyType.String,
+      enum: TYPOGRAPHY_VARIANTS,
       form: {
-        defaultValue: false,
+        defaultValue: 'body1',
+      },
+      category: 'shortcut',
+    },
+    color: {
+      type: PropertyType.color,
+      // load dynamically!
+      form: {
+        defaultValue: 'auto',
       },
       category: 'shortcut',
     },
@@ -81,26 +93,216 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
       },
       category: 'shortcut',
     },
-    variant: {
-      type: PropertyType.String,
-      enum: typographyVariants,
+    noWrap: {
+      type: PropertyType.Boolean,
       form: {
-        defaultValue: 'body1',
+        defaultValue: false,
       },
       category: 'shortcut',
     },
-    color: {
-      // form: {
-      // },
+    textOverflow: {
       type: PropertyType.String,
-      enum: muiTypographyColors,
-
-      // load dynamically!
-      // form: {
-      //   defaultValue: 'inherit',
-      // },
+      form: {
+        defaultValue: 'clip',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: ['clip', 'ellipsis'],
+    },
+    fontSize: {
+      type: PropertyType.cssSize,
+      form: {
+        defaultValue: 'auto',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+    },
+    lineHeight: {
+      type: PropertyType.cssSize,
+      form: {
+        defaultValue: 'auto',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+    },
+    fontWeight: {
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'auto',
+      },
+      category: 'shortcut',
+      enum: [
+        '100',
+        '200',
+        '300',
+        'normal',
+        '500',
+        '600',
+        'bold',
+        '800',
+        '900',
+        'lighter',
+        'bolder',
+      ],
+    },
+    fontStyle: {
+      type: PropertyType.String,
+      enum: ['normal', 'italic'],
+      form: {
+        defaultValue: 'normal',
+      },
       category: 'shortcut',
     },
+    letterSpacing: {
+      type: PropertyType.cssSize,
+      form: {
+        defaultValue: 'auto',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+    },
+    wordSpacing: {
+      type: PropertyType.cssSize,
+      form: {
+        defaultValue: 'auto',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+    },
+    textIndent: {
+      type: PropertyType.cssSize,
+      form: {
+        defaultValue: '0px',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+    },
+
+    // wordWrap: {
+    //   type: PropertyType.String,
+    //   form: {
+    //     defaultValue: 'normal',
+    //   },
+    //   category: 'shortcut',
+    //   objectPropertyToApply: 'sx',
+    //   enum: ['normal', 'break-word', 'anywhere'],
+    // },
+    // textWrap: {
+    //   type: PropertyType.String,
+    //   form: {
+    //     defaultValue: 'wrap',
+    //   },
+    //   category: 'shortcut',
+    //   objectPropertyToApply: 'sx',
+    //   enum: ['wrap', 'nowrap', 'balance'],
+    // },
+    lineBreak: {
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'auto',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: ['auto', 'loose', 'normal', 'strict', 'anywhere'],
+    },
+    wordBreak: {
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'normal',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: ['normal', 'break-all', 'keep-all'],
+    },
+    whiteSpace: {
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'normal',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: ['normal', 'break-spaces', 'nowrap', 'pre', 'pre-line', 'pre-wrap'],
+    },
+    whiteSpaceCollapse: {
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'collapse',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: [
+        'collapse',
+        'preserve',
+        'preserve-breaks',
+        'preserve-spaces',
+        'break-spaces',
+      ],
+    },
+
+    textDecoration: {
+      type: PropertyType.cssTextDecoration,
+      form: {
+        defaultValue: 'none',
+      },
+      category: 'shortcut',
+      // objectPropertyToApply: 'sx',
+    },
+    textShadow: {
+      type: PropertyType.cssTextShadow,
+      form: {},
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+    },
+    textTransform: {
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'none',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: ['none', 'capitalize', 'uppercase', 'lowercase'],
+    },
+    writingMode: {
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'horizontal-tb',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: [
+        'horizontal-tb',
+        'vertical-rl',
+        'vertical-lr',
+        'sideways-rl',
+        'sideways-lr',
+      ],
+    },
+    textOrientation: {
+      // affeects only when writingMode!= horizontal-tb
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'horizontal-tb',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: [
+        'mixed',
+        'upright',
+        'sideways-right',
+        'sideways',
+        'use-glyph-orientation',
+      ],
+    },
+    direction: {
+      type: PropertyType.String,
+      form: {
+        defaultValue: 'ltr',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
+      enum: ['ltr', 'rtl'],
+    },
+
     sx: {
       type: PropertyType.json,
       form: {
