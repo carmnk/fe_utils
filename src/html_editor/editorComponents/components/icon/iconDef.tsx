@@ -8,7 +8,6 @@ export const IconComponentDef: ElementModel<IconComponentWrapperProps> = {
   type: 'Icon' as const,
   props: {
     size: '1rem',
-    sx: {},
   },
   icon: mdiPlusCircleOutline,
   category: 'basic',

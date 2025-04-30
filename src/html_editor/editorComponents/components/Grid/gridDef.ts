@@ -6,9 +6,7 @@ import { FC } from 'react'
 
 export const gridEditorComponentDef = {
   type: 'Grid' as const,
-  props: {
-    display: 'grid',
-  },
+  props: {},
   icon: mdiGridLarge,
   category: 'layout',
   component: GridWrapper as FC<GridWrapperProps>,

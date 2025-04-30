@@ -278,7 +278,12 @@ export const Button = (props: CButtonProps) => {
           disableInteractive={disableInteractiveTooltip}
           {...tooltip}
         >
-          <Box width={rest?.fullWidth ? '100%' : 'max-content'}>{Button}</Box>
+          <Box
+            width={rest?.fullWidth ? '100%' : 'max-content'}
+            bgcolor="transparent"
+          >
+            {Button}
+          </Box>
         </Tooltip>
       ) : (
         Button

@@ -304,11 +304,32 @@ export const CTreeView2 = (props: CTreeViewProps) => {
     return itemActions
   }, [onNodeAddAction, onNodeRemoveAction, disableItemAdd, disableItemDelete])
 
+  // const handleDragMove = useCallback(
+  //   (event: any) => {
+  //     const overItem = event?.over?.data?.current
+  //     // const overNodeId = overItem?.nodeId
+
+  //     console.log('DRAG MOVE', overItem, overlay)
+  //     if (!overItem || !overlay) return
+
+  //     // onDragDrop?.(event, overlay, overItem)
+  //     // setOverlay(null)
+  //     // setUi((current) => ({
+  //     //   ...current,
+  //     //   dragging: { ctrKeyDown: false, active: false },
+  //     // }))
+  //     // onDragging?.(event, false, overlay)
+  //     // lastMouseMoveEvent.current = null
+  //   },
+  //   [onDragDrop, overlay, onDragging]
+  // )
+
   return (
     <Box position="relative">
       <DndContext
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        // onDragMove={handleDragMove}
         // sensors={sensors}
       >
         <SimpleTreeView

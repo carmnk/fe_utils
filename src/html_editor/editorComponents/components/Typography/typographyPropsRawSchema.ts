@@ -128,7 +128,7 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
     fontWeight: {
       type: PropertyType.String,
       form: {
-        defaultValue: 'auto',
+        // defaultValue: 'normal',
       },
       category: 'shortcut',
       enum: [
@@ -281,7 +281,7 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
       // affeects only when writingMode!= horizontal-tb
       type: PropertyType.String,
       form: {
-        defaultValue: 'horizontal-tb',
+        defaultValue: 'mixed',
       },
       category: 'shortcut',
       objectPropertyToApply: 'sx',
@@ -302,14 +302,32 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
       objectPropertyToApply: 'sx',
       enum: ['ltr', 'rtl'],
     },
-
-    sx: {
+    allProps: {
       type: PropertyType.json,
       form: {
         defaultValue: {},
         // label: 'sx',
       },
-      label: 'sx',
+      label: 'allProps',
+      // keysDict: CSS_RULE_NAMES_DICT_FULL,
+      valueTransformer: (formData: any) => {
+        const { allProps, element_id, ...rest } = formData
+        return rest
+      },
+      changeValueToFormDataTransformer: (
+        _currentFormData: Record<string, unknown>,
+        newValue: unknown
+      ) => {
+        return newValue
+      },
+      category: 'customize',
+    } as any,
+    sx: {
+      type: PropertyType.json,
+      form: {
+        defaultValue: {},
+        label: 'allProps.sx (styles)',
+      },
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
     },

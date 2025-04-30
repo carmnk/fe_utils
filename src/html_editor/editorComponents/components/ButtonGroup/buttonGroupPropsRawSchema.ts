@@ -64,6 +64,26 @@ export const ButtonGroupPropsSchema: ExtendedObjectSchemaType = {
       },
       category: 'shortcut',
     },
+    allProps: {
+      type: PropertyType.json,
+      form: {
+        defaultValue: {},
+        // label: 'sx',
+      },
+      label: 'allProps',
+      // keysDict: CSS_RULE_NAMES_DICT_FULL,
+      valueTransformer: (formData: any) => {
+        const { allProps, element_id, ...rest } = formData
+        return rest
+      },
+      changeValueToFormDataTransformer: (
+        _currentFormData: Record<string, unknown>,
+        newValue: unknown
+      ) => {
+        return newValue
+      },
+      category: 'customize',
+    } as any,
     slotProps: {
       type: PropertyType.Object,
       form: {

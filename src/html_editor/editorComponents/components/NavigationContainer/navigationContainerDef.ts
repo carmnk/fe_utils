@@ -6,9 +6,7 @@ import { navigationContainerPropsSchema } from './navigationContainerPropsRawSch
 
 export const navigationContainerDef = {
   type: 'NavContainer' as const,
-  props: {
-    children: [],
-  },
+  props: {},
   icon: mdiRectangleOutline,
   category: 'navigation',
   schema: navigationContainerPropsSchema,

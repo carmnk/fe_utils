@@ -8,9 +8,6 @@ export const linkEditorComponentDef = {
   type: 'Link' as const,
   props: {
     children: 'test',
-    noWrap: false,
-    align: 'inherit',
-    sx: {},
   },
   icon: mdiLink,
   category: 'basic',

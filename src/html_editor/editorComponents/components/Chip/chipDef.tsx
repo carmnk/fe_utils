@@ -7,12 +7,6 @@ export const chipEditorComponentDef = {
   type: 'Chip' as const,
   props: {
     label: 'test',
-    size: 'medium',
-    variant: 'filled',
-    color: 'primary',
-    clickable: false,
-    disabled: false,
-    sx: {},
   },
   icon: mdiInformation,
   category: 'basic',

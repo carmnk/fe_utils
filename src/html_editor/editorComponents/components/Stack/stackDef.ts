@@ -6,9 +6,7 @@ import { FC } from 'react'
 
 export const stackEditorComponentDef = {
   type: 'Stack' as const,
-  props: {
-    display: 'flex',
-  },
+  props: {},
   icon: mdiViewColumnOutline,
   category: 'layout',
   component: StackWrapper as FC<StackWrapperProps>,

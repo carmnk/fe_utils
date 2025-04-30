@@ -18,6 +18,7 @@ export const isThemeColor = (color: string) =>
 export type TypographyWrapperProps = CommonComponentPropertys &
   TypographyProps & {
     rootInjection: ReactNode
+    allProps: unknown
   }
 export const TypographyWrapper = (props: TypographyWrapperProps) => {
   const {
@@ -30,6 +31,7 @@ export const TypographyWrapper = (props: TypographyWrapperProps) => {
     id,
     isProduction,
     icons,
+    allProps,
     /* eslint-enable @typescript-eslint/no-unused-vars */
     sx,
     ...rest
@@ -95,8 +97,17 @@ export const TypographyWrapper = (props: TypographyWrapperProps) => {
     return newSx
   }, [sx, theme])
 
+  const restAdj = useMemo(() => {
+    return Object.keys(rest).reduce((acc, cur, idx) => {
+      if (rest?.[cur as keyof typeof rest]) {
+        return { ...acc, cur: (rest as any)?.[cur] }
+      }
+      return acc
+    }, {})
+  }, [rest])
+
   return (
-    <Typography {...rest} sx={sxAdj}>
+    <Typography {...restAdj} sx={sxAdj}>
       {children}
       {rootInjection}
     </Typography>

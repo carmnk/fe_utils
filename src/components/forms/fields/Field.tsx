@@ -24,6 +24,10 @@ type InputFieldLayoutProps = {
     showInArrayList?: boolean
   }
   valueTransformer?: (formData: Record<string, unknown>) => unknown
+  changeValueToFormDataTransformer?: (
+    currentFormData: Record<string, unknown>,
+    newValue: unknown
+  ) => Record<string, unknown>
 }
 type ArrayInputFieldProps = {
   type: 'array'
@@ -156,6 +160,25 @@ export const Field = (props: FieldProps) => {
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
       const { name } = e?.target ?? {}
+      const changeValueToFormDataTransformer =
+        field?.changeValueToFormDataTransformer
+      if (changeValueToFormDataTransformer) {
+        const newFormData = changeValueToFormDataTransformer(formData, newValue)
+        const changedField =
+          Object.keys(newFormData).find(
+            (key) => newFormData[key] !== formData?.[key]
+          ) ||
+          (Object.keys(formData).find(
+            (key) => newFormData?.[key] !== formData[key]
+          ) as string)
+        onChangeFormData(
+          newFormData,
+          changedField,
+          newFormData?.[changedField],
+          formData
+        )
+        return
+      }
       const newValueAdj = useChangeCompleted ? innerValue : newValue
       const newValueWithInjections = onBeforeChange?.(
         { ...formData, [name]: newValueAdj },
@@ -173,7 +196,14 @@ export const Field = (props: FieldProps) => {
         formData
       )
     },
-    [onBeforeChange, formData, onChangeFormData, innerValue, useChangeCompleted]
+    [
+      onBeforeChange,
+      formData,
+      onChangeFormData,
+      innerValue,
+      useChangeCompleted,
+      field?.changeValueToFormDataTransformer,
+    ]
   )
   const injectIsInt = field.type === 'int' ? { isInt: true } : {}
 
@@ -216,6 +246,7 @@ export const Field = (props: FieldProps) => {
     />
   ) : ['array', 'object', 'string-array'].includes(field.type) ? null : (
     <GenericInputField
+      label={(fieldAdj as any)?.form?.label ?? (fieldAdj as any)?.label}
       {...fieldAdj}
       options={fieldOptions}
       error={

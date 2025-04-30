@@ -8,10 +8,7 @@ export const paperDef = {
   ...appBarDef,
   type: 'Paper' as const,
   icon: mdiNoteOutline,
-  props: {
-    sx: {},
-    children: [],
-  },
+  props: {},
   category: 'surface',
   schema: paperPropsSchema,
   component: PaperWrapper,

@@ -13,7 +13,7 @@ export type Element = {
   component_id: string | null
   ref_component_id: string | null
   project_id: string
-  // _disableDelete?: boolean
+  
 }
 
 export type ElementDb = Element & {

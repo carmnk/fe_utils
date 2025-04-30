@@ -1,26 +1,24 @@
-import { CSSProperties, Ref, ReactNode } from 'react'
+import { CSSProperties, Ref, ReactNode, MouseEvent } from 'react'
 import { useMemo } from 'react'
 import {
-  Badge,
+  BadgeProps,
   BoxProps,
-  Stack,
-  Tab,
   TabProps,
   TooltipProps,
   TypographyProps,
 } from '@mui/material'
-import { Tooltip, Typography, useTheme, TabsProps } from '@mui/material'
+import { useTheme, TabsProps } from '@mui/material'
 import { Tabs as MTabs } from '@mui/material'
-import Icon from '@mdi/react'
 import { FlexProps } from '../_wrapper'
 import { IconProps } from '@mdi/react/dist/IconProps'
+import { CTab } from './CTab'
 
 export type CTabsProps = Omit<TabsProps, 'onChange' | 'value' | 'slotProps'> & {
   value: string
   onChange?: (value: string) => void
   items: {
     value: string
-    label: ReactNode
+    label?: ReactNode
     tooltip?: string
     disabled?: boolean
     icon?: string
@@ -28,6 +26,7 @@ export type CTabsProps = Omit<TabsProps, 'onChange' | 'value' | 'slotProps'> & {
     isInitialValue?: boolean
     badge?: string
     badgeColor?: string
+    badgeProps?: BadgeProps
   }[]
 
   disableIndicator?: boolean
@@ -88,13 +87,32 @@ export const Tabs = (props: CTabsProps) => {
   } = props
   const theme = useTheme()
 
+  // tabs
+  const TabIndicatorProps = useMemo(() => {
+    return disableIndicator
+      ? { sx: { display: 'none', overflowY: 'visible' } }
+      : undefined
+  }, [disableIndicator])
+
+  const tabsSx = useMemo(() => {
+    return {
+      ...(sx ?? {}),
+      borderBottom: disableBorderBottom
+        ? undefined
+        : '1px solid ' + theme.palette.divider,
+      minHeight: 32,
+      my: 1,
+    }
+  }, [disableBorderBottom, theme, sx])
+
+  // tab
   const {
     activeTab: activeTabSlotProps,
     inactiveTab: inactiveTabSlotProps,
     ...tabsSlotProps
-  } = slotProps ?? {}
+  } = useMemo(() => slotProps ?? {}, [slotProps])
 
-  const activeTabStyles = useMemo(() => {
+  const activeTabStyles: CSSProperties = useMemo(() => {
     const tabStyles =
       tabVariant === 'filled'
         ? {
@@ -117,28 +135,21 @@ export const Tabs = (props: CTabsProps) => {
     return {
       borderTopLeftRadius: 4,
       borderTopRightRadius: 4,
-      ...tabStyles,
-      ...activeTabStylesIn,
+      ...(tabStyles as any),
+      ...(activeTabStylesIn as any),
     }
   }, [theme, activeTabStylesIn, tabVariant, activeTabFilledColor])
 
   const handleChangeTab = useMemo(() => {
     return (
-      items?.map?.((item) => () => {
+      items?.map?.((item) => (_e: MouseEvent<HTMLElement>) => {
         onChange?.(item.value)
       }) ?? []
     )
   }, [items, onChange])
 
-  const TabIndicatorProps = useMemo(() => {
-    return disableIndicator
-      ? { sx: { display: 'none', overflowY: 'visible' } }
-      : undefined
-  }, [disableIndicator])
-
   return (
     <MTabs
-      // TabScrollButtonProps={{ sx: { overflowY: 'visible' } }}
       ref={ref}
       TabIndicatorProps={TabIndicatorProps}
       value={value}
@@ -148,111 +159,29 @@ export const Tabs = (props: CTabsProps) => {
       textColor={textColor}
       visibleScrollbar={visibleScrollbar}
       {...rest}
-      sx={{
-        ...(sx ?? {}),
-        borderBottom: disableBorderBottom
-          ? undefined
-          : '1px solid ' + theme.palette.divider,
-        minHeight: 32,
-        my: 1,
-      }}
+      sx={tabsSx}
       slotProps={tabsSlotProps}
     >
       {items?.map?.((item, iIdx) => {
-        const { icon: _i, ...restItem } = item ?? {}
-        const isTabActive = item.value === value
-        const tabSlotProps = isTabActive
-          ? activeTabSlotProps
-          : inactiveTabSlotProps
-
-        const tabStyles = {
-          p: 0,
-          minWidth: 40,
-          minHeight: 32,
-          transition: 'background 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-          opacity: 1,
-          color: item?.disabled
-            ? 'text.disabled'
-            : isTabActive && tabVariant === 'filled'
-              ? theme.palette.primary.contrastText
-              : undefined,
-
-          // ...injectTabBorders,
-          ...((item?.sx as CSSProperties) ?? {}),
-          ...(isTabActive
-            ? activeTabStyles
-            : tabVariant === 'outlined'
-              ? {
-                  border: '1px solid #99999966',
-                  borderBottom: 0,
-                  borderTopLeftRadius: 8,
-                  borderTopRightRadius: 8,
-                  background: 'transparent',
-                }
-              : {}),
-          ...(tabSlotProps?.tab?.sx ?? {}),
-        }
-
         return (
-          <Badge
-            key={iIdx}
-            badgeContent={item?.badge}
-            color={item?.badgeColor as 'primary'}
-            slotProps={{
-              badge: { style: { padding: 0, fontSize: '0.75rem !important' } },
-            }}
-          >
-            <Tab
-              {...(restItem ?? {})}
-              disabled={item?.disabled}
-              value={item.value}
-              label={
-                <Tooltip
-                  title={item.tooltip ?? ''}
-                  placement="top"
-                  arrow
-                  {...(tabSlotProps?.tooltip ?? {})}
-                >
-                  <Stack
-                    direction="row"
-                    gap={0}
-                    alignItems="center"
-                    {...(tabSlotProps?.tabInnerContainer ?? {})}
-                  >
-                    {item?.icon && (
-                      <Icon
-                        path={item.icon}
-                        size={'16px'}
-                        // color={
-                        //   item.value === value
-                        //     ? theme.palette.primary.contrastText
-                        //     : theme.palette.text.primary
-                        // }
-                        style={{ marginLeft: '8px' }}
-                        {...(tabSlotProps?.icon ?? {})}
-                      />
-                    )}
-                    <Typography
-                      component="span"
-                      textTransform="none"
-                      minWidth={40}
-                      fontWeight={800}
-                      // color="text.primary"
-                      lineHeight={'1em'}
-                      p={0.5}
-                      color={'inherit'}
-                      {...(tabSlotProps?.typography ?? {})}
-                    >
-                      {item.label}
-                    </Typography>
-                  </Stack>
-                </Tooltip>
-              }
-              onClick={handleChangeTab?.[iIdx]}
-              {...(tabSlotProps?.tab ?? {})}
-              sx={tabStyles}
-            />
-          </Badge>
+          <CTab
+            key={iIdx as any}
+            disabled={item?.disabled}
+            value={item.value}
+            label={item.label}
+            icon={item?.icon}
+            badge={item?.badge}
+            badgeColor={item?.badgeColor}
+            badgeProps={item?.badgeProps}
+            sx={item?.sx}
+            tooltip={item?.tooltip}
+            activeValue={value}
+            activeTabSlotProps={activeTabSlotProps}
+            inactiveTabSlotProps={inactiveTabSlotProps}
+            tabVariant={tabVariant}
+            activeTabStyles={activeTabStyles}
+            onClick={handleChangeTab?.[iIdx]}
+          />
         )
       }) ?? null}
       {rootInjection}

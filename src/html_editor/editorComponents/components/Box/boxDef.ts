@@ -7,7 +7,6 @@ import { FC } from 'react'
 export const boxEditorComponentDef = {
   type: 'Box' as const,
   props: {
-    display: 'block',
   },
   icon: mdiRectangleOutline,
   category: 'layout',

@@ -59,16 +59,36 @@ export const BottomNavPropsSchema: ExtendedObjectSchemaType = {
       category: 'shortcut',
     },
 
-    sx: {
+    allProps: {
       type: PropertyType.json,
       form: {
         defaultValue: {},
         // label: 'sx',
       },
-      label: 'sx',
+      label: 'allProps',
+      // keysDict: CSS_RULE_NAMES_DICT_FULL,
+      valueTransformer: (formData: any) => {
+        const { allProps, element_id, ...rest } = formData
+        return rest
+      },
+      changeValueToFormDataTransformer: (
+        _currentFormData: Record<string, unknown>,
+        newValue: unknown
+      ) => {
+        return newValue
+      },
+      category: 'customize',
+    } as any,
+    sx: {
+      type: PropertyType.json,
+      form: {
+        defaultValue: {},
+        label: 'allProps.sx (styles)',
+      },
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
     },
+
     slotProps: {
       type: PropertyType.Object,
       form: {
@@ -83,7 +103,7 @@ export const BottomNavPropsSchema: ExtendedObjectSchemaType = {
             defaultValue: {},
             // label: 'sx',
           },
-          label: 'sx',
+          // label: 'sx',
         },
         bottomNavigationSelectedAction: {
           type: PropertyType.json,
@@ -91,7 +111,7 @@ export const BottomNavPropsSchema: ExtendedObjectSchemaType = {
             defaultValue: {},
             // label: 'sx',
           },
-          label: 'sx',
+          // label: 'sx',
         },
       },
     },

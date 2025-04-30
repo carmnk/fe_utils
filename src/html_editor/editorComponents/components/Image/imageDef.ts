@@ -7,10 +7,6 @@ import { FC } from 'react'
 export const imageEditorComponentDef = {
   type: 'Image' as const,
   props: {
-    children: 'test',
-    noWrap: false,
-    align: 'inherit',
-    sx: {},
   },
   icon: mdiImageOutline,
   category: 'basic',

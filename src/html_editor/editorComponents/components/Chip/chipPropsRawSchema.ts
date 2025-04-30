@@ -113,7 +113,7 @@ export const chipPropsSchema: ExtendedObjectSchemaType = {
       required: false,
       enum: [...muiBaseColors, 'default'],
       form: {
-        defaultValue: muiBaseColors[0],
+        defaultValue: 'default',
       },
       category: 'shortcut',
     },
@@ -121,7 +121,7 @@ export const chipPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.Boolean,
       required: false,
       form: {
-        defaultValue: true,
+        defaultValue: false,
       },
       category: 'shortcut',
     },
@@ -155,13 +155,34 @@ export const chipPropsSchema: ExtendedObjectSchemaType = {
     //   type: PropertyType.String,
     //   required: false,
     // },
-    sx: {
+
+    allProps: {
       type: PropertyType.json,
       form: {
         defaultValue: {},
         // label: 'sx',
       },
-      label: 'sx',
+      label: 'allProps',
+      // keysDict: CSS_RULE_NAMES_DICT_FULL,
+      valueTransformer: (formData: any) => {
+        const { allProps, element_id, ...rest } = formData
+        return rest
+      },
+      changeValueToFormDataTransformer: (
+        _currentFormData: Record<string, unknown>,
+        newValue: unknown
+      ) => {
+        return newValue
+      },
+      category: 'customize',
+    } as any,
+    sx: {
+      type: PropertyType.json,
+      form: {
+        defaultValue: {},
+        label: 'allProps.sx (styles)',
+      },
+
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
     },

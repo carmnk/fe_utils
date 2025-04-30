@@ -8,10 +8,6 @@ export const typographyEditorComponentDef = {
   type: 'Typography' as const,
   props: {
     children: 'test',
-    noWrap: false,
-    align: 'inherit',
-    variant: 'body1',
-    sx: {},
   },
   icon: mdiFormatText,
   category: 'basic',

@@ -5,10 +5,7 @@ import { ElementModel } from '../../componentDefType'
 
 export const appBarDef = {
   type: 'AppBar' as const,
-  props: {
-    sx: {},
-    children: [],
-  },
+  props: {},
 
   icon: mdiDockTop,
   category: 'surface',

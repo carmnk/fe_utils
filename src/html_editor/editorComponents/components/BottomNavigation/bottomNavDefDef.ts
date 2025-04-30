@@ -15,10 +15,6 @@ export const BottomNavComponentDef = {
       { value: 'item1', label: 'Item 1', isInitialValue: true },
       { value: 'item2', label: 'Item 2' },
     ],
-    sx: {},
-    slotProps: {
-      bottomNavigationAction: {},
-    },
   },
   state: 'item1',
   icon: mdiDockBottom,

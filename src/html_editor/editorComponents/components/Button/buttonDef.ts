@@ -9,15 +9,7 @@ export const buttonEditorComponentDef = {
 
   component: ButtonWrapper,
   props: {
-    label: 'Test-Label',
-    disableElevation: true,
-    sx: {},
-    slotProps: {
-      typography: {},
-      startIcon: {},
-      endIcon: {},
-      tooltip: {},
-    },
+    label: 'Button',
   },
   state: false,
   icon: mdiButtonCursor,
