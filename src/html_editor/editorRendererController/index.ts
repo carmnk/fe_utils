@@ -1,5 +1,10 @@
 export type { EditorRendererControllerType } from '../types/editorRendererController'
-export { defaultEditorState, defaultElements } from './defaultEditorState'
+export {
+  defaultEditorState,
+  defaultElements,
+  makeNewProperty,
+  makeNewAttribute,
+} from './defaultEditorState'
 export type * from '../types'
 export { useAppController } from './appController'
 export { useEditorRendererController } from './editorRendererController'

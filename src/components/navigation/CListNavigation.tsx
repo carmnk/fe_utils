@@ -188,7 +188,7 @@ export const ListNavigation = (props: ListNavigationProps) => {
         }
         return item ? (
           <ListItem {...listItemProps} key={iIdx}>
-            <ListItemButton {...listItemButtonProps}>
+            <ListItemButton {...listItemButtonProps} disabled={item?.disabled}>
               {item?.icon && (
                 <ListItemIcon {...listItemIconRoot}>
                   <Icon

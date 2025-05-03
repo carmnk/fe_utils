@@ -76,17 +76,17 @@ export const Switch = (props: CSwitchProps) => {
   )
 
   return (
-    <Tooltip
-      disableFocusListener={!tooltip}
-      disableHoverListener={!tooltip}
-      disableTouchListener={!tooltip}
-      disableInteractive={!tooltip}
-      title={tooltip}
-      placement="top"
-      arrow
-      {...tooltipProps}
-    >
-      <>
+    <>
+      <Tooltip
+        disableFocusListener={!tooltip}
+        disableHoverListener={!tooltip}
+        disableTouchListener={!tooltip}
+        disableInteractive={!tooltip}
+        title={tooltip}
+        placement="top"
+        arrow
+        {...tooltipProps}
+      >
         <FormControlLabel
           color={color}
           slotProps={formControlLabelSlotProps}
@@ -107,14 +107,12 @@ export const Switch = (props: CSwitchProps) => {
           label={label}
           {...formControlLabel}
         />
-        {!disableHelperText && (
-          // <Box height="23px">
-          <FormHelperText {...formHelperText}>
-            {helperText ?? ''}
-          </FormHelperText>
-          // </Box>
-        )}
-      </>
-    </Tooltip>
+      </Tooltip>
+      {!disableHelperText && (
+        // <Box height="23px">
+        <FormHelperText {...formHelperText}>{helperText ?? ''}</FormHelperText>
+        // </Box>
+      )}
+    </>
   )
 }

@@ -17,7 +17,7 @@ export type EditorSetting = {
   disable_treeview_expand_animation?: boolean | null
   disable_treeview_dragging?: boolean | null
   disable_treeview_delete_item_confirmation?: boolean | null
-  treeview_expand_multiple_actions?: string[]
+  treeview_expand_multiple_actions?: string[] | null
   disable_hide_details_bar?: boolean | null
   disable_details_bar_show_ids?: boolean | null
   disable_details_bar_show_html_content_tab?: boolean | null

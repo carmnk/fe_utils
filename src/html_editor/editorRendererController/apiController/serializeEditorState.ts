@@ -34,7 +34,11 @@ export const serializeEditorState = (
     payload.alternativeViewports,
     project_id
   )
-  const properties = serializeProperties(payload.properties)
+  const properties = serializeProperties(
+    payload.properties,
+    payload.elements,
+    payload.elementTemplates
+  )
   const attributes = serializeAttributes(payload?.attributes)
   // seperate handling! -> must be multipart form data!!!!
   const { images /*imageFiles*/ } = serializeImages(

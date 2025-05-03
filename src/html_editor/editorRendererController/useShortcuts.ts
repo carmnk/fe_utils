@@ -2,6 +2,37 @@ import { useMemo } from 'react'
 import { EditorStateType } from '../types'
 import { ElementModel, BASE_ELEMENT_MODELS } from '../editorComponents'
 
+import { Element } from '@cmk/fe_utils'
+
+export const getRecursiveChildren = (
+  allElements: Element[],
+  parentId: string,
+  componentId?: string
+): Element[] => {
+  const children = allElements.filter(
+    (el) =>
+      el.parent_id === parentId &&
+      (!componentId || el.component_id === componentId)
+  )
+
+  return children
+    .map(
+      (child) =>
+        child.element_id
+          ? [
+              child,
+              ...getRecursiveChildren(
+                allElements,
+                child.element_id,
+                componentId
+              ),
+            ]
+          : (null as unknown as Element) // filter later
+    )
+    .filter((val) => val)
+    .flat()
+}
+
 export const useShortcuts = (params: {
   editorState: EditorStateType
   customComponents?: ElementModel[]
@@ -10,14 +41,27 @@ export const useShortcuts = (params: {
 
   const currentViewportElements = useMemo(() => {
     const currentViewport = editorState.ui.selected.viewport
-    const currentViewportElements =
+    const currentViewportElementsRaw =
       currentViewport === 'xs'
         ? editorState.elements
         : editorState.alternativeViewports[currentViewport]
+
     if (currentViewport === 'xs') return editorState.elements
-    return currentViewportElements?.length
-      ? currentViewportElements
-      : editorState.elements
+    const hasViewportRootElement = currentViewportElementsRaw.find(
+      (el) => !el.parent_id && !el.component_id
+    )
+    return hasViewportRootElement
+      ? currentViewportElementsRaw
+      : (() => {
+          const adaptiveViewportElements = editorState.elements
+            .map((el) => {
+              const recursiveSpecificViewportElementChildren =
+                getRecursiveChildren(currentViewportElementsRaw, el.element_id)
+              return [el, ...(recursiveSpecificViewportElementChildren ?? [])]
+            })
+            .flat()
+          return adaptiveViewportElements
+        })()
   }, [
     editorState.elements,
     editorState.alternativeViewports,

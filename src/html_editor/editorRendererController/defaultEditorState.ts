@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid'
 import { LeftMenuGlobalTabs } from '../defs/LeftMenuGlobalTabs'
 import { LeftMenuBackendTabs } from '../defs/LeftMenuBackendTabs'
 import { EditorStateType } from '../types/editorState'
-import { Element } from '../types'
+import { Attribute, Element, Property } from '../types'
 import { DEFAULT_THEMES_SERIALIZED } from '../theme/serializedMuiTheme'
 
 const baseHtmlDocument: Element[] = [
@@ -30,7 +30,8 @@ export const makeNewProperty = (params: {
   template_id?: string
   component_id?: string
   action_ids?: string[]
-}) => {
+  viewport?: string
+}): Property => {
   const {
     prop_id,
     element_id,
@@ -40,6 +41,7 @@ export const makeNewProperty = (params: {
     template_id,
     component_id,
     action_ids,
+    viewport,
   } = params
   return {
     element_id,
@@ -50,6 +52,39 @@ export const makeNewProperty = (params: {
     template_id: template_id ?? null,
     component_id: component_id ?? null,
     action_ids: action_ids ?? [],
+    viewport: viewport ?? null,
+  }
+}
+
+export const makeNewAttribute = (params: {
+  attr_id?: string
+  element_id?: string
+  template_id?: string
+  component_id?: string
+  project_id: string
+  attr_name: string
+  attr_value: any
+  viewport?: string
+}): Attribute => {
+  const {
+    attr_id,
+    element_id,
+    template_id,
+    component_id,
+    project_id,
+    attr_name,
+    attr_value,
+    viewport,
+  } = params
+  return {
+    attr_id: attr_id ?? uuid(),
+    element_id: element_id ?? null,
+    template_id: template_id ?? null,
+    component_id: component_id ?? null,
+    project_id,
+    attr_name,
+    attr_value,
+    viewport: viewport ?? null,
   }
 }
 
@@ -79,15 +114,12 @@ export const defaultEditorState = (
   const rootElements = defaultElements(project_id)
   const rootElementId = rootElements?.[0]?.element_id
 
-  const newAttribute = {
-    attr_id: uuid(),
+  const newAttribute = makeNewAttribute({
     element_id: rootElementId,
-    template_id: null,
-    component_id: null,
     project_id,
     attr_name: 'style',
     attr_value: { height: '100%' },
-  }
+  })
   return {
     action_params: [],
     composite_component_props: [],

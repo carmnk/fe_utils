@@ -7,4 +7,5 @@ export type Property = {
   prop_id: string
   component_id: string | null
   action_ids?: string[]
+  viewport: string | null
 }

@@ -1,4 +1,11 @@
-import { ChangeEvent, ReactNode, useCallback, useEffect, useState } from 'react'
+import {
+  ChangeEvent,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { GenericInputField } from '../../inputs/GenericInputField'
 import { CustomField, CustomFieldDefinition } from './CustomField'
 import { GenericInputFieldProps, InputFieldType } from '../../inputs/types'
@@ -100,10 +107,6 @@ export type DynamicFieldDefinition<Type extends FormFieldType = FormFieldType> =
       | ((formData: FormDataType, rootFormData: FormDataType) => boolean)
   }
 
-// | ArrayInputFieldProps
-// | ObjectInputFieldProps
-// | StringArrayInputFieldProps
-
 export type FieldProps = {
   formData: FormDataType
   onChangeFormData: any // (value: any) => void
@@ -150,13 +153,6 @@ export const Field = (props: FieldProps) => {
     },
     []
   )
-  useEffect(() => {
-    setInnerValue(
-      (formData?.[field?.name ?? ''] as string | number | boolean | null) ?? ''
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData?.[field?.name ?? '']])
-
   const handleChange = useCallback(
     (newValue: string, e: ChangeEvent<HTMLInputElement>) => {
       const { name } = e?.target ?? {}
@@ -205,13 +201,24 @@ export const Field = (props: FieldProps) => {
       field?.changeValueToFormDataTransformer,
     ]
   )
+
+  useEffect(() => {
+    setInnerValue(
+      (formData?.[field?.name ?? ''] as string | number | boolean | null) ?? ''
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData?.[field?.name ?? '']])
+
   const injectIsInt = field.type === 'int' ? { isInt: true } : {}
 
-  // const FieldComponent = (field as any)?.component
-  const fieldOptions =
-    typeof field?.options === 'function'
-      ? field?.options(formData, rootFormData)
-      : field?.options
+  const fieldOptions = useMemo(
+    () =>
+      typeof field?.options === 'function'
+        ? field?.options(formData, rootFormData)
+        : field?.options,
+    [field, formData, rootFormData]
+  )
+
   const fieldError =
     typeof field?.error === 'function'
       ? field?.error(formData, rootFormData)
@@ -222,8 +229,13 @@ export const Field = (props: FieldProps) => {
       : field?.required
   const fieldValue = formData?.[field?.name ?? '']
 
-  // eslint-disable-next-line
-  const { keysDict, ...fieldAdj } = { ...field, keysDict: null }
+  const { keysDict, valueTransformer, ...fieldAdj } = useMemo(
+    () => ({
+      ...field,
+      keysDict: null,
+    }),
+    [field]
+  )
 
   return field.type === 'inject' ? (
     <CustomField
@@ -270,10 +282,8 @@ export const Field = (props: FieldProps) => {
       value={
         useChangeCompleted
           ? innerValue
-          : field?.valueTransformer
-            ? (field?.valueTransformer?.(formData) ??
-              field?.form?.defaultValue ??
-              '')
+          : valueTransformer
+            ? (valueTransformer?.(formData) ?? field?.form?.defaultValue ?? '')
             : (formData?.[field?.name ?? ''] ?? field?.form?.defaultValue ?? '')
       }
       onChange={
@@ -319,9 +329,6 @@ export const Field = (props: FieldProps) => {
           : undefined
       }
       {...fieldProps}
-      // type={fieldAdj.field.}
-      // onFileChange={onFileChange}
-      // files={files}
     />
   )
 }

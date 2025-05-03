@@ -9,8 +9,8 @@ export const serializeEditorSetting = (settings: EditorSetting[]) => {
           .treeview_expand_multiple_actions?.length
           ? (JSON.stringify(
               setting.treeview_expand_multiple_actions
-            ) as unknown as string[] | undefined)
-          : undefined,
+            ) as unknown as string[] )
+          : null,
       }
     }) ?? []
   )
