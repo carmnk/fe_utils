@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
 import { EditorStateType } from '../types'
 import { ElementModel, BASE_ELEMENT_MODELS } from '../editorComponents'
-
-import { Element } from '@cmk/fe_utils'
+import { Element } from '../types/element'
 
 export const getRecursiveChildren = (
   allElements: Element[],
