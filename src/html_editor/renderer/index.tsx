@@ -8,3 +8,7 @@ export { renderElements } from './renderElements'
 export { replacePlaceholdersInString } from './placeholder/replacePlaceholder'
 export { checkForPlaceholders } from './placeholder/replacePlaceholder'
 export { getStylesFromClasses } from './classes/getStylesFromClasses'
+export {
+  getElementResolvedPropsDict,
+  getElementPropsRawDict,
+} from './properties/getElementProperties'

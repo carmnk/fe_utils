@@ -96,12 +96,12 @@ export const Tabs = (props: CTabsProps) => {
 
   const tabsSx = useMemo(() => {
     return {
-      ...(sx ?? {}),
       borderBottom: disableBorderBottom
         ? undefined
         : '1px solid ' + theme.palette.divider,
       minHeight: 32,
       my: 1,
+      ...(sx ?? {}),
     }
   }, [disableBorderBottom, theme, sx])
 

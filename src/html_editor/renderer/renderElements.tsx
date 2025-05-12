@@ -9,7 +9,7 @@ import {
 } from './placeholder/replacePlaceholder'
 import { FC, PropsWithChildren, ReactNode } from 'react'
 import { getInjectedElementIconProps } from './icons/getInjectedElementIconProps'
-import { resolveElementProps } from './placeholder/resolveElementProps'
+import { getElementResolvedPropsDict } from './properties/getElementProperties'
 import { getElementEventHandlerProps } from './actions/getElementEventHandlerProps'
 import { ElementModel } from '../editorComponents'
 import { ComponentBox } from './ComponentBox'
@@ -59,6 +59,11 @@ export const renderElements = (params: {
     disableElementEvents,
     navigate,
   } = params
+
+  const currentViewport = editorState.ui.selected.viewport
+  const isCurrentViewportAutarkic = currentViewportElements.find(
+    (el) => !el.parent_id && !el.component_id && el.viewport === currentViewport
+  )
 
   const currentPageViewportElements = currentViewportElements.filter(
     (el) => el.element_page === editorState.ui.selected.page
@@ -111,13 +116,21 @@ export const renderElements = (params: {
       elementProps: allElementProps,
     })
     // props
-    const elementPropsObject = resolveElementProps({
+    // const elementPropsObject = resolveElementProps({
+    //   element,
+    //   rootCompositeElementId,
+    //   editorState,
+    //   appController,
+    //   elementProps: allElementProps,
+    //   icons,
+    // })
+    const elementPropsObject = getElementResolvedPropsDict({
       element,
       rootCompositeElementId,
       editorState,
       appController,
-      elementProps: allElementProps,
       icons,
+      viewport: editorState.ui.selected.viewport,
     })
 
     const matches = !!element?.content && checkForPlaceholders(element?.content)
@@ -134,13 +147,35 @@ export const renderElements = (params: {
         )
       : element.content
 
+    const relevantElementsForChildren = baseComponentId
+      ? editorState.elements
+      : currentViewportElements
+
     const elementChildren =
-      (baseComponentId
-        ? editorState.elements
-        : currentViewportElements
-      )?.filter(
-        (el) => el.parent_id === element.element_id && element.element_id
+      relevantElementsForChildren?.filter(
+        (el) =>
+          el.parent_id === element.element_id &&
+          element.element_id &&
+          (!currentViewport ||
+            currentViewport === 'xs' ||
+            (isCurrentViewportAutarkic && el.viewport === currentViewport) ||
+            (() => {
+              if (isCurrentViewportAutarkic) return false
+              // if viewport specific children then only show them otherwise adaptive with default
+              const hasSpecificViewportChildren =
+                relevantElementsForChildren?.find(
+                  (el) =>
+                    el.parent_id === element.element_id &&
+                    element.element_id &&
+                    el.viewport === currentViewport
+                )
+              return hasSpecificViewportChildren
+                ? el.viewport === currentViewport
+                : !el.viewport || el.viewport === 'xs'
+            })())
       ) ?? []
+
+    // console.log('elementChildren', elementChildren, element.element_type)
 
     const renderedElementChildren = elementChildren?.length
       ? renderElements({
