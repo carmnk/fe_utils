@@ -100,7 +100,7 @@ export const TypographyWrapper = (props: TypographyWrapperProps) => {
   const restAdj = useMemo(() => {
     return Object.keys(rest).reduce((acc, cur, idx) => {
       if (rest?.[cur as keyof typeof rest]) {
-        return { ...acc, cur: (rest as any)?.[cur] }
+        return { ...acc, [cur]: (rest as any)?.[cur] }
       }
       return acc
     }, {})
