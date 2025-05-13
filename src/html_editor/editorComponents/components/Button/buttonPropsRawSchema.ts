@@ -87,6 +87,11 @@ export const ButtonPropsSchema: ExtendedObjectSchemaType = {
       enum: ICON_NAMES,
       category: 'shortcut',
     },
+    iconSize: {
+      type: PropertyType.cssSize,
+      required: false,
+      category: 'shortcut',
+    },
     endIcon: {
       type: PropertyType.icon,
       required: false,
