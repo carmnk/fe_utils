@@ -31,8 +31,9 @@ export const serializeProperties = (
           : null
 
         return (
-          ![undefined, null].includes(prop?.prop_value as null) ||
-          correspondingTemplateProp
+          (![undefined, null].includes(prop?.prop_value as null) ||
+            correspondingTemplateProp) ||
+          prop.action_ids?.length
         )
       })
       ?.map((prop) => {

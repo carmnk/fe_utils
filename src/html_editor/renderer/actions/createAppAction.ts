@@ -5,6 +5,7 @@ import {
 } from '../../editorRendererController'
 import { replacePlaceholdersInString } from '../placeholder/replacePlaceholder'
 import { queryAction } from './queryAction'
+import { toast } from 'react-hot-toast'
 
 type EditorRendererController = EditorRendererControllerType
 
@@ -71,7 +72,11 @@ export const createAppAction = (params: {
             (act) => act.action_id === actionId
           )
           const navigationAction = navigationActionElementIds.includes(actionId)
-          const isPageNavigation = actionId === 'navigatePage'
+          const action = editorState.actions.find(
+            (act) => act.action_id === actionId
+          )
+          const isPageNavigation =
+            action?.internal_action_name === 'navigatePage'
           if (!endpointAction && !navigationAction && !isPageNavigation) {
             console.warn(
               'No ep and no nav -action found for actionId',
@@ -84,7 +89,7 @@ export const createAppAction = (params: {
               (ap) =>
                 ap.param_name === 'navigatePage' &&
                 ap.element_id === element.element_id &&
-                ap.event_name === eventName
+                actionId === ap.action_id
             )?.param_value
             if (isProduction) {
               console.debug('Navigate to page ...', isProduction)
@@ -92,6 +97,10 @@ export const createAppAction = (params: {
             } else {
               console.warn(
                 'Navigate to page not implemented in dev mode, will navigate to ' +
+                  actionsParmValue
+              )
+              toast.error(
+                'Navigate to page not implemented in dev mode, navigate to ' +
                   actionsParmValue
               )
             }
