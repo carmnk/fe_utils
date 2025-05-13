@@ -1,6 +1,6 @@
 import { useState, useCallback, ReactNode, Ref, CSSProperties } from 'react'
 import { useMemo, ChangeEvent } from 'react'
-import { InputAdornment, Box, TooltipProps } from '@mui/material'
+import { InputAdornment, Box, TooltipProps, useTheme } from '@mui/material'
 import { TextField as MTextField } from '@mui/material'
 import { TypographyProps, BoxProps, Typography } from '@mui/material'
 import { TextFieldProps as MTextFieldProps } from '@mui/material'
@@ -84,6 +84,7 @@ export const CTextField = (props: CTextFieldProps) => {
     ...rest
   } = props
 
+  const theme = useTheme()
   const {
     inputContainer,
     input,
@@ -244,53 +245,59 @@ export const CTextField = (props: CTextFieldProps) => {
   }, [labelRightInfo])
 
   return (
-    <Box
-      position="relative"
-      display="flex"
-      flexDirection="column"
-      width="100%"
-      {...(rootContainer ?? {})}
-    >
-      {!disableLabel && !useNotchedLabel && (
-        <Flex
-          alignItems="center"
-          justifyContent="space-between"
-          mb={labelRightInfo ? 0.5 : 0}
-        >
-          <Typography {...defaultLabelProps} {...(labelProps ?? {})}>
-            {label}{' '}
-            {required && (
-              <Box component="strong" color="error.main" fontWeight="700">
-                *
-              </Box>
-            )}
-          </Typography>
-          {labelRightInfo && rootContainer?.sx?.flexDirection === 'column' && (
+    <>
+      <style>{`.MuiTooltip-tooltip {
+      a {
+        color: ${theme.palette.primary.main};}}`}</style>
+      <Box
+        position="relative"
+        display="flex"
+        flexDirection="column"
+        width="100%"
+        {...(rootContainer ?? {})}
+      >
+        {!disableLabel && !useNotchedLabel && (
+          <Flex
+            alignItems="center"
+            justifyContent="space-between"
+            mb={labelRightInfo ? 0.5 : 0}
+          >
+            <Typography {...defaultLabelProps} {...(labelProps ?? {})}>
+              {label}{' '}
+              {required && (
+                <Box component="strong" color="error.main" fontWeight="700">
+                  *
+                </Box>
+              )}
+            </Typography>
+            {labelRightInfo &&
+              rootContainer?.sx?.flexDirection === 'column' && (
+                <Button
+                  variant="outlined"
+                  iconButton
+                  icon={mdiInformation}
+                  tooltip={labelRightInfoTooltip}
+                />
+              )}
+          </Flex>
+        )}
+        {rootContainer?.sx?.flexDirection === 'row' && labelRightInfo ? (
+          <Flex alignItems="center" gap={1}>
+            <MTextField {...textFieldProps} ref={ref} />
             <Button
               variant="outlined"
               iconButton
               icon={mdiInformation}
               tooltip={labelRightInfoTooltip}
             />
-          )}
-        </Flex>
-      )}
-      {rootContainer?.sx?.flexDirection === 'row' && labelRightInfo ? (
-        <Flex alignItems="center" gap={1}>
+          </Flex>
+        ) : (
           <MTextField {...textFieldProps} ref={ref} />
-          <Button
-            variant="outlined"
-            iconButton
-            icon={mdiInformation}
-            tooltip={labelRightInfoTooltip}
-          />
-        </Flex>
-      ) : (
-        <MTextField {...textFieldProps} ref={ref} />
-      )}
+        )}
 
-      {injectComponent}
-    </Box>
+        {injectComponent}
+      </Box>
+    </>
   )
 }
 CTextField.displayName = 'CTextField'
