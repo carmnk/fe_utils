@@ -13,6 +13,7 @@ import { getElementResolvedPropsDict } from './properties/getElementProperties'
 import { getElementEventHandlerProps } from './actions/getElementEventHandlerProps'
 import { ElementModel } from '../editorComponents'
 import { ComponentBox } from './ComponentBox'
+import { isViewportAutarkic } from './viewports/isViewportAutarkic'
 
 // const ANY_PLACEHOLDER_REGEX =
 //   /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
@@ -61,10 +62,6 @@ export const renderElements = (params: {
   } = params
 
   const currentViewport = editorState.ui.selected.viewport
-  const isCurrentViewportAutarkic = currentViewportElements.find(
-    (el) => !el.parent_id && !el.component_id && el.viewport === currentViewport
-  )
-
   const currentPageViewportElements = currentViewportElements.filter(
     (el) => el.element_page === editorState.ui.selected.page
   )
@@ -124,13 +121,19 @@ export const renderElements = (params: {
     //   elementProps: allElementProps,
     //   icons,
     // })
+    const viewport = editorState.ui.selected.viewport
+    const isCurrentViewportAutarkic = isViewportAutarkic(
+      currentViewportElements,
+      viewport
+    )
     const elementPropsObject = getElementResolvedPropsDict({
       element,
       rootCompositeElementId,
       editorState,
       appController,
       icons,
-      viewport: editorState.ui.selected.viewport,
+      viewport,
+      isVieweportAutarkic: isCurrentViewportAutarkic,
     })
 
     const matches = !!element?.content && checkForPlaceholders(element?.content)

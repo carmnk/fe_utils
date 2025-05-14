@@ -17,86 +17,15 @@ export type ResolveElementPropsParams = {
   elementProps: Property[]
 }
 
-// export const resolveElementProps = (params: ResolveElementPropsParams) => {
-//   const {
-//     element,
-//     rootCompositeElementId,
-//     editorState,
-//     appController,
-//     icons,
-//     elementProps,
-//   } = params
-
-//   const getPropByName = (key: string) =>
-//     elementProps?.find((prop) => prop.prop_name === key)?.prop_value
-
-//   const elementPropsDict = elementProps.reduce<Record<string, unknown>>(
-//     (acc, cur) => {
-//       const key = cur.prop_name
-//       const keyValue = getPropByName(key) as string
-//       const matches = keyValue?.match?.(
-//         /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
-//       )
-//       const keyValueAdj = matches
-//         ? replacePlaceholdersInString(
-//             keyValue as string,
-//             appController.state,
-//             editorState.composite_component_props,
-//             editorState.properties,
-//             element,
-//             rootCompositeElementId,
-//             undefined,
-//             icons
-//           )
-//         : keyValue
-
-//       const isFormularInput = keyValue !== keyValueAdj
-//       const transformerStr = editorState.transformers.find(
-//         (tr) =>
-//           tr.prop_id === cur.prop_id && tr.element_id === element.element_id
-//       )?.transformer_string
-//       const transformerFn =
-//         isFormularInput && transformerStr
-//           ? replacePlaceholdersInString(
-//               transformerStr,
-//               appController.state,
-//               editorState.composite_component_props,
-//               editorState.properties,
-//               element,
-//               rootCompositeElementId,
-//               true,
-//               icons,
-//               true
-//             )
-//           : null
-
-//       // if (
-//       //   transformerFn &&
-//       //   element?.element_type?.toLowerCase().includes('treeview')
-//       // ) {
-//       //   console.log('transformerFn', transformerFn, transformerStr, icons)
-//       // }
-//       const keyValueAdj2 =
-//         typeof transformerFn === 'function' && Array.isArray(keyValueAdj)
-//           ? transformerFn?.(keyValueAdj)
-//           : keyValueAdj
-//       return {
-//         ...acc,
-//         [key]: keyValueAdj2,
-//       }
-//     },
-//     {}
-//   )
-//   return elementPropsDict
-// }
-
 export const getElementPropsRawDict = (params: {
   element: Element | Template | ElementModel | null
   editorState: EditorStateType
   viewport?: EditorStateType['ui']['selected']['viewport']
+  isVieweportAutarkic?: boolean
 }) => {
-  const { element, editorState, viewport } = params
+  const { element, editorState, viewport, isVieweportAutarkic } = params
   const { properties } = editorState
+
   const elementOwnProps =
     element && !('element_id' in element)
       ? []
@@ -105,7 +34,13 @@ export const getElementPropsRawDict = (params: {
             prop.element_id === element?.element_id &&
             (((!viewport || viewport === 'xs') &&
               (!prop.viewport || prop.viewport === 'xs')) ||
-              (viewport && prop.viewport === viewport))
+              (viewport
+                ? isVieweportAutarkic
+                  ? prop.viewport === viewport
+                  : prop.viewport === viewport ||
+                    !prop.viewport ||
+                    prop.viewport === 'xs'
+                : false))
         )
   const templateProps = properties?.filter(
     (prop) =>
@@ -175,6 +110,7 @@ export const getElementResolvedPropsDict = (params: {
   appController: AppController
   icons?: { [key: string]: string }
   viewport?: EditorStateType['ui']['selected']['viewport']
+  isVieweportAutarkic?: boolean
 }) => {
   const {
     element,
@@ -183,11 +119,13 @@ export const getElementResolvedPropsDict = (params: {
     appController,
     icons,
     viewport,
+    isVieweportAutarkic,
   } = params
   const unresolvedElementPropsDict = getElementPropsRawDict({
     element,
     editorState,
     viewport,
+    isVieweportAutarkic,
   })
 
   const keys = Object.keys(unresolvedElementPropsDict)
@@ -271,81 +209,3 @@ export const getElementResolvedPropsDict = (params: {
   )
   return elementResolvedPropsDict
 }
-
-// const elementProps = useMemo(() => {
-//   const elementOwnProps =
-//     !selectedElementAdj || !('element_id' in selectedElementAdj)
-//       ? []
-//       : editorState.properties?.filter(
-//           (prop) => prop.element_id === selectedElementAdj?.element_id
-//         )
-//   const templateProps =
-//     selectedElementAdj && 'template_id' in selectedElementAdj
-//       ? editorState.properties?.filter(
-//           (prop) =>
-//             prop.template_id === selectedElementAdj?.template_id &&
-//             !elementOwnProps.find(
-//               (elprop) => elprop.prop_name === prop.prop_name
-//             )
-//         )
-//       : []
-//   const defaultTemplateProps =
-//     selectedElementAdj &&
-//     'props' in selectedElementAdj &&
-//     !('element_id' in selectedElementAdj)
-//       ? Object.keys(selectedElementAdj?.props ?? {})?.reduce?.(
-//           (acc, key) => [
-//             ...acc,
-//             {
-//               prop_id: null as unknown as string,
-//               project_id: editorState.project.project_id,
-//               prop_name: key,
-//               prop_value: selectedElementAdj?.props?.[key],
-//               component_id: null,
-//               template_id: editorState.ui.selected.template,
-//               element_id: null,
-//             } as Property,
-//           ],
-//           [] as Property[]
-//         )
-//       : []
-
-//   const allElementProps = [
-//     ...(elementOwnProps ?? []),
-//     ...(templateProps ?? []),
-//     ...(defaultTemplateProps ?? []),
-//   ]
-//   return allElementProps.reduce<Record<string, unknown>>((acc, prop) => {
-//     const value =
-//       prop.prop_value === 'null'
-//         ? null
-//         : prop.prop_value === 'true'
-//           ? true
-//           : prop.prop_value === 'false'
-//             ? false
-//             : prop.prop_value
-
-//     return {
-//       ...acc,
-//       [prop.prop_name]:
-//         prop?.prop_name === 'open' &&
-//         ['Dialog', 'Alert'].includes(elementType ?? '') &&
-//         selectedElementAdj &&
-//         'element_id' in selectedElementAdj
-//           ? (appController?.state?.[selectedElementAdj?.element_id] ?? value)
-//           : value,
-//       // TODO: is it needed at all?
-//       element_id:
-//         selectedElementAdj && 'element_id' in selectedElementAdj
-//           ? selectedElementAdj?.element_id
-//           : null,
-//     }
-//   }, {})
-// }, [
-//   selectedElementAdj,
-//   editorState.properties,
-//   appController?.state,
-//   elementType,
-//   editorState.project.project_id,
-//   editorState.ui.selected.template,
-// ])

@@ -12,3 +12,5 @@ export {
   getElementResolvedPropsDict,
   getElementPropsRawDict,
 } from './properties/getElementProperties'
+
+export { isViewportAutarkic } from './viewports/isViewportAutarkic'

@@ -42,7 +42,7 @@ export const getElementEventHandlerProps = (
   const getEventActionIdsByEventName = (key: string) =>
     elementProps?.find((prop) => prop.prop_name === key)?.action_ids
 
-  const componentEventNames = (() => {
+  const elementModerlEventNames = (() => {
     if (isReactElement) {
       const elementModel = element as unknown as ElementModel
       const elementModelSchema = elementModel?.schema
@@ -66,7 +66,7 @@ export const getElementEventHandlerProps = (
     }
   })()
 
-  const eventHandlerProps = componentEventNames?.reduce<{
+  const eventHandlerProps = elementModerlEventNames?.reduce<{
     [key: string]:
       | ((...fnParams: unknown[]) => void)
       | ((newFormData: Record<string, unknown>) => void)
@@ -108,13 +108,13 @@ export const getElementEventHandlerProps = (
   }, {})
 
   // Special render case for renderType = Form
-  const baseComponent =
+  const elementModel =
     isComponentType(element.element_type) &&
-    ELEMENT_MODELS.find((comp) => comp.type === element.element_type)
+    ELEMENT_MODELS?.find((model) => model.type === element.element_type)
   if (
-    baseComponent &&
-    'renderType' in baseComponent &&
-    baseComponent.renderType === 'form'
+    elementModel &&
+    'renderType' in elementModel &&
+    elementModel.renderType === 'form'
   ) {
     eventHandlerProps.formData =
       (getPropByName('formData') as Record<string, unknown>) ??
