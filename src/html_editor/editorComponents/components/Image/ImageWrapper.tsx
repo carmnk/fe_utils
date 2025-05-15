@@ -22,7 +22,8 @@ export const ImageWrapper = (props: ImageWrapperProps) => {
     ...rest
   } = props
 
-  const srcAdj = assets.images?.find?.((img) => img.asset_id === src)?.src
+  const srcAdj = assets.images?.find?.((img) => img.asset_id === src)?.src ?? src
+  console.log("IMAGE WRAPPER ", assets, src, "OUT", srcAdj)
 
   return <Box component="img" {...rest} src={srcAdj} />
 }
