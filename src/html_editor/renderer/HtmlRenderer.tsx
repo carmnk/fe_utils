@@ -6,6 +6,7 @@ import { useMdiIcons } from './icons/useMdiIcons'
 import { EditorStateType, Element } from '../types'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import { EditorRendererControllerType } from '../editorRendererController'
+import { uniqBy } from 'lodash'
 
 type RendererUiActionsType = {
   selectElement?: (elementId: string, boundingRect: unknown) => void
@@ -65,12 +66,16 @@ export const HtmlRendererComponent = <
   const selectElement = uiActions?.selectElement
   const themeAdj = theme ?? editorState.theme
 
-  const currentPageViewportElements = useMemo(() => {
-    return currentViewportElements.filter((el) => el.element_page === pageName)
-  }, [currentViewportElements, pageName])
 
+  const allRelevantElements = uniqBy(
+    [
+      ...(currentViewportElements ?? []),
+      ...editorState.elements.filter((el) => el.component_id),
+    ],
+    'element_id'
+  )
   const [icons] = useMdiIcons(
-    currentPageViewportElements,
+    allRelevantElements,
     ELEMENT_MODELS,
     editorState.properties,
     importIconByName

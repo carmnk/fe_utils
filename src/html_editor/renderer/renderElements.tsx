@@ -229,9 +229,6 @@ export const renderElements = (params: {
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />
 
-    if (element.element_type === 'Image') {
-      console.log('IMAGE', element, elementPropsObject, elementProps)
-    }
 
     return element?.element_type === 'composite' ? (
       <ComponentBox
@@ -247,6 +244,7 @@ export const renderElements = (params: {
         OverlayComponent={OverlayComponent}
         navigate={navigate}
         rootCompositeElementId={rootCompositeElementId}
+        icons={icons}
       />
     ) : isHtmlElement ? (
       <ElementBox

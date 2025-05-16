@@ -200,6 +200,7 @@ export const getElementResolvedPropsDict = (params: {
         'element_id' in element
           ? (appController?.state?.[element?.element_id] ?? keyValueAdj2)
           : keyValueAdj2
+
       return {
         ...acc,
         [key]: keyValueAdj3,

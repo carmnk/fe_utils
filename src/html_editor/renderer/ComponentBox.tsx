@@ -19,6 +19,7 @@ export type ComponentElementBoxProps = {
   OverlayComponent?: FC<{ element: Element }>
   navigate: (to: string) => void
   rootCompositeElementId?: string
+  icons: Record<string, string>
 }
 
 export const ComponentBox = (props: ComponentElementBoxProps) => {
@@ -32,6 +33,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     isProduction,
     OverlayComponent,
     navigate,
+    icons,
     // rootCompositeElementId,
   } = props
 
@@ -57,7 +59,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
         onSelectElement: () => {},
         theme: editorState.theme,
         isProduction,
-        icons: {},
+        icons,
         parentId: undefined, // start with the elements without parent !
         isPointerProduction: true,
         baseComponentId:
@@ -68,6 +70,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
         navigate,
       }),
     [
+      icons,
       editorState,
       appController,
       currentViewportElements,

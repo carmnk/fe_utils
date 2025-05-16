@@ -5,12 +5,12 @@ import { ArraySchemaType, ElementModel } from '../../editorComponents'
 /** extracts a component's icon keys (properties of type 'icon') */
 export const getIconKeys = (
   elementType: string,
-  components: ElementModel[]
+  elementModels: ElementModel[]
 ) => {
-  const baseComponent = components.find((com) => com.type === elementType)
-  if (!baseComponent) return { directIconKeys: [], arrayOfObjectProperties: [] }
+  const elementModel = elementModels.find((model) => model.type === elementType)
+  if (!elementModel) return { directIconKeys: [], arrayOfObjectProperties: [] }
   const properties: ElementModel['schema']['properties'] =
-    ('schema' in baseComponent && baseComponent?.schema?.properties) || {}
+    ('schema' in elementModel && elementModel?.schema?.properties) || {}
   const directIconKeys = Object.keys(properties).filter(
     (key) => properties[key].type === 'icon'
   )
@@ -65,7 +65,6 @@ export const useMdiIcons = (
           const {
             directIconKeys,
             arrayOfObjectProperties,
-            // TODO: el.element_type richtig oder doch el.type?
           } = getIconKeys(el.element_type, components)
 
           const directIconNames = directIconKeys.map((iconKey) => {
@@ -92,7 +91,10 @@ export const useMdiIcons = (
         .flat()
         .filter((el) => el && !Object.keys(icons).includes(el))
 
-      if (!iconsNames.length) return
+      if (!iconsNames.length) {
+        console.debug('NO new ICONNAMES - STOP here, icons are: ', icons)
+        return
+      }
       const iconsNew: Record<string, string> = {}
 
       for (let i = 0; i < iconsNames.length; i++) {
@@ -101,13 +103,6 @@ export const useMdiIcons = (
           iconsNew[iconName] = await importIconByName(iconName)
         }
       }
-
-      // for (const iconName of iconsNames) {
-      //   if (!icons[iconName]) {
-      //     iconsNew[iconName] =
-      //       iconLibrary?.[iconName as keyof typeof iconLibrary]
-      //   }
-      // }
       setIcons((current) => ({ ...current, ...iconsNew }))
     }
     updateIcons()
