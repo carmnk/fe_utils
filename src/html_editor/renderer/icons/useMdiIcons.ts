@@ -1,4 +1,4 @@
-import { EditorStateType, Element } from '../../types'
+import { EditorStateType, Element, Property } from '../../types'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { ArraySchemaType, ElementModel } from '../../editorComponents'
 
@@ -53,28 +53,39 @@ export const useMdiIcons = (
   const [icons, setIcons] = useState<Icons>({})
 
   useEffect(() => {
-    const getPropByName = (key: string, element_id: string): unknown =>
+    const getPropertyValueByName = (key: string, element_id: string): unknown =>
       properties?.find(
         (prop) => prop.prop_name === key && prop.element_id === element_id
       )?.prop_value
+    const getPropsByName = (key: string, element_id: string): Property[] =>
+      properties?.filter(
+        (prop) => prop.prop_name === key && prop.element_id === element_id
+      )
 
     const updateIcons = async () => {
       const flatElements = selectedPageElements
       const iconsNames = flatElements
         .map((el) => {
-          const {
-            directIconKeys,
-            arrayOfObjectProperties,
-          } = getIconKeys(el.element_type, components)
+          const { directIconKeys, arrayOfObjectProperties } = getIconKeys(
+            el.element_type,
+            components
+          )
 
-          const directIconNames = directIconKeys.map((iconKey) => {
-            return getPropByName(iconKey, el.element_id)
-          })
+          const directIconNames = directIconKeys
+            .map((iconKey) => {
+              return getPropsByName(iconKey, el.element_id)?.map(
+                (prop) => prop.prop_value
+              )
+            })
+            .flat()
           // UNCLEAR ???
           const arrayItemIconNames =
             arrayOfObjectProperties
               ?.map?.((props) => {
-                const propertyValueRaw = getPropByName(props.key, el.element_id)
+                const propertyValueRaw = getPropertyValueByName(
+                  props.key,
+                  el.element_id
+                )
                 const propertyValue = Array.isArray(propertyValueRaw)
                   ? propertyValueRaw
                   : []
@@ -92,7 +103,6 @@ export const useMdiIcons = (
         .filter((el) => el && !Object.keys(icons).includes(el))
 
       if (!iconsNames.length) {
-        console.debug('NO new ICONNAMES - STOP here, icons are: ', icons)
         return
       }
       const iconsNew: Record<string, string> = {}

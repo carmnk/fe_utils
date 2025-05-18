@@ -3,7 +3,11 @@ import {
   ExtendedObjectSchemaType,
   PropertyType,
 } from '../../editorComponents'
-import { Element, Property } from '../../editorRendererController'
+import {
+  EditorStateType,
+  Element,
+  Property,
+} from '../../editorRendererController'
 
 export type GetInjectedElementIconParams = {
   element: Element
@@ -11,14 +15,37 @@ export type GetInjectedElementIconParams = {
   icons?: Record<string, string>
   isHtmlElement: boolean
   elementProps: Property[]
+  viewport: EditorStateType['ui']['selected']['viewport']
+  isViewportAutarkic: boolean
 }
 
 export const getInjectedElementIconProps = (
   params: GetInjectedElementIconParams
 ) => {
-  const { element, schemaProps, icons, isHtmlElement, elementProps } = params
-  const getPropByName = (key: string) =>
-    elementProps?.find((prop) => prop.prop_name === key)?.prop_value
+  const {
+    element,
+    schemaProps,
+    icons,
+    isHtmlElement,
+    elementProps,
+    viewport,
+    isViewportAutarkic,
+  } = params
+  const getPropByName = (key: string) => {
+    return elementProps?.find(
+      (prop) =>
+        prop.prop_name === key &&
+        (((!viewport || viewport === 'xs') &&
+          (!prop.viewport || prop.viewport === 'xs')) ||
+          (viewport
+            ? isViewportAutarkic
+              ? prop.viewport === viewport
+              : prop.viewport === viewport ||
+                !prop.viewport ||
+                prop.viewport === 'xs'
+            : false))
+    )?.prop_value
+  }
 
   const elementIconKeys = isHtmlElement
     ? []

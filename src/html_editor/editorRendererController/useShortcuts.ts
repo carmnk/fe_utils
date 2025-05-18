@@ -1,36 +1,7 @@
 import { useMemo } from 'react'
 import { EditorStateType } from '../types'
 import { ElementModel, BASE_ELEMENT_MODELS } from '../editorComponents'
-import { Element } from '../types/element'
-
-export const getRecursiveChildren = (
-  allElements: Element[],
-  parentId: string,
-  componentId?: string
-): Element[] => {
-  const children = allElements.filter(
-    (el) =>
-      el.parent_id === parentId &&
-      (!componentId || el.component_id === componentId)
-  )
-
-  return children
-    .map(
-      (child) =>
-        child.element_id
-          ? [
-              child,
-              ...getRecursiveChildren(
-                allElements,
-                child.element_id,
-                componentId
-              ),
-            ]
-          : (null as unknown as Element) // filter later
-    )
-    .filter((val) => val)
-    .flat()
-}
+import { getRecursiveElementChildren } from '../utils'
 
 export const useShortcuts = (params: {
   editorState: EditorStateType
@@ -55,7 +26,10 @@ export const useShortcuts = (params: {
           const adaptiveViewportElements = editorState.elements
             .map((el) => {
               const recursiveSpecificViewportElementChildren =
-                getRecursiveChildren(currentViewportElementsRaw, el.element_id)
+                getRecursiveElementChildren(
+                  currentViewportElementsRaw,
+                  el.element_id
+                )
               return [el, ...(recursiveSpecificViewportElementChildren ?? [])]
             })
             .flat()

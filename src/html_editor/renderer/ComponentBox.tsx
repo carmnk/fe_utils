@@ -3,6 +3,7 @@ import { EditorRendererControllerType } from '../types/editorRendererController'
 import { EditorStateType, Element } from '../types'
 import { renderElements } from './renderElements'
 import { FC, useMemo } from 'react'
+import { isViewportAutarkic } from './viewports/isViewportAutarkic'
 
 export type ComponentElementBoxProps = {
   element: Element
@@ -37,19 +38,35 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     // rootCompositeElementId,
   } = props
 
+  const currentViewport = editorState.ui.selected.viewport
+  const currentViewportAdj =
+    currentViewport && currentViewport !== 'xs' ? currentViewport : null
+  const isCurrentViewportAutarkic = isViewportAutarkic(
+    currentViewportElements,
+    currentViewport
+  )
+
   const renderedComponentElements = useMemo(
     () =>
       renderElements({
         elements: editorState.elements.filter(
           (el) =>
-            (el.element_type !== 'composite' &&
+            ((el.element_type !== 'composite' &&
               el.component_id === element.component_id) ||
-            (el.component_id === element.ref_component_id &&
-              element?.ref_component_id &&
-              (el?.element_type !== 'composite' ||
-                (el.element_type === 'composite' &&
-                  el.component_id !== el.ref_component_id)) &&
-              !el?.parent_id)
+              (el.component_id === element.ref_component_id &&
+                element?.ref_component_id &&
+                (el?.element_type !== 'composite' ||
+                  (el.element_type === 'composite' &&
+                    el.component_id !== el.ref_component_id)) &&
+                !el?.parent_id)) &&
+            ((!currentViewportAdj && (!el.viewport || el.viewport === 'xs')) ||
+              (currentViewportAdj
+                ? isCurrentViewportAutarkic
+                  ? el.viewport === currentViewportAdj
+                  : el.viewport === currentViewportAdj ||
+                    !el.viewport ||
+                    el.viewport === 'xs'
+                : false))
         ),
         editorState,
         appController,
@@ -80,6 +97,8 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
       OverlayComponent,
       navigate,
       element,
+      currentViewportAdj,
+      isCurrentViewportAutarkic,
     ]
   )
   return (

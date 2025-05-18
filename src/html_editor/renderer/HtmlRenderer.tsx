@@ -66,13 +66,16 @@ export const HtmlRendererComponent = <
   const selectElement = uiActions?.selectElement
   const themeAdj = theme ?? editorState.theme
 
-
-  const allRelevantElements = uniqBy(
-    [
-      ...(currentViewportElements ?? []),
-      ...editorState.elements.filter((el) => el.component_id),
-    ],
-    'element_id'
+  const allRelevantElements = useMemo(
+    () =>
+      uniqBy(
+        [
+          ...(currentViewportElements ?? []),
+          ...editorState.elements.filter((el) => el.component_id),
+        ],
+        'element_id'
+      ),
+    [currentViewportElements, editorState.elements]
   )
   const [icons] = useMdiIcons(
     allRelevantElements,

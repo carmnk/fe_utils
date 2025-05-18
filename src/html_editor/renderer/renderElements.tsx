@@ -2,7 +2,7 @@ import { EditorStateType, Element } from '../types'
 import { ElementBox } from './ElementBox'
 import { Box, BoxProps, Theme } from '@mui/material'
 import { EditorRendererControllerType } from '../types/editorRendererController'
-import { isStringLowerCase } from '../utils'
+import { isStringLowerCase } from '../utils/utils'
 import {
   checkForPlaceholders,
   replacePlaceholdersInString,
@@ -104,6 +104,12 @@ export const renderElements = (params: {
       | FC<PropsWithChildren<Record<string, unknown>>>
       | undefined
 
+    const viewport = editorState.ui.selected.viewport
+    const isCurrentViewportAutarkic = isViewportAutarkic(
+      currentViewportElements,
+      viewport
+    )
+
     // icon injections
     const injectedIconProps = getInjectedElementIconProps({
       element,
@@ -111,21 +117,10 @@ export const renderElements = (params: {
       icons,
       isHtmlElement,
       elementProps: allElementProps,
+      viewport,
+      isViewportAutarkic: isCurrentViewportAutarkic,
     })
-    // props
-    // const elementPropsObject = resolveElementProps({
-    //   element,
-    //   rootCompositeElementId,
-    //   editorState,
-    //   appController,
-    //   elementProps: allElementProps,
-    //   icons,
-    // })
-    const viewport = editorState.ui.selected.viewport
-    const isCurrentViewportAutarkic = isViewportAutarkic(
-      currentViewportElements,
-      viewport
-    )
+
     const elementPropsObject = getElementResolvedPropsDict({
       element,
       rootCompositeElementId,
@@ -229,9 +224,9 @@ export const renderElements = (params: {
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />
 
-
     return element?.element_type === 'composite' ? (
       <ComponentBox
+        key={element.element_id}
         element={element}
         editorState={editorState}
         appController={appController}
@@ -266,8 +261,7 @@ export const renderElements = (params: {
         {rootInjectionOverlayComponent}
         {renderedElementChildren}
       </ElementBox>
-    ) : // components
-    // Navigation Container -> specific render case (but could be component, too)
+    ) : // Navigation Container -> specific render case (but could be component, too)
     CurrentComponent && baseComponent?.renderType === 'custom' ? (
       (() => {
         return (

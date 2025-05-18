@@ -107,6 +107,7 @@ export const DropdownMenuItem = (props: DropDownMenuItemProps) => {
               }}
               variant="body2"
               width={'100%'}
+              component={"span"}
             >
               {label}
             </Typography>

@@ -5,7 +5,7 @@ import {
   EditorStateType,
 } from '../../editorRendererController'
 import { Element, Property } from '../../editorRendererController'
-import { isComponentType } from '../../utils'
+import { isComponentType } from '../../utils/utils'
 import { createAppAction } from './createAppAction'
 import { htmlEventCategories } from './htmlElementEvents'
 

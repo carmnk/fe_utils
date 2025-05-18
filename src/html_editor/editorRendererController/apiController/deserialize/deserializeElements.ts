@@ -1,7 +1,7 @@
 import { Element } from '../../index'
 import { ElementModel } from '../../../editorComponents/index'
 import { ElementDb } from '../../../types/element'
-import { isComponentType } from '../../../utils'
+import { isComponentType } from '../../../utils/utils'
 
 export const deserializeElements = (
   elementsIn: ElementDb[],

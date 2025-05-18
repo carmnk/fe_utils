@@ -2,7 +2,7 @@ import { ElementModel, PropertyType } from '../../../editorComponents/index'
 import { checkForPlaceholders } from '../../../renderer/index'
 import { checkForParsableJson } from '../../../renderer/placeholder/replacePlaceholder'
 import { Element, Property, Template } from '../../../types/index'
-import { isComponentType } from '../../../utils'
+import { isComponentType } from '../../../utils/utils'
 
 export const deserializeProperties = (
   properties: Property[],
