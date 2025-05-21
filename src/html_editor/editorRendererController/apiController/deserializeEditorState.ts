@@ -86,5 +86,6 @@ export const deserializeEditorState = (
     theme_typographys,
     fonts: data?.fonts ?? [],
     editor_settings: deserializeEditorSettings(data?.editor_settings),
+    viewport_references: data?.viewport_references,
   }
 }

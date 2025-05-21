@@ -14,12 +14,14 @@ import { getElementEventHandlerProps } from './actions/getElementEventHandlerPro
 import { ElementModel } from '../editorComponents'
 import { ComponentBox } from './ComponentBox'
 import { isViewportAutarkic } from './viewports/isViewportAutarkic'
+import { doesElementChildrenBelongToViewport } from './viewports/doesElementChildrenBelongToViewport'
 
 // const ANY_PLACEHOLDER_REGEX =
 //   /{(_data|form|props|treeviews|buttonStates)\.[^}]*}/g
 
 export const renderElements = (params: {
   elements: Element[]
+  allElements: Element[]
   //
   editorState: EditorStateType
   appController: EditorRendererControllerType['appController']
@@ -58,6 +60,7 @@ export const renderElements = (params: {
     rootCompositeElementId,
     OverlayComponent,
     disableElementEvents,
+    allElements,
     navigate,
   } = params
 
@@ -119,6 +122,7 @@ export const renderElements = (params: {
       elementProps: allElementProps,
       viewport,
       isViewportAutarkic: isCurrentViewportAutarkic,
+      viewport_references: editorState.viewport_references,
     })
 
     const elementPropsObject = getElementResolvedPropsDict({
@@ -128,7 +132,8 @@ export const renderElements = (params: {
       appController,
       icons,
       viewport,
-      isVieweportAutarkic: isCurrentViewportAutarkic,
+      isViewportAutarkic: isCurrentViewportAutarkic,
+      viewport_references: editorState.viewport_references,
     })
 
     const matches = !!element?.content && checkForPlaceholders(element?.content)
@@ -154,26 +159,14 @@ export const renderElements = (params: {
         (el) =>
           el.parent_id === element.element_id &&
           element.element_id &&
-          (!currentViewport ||
-            currentViewport === 'xs' ||
-            (isCurrentViewportAutarkic && el.viewport === currentViewport) ||
-            (() => {
-              if (isCurrentViewportAutarkic) return false
-              // if viewport specific children then only show them otherwise adaptive with default
-              const hasSpecificViewportChildren =
-                relevantElementsForChildren?.find(
-                  (el) =>
-                    el.parent_id === element.element_id &&
-                    element.element_id &&
-                    el.viewport === currentViewport
-                )
-              return hasSpecificViewportChildren
-                ? el.viewport === currentViewport
-                : !el.viewport || el.viewport === 'xs'
-            })())
+          doesElementChildrenBelongToViewport(
+            el,
+            currentViewport,
+            isCurrentViewportAutarkic,
+            relevantElementsForChildren,
+            editorState.viewport_references
+          )
       ) ?? []
-
-    // console.log('elementChildren', elementChildren, element.element_type)
 
     const renderedElementChildren = elementChildren?.length
       ? renderElements({
@@ -194,6 +187,7 @@ export const renderElements = (params: {
           rootCompositeElementId,
           OverlayComponent,
           navigate,
+          allElements,
         })
       : []
 
@@ -240,6 +234,7 @@ export const renderElements = (params: {
         navigate={navigate}
         rootCompositeElementId={rootCompositeElementId}
         icons={icons}
+        allElements={allElements}
       />
     ) : isHtmlElement ? (
       <ElementBox
@@ -287,6 +282,7 @@ export const renderElements = (params: {
             rootCompositeElementId={rootCompositeElementId}
             OverlayComponent={OverlayComponent}
             key={element.element_id + '_component'}
+            allElements={allElements}
           ></CurrentComponent>
         )
       })()

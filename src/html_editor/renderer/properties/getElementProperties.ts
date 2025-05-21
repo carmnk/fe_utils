@@ -7,6 +7,7 @@ import {
   Template,
 } from '../../editorRendererController'
 import { replacePlaceholdersInString } from '../placeholder/replacePlaceholder'
+import { doesEntityBelongToViewport } from '../viewports/doesEntityBelongToViewport'
 
 export type ResolveElementPropsParams = {
   element: Element
@@ -21,9 +22,16 @@ export const getElementPropsRawDict = (params: {
   element: Element | Template | ElementModel | null
   editorState: EditorStateType
   viewport?: EditorStateType['ui']['selected']['viewport']
-  isVieweportAutarkic?: boolean
+  isViewportAutarkic?: boolean
+  viewport_references: EditorStateType['viewport_references']
 }) => {
-  const { element, editorState, viewport, isVieweportAutarkic } = params
+  const {
+    element,
+    editorState,
+    viewport,
+    isViewportAutarkic,
+    viewport_references,
+  } = params
   const { properties } = editorState
 
   const elementOwnProps =
@@ -32,15 +40,14 @@ export const getElementPropsRawDict = (params: {
       : properties?.filter(
           (prop) =>
             prop.element_id === element?.element_id &&
-            (((!viewport || viewport === 'xs') &&
-              (!prop.viewport || prop.viewport === 'xs')) ||
-              (viewport
-                ? isVieweportAutarkic
-                  ? prop.viewport === viewport
-                  : prop.viewport === viewport ||
-                    !prop.viewport ||
-                    prop.viewport === 'xs'
-                : false))
+            doesEntityBelongToViewport(
+              prop.prop_id,
+              viewport,
+              isViewportAutarkic,
+              viewport_references,
+              prop.viewport,
+              properties
+            )
         )
   const templateProps = properties?.filter(
     (prop) =>
@@ -110,7 +117,8 @@ export const getElementResolvedPropsDict = (params: {
   appController: AppController
   icons?: { [key: string]: string }
   viewport?: EditorStateType['ui']['selected']['viewport']
-  isVieweportAutarkic?: boolean
+  isViewportAutarkic?: boolean
+  viewport_references: EditorStateType['viewport_references']
 }) => {
   const {
     element,
@@ -119,19 +127,24 @@ export const getElementResolvedPropsDict = (params: {
     appController,
     icons,
     viewport,
-    isVieweportAutarkic,
+    isViewportAutarkic,
+    viewport_references,
   } = params
   const unresolvedElementPropsDict = getElementPropsRawDict({
     element,
     editorState,
     viewport,
-    isVieweportAutarkic,
+    isViewportAutarkic,
+    viewport_references,
   })
 
   const keys = Object.keys(unresolvedElementPropsDict)
 
   const getPropertyByPropName = (propName: string) =>
     editorState.properties?.find((prop) => prop.prop_name === propName)
+
+  // if (element.element_type === 'Chip')
+  //   console.log(element, unresolvedElementPropsDict)
 
   const elementResolvedPropsDict = keys.reduce<Record<string, unknown>>(
     (acc, cur) => {

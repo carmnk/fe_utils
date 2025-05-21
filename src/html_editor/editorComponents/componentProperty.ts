@@ -34,4 +34,5 @@ export type NavContainerComponentPropertys = CommonComponentPropertys & {
   navigationElementId: string
   parentId: string
   theme: ExtendedTheme
+  allElements: Element[]
 }

@@ -4,9 +4,11 @@ import { EditorStateType, Element } from '../types'
 import { renderElements } from './renderElements'
 import { FC, useMemo } from 'react'
 import { isViewportAutarkic } from './viewports/isViewportAutarkic'
+import { doesEntityBelongToViewport } from './viewports/doesEntityBelongToViewport'
 
 export type ComponentElementBoxProps = {
   element: Element
+  allElements: Element[]
   //
   editorState: EditorStateType
   appController: EditorRendererControllerType['appController']
@@ -35,6 +37,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     OverlayComponent,
     navigate,
     icons,
+    allElements,
     // rootCompositeElementId,
   } = props
 
@@ -59,14 +62,14 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
                   (el.element_type === 'composite' &&
                     el.component_id !== el.ref_component_id)) &&
                 !el?.parent_id)) &&
-            ((!currentViewportAdj && (!el.viewport || el.viewport === 'xs')) ||
-              (currentViewportAdj
-                ? isCurrentViewportAutarkic
-                  ? el.viewport === currentViewportAdj
-                  : el.viewport === currentViewportAdj ||
-                    !el.viewport ||
-                    el.viewport === 'xs'
-                : false))
+            doesEntityBelongToViewport(
+              el.element_id,
+              currentViewportAdj,
+              isCurrentViewportAutarkic,
+              editorState.viewport_references,
+              el.viewport,
+              editorState.elements
+            )
         ),
         editorState,
         appController,
@@ -85,6 +88,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
         rootCompositeElementId: element.element_id,
         OverlayComponent: OverlayComponent,
         navigate,
+        allElements,
       }),
     [
       icons,
@@ -99,6 +103,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
       element,
       currentViewportAdj,
       isCurrentViewportAutarkic,
+      allElements,
     ]
   )
   return (

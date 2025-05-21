@@ -33,6 +33,7 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   hoveredElementSide?: string | null
   dragging?: unknown
   disableElementEvents?: boolean
+  allElements: Element[]
 }
 
 export const HtmlRendererComponent = <
@@ -61,6 +62,7 @@ export const HtmlRendererComponent = <
     hoveredElementSide,
     dragging,
     disableElementEvents,
+    allElements,
   } = props
 
   const selectElement = uiActions?.selectElement
@@ -117,6 +119,7 @@ export const HtmlRendererComponent = <
         OverlayComponent,
         navigate,
         disableElementEvents,
+        allElements,
       })
     },
     [
@@ -132,6 +135,7 @@ export const HtmlRendererComponent = <
       OverlayComponent,
       navigate,
       disableElementEvents,
+      allElements,
     ]
   )
 

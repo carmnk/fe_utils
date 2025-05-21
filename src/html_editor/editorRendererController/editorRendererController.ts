@@ -53,6 +53,7 @@ export const useEditorRendererController = (
     selectedElement,
     selectedPageElements,
     ELEMENT_MODELS,
+    allElements,
   } = useShortcuts({ editorState, customComponents: injections?.elementModels })
 
   const appController = useAppController({
@@ -71,6 +72,7 @@ export const useEditorRendererController = (
       appController,
       setEditorState,
       ELEMENT_MODELS: ELEMENT_MODELS as ElementModel[],
+      allElements,
     }
   }, [
     selectedElement,
@@ -80,6 +82,7 @@ export const useEditorRendererController = (
     appController,
     setEditorState,
     ELEMENT_MODELS,
+    allElements,
   ])
   return rendererController
 }

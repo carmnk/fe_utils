@@ -22,6 +22,7 @@ export type EditorStateDbDataType = Pick<
   | 'theme_typographys'
   | 'composite_component_props'
   | 'fonts'
+  | 'viewport_references'
 > & {
   project: ProjectDb
   elements: ElementDb[]

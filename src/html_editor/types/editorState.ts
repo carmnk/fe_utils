@@ -19,6 +19,7 @@ import { Transformer } from './transformer'
 import { ThemeTypography } from './themeTypographys'
 import { SerializedThemeType } from './serializedTheme'
 import { Font } from './Font'
+import { ViewportReference } from './viewportReferences'
 
 export type EditorStateType = {
   actions: Action[]
@@ -55,4 +56,5 @@ export type EditorStateType = {
   theme: ExtendedTheme
   cssSelectors: CssSelectorDb[]
   ui: Ui // partly autosaved
+  viewport_references: ViewportReference[]
 }

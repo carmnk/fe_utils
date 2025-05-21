@@ -53,7 +53,7 @@ export const serializeEditorState = (
   return {
     project,
     elements,
-
+    viewport_references: payload.viewport_references,
     attributes,
     cssSelectors: [],
     images: images as Image[],

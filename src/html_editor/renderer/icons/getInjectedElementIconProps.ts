@@ -8,6 +8,7 @@ import {
   Element,
   Property,
 } from '../../editorRendererController'
+import { doesEntityBelongToViewport } from '../viewports/doesEntityBelongToViewport'
 
 export type GetInjectedElementIconParams = {
   element: Element
@@ -17,6 +18,7 @@ export type GetInjectedElementIconParams = {
   elementProps: Property[]
   viewport: EditorStateType['ui']['selected']['viewport']
   isViewportAutarkic: boolean
+  viewport_references: EditorStateType['viewport_references']
 }
 
 export const getInjectedElementIconProps = (
@@ -30,20 +32,20 @@ export const getInjectedElementIconProps = (
     elementProps,
     viewport,
     isViewportAutarkic,
+    viewport_references,
   } = params
   const getPropByName = (key: string) => {
     return elementProps?.find(
       (prop) =>
         prop.prop_name === key &&
-        (((!viewport || viewport === 'xs') &&
-          (!prop.viewport || prop.viewport === 'xs')) ||
-          (viewport
-            ? isViewportAutarkic
-              ? prop.viewport === viewport
-              : prop.viewport === viewport ||
-                !prop.viewport ||
-                prop.viewport === 'xs'
-            : false))
+        doesEntityBelongToViewport(
+          prop.prop_id,
+          viewport,
+          isViewportAutarkic,
+          viewport_references,
+          prop.viewport,
+          elementProps,
+        )
     )?.prop_value
   }
 

@@ -10,4 +10,5 @@ export type EditorRendererControllerType = {
   selectedPageElements: Element[]
   currentViewportElements: Element[]
   ELEMENT_MODELS: ElementModel[]
+  allElements: Element[]
 }

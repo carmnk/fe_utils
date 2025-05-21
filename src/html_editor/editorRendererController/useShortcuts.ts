@@ -40,6 +40,16 @@ export const useShortcuts = (params: {
     editorState.alternativeViewports,
     editorState.ui.selected.viewport,
   ])
+  const allElements = useMemo(() => {
+    const xsAndComponentElements = editorState.elements
+    const viewportSpecificElements = [
+      ...editorState.alternativeViewports['sm'],
+      ...editorState.alternativeViewports['md'],
+      ...editorState.alternativeViewports['lg'],
+      ...editorState.alternativeViewports['xl'],
+    ]
+    return [...xsAndComponentElements, ...viewportSpecificElements]
+  }, [editorState.elements, editorState.alternativeViewports])
 
   const selectedElement = useMemo(() => {
     const id = editorState?.ui.selected.element
@@ -68,12 +78,14 @@ export const useShortcuts = (params: {
       selectedPageElements,
       selectedElement,
       ELEMENT_MODELS,
+      allElements,
     }
   }, [
     currentViewportElements,
     selectedElement,
     selectedPageElements,
     ELEMENT_MODELS,
+    allElements,
   ])
 
   return shortcuts

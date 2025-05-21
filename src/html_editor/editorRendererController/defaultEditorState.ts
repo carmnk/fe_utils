@@ -12,7 +12,6 @@ const baseHtmlDocument: Element[] = [
   {
     element_id: uuid(),
     element_type: 'div',
-    // _disableDelete: true,
     element_page: 'index',
     parent_id: null,
     element_html_id: null,
@@ -93,10 +92,6 @@ export const defaultElements = (project_id: string) =>
     ...el,
     element_id: uuid(),
     project_id,
-    // parent_id: null,
-    // element_html_id: null,
-    // element_type: el.element_type,
-    // element_page: 'index',
   })) ?? []
 export const defaultProperties = (rootElementId: string, project_id: string) =>
   makeNewProperty({
@@ -233,5 +228,6 @@ export const defaultEditorState = (
     },
     externalApis: [],
     actions: [],
+    viewport_references: [],
   }
 }
