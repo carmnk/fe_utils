@@ -35,7 +35,6 @@ export const doesElementChildrenBelongToViewport = (
       )
 
       // if viewport specific children then only show them otherwise adaptive with default
-    //   const parentElementId = parentElement?.element_id ?? null
       const hasSpecificViewportChildren = elementsAcrossViewports?.find((el) =>
         adaptiveReferenceViewports.includes(el?.viewport ?? 'xs')
       )

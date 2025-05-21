@@ -152,7 +152,7 @@ export const renderElements = (params: {
 
     const relevantElementsForChildren = baseComponentId
       ? editorState.elements
-      : currentViewportElements
+      : allElements
 
     const elementChildren =
       relevantElementsForChildren?.filter(
