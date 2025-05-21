@@ -222,7 +222,9 @@ export const ColorPicker = (props: ColorPickerProps) => {
       backgroundColor: !value
         ? undefined
         : isThemeColor
-          ? value
+          ? (themeAdj?.['palette']?.[
+              (value as any).split('.')?.[0] as 'primary'
+            ]?.[(value as any).split('.')?.[1] as 'main'] ?? value)
           : 'r' in color
             ? `rgba(${color?.r ?? 0}, ${color?.g ?? 0}, ${color?.b ?? 0}, ${
                 color?.a ?? 1
@@ -243,7 +245,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
              ${transparentBgColor} 100%)`
         : undefined,
     }),
-    [selectorSize, theme, color, value, isThemeColor]
+    [selectorSize, theme, color, value, isThemeColor, themeAdj]
   )
 
   const handleChangeThemeColor = useCallback(

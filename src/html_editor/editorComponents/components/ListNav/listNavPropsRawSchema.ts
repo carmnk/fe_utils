@@ -79,32 +79,32 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
       },
     },
     primaryTypographyColor: {
-      type: PropertyType.String,
+      type: PropertyType.color,
       required: false,
       category: 'shortcut',
     },
     secondaryTypographyColor: {
-      type: PropertyType.String,
+      type: PropertyType.color,
       required: false,
       category: 'shortcut',
     },
     background: {
-      type: PropertyType.String,
+      type: PropertyType.color,
       required: false,
       category: 'shortcut',
     },
     itemHoverBgColor: {
-      type: PropertyType.String,
+      type: PropertyType.color,
       required: false,
       category: 'shortcut',
     },
     activeItemBgColor: {
-      type: PropertyType.String,
+      type: PropertyType.color,
       required: false,
       category: 'shortcut',
     },
     activeItemHoverBgColor: {
-      type: PropertyType.String,
+      type: PropertyType.color,
       required: false,
       category: 'shortcut',
     },
@@ -119,11 +119,11 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
       required: false,
       category: 'shortcut',
     },
-    subheader: {
-      type: PropertyType.String,
-      required: false,
-      category: 'shortcut',
-    },
+    // subheader: {
+    //   type: PropertyType.String,
+    //   required: false,
+    //   category: 'shortcut',
+    // },
     allProps: {
       type: PropertyType.json,
       form: {

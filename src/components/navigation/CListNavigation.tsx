@@ -14,6 +14,7 @@ import { ListItemButtonProps, ListItemIconProps } from '@mui/material'
 import { ListItemProps, ListItemTextProps, ListProps } from '@mui/material'
 import { ListItemText, ListSubheader, alpha, useTheme } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
+import { isThemeColor } from '../../html_editor/editorComponents/components/Typography/TypographyWrapper'
 
 export type ListNavigationProps = Omit<
   ListProps,
@@ -151,16 +152,28 @@ export const ListNavigation = (props: ListNavigationProps) => {
               },
             }
           : {}
+        const activeItemBgColorAdj =
+          activeItemBgColor && isThemeColor(activeItemBgColor)
+            ? theme.palette[activeItemBgColor.split('.')?.[0] as 'primary'][
+                activeItemBgColor.split('.')?.[1] as 'main'
+              ]
+            : activeItemBgColor
+        const activeItemHoverBgColorAdj =
+          activeItemHoverBgColor && isThemeColor(activeItemHoverBgColor)
+            ? theme.palette[
+                activeItemHoverBgColor.split('.')?.[0] as 'primary'
+              ][activeItemHoverBgColor.split('.')?.[1] as 'main']
+            : activeItemHoverBgColor
         const activeListItemSx =
           (activeItemBgColor || activeItemHoverBgColor) && item?.value === value
             ? {
-                bgcolor: activeItemBgColor
-                  ? activeItemBgColor + ' !important'
+                bgcolor: activeItemBgColorAdj
+                  ? activeItemBgColorAdj + ' !important'
                   : undefined,
                 '&:hover': {
                   ...(listItem?.sx?.['&:hover' as keyof SxProps] ?? {}),
-                  backgroundColor: activeItemHoverBgColor
-                    ? activeItemHoverBgColor + ' !important'
+                  backgroundColor: activeItemHoverBgColorAdj
+                    ? activeItemHoverBgColorAdj + ' !important'
                     : undefined,
                 },
               }
