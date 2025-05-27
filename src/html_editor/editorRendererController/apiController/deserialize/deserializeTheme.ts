@@ -7,6 +7,105 @@ import { Typography } from '@mui/material/styles/createTypography'
 import { PaletteMode, Theme, Palette } from '@mui/material'
 import { resolveTypographyThemeColors } from '../utils/resolveThemeColors'
 
+export const defaultTypography = {
+  fontFamily: `'Open Sans'`,
+  h1: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 300,
+    fontSize: '6rem',
+    lineHeight: 1.167,
+    letterSpacing: '-0.01562em',
+  },
+  h2: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 300,
+    fontSize: '3.75rem',
+    lineHeight: 1.2,
+    letterSpacing: '-0.00833em',
+  },
+  h3: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 400,
+    fontSize: '3rem',
+    lineHeight: 1.167,
+    letterSpacing: '0em',
+  },
+  h4: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 400,
+    fontSize: '2.125rem',
+    lineHeight: 1.235,
+    letterSpacing: '0.00735em',
+  },
+  h5: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 400,
+    fontSize: '1.5rem',
+    lineHeight: 1.334,
+    letterSpacing: '0em',
+  },
+  h6: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 500,
+    fontSize: '1.25rem',
+    lineHeight: 1.6,
+    letterSpacing: '0.0075em',
+  },
+
+  subtitle1: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 400,
+    fontSize: '1rem',
+    lineHeight: 1.75,
+    letterSpacing: '0.00938em',
+  },
+  subtitle2: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 500,
+    fontSize: '0.875rem',
+    lineHeight: 1.57,
+    letterSpacing: '0.00714em',
+  },
+  body1: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 400,
+    fontSize: '1rem',
+    lineHeight: 1.5,
+    letterSpacing: '0.00938em',
+  },
+  body2: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 400,
+    fontSize: '0.875rem',
+    lineHeight: 1.43,
+    letterSpacing: '0.01071em',
+  },
+
+  button: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 500,
+    fontSize: '0.875rem',
+    lineHeight: 1.75,
+    letterSpacing: '0.02857em',
+    textTransform: 'uppercase',
+  },
+  caption: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 400,
+    fontSize: '0.75rem',
+    lineHeight: 1.66,
+    letterSpacing: '0.03333em',
+  },
+  overline: {
+    fontFamily: `'Open Sans'`,
+    fontWeight: 400,
+    fontSize: '0.75rem',
+    lineHeight: 2.66,
+    letterSpacing: '0.08333em',
+    textTransform: 'uppercase',
+  },
+}
+
 export const deserializeThemePalette = (themeIn: SerializedThemeType) => {
   return {
     primary: {
@@ -126,39 +225,38 @@ export const deserializeTheme = (
     palette: newPalette,
   }
 
-  if (themeTypographys.length > 0) {
-    newThemeStatic.typography = {
-      ...(themeTypographys.reduce((acc, tt) => {
-        const name = tt.name
-        const fontSize = tt.font_size
-        const fontWeight = tt.font_weight
-        const fontStyle = tt.font_style
-        const fontFamily = tt.font_family
-        const color = tt.font_color
-        const subTypography: CSSProperties & { name: string } = {
-          name,
-        }
-        if (fontSize) {
-          subTypography.fontSize = fontSize
-        }
-        if (fontWeight) {
-          subTypography.fontWeight = fontWeight
-        }
-        if (fontStyle) {
-          subTypography.fontStyle = fontStyle
-        }
-        if (fontFamily) {
-          subTypography.fontFamily = fontFamily
-        }
-        if (color) {
-          const colorResolved = resolveTypographyThemeColors(color, newPalette)
-          const colorAdj = colorResolved ?? color
-          subTypography.color = colorAdj
-        }
-        return { ...acc, [name]: subTypography }
-      }, {}) ?? {}),
-    } as Typography
-  }
+  newThemeStatic.typography = {
+    ...defaultTypography,
+    ...(themeTypographys.reduce((acc, tt) => {
+      const name = tt.name
+      const fontSize = tt.font_size
+      const fontWeight = tt.font_weight
+      const fontStyle = tt.font_style
+      const fontFamily = tt.font_family
+      const color = tt.font_color
+      const subTypography: CSSProperties & { name: string } = {
+        name,
+      }
+      if (fontSize) {
+        subTypography.fontSize = fontSize
+      }
+      if (fontWeight) {
+        subTypography.fontWeight = fontWeight
+      }
+      if (fontStyle) {
+        subTypography.fontStyle = fontStyle
+      }
+      if (fontFamily) {
+        subTypography.fontFamily = fontFamily
+      }
+      if (color) {
+        const colorResolved = resolveTypographyThemeColors(color, newPalette)
+        const colorAdj = colorResolved ?? color
+        subTypography.color = colorAdj
+      }
+      return { ...acc, [name]: subTypography }
+    }, {}) ?? {}),
+  } as Typography
 
   const muiTheme = {
     ...createMuiTheme({

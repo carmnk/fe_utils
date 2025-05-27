@@ -67,6 +67,7 @@ export const getElementPropsRawDict = (params: {
               prop_name: key,
               prop_value: element?.props?.[key],
               component_id: null,
+              // TODO: PROBABLY MISTAKE ? 
               template_id: editorState.ui.selected.template,
               element_id: null,
             } as Property,
