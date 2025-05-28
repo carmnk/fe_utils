@@ -27,6 +27,7 @@ export enum PropertyType {
   navControlElementId = 'navControlElementId',
   cssTextShadow = 'cssTextShadow',
   cssTextDecoration = 'cssTextDecoration',
+  fontFamily = 'fontFamily',
 }
 
 type EnumOptionType = string | number | { value: string; label: string }
@@ -43,6 +44,7 @@ export type SchemaType<IsExtendedType extends boolean = false> = FormProps &
     | IconType
     | HrefType
     | ImageSrcType
+    | FontFamilyType
     | NavControlElementIdType
     | ButtonGroupType
     | CssSizeType
@@ -194,6 +196,10 @@ export type ButtonGroupType = {
 }
 export type ImageSrcType = {
   type: PropertyType.imageSrc
+  required?: boolean
+}
+export type FontFamilyType = {
+  type: PropertyType.fontFamily
   required?: boolean
 }
 export type NavControlElementIdType = {

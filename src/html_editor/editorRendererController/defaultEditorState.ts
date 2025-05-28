@@ -11,7 +11,7 @@ import { DEFAULT_THEMES_SERIALIZED } from '../theme/serializedMuiTheme'
 const baseHtmlDocument: Element[] = [
   {
     element_id: uuid(),
-    element_type: 'div',
+    element_type: 'Box',
     element_page: 'index',
     parent_id: null,
     element_html_id: null,
@@ -92,6 +92,7 @@ export const defaultElements = (project_id: string) =>
     ...el,
     element_id: uuid(),
     project_id,
+    element_html_id: 'root',
   })) ?? []
 export const defaultProperties = (rootElementId: string, project_id: string) =>
   makeNewProperty({
@@ -109,12 +110,12 @@ export const defaultEditorState = (
   const rootElements = defaultElements(project_id)
   const rootElementId = rootElements?.[0]?.element_id
 
-  const newAttribute = makeNewAttribute({
-    element_id: rootElementId,
-    project_id,
-    attr_name: 'style',
-    attr_value: { height: '100%' },
-  })
+  // const newAttribute = makeNewAttribute({
+  //   element_id: rootElementId,
+  //   project_id,
+  //   attr_name: 'style',
+  //   attr_value: { height: '100%' },
+  // })
   return {
     action_params: [],
     composite_component_props: [],
@@ -133,8 +134,8 @@ export const defaultEditorState = (
       use_github_pages: false,
     },
     elementTemplates: [],
-    attributes: [newAttribute],
-    properties: [],
+    attributes: [],
+    properties: [defaultProperties(rootElementId, project_id)],
     transformers: [],
     elements: rootElements,
     alternativeViewports: {

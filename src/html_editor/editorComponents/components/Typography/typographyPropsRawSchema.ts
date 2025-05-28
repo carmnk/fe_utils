@@ -43,7 +43,15 @@ export const TYPOGRAPHY_VARIANTS = [
 ]
 
 const typographyAligns = ['inherit', 'left', 'center', 'right', 'justify']
-// const components = HTML_TAG_NAMES_STRUCTURED_OPTIONS
+
+const events = {
+  ...BASE_POINTER_EVENTS,
+  ...MOUSE_EVENTS,
+  ...POINTER_EVENTS,
+  ...TOUCH_EVENTS,
+  ...CLIPBOARD_EVENTS,
+  ...DRAG_EVENTS,
+}
 
 // raw schema to use until schema can be generated reliably from typescript parser/checker
 export const typographyPropsSchema: ExtendedObjectSchemaType = {
@@ -108,6 +116,14 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
       category: 'shortcut',
       objectPropertyToApply: 'sx',
       enum: ['clip', 'ellipsis'],
+    },
+    fontFamily: {
+      type: PropertyType.fontFamily,
+      form: {
+        defaultValue: 'auto',
+      },
+      category: 'shortcut',
+      objectPropertyToApply: 'sx',
     },
     fontSize: {
       type: PropertyType.cssSize,
@@ -316,8 +332,13 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
       },
       changeValueToFormDataTransformer: (
         _currentFormData: Record<string, unknown>,
-        newValue: unknown
+        newValue: Record<string, unknown>
       ) => {
+        console.log(
+          'changeValueToFormDataTransformer',
+          _currentFormData,
+          newValue
+        )
         return newValue
       },
       category: 'customize',
@@ -331,11 +352,6 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
       keysDict: CSS_RULE_NAMES_DICT_FULL,
       category: 'customize',
     },
-    ...BASE_POINTER_EVENTS,
-    ...MOUSE_EVENTS,
-    ...POINTER_EVENTS,
-    ...TOUCH_EVENTS,
-    ...CLIPBOARD_EVENTS,
-    ...DRAG_EVENTS,
+    ...events,
   },
 }

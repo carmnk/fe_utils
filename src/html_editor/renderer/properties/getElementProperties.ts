@@ -53,6 +53,7 @@ export const getElementPropsRawDict = (params: {
     (prop) =>
       element &&
       'template_id' in element &&
+      element.template_id &&
       prop.template_id === element.template_id &&
       !elementOwnProps.find((elprop) => elprop.prop_name === prop.prop_name)
   )
@@ -67,8 +68,8 @@ export const getElementPropsRawDict = (params: {
               prop_name: key,
               prop_value: element?.props?.[key],
               component_id: null,
-              // TODO: PROBABLY MISTAKE ? 
-              template_id: editorState.ui.selected.template,
+              // TODO: PROBABLY MISTAKE ?
+              template_id: null,
               element_id: null,
             } as Property,
           ],
