@@ -14,7 +14,7 @@ import { ListItemButtonProps, ListItemIconProps } from '@mui/material'
 import { ListItemProps, ListItemTextProps, ListProps } from '@mui/material'
 import { ListItemText, ListSubheader, alpha, useTheme } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
-import { isThemeColor } from '../../html_editor/editorComponents/components/Typography/TypographyWrapper'
+import { isThemeColor } from '../../html_editor/utils/isThemeColor'
 
 export type ListNavigationProps = Omit<
   ListProps,

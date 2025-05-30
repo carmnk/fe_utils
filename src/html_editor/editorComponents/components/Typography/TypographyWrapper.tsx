@@ -1,19 +1,7 @@
 import { Typography, TypographyProps, useTheme } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
 import { CommonComponentPropertys } from '../../componentProperty'
-
-export const isThemeColor = (color: string) =>
-  [
-    'primary',
-    'secondary',
-    'warning',
-    'error',
-    'success',
-    'info',
-    'text',
-    'background',
-    'action',
-  ].includes(color?.split?.('.')[0] ?? '')
+import { isThemeColor } from '../../../utils/isThemeColor'
 
 export type TypographyWrapperProps = CommonComponentPropertys &
   TypographyProps & {

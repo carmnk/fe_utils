@@ -1,9 +1,8 @@
 import { Box, BoxProps, SxProps, useTheme } from '@mui/material'
-import { CommonComponentPropertys } from '../../componentProperty'
 import { CSSProperties, ReactNode, useMemo } from 'react'
-import { isThemeColor } from '../../../utils/isThemeColor'
+import { isThemeColor } from '../../html_editor/utils/isThemeColor'
 
-export type IconComponentWrapperProps = {
+export type IconProps = {
   sx: SxProps & BoxProps
   color?: string
   path: string
@@ -12,24 +11,17 @@ export type IconComponentWrapperProps = {
   horizontal?: boolean
   vertical?: boolean
   rotate?: string
-} & CommonComponentPropertys
+}
 
-export const IconComponentWrapper = (props: IconComponentWrapperProps) => {
+export const CIcon = (props: IconProps) => {
   const {
     rootInjection,
     sx,
     path,
     color: colorRaw,
     size = '1.5rem',
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    appController,
-    assets,
-    editorStateUi,
-    isProduction,
     horizontal,
     vertical,
-    icons,
-    /* eslint-enable @typescript-eslint/no-unused-vars */
     rotate,
     // ...rest
   } = props

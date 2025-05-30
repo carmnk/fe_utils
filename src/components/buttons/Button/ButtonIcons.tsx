@@ -4,6 +4,7 @@ import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
 import { useTheme } from '@mui/material'
 import { CSSProperties, ReactNode } from 'react'
 import { CButtonProps } from './Button'
+import { CIcon } from '../../icon/Icon'
 
 type ButtonStartIconProps = {
   color: string | undefined
@@ -27,18 +28,18 @@ export const ButtonStartIcon = (props: ButtonStartIconProps) => {
   const theme = useTheme()
   const colorAdj = (color ?? 'primary') as 'primary'
   return typeof icon === 'string' ? (
-    <Icon
+    <CIcon
       path={icon}
-      size={iconSize ?? '16px'}
+      size={(iconSize as any) ?? '16px'}
       color={
-        iconColor ??
+        (iconColor as any) ??
         (disabled
           ? theme.palette.action.disabled
           : variant === 'outlined' || variant === 'text'
             ? theme.palette?.[colorAdj]?.main
             : theme.palette?.[colorAdj]?.contrastText)
       }
-      {...startIconProps}
+      {...(startIconProps as any)}
     />
   ) : (
     icon

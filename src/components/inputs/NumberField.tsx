@@ -260,6 +260,7 @@ export const NumberField = (props: CNumberFieldProps) => {
       slotProps: {
         ...(slotProps ?? {}),
         input: {
+          ...(slotProps?.input ?? {}),
           // eslint-disable-next-line no-useless-escape
           pattern: '\d*',
         },
