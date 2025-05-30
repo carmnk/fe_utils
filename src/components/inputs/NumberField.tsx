@@ -257,7 +257,13 @@ export const NumberField = (props: CNumberFieldProps) => {
       //   }
       // },
       ...rest,
-      slotProps,
+      slotProps: {
+        ...(slotProps ?? {}),
+        input: {
+          // eslint-disable-next-line no-useless-escape
+          pattern: '\d*',
+        },
+      },
     }
 
     return textfieldProps
