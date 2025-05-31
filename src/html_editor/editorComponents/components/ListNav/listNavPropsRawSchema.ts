@@ -219,5 +219,11 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
         },
       },
     },
+    onChange: {
+      type: PropertyType.eventHandler,
+      required: false,
+      category: 'events',
+      eventType: 'item',
+    },
   },
 }

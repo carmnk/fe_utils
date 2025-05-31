@@ -14,6 +14,7 @@ export const ListNavWrapper = (
     isProduction,
     icons,
     /* eslint-enable @typescript-eslint/no-unused-vars */
+    onChange,
     ...rest
   } = props
 
@@ -24,8 +25,9 @@ export const ListNavWrapper = (
   const handleChange = useCallback(
     (tabValue: string) => {
       appController.actions.updateProperty(id, tabValue)
+      onChange?.(tabValue)
     },
-    [appController, id]
+    [appController, id, onChange]
   )
 
   return (

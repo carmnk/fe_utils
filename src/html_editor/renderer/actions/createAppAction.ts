@@ -84,6 +84,16 @@ export const createAppAction = (params: {
             )
             continue
           }
+
+          // console.debug(
+          //   'app action called WITH',
+          //   eventName,
+          //   fnParams,
+          //   isPageNavigation,
+          //   endpointAction,
+          //   navigationAction
+          // )
+
           if (isPageNavigation) {
             const actionsParmValue = editorState.action_params.find(
               (ap) =>
@@ -91,17 +101,97 @@ export const createAppAction = (params: {
                 ap.element_id === element.element_id &&
                 actionId === ap.action_id
             )?.param_value
+
+            const elementTemplateValuesDict = editorState.action_params
+              .filter((ap) => ap.element_id === element.element_id)
+              .reduce<Record<string, string>>((acc, cur) => {
+                return {
+                  ...acc,
+                  [cur.param_name]: cur.param_value,
+                }
+              }, {})
+            const componentModel = ELEMENT_MODELS.find(
+              (mod) => mod.type === element.element_type
+            )
+            const isItemEvent =
+              componentModel?.schema?.properties[eventName]?.eventType
+
+            const elementTemplateValuesDictAdj = isItemEvent
+              ? Object.keys(elementTemplateValuesDict).reduce<
+                  Record<string, string>
+                >((acc, cur) => {
+                  const value =
+                    elementTemplateValuesDict?.[
+                      cur as keyof typeof elementTemplateValuesDict
+                    ]
+                  const replaceValue =
+                    element.element_type === 'TreeView'
+                      ? (fnParams?.[1] as string)
+                      : (fnParams?.[0] as string)
+                  const newValue =
+                    typeof value === 'string' &&
+                    ['string', 'number'].includes(typeof replaceValue)
+                      ? value?.replaceAll?.('{itemId}', replaceValue)
+                      : value
+                  const matches =
+                    typeof newValue === 'string' &&
+                    newValue?.match?.(
+                      /{(_data|form|formData|props|treeviews|buttonStates)\.[^}]*}/g
+                    )
+                  const newValueReplaced = matches
+                    ? replacePlaceholdersInString(
+                        newValue,
+                        appController.state,
+                        editorState.composite_component_props,
+                        editorState.properties,
+                        element,
+                        undefined,
+                        undefined,
+                        icons,
+                        undefined,
+                        componentModel?.renderType === 'form'
+                          ? (fnParams?.[1] as Record<string, unknown>)
+                          : undefined
+                      )
+                    : newValue
+                  const regexOnlyNumbersOrDecimal = /^[0-9]+(\.[0-9]+)?$/
+                  const isNumberOrDecimal =
+                    regexOnlyNumbersOrDecimal.test(newValueReplaced)
+                  const newValueAdj = isNumberOrDecimal
+                    ? parseFloat(newValueReplaced)
+                    : newValueReplaced
+                  return {
+                    ...acc,
+                    [cur]: newValueAdj,
+                  }
+                }, {})
+              : elementTemplateValuesDict
+
+            console.log('WHAT', elementTemplateValuesDictAdj)
+
+            const actionsParmValueAdj =
+              isItemEvent && elementTemplateValuesDictAdj?.['navigatePage']
+                ? elementTemplateValuesDictAdj?.['navigatePage']
+                : actionsParmValue
+
             if (isProduction) {
-              console.debug('Navigate to page ...', isProduction)
-              navigate('/' + actionsParmValue)
+              console.debug(
+                'Navigate to page ...',
+                actionsParmValue,
+                actionsParmValueAdj,
+                isProduction
+              )
+              navigate('/' + actionsParmValueAdj)
             } else {
               console.warn(
                 'Navigate to page not implemented in dev mode, will navigate to ' +
-                  actionsParmValue
+                  actionsParmValue,
+                actionsParmValueAdj,
+                isProduction
               )
               toast.error(
-                'Navigate to page not implemented in dev mode, navigate to ' +
-                  actionsParmValue
+                'Navigate to page not implemented in dev mode, navigate to /' +
+                  actionsParmValueAdj
               )
             }
             continue
@@ -145,7 +235,10 @@ export const createAppAction = (params: {
                     elementTemplateValuesDict?.[
                       cur as keyof typeof elementTemplateValuesDict
                     ]
-                  const replaceValue = fnParams?.[1] as string
+                  const replaceValue =
+                    element.element_type === 'TreeView'
+                      ? (fnParams?.[1] as string)
+                      : (fnParams?.[0] as string)
                   const newValue =
                     typeof value === 'string' &&
                     ['string', 'number'].includes(typeof replaceValue)
@@ -188,6 +281,10 @@ export const createAppAction = (params: {
               'elementTemplateValuesDictAdj',
               elementTemplateValuesDictAdj,
               isItemEvent,
+              componentModel,
+              eventName,
+              componentModel?.schema?.properties[eventName],
+              fnParams,
               ['string', 'number'].includes(typeof fnParams?.[1]),
               fnParams,
               elementTemplateValuesDict
