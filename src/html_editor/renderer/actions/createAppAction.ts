@@ -174,6 +174,14 @@ export const createAppAction = (params: {
                 ? elementTemplateValuesDictAdj?.['navigatePage']
                 : actionsParmValue
 
+            if (!actionsParmValueAdj) {
+              console.debug(
+                'actionsParmValueAdj for pageNavigation is not valid',
+                actionsParmValueAdj
+              )
+              return
+            }
+
             if (isProduction) {
               console.debug(
                 'Navigate to page ...',
