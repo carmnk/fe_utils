@@ -229,10 +229,10 @@ export const Field = (props: FieldProps) => {
       : field?.required
   const fieldValue = formData?.[field?.name ?? '']
 
-  const { keysDict, valueTransformer, ...fieldAdj } = useMemo(
+  const { valueTransformer, ...fieldAdj } = useMemo(
     () => ({
-      ...field,
       keysDict: null,
+      ...field,
     }),
     [field]
   )

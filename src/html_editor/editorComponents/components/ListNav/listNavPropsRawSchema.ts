@@ -128,7 +128,6 @@ export const ListNavPropsSchema: ExtendedObjectSchemaType = {
       type: PropertyType.json,
       form: {
         defaultValue: {},
-        // label: 'sx',
       },
       label: 'allProps',
       // keysDict: CSS_RULE_NAMES_DICT_FULL,

@@ -24,6 +24,8 @@ export const getDynamicFields = (params: {
   const getInjectedValue = (param: ((value: unknown) => unknown) | unknown) =>
     (typeof param === 'function' ? param?.(formData, rootFormData) : param) ??
     undefined
+
+    // TODO - will overwrite the static values even if nullish!
   const dynamicFields = fields?.map((field) => {
     const injectDynamics = field?.name
       ? {
@@ -34,7 +36,9 @@ export const getDynamicFields = (params: {
           helperText: getInjectedValue(injections?.helperText?.[field.name]),
           invisible: getInjectedValue(injections?.invisible?.[field.name]),
           hidden: getInjectedValue(injections?.hidden?.[field.name]),
-          keysDict: getInjectedValue(injections?.keysDict?.[field.name]),
+          keysDict:
+            getInjectedValue(injections?.keysDict?.[field.name]) ??
+            (field as any)?.keysDict,
         }
       : {}
     return {

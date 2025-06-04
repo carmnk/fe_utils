@@ -137,9 +137,12 @@ export const RawJsonField = (props: JsonFieldProps) => {
             {isCurrentFieldExpanded &&
               value.map((item, arrIdx) => {
                 const handleDeleteItem = () => {
-                  onChange(value?.filter((__v, vIdx) => vIdx !== arrIdx) || [], {
-                    target: { name: name ?? '' },
-                  })
+                  onChange(
+                    value?.filter((__v, vIdx) => vIdx !== arrIdx) || [],
+                    {
+                      target: { name: name ?? '' },
+                    }
+                  )
                 }
                 const handleChangeJsonField = (
                   newValuePerItem: JsonFieldValue
@@ -200,7 +203,7 @@ export const RawJsonField = (props: JsonFieldProps) => {
                 sx={miniButtonStyles}
                 onClick={handleAddItem}
               >
-                Add Item
+                Add Item__
               </Button>
             )}
             <Typography color="gold">

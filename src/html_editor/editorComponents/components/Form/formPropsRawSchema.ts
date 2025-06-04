@@ -8,11 +8,6 @@ export const formPropsSchema: ExtendedObjectSchemaType = {
     fields: {
       type: PropertyType.json,
       label: 'fields',
-      // keysDict: {
-      //   name: '',
-      //   label: '',
-      //   type: 'text',
-      // },
       items: [
         {
           type: PropertyType.Object,
@@ -29,8 +24,39 @@ export const formPropsSchema: ExtendedObjectSchemaType = {
         },
       ],
       category: 'data',
+      keysDict: [
+          {
+            name: 'test',
+            label: 'Test',
+            type: 'text',
+            sx: {},
+            width12: 12,
+            fillWidth: true,
+            required: false,
+            disabled: false,
+            disableHelperText: false,
+            disableLabel: false,
+            tooltip: 'TEST Tooltip',
+            placeholder: 'place me here',
+          },
+        ] as any,
       form: {
-        defaultValue: [],
+        defaultValue: [
+          {
+            name: 'test',
+            label: 'Test',
+            type: 'text',
+            sx: {},
+            width12: 12,
+            fillWidth: true,
+            required: false,
+            disabled: false,
+            disableHelperText: false,
+            disableLabel: false,
+            tooltip: 'TEST Tooltip',
+            placeholder: 'place me here',
+          },
+        ],
       },
     },
     showError: {
