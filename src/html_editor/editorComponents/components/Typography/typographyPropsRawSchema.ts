@@ -334,7 +334,7 @@ export const typographyPropsSchema: ExtendedObjectSchemaType = {
         _currentFormData: Record<string, unknown>,
         newValue: Record<string, unknown>
       ) => {
-        console.log(
+        console.debug(
           'changeValueToFormDataTransformer',
           _currentFormData,
           newValue

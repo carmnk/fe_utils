@@ -121,7 +121,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
   )
 
   const handleTakeover = useCallback(() => {
-    console.log(
+    console.debug(
       'unchangedColor',
       unchangedColor,
       isThemeColor,
@@ -152,7 +152,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
     // const colorCss = `rgba(${color?.r ?? 0}, ${color?.g ?? 0}, ${
     //   color?.b ?? 0
     // }, ${color?.a ?? 1})`;
-    console.log('handleTakeover, ', colorAdj)
+    console.debug('handleTakeover, ', colorAdj)
     onChange?.(colorAdj)
     setDisplayColorPicker(false)
   }, [
@@ -267,7 +267,7 @@ export const ColorPicker = (props: ColorPickerProps) => {
           : null
       if (!colorRgba) return
 
-      console.log('handleChangeThemeColor, ', colorRgba, colorName, colorPath)
+      console.debug('handleChangeThemeColor, ', colorRgba, colorName, colorPath)
       setColor?.(rgbaToObj(colorRgba))
       setUnchangedColor(colorName)
       setIsThemeColor(true)

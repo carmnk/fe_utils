@@ -52,25 +52,6 @@ export const doesEntityBelongToViewport = (
                 viewportRefsWithHigherPriority.includes(ent?.viewport ?? 'xs')
               )
 
-            // if (
-            //   'prop_id' in (entities?.[0] ?? {}) &&
-            //   (
-            //     entities.find(
-            //       (ent) => (ent as any)?.prop_id === entity_id
-            //     ) as any
-            //   )?.prop_name === 'children'
-            // )
-              // console.log(
-              //   'doesEntityBelongToViewport --> ADAPTIVE END',
-              //   viewport,
-              //   entityViewport,
-              //   adaptiveReferenceViewports,
-              //   entitysAcrossViewports,
-              //   "higher Pro",
-              //   viewportRefsWithHigherPriority,
-              //   doesEntityWithHigherViewportRefPriorityExist
-              // )
-
               return doesEntityWithHigherViewportRefPriorityExist
                 ? false
                 : entityViewport

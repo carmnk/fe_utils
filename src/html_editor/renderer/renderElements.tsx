@@ -232,10 +232,6 @@ export const renderElements = (params: {
       return injections.elements?.[element.element_id]
     })()
 
-    if (element.element_type === 'Button') {
-      console.log('BUTTON', element, injections, elementInjections)
-    }
-
     return element?.element_type === 'composite' ? (
       <ComponentBox
         key={element.element_id}

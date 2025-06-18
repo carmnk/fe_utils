@@ -487,7 +487,7 @@ export const JsonObjectField = (props: JsonObjectFieldProps) => {
                   newValue: string
                   // e: any
                 ) => {
-                  console.log('handleChangeCompletedPropValue', newValue)
+                  console.debug('handleChangeCompletedPropValue', newValue)
                   handleChangePropertyValue([..._path, key], newValue)
                 }
 

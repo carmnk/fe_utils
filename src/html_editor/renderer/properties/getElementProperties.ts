@@ -145,9 +145,6 @@ export const getElementResolvedPropsDict = (params: {
   const getPropertyByPropName = (propName: string) =>
     editorState.properties?.find((prop) => prop.prop_name === propName)
 
-  // if (element.element_type === 'Chip')
-  //   console.log(element, unresolvedElementPropsDict)
-
   const elementResolvedPropsDict = keys.reduce<Record<string, unknown>>(
     (acc, cur) => {
       const key = cur

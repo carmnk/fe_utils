@@ -167,8 +167,6 @@ export const createAppAction = (params: {
                 }, {})
               : elementTemplateValuesDict
 
-            console.log('WHAT', elementTemplateValuesDictAdj)
-
             const actionsParmValueAdj =
               isItemEvent && elementTemplateValuesDictAdj?.['navigatePage']
                 ? elementTemplateValuesDictAdj?.['navigatePage']
