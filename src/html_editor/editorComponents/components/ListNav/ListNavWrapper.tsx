@@ -30,7 +30,6 @@ export const ListNavWrapper = (
     [appController, id, onChange]
   )
 
-  console.log('ListNavigationWrapper', props)
   return (
     <ListNavigation {...rest} value={navValueState} onChange={handleChange} />
   )

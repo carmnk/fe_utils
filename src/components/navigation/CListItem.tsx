@@ -24,10 +24,6 @@ export type CListItemProps = {
   item: any
   itemIdx: number
   listItemTextSlotProps: any
-  //   primaryTypographyVariant?: TypographyVariant
-  //   secondaryTypographyVariant?: TypographyVariant
-  //   primaryTypographyColor?: TypographyProps['color']
-  //   secondaryTypographyColor?: TypographyProps['color']
   itemHoverBgColor?: string
   activeItemBgColor?: string
   activeItemHoverBgColor?: string
@@ -166,19 +162,6 @@ export const CListItem = (props: CListItemProps) => {
       },
     }),
     [onChange, item?.value, listItemButton]
-  )
-
-  console.log(
-    'ListNavigation ITEM inside',
-    props,
-    item,
-    'item-props',
-    listItemProps,
-    listItemButtonProps,
-    listItemIconRoot,
-    listItemTextContainer,
-    listItemTextSlotProps,
-    listItemIcon
   )
 
   return item ? (
