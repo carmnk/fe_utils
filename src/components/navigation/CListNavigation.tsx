@@ -120,6 +120,7 @@ export const ListNavigation = (props: ListNavigationProps) => {
       {items?.map?.((item, iIdx) => {
         return (
           <CListItem
+            key={iIdx}
             item={item}
             itemIdx={iIdx}
             slotProps={slotProps}

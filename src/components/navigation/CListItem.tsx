@@ -58,11 +58,11 @@ export const CListItem = (props: CListItemProps) => {
     listItemTextSlotProps,
   } = props
   const {
-    listItem,
-    listItemButton,
-    listItemIcon,
-    listItemIconRoot,
-    listItemTextContainer,
+    listItem = {},
+    listItemButton = {},
+    listItemIcon = {},
+    listItemIconRoot = {},
+    listItemTextContainer = {},
     // listItemTextPrimaryTypography,
     // listItemTextSecondaryTypography,
   } = slotProps ?? {}
@@ -184,11 +184,11 @@ export const CListItem = (props: CListItemProps) => {
   return item ? (
     <ListItem {...listItemProps} key={itemIdx}>
       <ListItemButton {...listItemButtonProps} disabled={item?.disabled}>
-        {/* {item?.icon && (
+        {typeof item?.icon === 'string' && (
           <ListItemIcon {...listItemIconRoot}>
             <Icon path={item?.icon as string} size={1} {...listItemIcon} />
           </ListItemIcon>
-        )} */}
+        )}
         <ListItemText
           primary={item.label}
           secondary={item?.secondaryLabel}
