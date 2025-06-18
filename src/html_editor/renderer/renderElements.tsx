@@ -192,6 +192,7 @@ export const renderElements = (params: {
           OverlayComponent,
           navigate,
           allElements,
+          injections,
         })
       : []
 
