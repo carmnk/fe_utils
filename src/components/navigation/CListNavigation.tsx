@@ -199,6 +199,18 @@ export const ListNavigation = (props: ListNavigationProps) => {
             },
           },
         }
+
+        console.log(
+          'ListNavigation ITEM inside',
+          props,
+          item,
+          listItemProps,
+          listItemButtonProps,
+          listItemIconRoot,
+          listItemTextContainer,
+          listItemTextSlotProps
+        )
+
         return item ? (
           <ListItem {...listItemProps} key={iIdx}>
             <ListItemButton {...listItemButtonProps} disabled={item?.disabled}>
