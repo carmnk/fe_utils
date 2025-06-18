@@ -163,8 +163,8 @@ export const HtmlRendererComponent = <
   }, [isProduction, setEditorState, pageName])
 
   const renderedCurrentPageElements = useMemo(() => {
-    return isProduction || !pageName ? null : renderPage(pageName)
-  }, [pageName, isProduction, renderPage])
+    return !pageName ? null : renderPage(pageName)
+  }, [pageName, renderPage])
 
   const containerStyles = useMemo(() => {
     return {
@@ -248,7 +248,7 @@ export const HtmlRendererComponent = <
           sx={containerStyles}
           id={id}
         >
-          {renderPage(pageName)}
+          {renderedCurrentPageElements}
         </Box>
       ) : (
         <Box

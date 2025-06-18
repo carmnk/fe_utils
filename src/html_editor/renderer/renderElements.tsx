@@ -223,14 +223,14 @@ export const renderElements = (params: {
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />
 
-    const elementInjections = useMemo(() => {
+    const elementInjections = (() => {
       if (!injections?.elements) return null
       const injectionElementIds = Object.keys(injections.elements)
       if (!injectionElementIds?.includes(element.element_id)) {
         return null
       }
       return injections.elements?.[element.element_id]
-    }, [element.element_id])
+    })()
 
     if (element.element_type === 'Button') {
       console.log('BUTTON', element, injections, elementInjections)
