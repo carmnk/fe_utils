@@ -34,6 +34,9 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   dragging?: unknown
   disableElementEvents?: boolean
   allElements: Element[]
+  injections?: {
+    elements: Record<string, any>
+  }
 }
 
 export const HtmlRendererComponent = <
@@ -63,6 +66,7 @@ export const HtmlRendererComponent = <
     dragging,
     disableElementEvents,
     allElements,
+    injections,
   } = props
 
   const selectElement = uiActions?.selectElement
@@ -122,6 +126,7 @@ export const HtmlRendererComponent = <
         navigate,
         disableElementEvents,
         allElements,
+        injections,
       })
     },
     [
@@ -138,6 +143,7 @@ export const HtmlRendererComponent = <
       navigate,
       disableElementEvents,
       allElements,
+      injections,
     ]
   )
 

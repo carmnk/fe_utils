@@ -7,7 +7,7 @@ import {
   checkForPlaceholders,
   replacePlaceholdersInString,
 } from './placeholder/replacePlaceholder'
-import { FC, PropsWithChildren, ReactNode } from 'react'
+import { FC, PropsWithChildren, ReactNode, useMemo } from 'react'
 import { getInjectedElementIconProps } from './icons/getInjectedElementIconProps'
 import { getElementResolvedPropsDict } from './properties/getElementProperties'
 import { getElementEventHandlerProps } from './actions/getElementEventHandlerProps'
@@ -41,6 +41,9 @@ export const renderElements = (params: {
   OverlayComponent?: FC<{ element: Element }>
   disableElementEvents?: boolean
   navigate: (to: string) => void
+  injections?: {
+    elements: Record<string, any>
+  }
 }): ReactNode => {
   const {
     elements,
@@ -62,6 +65,7 @@ export const renderElements = (params: {
     disableElementEvents,
     allElements,
     navigate,
+    injections,
   } = params
 
   const currentViewport = editorState.ui.selected.viewport
@@ -218,6 +222,15 @@ export const renderElements = (params: {
     const rootInjectionOverlayComponent = !disableOverlay &&
       OverlayComponent && <OverlayComponent element={elementAdj2} />
 
+    const elementInjections = useMemo(() => {
+      if (!injections?.elements) return null
+      const injectionElementIds = Object.keys(injections.elements)
+      if (!injectionElementIds?.includes(element.element_id)) {
+        return null
+      }
+      return injections.elements?.[element.element_id]
+    }, [element.element_id])
+
     return element?.element_type === 'composite' ? (
       <ComponentBox
         key={element.element_id}
@@ -235,6 +248,7 @@ export const renderElements = (params: {
         rootCompositeElementId={rootCompositeElementId}
         icons={icons}
         allElements={allElements}
+        {...elementInjections}
       />
     ) : isHtmlElement ? (
       <ElementBox
@@ -252,6 +266,7 @@ export const renderElements = (params: {
           }
         }
         rootCompositeElementId={rootCompositeElementId}
+        {...elementInjections}
       >
         {rootInjectionOverlayComponent}
         {renderedElementChildren}
@@ -283,6 +298,7 @@ export const renderElements = (params: {
             OverlayComponent={OverlayComponent}
             key={element.element_id + '_component'}
             allElements={allElements}
+            {...elementInjections}
           ></CurrentComponent>
         )
       })()
@@ -315,6 +331,7 @@ export const renderElements = (params: {
         key={element.element_id}
         assets={editorState.assets}
         icons={icons}
+        {...elementInjections}
       >
         {renderedElementChildren}
         {elementPropsObject?.children as ReactNode}
