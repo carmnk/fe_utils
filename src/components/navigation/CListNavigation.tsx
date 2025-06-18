@@ -77,13 +77,13 @@ export const ListNavigation = (props: ListNavigationProps) => {
   } = props
 
   const {
-    listItem,
-    listItemButton,
-    listItemIconRoot,
-    listItemIcon,
-    listItemTextContainer,
-    listItemTextPrimaryTypography,
-    listItemTextSecondaryTypography,
+    listItem = {},
+    listItemButton = {},
+    listItemIconRoot = {},
+    listItemIcon = {},
+    listItemTextContainer = {},
+    listItemTextPrimaryTypography = {},
+    listItemTextSecondaryTypography = {},
   } = slotProps ?? {}
 
   const theme = useTheme()
@@ -204,6 +204,7 @@ export const ListNavigation = (props: ListNavigationProps) => {
           'ListNavigation ITEM inside',
           props,
           item,
+          'item-props',
           listItemProps,
           listItemButtonProps,
           listItemIconRoot,
