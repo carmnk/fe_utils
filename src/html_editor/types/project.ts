@@ -15,7 +15,7 @@ export type Project = {
   github_updated_version_edited_datetime?: string | null
   use_github: boolean
   use_github_pages: boolean
-
+  use_github_dev_branch: boolean
   // from ui
 }
 

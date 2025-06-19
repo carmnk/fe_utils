@@ -132,6 +132,7 @@ export const defaultEditorState = (
       html_pages_favicon: null,
       use_github: false,
       use_github_pages: false,
+      use_github_dev_branch: false,
     },
     elementTemplates: [],
     attributes: [],
