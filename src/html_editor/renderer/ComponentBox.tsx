@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { EditorRendererControllerType } from '../types/editorRendererController'
 import { EditorStateType, Element } from '../types'
 import { renderElements } from './renderElements'
-import { FC, useMemo } from 'react'
+import { FC, ReactNode, useMemo } from 'react'
 import { isViewportAutarkic } from './viewports/isViewportAutarkic'
 import { doesEntityBelongToViewport } from './viewports/doesEntityBelongToViewport'
 
@@ -23,6 +23,10 @@ export type ComponentElementBoxProps = {
   navigate: (to: string) => void
   rootCompositeElementId?: string
   icons: Record<string, string>
+  injections?: {
+    elements: Record<string, any>
+    elementReplacementComponent: Record<string, ReactNode>
+  }
 }
 
 export const ComponentBox = (props: ComponentElementBoxProps) => {
@@ -39,6 +43,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
     icons,
     allElements,
     // rootCompositeElementId,
+    injections,
   } = props
 
   const currentViewport = editorState.ui.selected.viewport
@@ -89,6 +94,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
         OverlayComponent: OverlayComponent,
         navigate,
         allElements,
+        injections,
       }),
     [
       icons,
@@ -104,6 +110,7 @@ export const ComponentBox = (props: ComponentElementBoxProps) => {
       currentViewportAdj,
       isCurrentViewportAutarkic,
       allElements,
+      injections,
     ]
   )
   return (

@@ -96,9 +96,8 @@ export const renderElements = (params: {
       }
       return injections.elementReplacementComponent?.[element.element_id]
     })()
-    // if elementComponentReplacement, stop calc .. 
+    // if elementComponentReplacement, stop calc ..
     if (elementComponentReplacement) return elementComponentReplacement
-
 
     const typeFirstLetter = element.element_type.slice(0, 1)
     const isHtmlElement = isStringLowerCase(typeFirstLetter)
@@ -264,6 +263,7 @@ export const renderElements = (params: {
         rootCompositeElementId={rootCompositeElementId}
         icons={icons}
         allElements={allElements}
+        injections={injections}
         {...elementInjections}
       />
     ) : isHtmlElement ? (
