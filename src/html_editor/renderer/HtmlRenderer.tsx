@@ -36,6 +36,7 @@ export type HtmlRendererProps<UiActionsType extends RendererUiActionsType> = {
   allElements: Element[]
   injections?: {
     elements: Record<string, any>
+    elementReplacementComponent: Record<string, ReactNode>
   }
 }
 

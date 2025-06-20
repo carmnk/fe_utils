@@ -43,6 +43,7 @@ export const renderElements = (params: {
   navigate: (to: string) => void
   injections?: {
     elements: Record<string, any>
+    elementReplacementComponent: Record<string, ReactNode>
   }
 }): ReactNode => {
   const {
@@ -85,6 +86,20 @@ export const renderElements = (params: {
   )
 
   const renderedElements = relevantElements.map((element) => {
+    const elementComponentReplacement = (() => {
+      if (!injections?.elementReplacementComponent) return null
+      const injectionElementIds = Object.keys(
+        injections.elementReplacementComponent
+      )
+      if (!injectionElementIds?.includes(element.element_id)) {
+        return null
+      }
+      return injections.elements?.[element.element_id]
+    })()
+    // if elementComponentReplacement, stop calc .. 
+    if (elementComponentReplacement) return elementComponentReplacement
+
+
     const typeFirstLetter = element.element_type.slice(0, 1)
     const isHtmlElement = isStringLowerCase(typeFirstLetter)
     const elementProps = editorState.properties?.filter(

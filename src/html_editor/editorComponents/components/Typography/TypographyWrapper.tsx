@@ -7,6 +7,7 @@ export type TypographyWrapperProps = CommonComponentPropertys &
   TypographyProps & {
     rootInjection: ReactNode
     allProps: unknown
+    label: string
   }
 export const TypographyWrapper = (props: TypographyWrapperProps) => {
   const {
@@ -22,6 +23,7 @@ export const TypographyWrapper = (props: TypographyWrapperProps) => {
     allProps,
     /* eslint-enable @typescript-eslint/no-unused-vars */
     sx,
+    label,
     ...rest
   } = props
   const theme = useTheme()
@@ -96,7 +98,7 @@ export const TypographyWrapper = (props: TypographyWrapperProps) => {
 
   return (
     <Typography {...restAdj} sx={sxAdj}>
-      {children}
+      {label ?? children}
       {rootInjection}
     </Typography>
   )
