@@ -94,7 +94,7 @@ export const renderElements = (params: {
       if (!injectionElementIds?.includes(element.element_id)) {
         return null
       }
-      return injections.elements?.[element.element_id]
+      return injections.elementReplacementComponent?.[element.element_id]
     })()
     // if elementComponentReplacement, stop calc .. 
     if (elementComponentReplacement) return elementComponentReplacement
