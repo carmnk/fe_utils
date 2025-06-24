@@ -162,11 +162,11 @@ export const Modal = (props: CModalProps) => {
         borderRadius: borderRadius ? borderRadius + 'px' : undefined,
         maxWidth,
         width: width ? width + 4 * 8 : undefined,
-        ...paper?.sx,
         minHeight,
         minWidth,
         height,
         maxHeight: '90%',
+        ...paper?.sx,
       },
     }),
     [paper, maxWidth, width, minHeight, minWidth, height, borderRadius]
