@@ -38,6 +38,7 @@ const recursiveMap = (
     : items?.filter((el) => !el._parentId)
 
   console.debug('recursiveMap, PROPS etc', items, parentId, relevantElements)
+
   return (
     relevantElements?.map?.(({ labelIcon, ...item }) => {
       const additionalActions =
@@ -48,10 +49,13 @@ const recursiveMap = (
         typeof events?.actions === 'function'
           ? events?.actions(item)
           : events?.actions
-      const children = (items?.filter((it) => it._parentId === item.nodeId) ??
-        []) as StyledTreeItemProps[]
+
+      const { children: childrenProps, ...props } = item as any
+      const children = (childrenProps ?? []) as StyledTreeItemProps[]
+      // const children = (items?.filter((it) => it._parentId === item.nodeId) ??
+      // []) as StyledTreeItemProps[]
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { children: _c, ...props } = item
+      // const { children: _c, ...props } = item
 
       console.debug('recursiveMap, CHILDREN', children)
 
