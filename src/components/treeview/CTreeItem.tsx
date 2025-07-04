@@ -1,31 +1,38 @@
-import { mdiChevronDown, mdiChevronRight, mdiDotsHorizontal } from '@mdi/js'
+import { mdiDotsHorizontal } from '@mdi/js'
 import { styled, Box, Stack, Typography, useTheme, alpha } from '@mui/material'
 import { TreeItemProps, TreeItem, treeItemClasses } from '@mui/x-tree-view'
 import {
-  KeyboardEvent,
-  MouseEvent,
-  PointerEvent,
+  ForwardRefExoticComponent,
   ReactNode,
-  useImperativeHandle,
   Ref,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react'
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { Button } from '../buttons/Button/Button'
-import { DropdownMenu } from '../dropdown/DropdownMenu'
-import { DropdownMenuItem } from '../dropdown/DropdownMenuItem'
 import { AdditionalActionType } from './CTreeView'
 import { useDraggable, useDroppable } from '@dnd-kit/core'
+import Icon from '@mdi/react'
+import { ExpandIcon } from './ExpandIcon'
+import { Button } from '../buttons'
+import { DropdownMenu, DropdownMenuItem } from '../dropdown'
 
-export type StyledTreeItemProps = Omit<TreeItemProps, 'nodeId' | 'children'> & {
+const slotProps = {
+  groupTransition: { style: { transitionDuration: '180ms' } },
+}
+
+export type StyledTreeItemProps = Omit<
+  TreeItemProps,
+  'nodeId' | 'itemId' | 'children'
+> & {
   bgColor?: string
   bgColorForDarkMode?: string
   color?: string
   colorForDarkMode?: string
   labelIcon?: ReactNode
-  icon?: ReactNode
   labelInfo?: string
-  labelText: string
-  nodeId: number | string
+
   disableBorderLeft?: boolean
   disableAddAction?: boolean
   disableDeleteAction?: boolean
@@ -40,66 +47,101 @@ export type StyledTreeItemProps = Omit<TreeItemProps, 'nodeId' | 'children'> & {
     | AdditionalActionType[]
     | ((item: any) => AdditionalActionType[])
   useDraggable?: boolean
-  toggleExpand?: (id: string) => void
-  _parentId: string | null
-  ref?: Ref<HTMLElement>
-  onToggleSelect?: (id: string) => void
+  toggleExpand?: (id: string, e: any) => void
+  expandAllChildren?: (id: string) => void
+  collapseAllChildren?: (id: string) => void
+
+  isNotDroppable?: boolean
+  onChangeDraggingActive?: (active: boolean) => void
+  disableExpandMargin?: boolean
+
+  // actually required but to avoid injecting in html element attributes -> temporarily optional
+  nodeId?: number | string
+  _parentId?: string | null
+  labelText?: string
 }
 
-const StyledTreeItemRoot = styled(TreeItem)<TreeItemProps>(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  [`& .${treeItemClasses.content}`]: {
+const StyledTreeItemRoot = styled(TreeItem)<
+  TreeItemProps & {
+    itemId: string
+    isNotDroppable?: boolean
+    // disableExpandMargin: boolean
+  }
+>(({ theme, isNotDroppable }) => {
+  return {
     color: theme.palette.text.secondary,
-    borderTopRightRadius: theme.spacing(0.5),
-    borderBottomRightRadius: theme.spacing(0.5),
-    paddingLeft: '4px !important',
-    paddingRight: '4px !important',
-    fontWeight: theme.typography.fontWeightMedium,
-    '&.Mui-expanded': {
-      fontWeight: theme.typography.fontWeightRegular,
-    },
-    // '&:hover': {
-    //   backgroundColor: theme.palette.action.hover + " !important",
-    // },
-    // '&:focused': {
-    //   backgroundColor: "transparent",
-    // },
-    '&.Mui-selected': {
-      // backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
-      color: 'var(--tree-view-color)',
-    },
-    '&.Mui-focused': {
-      '&:not(.Mui-selected)': {
-        background: 'none',
-      },
-      // backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
-      // color: 'var(--tree-view-color)',
-    },
-    [`& .${treeItemClasses.label}`]: {
-      fontWeight: 'inherit',
-      color: 'inherit',
-    },
-  },
-  [`& .${treeItemClasses.groupTransition}`]: {
-    marginLeft: 0,
-    paddingLeft: 8,
     [`& .${treeItemClasses.content}`]: {
-      paddingLeft: theme.spacing(2),
+      color: theme.palette.text.secondary,
+      borderTopRightRadius: theme.spacing(0.5),
+      borderBottomRightRadius: theme.spacing(0.5),
+      paddingLeft: '4px !important',
+      paddingRight: '4px !important',
+      fontWeight: theme.typography.fontWeightMedium,
+      '&.Mui-expanded': {
+        fontWeight: theme.typography.fontWeightRegular,
+      },
+      // '&:hover': {
+      //   borderTop: '1px solid ' + theme.palette.secondary.main + ' !important',
+      // },
+      // '&:focused': {
+      //   backgroundColor: "transparent",
+      // },
+      background: isNotDroppable ? 'red' : undefined,
+      '&.Mui-selected': {
+        // backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+        color: 'var(--tree-view-color)',
+      },
+      '&.Mui-focused': {
+        '&:not(.Mui-selected)': {
+          background: 'none',
+        },
+        // backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+        // color: 'var(--tree-view-color)',
+      },
+      [`& .${treeItemClasses.label}`]: {
+        fontWeight: 'inherit',
+        color: 'inherit',
+      },
     },
-  },
-  '&.MuiTreeItem-group, &.MuiCollapse-root': {
-    marginLeft: '16px !important',
-  },
-}))
+    [`& .${treeItemClasses.groupTransition}`]: {
+      marginLeft: 0,
+      paddingLeft: 8,
+      [`& .${treeItemClasses.content}`]: {
+        paddingLeft: theme.spacing(2),
+      },
+    },
+    '&.MuiTreeItem-group, &.MuiCollapse-root': {
+      marginLeft: '16px !important',
+    },
+
+    // : {
+    //     marginRight: '0px !important',
+    //     width: 0,
+    //   },
+  }
+}) as unknown as ForwardRefExoticComponent<
+  StyledTreeItemProps & {
+    itemId: string
+    isNotDroppable?: boolean
+    // disableExpandMargin: boolean
+  }
+>
 
 export const StyledTreeItem = function StyledTreeItem(
-  props: StyledTreeItemProps
+  props: StyledTreeItemProps & {
+    state: unknown
+    formGen: unknown
+    schema: unknown
+    component: unknown
+    ref?: Ref<HTMLUListElement>
+    itemId?: string
+    toggleSelect?: (id: string) => void
+  }
 ) {
   const theme = useTheme()
   const {
     bgColor,
     color,
-    icon,
     labelIcon,
     labelInfo,
     labelText,
@@ -108,49 +150,62 @@ export const StyledTreeItem = function StyledTreeItem(
     nodeId,
     disableBorderLeft,
     additionalActions,
-    useDraggable: doUseDraggable,
     actions,
     toggleExpand,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    children: _c,
-    ref,
+    onChangeDraggingActive,
+    disableExpandMargin,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    useDraggable: doUseDraggable,
+    disableDeleteAction,
+    disableAddAction,
     _parentId,
-    onToggleSelect,
+    schema,
+    formGen,
+    state,
+    component,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    expandAllChildren,
+    collapseAllChildren,
+    toggleSelect,
+    children,
+    sx,
     ...other
   } = props
-  const LabelIcon = labelIcon ?? icon
 
   const {
     attributes,
     listeners,
     setNodeRef,
+    // isDragging,
     transform,
     active: isDragActive,
   } = useDraggable({
     id: nodeId as string,
     data: props,
-    disabled: !doUseDraggable,
+    disabled: false,
   })
   const { isOver, setNodeRef: setNodeDropRef } = useDroppable({
     id: nodeId as string,
     disabled: !!transform,
     data: props,
   })
-  const itemRef = useRef<HTMLElement | null>(null)
-  const handleSetNodeRef = useCallback(
-    (element: HTMLElement | null) => {
-      setNodeRef(element)
-      itemRef.current = element
-    },
-    [setNodeRef]
-  )
-  useImperativeHandle(ref, () => itemRef.current as HTMLElement)
+
+  useEffect(() => {
+    // if (isDragActive?.id === nodeId) {
+    //   console.log('changed ', isDragActive, nodeId, attributes, listeners)
+    // }
+    onChangeDraggingActive?.(!!isDragActive)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDragActive])
 
   const moreActionsButtonRef = useRef<HTMLButtonElement>(null)
-  const [ui, setUi] = useState({ moreActionsOpen: false })
+  const [ui, setUi] = useState({
+    moreActionsOpen: false,
+  })
 
   const styleProps = useMemo(
     () => ({
+      ...(sx ?? {}),
       borderLeft: disableBorderLeft
         ? undefined
         : `1px dashed ` + alpha(theme.palette.primary.main, 0.66),
@@ -159,8 +214,16 @@ export const StyledTreeItem = function StyledTreeItem(
         theme.palette.mode !== 'dark' ? color : colorForDarkMode,
       '--tree-view-bg-color':
         theme.palette.mode !== 'dark' ? bgColor : bgColorForDarkMode,
+      '&>div': {
+        '&>div:first-of-type': {
+          width: disableExpandMargin ? 0 : undefined,
+          marginRight: disableExpandMargin ? '0 !important' : undefined,
+          marginLeft: disableExpandMargin ? 0 : undefined,
+        },
+      },
     }),
     [
+      sx,
       theme.palette,
       color,
       colorForDarkMode,
@@ -168,49 +231,45 @@ export const StyledTreeItem = function StyledTreeItem(
       bgColorForDarkMode,
       disableBorderLeft,
       isOver,
+      disableExpandMargin,
     ]
   )
 
   const handleMoreActionsClick = useCallback(
-    (e?: MouseEvent) => {
+    (e: any) => {
       e?.stopPropagation?.()
-      onToggleSelect?.(props?.itemId)
+      toggleSelect?.(props?.nodeId as string)
       setUi((current) => ({
         ...current,
         moreActionsOpen: !current?.moreActionsOpen,
       }))
     },
-    [onToggleSelect, props?.itemId]
+    [props?.nodeId, toggleSelect]
   )
 
-  const stopPropagation = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (e: any) => e.stopPropagation(),
-    []
-  )
-  const stopPropagationPreventDefault = useCallback(
-    (e: PointerEvent<HTMLButtonElement> & KeyboardEvent<HTMLButtonElement>) => {
-      e.stopPropagation()
-      e.preventDefault()
-    },
-    []
-  )
+  const stopPropagation = useCallback((e: any) => e.stopPropagation(), [])
 
-  const preventTreeItemClickWhenDraggin = useMemo(
-    () =>
-      isDragActive
-        ? {
-            onClick: (e: MouseEvent) => {
-              e.stopPropagation()
-              e.preventDefault()
-            },
-          }
-        : {},
-    [isDragActive]
-  )
+  const preventTreeItemClickWhenDraggin = useMemo(() => {
+    const preventActions: any = isDragActive
+      ? {
+          onClick: (e: any) => {
+            e.stopPropagation()
+            e.preventDefault()
+          },
+        }
+      : {}
+    // if (isDragActive?.id !== nodeId) {
+    //   preventActions.onPointerMove = (e: any) => {
+    //     e.stopPropagation()
+    //     e.preventDefault()
+    //   }
+    // }
+    return preventActions
+  }, [isDragActive, nodeId])
 
   const actionsInt = useMemo(() => {
     if (!actions) return []
+
     return typeof actions === 'function' ? actions(props) : actions
   }, [actions, props])
   const additionalActionsInt = useMemo(() => {
@@ -220,35 +279,42 @@ export const StyledTreeItem = function StyledTreeItem(
       : additionalActions
   }, [additionalActions, props])
 
+  const refMemo = useMemo(() => ({ ref: setNodeRef }), [setNodeRef])
+
   return (
     <>
       <StyledTreeItemRoot
+        className={other.className}
         {...attributes}
-        {...listeners}
-        slots={{
-          collapseIcon: () => (
-            <Button
-              iconButton={true}
-              icon={mdiChevronDown}
-              variant="text"
-              onPointerDown={stopPropagationPreventDefault}
-              onKeyDown={stopPropagationPreventDefault}
-              onClick={() => toggleExpand?.(nodeId as string)}
-            />
-          ),
-          expandIcon: () => (
-            <Button
-              iconButton={true}
-              icon={mdiChevronRight}
-              variant="text"
-              onPointerDown={stopPropagationPreventDefault}
-              onKeyDown={stopPropagationPreventDefault}
-              onClick={() => toggleExpand?.(nodeId as string)}
-            />
-          ),
-        }}
-        ref={handleSetNodeRef}
+        {...refMemo}
+        itemID={nodeId as string}
         // nodeId={nodeId as string}
+        // _parentId={_parentId as string}
+        // labelText={labelText}
+        slots={{
+          collapseIcon: () =>
+            !disableExpandMargin &&
+            !!toggleExpand && (
+              <ExpandIcon
+                nodeId={nodeId as string}
+                toggleExpand={toggleExpand}
+                expandAllChildren={expandAllChildren}
+                collapseAllChildren={collapseAllChildren}
+                forCollapedIcon={true}
+              />
+            ),
+          expandIcon: () =>
+            !disableExpandMargin &&
+            !!toggleExpand && (
+              <ExpandIcon
+                nodeId={nodeId as string}
+                toggleExpand={toggleExpand}
+                expandAllChildren={expandAllChildren}
+                collapseAllChildren={collapseAllChildren}
+              />
+            ),
+        }}
+        slotProps={slotProps}
         label={
           <Box
             ref={setNodeDropRef}
@@ -272,7 +338,6 @@ export const StyledTreeItem = function StyledTreeItem(
               alignItems="center"
             >
               <Box
-                component="div"
                 color="inherit"
                 sx={{
                   mr: 1,
@@ -283,7 +348,11 @@ export const StyledTreeItem = function StyledTreeItem(
                 onPointerDown={stopPropagation}
                 onKeyDown={stopPropagation}
               >
-                {LabelIcon}
+                {typeof labelIcon === 'string' ? (
+                  <Icon path={labelIcon} size={1} />
+                ) : (
+                  labelIcon
+                )}
               </Box>
 
               <Typography
@@ -306,31 +375,46 @@ export const StyledTreeItem = function StyledTreeItem(
 
               <Stack direction="row" justifyContent="flex-end" gap={1}>
                 {actionsInt?.map?.((action, aIdx) => {
+                  const {
+                    action: _a,
+                    disableStopPropagation: _d,
+                    useDragListeners: _u,
+                    ...rest
+                  } = action
                   return (
                     <Button
+                      variant={isDragActive ? 'outlined' : 'contained'}
                       disabled={action?.disabled}
                       key={aIdx}
                       iconButton={true}
                       icon={action.icon}
                       tooltip={action.tooltip}
                       onClick={(e) => {
-                        e.stopPropagation()
-                        const actionFn = action.action
-                        !!nodeId && actionFn?.(nodeId as string, e)
+                        if (!action.disableStopPropagation) {
+                          e.stopPropagation()
+                        }
+                        const actionFn = action.action as any
+                        !!nodeId && actionFn?.(nodeId as any, e)
                       }}
                       onPointerDown={stopPropagation}
                       onKeyDown={stopPropagation}
+                      {...(rest as any)}
                       iconSize="16px"
                       sx={{
                         height: 24,
                         width: 24,
                       }}
+                      {...(action?.useDragListeners &&
+                      (!isDragActive || isDragActive.id === nodeId)
+                        ? listeners
+                        : {})}
                     />
                   )
                 })}
 
                 {!!additionalActions?.length && (
                   <Button
+                    variant={isDragActive ? 'outlined' : 'contained'}
                     ref={moreActionsButtonRef}
                     iconButton={true}
                     icon={mdiDotsHorizontal}
@@ -346,19 +430,16 @@ export const StyledTreeItem = function StyledTreeItem(
             </Stack>
           </Box>
         }
-        style={styleProps}
-        {...other}
-        itemId={(nodeId ?? other.itemId) as any}
+        sx={styleProps}
+        itemId={(nodeId ?? other.itemId) as string}
+        // {...other}
       >
-        {/* {children} */}
+        {children}
       </StyledTreeItemRoot>
       <DropdownMenu
-        // usePortal={true}
         anchorEl={moreActionsButtonRef.current}
         open={ui?.moreActionsOpen}
-        // onPointerDown={stopPropagation}
-        // onKeyDown={stopPropagation}
-        onClose={() => handleMoreActionsClick()}
+        onClose={handleMoreActionsClick as any}
       >
         {additionalActionsInt?.map((action, aIdx) => (
           <DropdownMenuItem
@@ -368,14 +449,17 @@ export const StyledTreeItem = function StyledTreeItem(
             icon={action.icon}
             onPointerDown={stopPropagation}
             onKeyDown={stopPropagation}
-            onClick={(e: MouseEvent) => {
+            onClick={(e: any, sourceAnchorEl?: HTMLElement) => {
               e.stopPropagation()
-              action.action(nodeId, e)
+              if (sourceAnchorEl) {
+                action.action(nodeId as any, e, sourceAnchorEl)
+              }
               handleMoreActionsClick(e)
             }}
             disabled={action.disabled}
+            tooltip={action.tooltip}
             sourceAnchorEl={moreActionsButtonRef.current as HTMLElement}
-          ></DropdownMenuItem>
+          />
         ))}
       </DropdownMenu>
     </>

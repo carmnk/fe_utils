@@ -1,12 +1,45 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView'
+import {
+  SimpleTreeView,
+  SimpleTreeViewProps,
+} from '@mui/x-tree-view/SimpleTreeView'
 import Icon from '@mdi/react'
 import { StyledTreeItem, StyledTreeItemProps } from './CTreeItem'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useState, useRef, useCallback, useEffect, ReactNode } from 'react'
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
+import debounce from 'lodash/debounce'
+import type { PointerEvent, ReactNode } from 'react'
 
+const dblTouchTapMaxDelay = 400
+let latestTouchTap = {
+  time: 0,
+  target: null,
+}
+
+const isDblTouchTap = (event: any) => {
+  const touchTap = {
+    time: new Date().getTime(),
+    target: event.currentTarget,
+  }
+  const isFastDblTouchTap =
+    touchTap.target === latestTouchTap.target &&
+    touchTap.time - latestTouchTap.time < dblTouchTapMaxDelay
+  latestTouchTap = touchTap
+  return isFastDblTouchTap
+}
+
+function snapToGrid(args: {
+  transform: { x: number; y: number; scaleX: number; scaleY: number }
+}) {
+  const { transform } = args
+
+  return {
+    ...transform,
+    // x: Math.ceil(transform.x / gridSize) * gridSize,
+    y: Math.abs(transform.y) < 7 ? 0 : transform.y,
+  }
+}
+// const modifiers = [snapToGrid]
 declare module 'react' {
   interface CSSProperties {
     '--tree-view-color'?: string
@@ -31,13 +64,18 @@ const recursiveMap = (
   disableBorderLeft?: boolean,
   toggleExpand?: (id: string) => void,
   parentId?: string,
-  onToggleSelect?: (id: string, e?: any) => void
+  disableExpandMargin?: boolean,
+  expandAllChildren?: (id: string) => void,
+  collapseAllChildren?: (id: string) => void,
+  toggleSelect?: (id: string) => void,
+  borderDraggin?: {
+    topBorderDragging: { id: string } | null
+    bottomBorderDragging: { id: string } | null
+  }
 ): ReactNode[] => {
   const relevantElements = parentId
     ? items?.filter((el) => el._parentId === parentId)
     : items?.filter((el) => !el._parentId)
-
-  console.debug('recursiveMap, PROPS etc', items, parentId, relevantElements)
 
   return (
     relevantElements?.map?.(({ labelIcon, ...item }) => {
@@ -52,18 +90,30 @@ const recursiveMap = (
 
       const { children: childrenProps, ...props } = item as any
       const children = (childrenProps ?? []) as StyledTreeItemProps[]
-      // const children = (items?.filter((it) => it._parentId === item.nodeId) ??
-      // []) as StyledTreeItemProps[]
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      // const { children: _c, ...props } = item
 
-      console.debug('recursiveMap, CHILDREN', children)
+      const disableBeforeAfterInsertion =
+        (!item._parentId &&
+          !(item as any)?.component_id &&
+          !(item as any)?.template_id) ||
+        (item as any).type === 'component'
 
       return (
         <StyledTreeItem
-          onToggleSelect={onToggleSelect}
-          key={item.nodeId}
           {...props}
+          sx={{
+            ...props?.sx,
+            borderTop:
+              borderDraggin?.topBorderDragging?.id === item.nodeId &&
+              !disableBeforeAfterInsertion
+                ? '2px solid red !important'
+                : undefined,
+            borderBottom:
+              borderDraggin?.bottomBorderDragging?.id === item.nodeId &&
+              !disableBeforeAfterInsertion
+                ? '2px solid red'
+                : undefined,
+          }}
+          key={item.nodeId}
           labelIcon={
             typeof labelIcon === 'string' ? (
               <Icon path={labelIcon} size={1} />
@@ -72,9 +122,13 @@ const recursiveMap = (
             )
           }
           disableBorderLeft={disableBorderLeft}
-          additionalActions={additionalActions}
-          actions={actions}
+          additionalActions={item?.additionalActions ?? additionalActions}
+          actions={item?.actions ?? actions}
           toggleExpand={toggleExpand}
+          disableExpandMargin={disableExpandMargin}
+          expandAllChildren={expandAllChildren}
+          collapseAllChildren={collapseAllChildren}
+          toggleSelect={toggleSelect}
         >
           {((!!children?.length &&
             recursiveMap(
@@ -82,8 +136,13 @@ const recursiveMap = (
               events,
               undefined,
               toggleExpand,
-              item.nodeId as any
-            )) as any) || undefined}
+              item.nodeId as any,
+              undefined,
+              expandAllChildren,
+              collapseAllChildren,
+              toggleSelect,
+              borderDraggin
+            )) as ReactNode) || undefined}
         </StyledTreeItem>
       )
     }) ?? null
@@ -91,38 +150,53 @@ const recursiveMap = (
 }
 
 export type AdditionalActionType = {
-  action: (nodeId: string | number, e: any) => void
+  action: (nodeId: string | number, e: any, sourceAnchorEl: HTMLElement) => void
   icon: string
   tooltip: string
   label: string
   disabled?: boolean
+  disableStopPropagation?: boolean
+  useDragListeners?: boolean
 }
 
 export type AdditionalActionGenType =
   | AdditionalActionType[]
   | ((item: any) => AdditionalActionType[])
 
-export type CTreeViewProps = {
+export type CTreeViewProps = Omit<
+  SimpleTreeViewProps<false>,
+  'selectedItems'
+> & {
   items: StyledTreeItemProps[]
   actions?: AdditionalActionGenType
   additionalActions?: AdditionalActionGenType
-
-  selectedItems?: string[]
-  onToggleSelect?: (id: string, e: any) => void
-  onDragDrop?: (event: any, draggedItem: any, droppedItem: any) => void // nodeId is the id of the dropped item
+  onToggleExpand?: (id: string) => void
+  onExpandChildrenRecursively?: (id: string) => void
+  onCollapseChildrenRecursively?: (id: string) => void
+  onNodeDoubleClick?: (id: string, e: any) => void
+  onToggleSelect?: (id: string, e?: any) => void
+  onDragDrop?: (
+    event: any,
+    draggedItem: any,
+    droppedItem: any,
+    droppedOnBorder?: 'top' | 'bottom'
+  ) => void // nodeId is the id of the dropped item
   onDragging?: (event: any, active: boolean, draggedItem: any) => void
   expandedItems?: string[]
-  defaultExpanded?: string[]
-  onToggleExpand?: (id: string, e?: any) => void
-  enableNullSelection?: boolean
-  disableItemsFocusable?: boolean
+  selectedItems?: string[]
   maxWidth?: number
+  disableItemsFocusable?: boolean
   width?: number
+  onChangeDraggingActive?: (active: boolean) => void
+  onMouseUp?: any
+  disableExpandMargin?: boolean
+  transformer?: any[]
 }
 
 export const CTreeView = (props: CTreeViewProps) => {
   const {
     items,
+    onExpandedItemsChange,
     onToggleExpand,
     onToggleSelect,
     expandedItems,
@@ -134,39 +208,77 @@ export const CTreeView = (props: CTreeViewProps) => {
     onDragDrop,
     onDragging,
     width,
-    enableNullSelection,
-    defaultExpanded,
+    onChangeDraggingActive,
+    disableExpandMargin,
+    onNodeDoubleClick,
+    transformer,
+    onExpandChildrenRecursively,
+    onCollapseChildrenRecursively,
+    sx,
+    ...rest
   } = props
 
   const [ui, setUi] = useState<{
-    dragging: { ctrKeyDown: boolean; active: boolean }
+    dragging: {
+      ctrKeyDown: boolean
+      active: boolean
+      draggedItemId: string | null
+    }
+    topBorderDragging: { id: string } | null
+    bottomBorderDragging: { id: string } | null
   }>({
-    dragging: { ctrKeyDown: false, active: false },
+    dragging: { ctrKeyDown: false, active: false, draggedItemId: null },
+    topBorderDragging: null,
+    bottomBorderDragging: null,
   })
+
   const [overlay, setOverlay] = useState<any>(null)
   const treeViewRef = useRef<any>(null)
 
   const handleDragStart = useCallback((event: any) => {
+    // console.log('START DRAGGIN 123')
     const treeItemProps = event?.active?.data?.current
+    const draggedItemId = event?.active?.id
 
     setOverlay(treeItemProps)
     setUi((current) => ({
       ...current,
-      dragging: { ...current?.dragging, active: true },
+      dragging: { ...current?.dragging, active: true, draggedItemId },
     }))
   }, [])
+
   const handleDragEnd = useCallback(
     (event: any) => {
       const overItem = event?.over?.data?.current
-      // const overNodeId = overItem?.nodeId
-
       if (!overItem || !overlay) return
 
-      onDragDrop?.(event, overlay, overItem)
+      const isTopBorderDragged =
+        (event.activatorEvent as PointerEvent).clientY + event.delta.y <
+          event.over.rect.top + 8 &&
+        (event.activatorEvent as PointerEvent).clientY + event.delta.y >
+          (event?.over?.rect?.top ?? 0) - 8
+      const isBottomBorderDragged =
+        (event.activatorEvent as PointerEvent).clientY + event.delta.y <
+          event.over.rect.bottom + 8 &&
+        (event.activatorEvent as PointerEvent).clientY + event.delta.y >
+          (event?.over?.rect?.bottom ?? 0) - 8
+
+      onDragDrop?.(
+        event,
+        overlay,
+        overItem,
+        isTopBorderDragged
+          ? 'top'
+          : isBottomBorderDragged
+          ? 'bottom'
+          : undefined
+      )
       setOverlay(null)
       setUi((current) => ({
         ...current,
-        dragging: { ctrKeyDown: false, active: false },
+        dragging: { ctrKeyDown: false, active: false, draggedItemId: null },
+        bottomBorderDragging: null,
+        topBorderDragging: null,
       }))
       onDragging?.(event, false, overlay)
       lastMouseMoveEvent.current = null
@@ -176,7 +288,11 @@ export const CTreeView = (props: CTreeViewProps) => {
 
   const lastMouseMoveEvent = useRef<any>(null)
   useEffect(() => {
-    const mouseMoveListener = (e: any) => {
+    const mouseMoveListener = debounce((e: any) => {
+      // console.log('MOUSE MVOE ', ui.dragging)
+      if (!ui.dragging.active) {
+        return
+      }
       lastMouseMoveEvent.current = e
       const isCtrlPressed = e?.ctrlKey
       onDragging?.(e, true, overlay)
@@ -188,21 +304,37 @@ export const CTreeView = (props: CTreeViewProps) => {
             }
           : current
       )
-    }
+    }, 100)
+
     const keyDownListener = (e: any) => {
+      console.log('KEYDOWN LISTENER IS TRIGGERED ')
       const ctrlKey = e?.ctrlKey
+
+      if (e?.repeat || ctrlKey === lastMouseMoveEvent.current?.ctrlKey) {
+        return
+      }
+
       const newEvent = { ...(lastMouseMoveEvent.current ?? {}), ctrlKey }
-      onDragging?.(newEvent, true, overlay) // event handler is not addded if dragging is not active
-      setUi((current) =>
-        ctrlKey !== current?.dragging?.ctrKeyDown
+
+      let isCtrlStatuschanged
+      setUi((current) => {
+        isCtrlStatuschanged = ctrlKey !== current?.dragging?.ctrKeyDown
+        return isCtrlStatuschanged
           ? {
               ...current,
               dragging: { ...current.dragging, ctrKeyDown: ctrlKey },
             }
           : current
-      )
+      })
+      if (isCtrlStatuschanged) {
+        onDragging?.(newEvent, true, overlay) // event handler is not addded if dragging is not active
+      }
     }
     const keyUpListener = (e: any) => {
+      console.log('KEYUP LISTENER IS TRIGGERED ')
+      if (e?.repeat) {
+        return
+      }
       const ctrlKey = e?.ctrlKey
       const newEvent = {
         ...(lastMouseMoveEvent.current ?? {}),
@@ -218,34 +350,50 @@ export const CTreeView = (props: CTreeViewProps) => {
           : current
       )
     }
+    const treeView = treeViewRef.current
 
-    if (ui?.dragging?.active) {
-      document.addEventListener('keydown', keyDownListener)
-      document.addEventListener('keyup', keyUpListener)
-      document.addEventListener('mousemove', mouseMoveListener)
-    }
+    treeView.addEventListener('keydown', keyDownListener)
+    treeView.addEventListener('keyup', keyUpListener)
+    treeView.addEventListener('pointermove', mouseMoveListener)
+
     return () => {
-      if (ui?.dragging?.active) {
-        document.addEventListener('keydown', keyDownListener)
-        document.addEventListener('keyup', keyUpListener)
-        document.removeEventListener('mousemove', mouseMoveListener)
-      }
+      treeView.addEventListener('keydown', keyDownListener)
+      treeView.addEventListener('keyup', keyUpListener)
+      treeView.removeEventListener('pointermove', mouseMoveListener)
     }
-  }, [onDragging, overlay, ui?.dragging?.active])
+    /// no need to update the listeners
+    /// eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ui.dragging?.active])
 
-  const handleExpandNode = useCallback(
-    (id: string) => {
-      if (!onToggleExpand) return
-      onToggleExpand(id, null)
+  // const handleExpandNode = useCallback(
+  //   (e: MouseEvent, ids: string[]) => {
+  //     if (!onToggleExpand) return
+  //     onToggleExpand(ids)
+  //   },
+  //   [onToggleExpand]
+  // )
+
+  const handleNodeSelect = useCallback(
+    (e: any, value: any) => {
+      const isDoubleTap = isDblTouchTap(e)
+      // console.info('onSelect', isDoubleTap)
+      if (onNodeDoubleClick && isDoubleTap) {
+        onNodeDoubleClick?.(value, e)
+        return
+      }
+      if (!onToggleSelect) return
+      if (selectedItems?.[0] === value) {
+        onToggleSelect(null as any, e)
+        return
+      }
+      onToggleSelect?.(value, e)
+      // treeViewRef.current.focus()
     },
-    [onToggleExpand]
+    [onToggleSelect, selectedItems, onNodeDoubleClick]
   )
 
-  const selected = selectedItems?.[0]
+  const selected = useMemo(() => selectedItems?.[0], [selectedItems])
   useEffect(() => {
-    if (!enableNullSelection) {
-      return
-    }
     if (selected === null) {
       const focusedItem = treeViewRef.current?.querySelector(
         '.MuiTreeItem-content.Mui-focused'
@@ -254,70 +402,103 @@ export const CTreeView = (props: CTreeViewProps) => {
         focusedItem.classList.remove('Mui-focused')
       }
     }
-  }, [selected, enableNullSelection])
+  }, [selected])
 
-  // const handleDragMove = useCallback(
-  //   (event: any) => {
-  //     const overItem = event?.over?.data?.current
-  //     // const overNodeId = overItem?.nodeId
+  const treeViewSx = useMemo(() => {
+    return {
+      overflowY: 'auto',
+      maxWidth: maxWidth,
+      width,
+      ...(treeViewProps as any),
+      ...sx,
+      touchAction: overlay ? 'none' : undefined,
+    }
+  }, [maxWidth, width, sx, overlay])
 
-  //     console.log('DRAG MOVE', overItem, overlay)
-  //     if (!overItem || !overlay) return
+  const modifiers = useMemo(() => {
+    return [snapToGrid, restrictToVerticalAxis, ...(transformer ?? [])]
+  }, [transformer])
 
-  //     // onDragDrop?.(event, overlay, overItem)
-  //     // setOverlay(null)
-  //     // setUi((current) => ({
-  //     //   ...current,
-  //     //   dragging: { ctrKeyDown: false, active: false },
-  //     // }))
-  //     // onDragging?.(event, false, overlay)
-  //     // lastMouseMoveEvent.current = null
-  //   },
-  //   [onDragDrop, overlay, onDragging]
-  // )
+  const handleToggleExpand = useCallback(
+    (newValue: string) => {
+      onToggleExpand?.(newValue)
+      // console.info('onToggleExpand', newValue)
+      // const newToggles = [
+      //   ...(expandedItems?.filter((item) => item !== newValue) ?? []),
+      //   newValue,
+      // ]
+      // onToggleExpand?.(null as any, newToggles)
+    },
+    [onToggleExpand]
+  )
+
+  const testExpandedChanged = useCallback((_e: any, newValues: string[]) => {
+    // console.info('onExpandedItemsChange', newValues)
+  }, [])
+
+  const handleDragMove = useCallback(
+    (event: any) => {
+      const overItem = event?.over?.data?.current
+      // const overNodeId = overItem?.nodeId
+
+      if (!overItem || !overlay) return
+
+      if (!event?.over?.rect) {
+        return
+      }
+      const isTopBorderDragged =
+        (event.activatorEvent as PointerEvent).clientY + event.delta.y <
+          event.over.rect.top + 8 &&
+        (event.activatorEvent as PointerEvent).clientY + event.delta.y >
+          (event?.over?.rect?.top ?? 0) - 8
+      const isBottomBorderDragged =
+        (event.activatorEvent as PointerEvent).clientY + event.delta.y <
+          event.over.rect.bottom + 8 &&
+        (event.activatorEvent as PointerEvent).clientY + event.delta.y >
+          (event?.over?.rect?.bottom ?? 0) - 8
+      // if (isTopBorderDragged || isBottomBorderDragged) {
+      setUi((current) => ({
+        ...current,
+        topBorderDragging: isTopBorderDragged ? { id: event.over.id } : null,
+        bottomBorderDragging: isBottomBorderDragged
+          ? { id: event.over.id }
+          : null,
+      }))
+    },
+    [overlay]
+  )
+
+  const handleDragAbort = useCallback((e: any) => {
+    console.log('handleDragAbort', e)
+  }, [])
+  const handleDragCancel = useCallback((e: any) => {
+    console.log('handleDragCancel', e)
+  }, [])
+  const handlePointerUp = useCallback((e: any) => {
+    setOverlay(null)
+  }, [])
 
   return (
     <>
       <DndContext
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        // onDragMove={handleDragMove}
-        // sensors={sensors}
+        modifiers={modifiers}
+        onDragMove={handleDragMove}
+        onDragAbort={handleDragAbort}
+        onDragCancel={handleDragCancel}
       >
         <SimpleTreeView
+          {...rest}
           ref={treeViewRef}
-          defaultExpandedItems={defaultExpanded}
           disabledItemsFocusable={disableItemsFocusable}
           aria-label="tree-view"
           expandedItems={expandedItems as any}
-          onSelectedItemsChange={(e, value) => {
-            if (!onToggleSelect) return
-            onToggleSelect?.(value as string, e)
-            // treeViewRef.current.focus()
-          }}
-          // onNodeToggle={(e, value) => {
-          //   e.stopPropagation();
-          //   if (!onToggleExpand) return;
-          //   // if ((e?.target as any)?.nodeName !== "svg") return;
-
-          //   const newToggles = [
-          //     ...(value.filter((v) => !expandedItems?.includes?.(v)) ?? []),
-          //     ...(expandedItems?.filter((item) => !value?.includes?.(item)) ??
-          //       []),
-          //   ];
-          //   forEach(newToggles, (t) => {
-          //     onToggleExpand(t, e);
-          //   });
-          // }}
-          selectedItems={selectedItems?.[0]}
-          // multiSelect={true}
-
-          sx={{
-            overflowY: 'auto',
-            maxWidth: maxWidth,
-            width,
-            ...(treeViewProps as any),
-          }}
+          onSelectedItemsChange={handleNodeSelect}
+          onExpandedItemsChange={testExpandedChanged}
+          selectedItems={selectedItems?.[0] ?? ''}
+          sx={treeViewSx}
+          onPointerUp={handlePointerUp}
         >
           {items?.map?.((item) =>
             recursiveMap(
@@ -327,15 +508,26 @@ export const CTreeView = (props: CTreeViewProps) => {
                 actions,
               },
               true,
-              handleExpandNode,
+              handleToggleExpand,
               undefined,
-              onToggleSelect
+              disableExpandMargin,
+              onExpandChildrenRecursively,
+              onCollapseChildrenRecursively,
+              onToggleSelect,
+              {
+                topBorderDragging: ui.topBorderDragging,
+                bottomBorderDragging: ui.bottomBorderDragging,
+              }
             )
           )}
         </SimpleTreeView>
 
-        <DragOverlay modifiers={[restrictToVerticalAxis]}>
-          {overlay && <StyledTreeItem key="overlay" {...overlay} />}
+        <DragOverlay modifiers={modifiers}>
+          {overlay && (
+            <SimpleTreeView>
+              <StyledTreeItem key="overlay" {...overlay} />
+            </SimpleTreeView>
+          )}
         </DragOverlay>
       </DndContext>
     </>
