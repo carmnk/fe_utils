@@ -36,6 +36,8 @@ const recursiveMap = (
   const relevantElements = parentId
     ? items?.filter((el) => el._parentId === parentId)
     : items?.filter((el) => !el._parentId)
+
+  console.debug('recursiveMap, PROPS etc', items, parentId, relevantElements)
   return (
     relevantElements?.map?.(({ labelIcon, ...item }) => {
       const additionalActions =
@@ -50,6 +52,9 @@ const recursiveMap = (
         []) as StyledTreeItemProps[]
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { children: _c, ...props } = item
+
+      console.debug('recursiveMap, CHILDREN', children)
+
       return (
         <StyledTreeItem
           onToggleSelect={onToggleSelect}
