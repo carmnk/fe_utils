@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useMemo } from 'react'
+import { ReactElement, ReactNode, useCallback, useMemo } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import Dialog, { DialogProps } from '@mui/material/Dialog'
 import DialogActions, { DialogActionsProps } from '@mui/material/DialogActions'
@@ -72,6 +72,7 @@ export type CModalBaseProps = Omit<
     closButtonTooltip?: TooltipProps
     dialogContentTypography?: TypographyProps
   }
+  injectElementAboveActions?: ReactElement
 }
 
 export type CModalProps =
@@ -117,6 +118,7 @@ export const Modal = (props: CModalProps) => {
     borderRadius,
     buttonBorderRadiuses,
     disableTopRightCloseButton,
+    injectElementAboveActions,
     ...rest
   } = {
     ...props,
@@ -247,6 +249,7 @@ export const Modal = (props: CModalProps) => {
         )}
       </DialogContent>
       <DialogActions sx={actionsStyles} {...dialogActionsRoot}>
+        {injectElementAboveActions}
         {isConfirmation ? (
           <Stack
             direction="row"

@@ -3,7 +3,7 @@ import { ListNavigation, ListNavigationProps } from '../../../../components'
 import { CommonComponentPropertys } from '../../componentProperty'
 
 export const ListNavWrapper = (
-  props: Omit<ListNavigationProps, "value"> & CommonComponentPropertys
+  props: ListNavigationProps & CommonComponentPropertys
 ) => {
   const {
     appController,
@@ -19,6 +19,7 @@ export const ListNavWrapper = (
   } = props
 
   const navValueState =
+    props?.value ??
     (appController?.state?.[id] as string) ??
     rest?.items?.find?.((item) => item?.isInitialValue)?.value ??
     ''
@@ -31,6 +32,6 @@ export const ListNavWrapper = (
   )
 
   return (
-    <ListNavigation value={navValueState} onChange={handleChange} {...rest} />
+    <ListNavigation onChange={handleChange} {...rest} value={navValueState} />
   )
 }
